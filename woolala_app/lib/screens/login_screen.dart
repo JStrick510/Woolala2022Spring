@@ -50,7 +50,7 @@ class LoginScreen extends StatelessWidget {
         decoration: BoxDecoration(
           shape: BoxShape.circle, color: Colors.white,
           boxShadow: [
-            BoxShadow(color: Colors.black26, offset: Offset(0, 2), blurRadius: 6.0,),
+            BoxShadow(color: Colors.black26, offset: Offset(0, 2), blurRadius: 20.0,),
           ],
           image: DecorationImage(
             image: logo,
