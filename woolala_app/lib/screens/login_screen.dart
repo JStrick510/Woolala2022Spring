@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:flutter_facebook_login/flutter_facebook_login.dart';
 
 final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
@@ -66,7 +67,7 @@ class LoginScreen extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: <Widget>[
-          _buildSocialBtn(() => print('Login with Facebook'), AssetImage('assets/logos/facebook_logo.png',),),
+          _buildSocialBtn(startFacebookSignIn, AssetImage('assets/logos/facebook_logo.png',),),
           _buildSocialBtn(startGoogleSignIn, AssetImage('assets/logos/google_logo.png',),),
         ],
       ),
@@ -85,4 +86,24 @@ class LoginScreen extends StatelessWidget {
     }
   }
 
+
+
+
+  void startFacebookSignIn() async {
+    final facebookLogin = FacebookLogin();
+    final result = await facebookLogin.logInWithReadPermissions(['email']);
+
+    switch (result.status) {
+      case FacebookLoginStatus.loggedIn:
+        _sendTokenToServer(result.accessToken.token);
+        _showLoggedInUI();
+        break;
+      case FacebookLoginStatus.cancelledByUser:
+        _showCancelledMessage();
+        break;
+      case FacebookLoginStatus.error:
+        _showErrorOnUI(result.errorMessage);
+        break;
+    }
+  }
 }
