@@ -9,7 +9,17 @@ StepDefinitionGeneric TapIcons() {
       // TODO:
       // key could be either google or facebook
       // need some code to check it really gets into the login page
-      }
+      },
+  );
+}
+
+StepDefinitionGeneric LoginAPIs() {
+  return then1<String, FlutterWorld>(
+    'I should see {string} log-in api',
+        (key, context) async {
+      // TODO:
+      // key could be either google or facebook
+      // need some code to check it really gets into the login page
     },
   );
 }
@@ -21,7 +31,17 @@ StepDefinitionGeneric LoggedIn() {
       // TODO:
       // key could be either google or facebook
       // need some code to check whether the user has successfully logged in
-      }
+      },
+  );
+}
+
+StepDefinitionGeneric Homepage() {
+  return then<FlutterWorld>(
+    'I should have "homepage" on screen',
+        (context) async {
+      // TODO:
+      // key could be either google or facebook
+      // need some code to check it really gets into the login page
     },
   );
 }

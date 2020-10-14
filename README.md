@@ -67,3 +67,8 @@ The app.js had the Product_Owner inserted into the request URI already, but feel
 The pubspec.yaml file apparently has some weird way to keep track of dependencies in terms of installing on local machines. We will probably run into this later, so keep note of when this file is changed.
 
 If you cant find the DartSDK it is in: /flutter/bin/cache/dart-sdk
+
+# Cucumber test
+
+To run cucumber test, direct to woolala_app folder and run:
+'''flutter drive --target=test_driver/app.dart'''
