@@ -84,6 +84,8 @@ class LoginScreen extends StatelessWidget {
     GoogleSignInAccount user = await googleSignIn.signIn();
     if (user == null) {
       print("Sign in failed.");
+      SnackBar googleSnackBar = SnackBar(content: Text("Sign in failed."));
+      _scaffoldKey.currentState.showSnackBar(googleSnackBar);
     }
     else {
       SnackBar googleSnackBar = SnackBar(content: Text("Welcome ${user.displayName}!"));
@@ -107,7 +109,6 @@ class LoginScreen extends StatelessWidget {
             'https://graph.facebook.com/v2.12/me?fields=name,first_name,last_name,email&access_token=${token}');
         final profile = json.decode(graphResponse.body);
         print(profile);
-        print(profile["name"]);
         SnackBar googleSnackBar = SnackBar(content: Text("Welcome ${profile["name"]}!"));
         _scaffoldKey.currentState.showSnackBar(googleSnackBar);
 
@@ -120,10 +121,14 @@ class LoginScreen extends StatelessWidget {
       case FacebookLoginStatus.cancelledByUser:
         // _showCancelledMessage();
         print("Sign in failed.");
+        SnackBar googleSnackBar = SnackBar(content: Text("Sign in failed."));
+        _scaffoldKey.currentState.showSnackBar(googleSnackBar);
         break;
       case FacebookLoginStatus.error:
         // _showErrorOnUI(result.errorMessage);
         print("Sign in failed.");
+        SnackBar googleSnackBar = SnackBar(content: Text("Sign in failed."));
+        _scaffoldKey.currentState.showSnackBar(googleSnackBar);
 
         break;
     }
