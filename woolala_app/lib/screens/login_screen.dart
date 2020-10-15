@@ -99,8 +99,6 @@ class LoginScreen extends StatelessWidget {
     FacebookLogin facebookLogin = FacebookLogin();
     final result = await facebookLogin.logIn(['email']);
 
-
-
     switch (result.status) {
       case FacebookLoginStatus.loggedIn:
         final token = result.accessToken.token;
@@ -109,6 +107,10 @@ class LoginScreen extends StatelessWidget {
             'https://graph.facebook.com/v2.12/me?fields=name,first_name,last_name,email&access_token=${token}');
         final profile = json.decode(graphResponse.body);
         print(profile);
+        print(profile["name"]);
+        SnackBar googleSnackBar = SnackBar(content: Text("Welcome ${profile["name"]}!"));
+        _scaffoldKey.currentState.showSnackBar(googleSnackBar);
+
         Navigator.push(_scaffoldKey.currentContext, MaterialPageRoute(builder: (context) => HomepageScreen()));
 
         // final credential = FacebookAuthProvider.getCredential(accessToken: token);
@@ -125,7 +127,5 @@ class LoginScreen extends StatelessWidget {
 
         break;
     }
-
-
   }
 }
