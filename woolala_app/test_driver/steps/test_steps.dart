@@ -8,7 +8,18 @@ StepDefinitionGeneric tapGoogleButton() {
         (key, context) async {
       final locator = find.byValueKey(key);
       await FlutterDriverUtils.tap(context.world.driver, locator);
-      print("button tapped");
+     //print("button tapped");
+    },
+  );
+}
+
+StepDefinitionGeneric tapFacebookButton() {
+  return when1<String, FlutterWorld>(
+    'I tap the {string} button',
+        (key, context) async {
+      final locator = find.byValueKey(key);
+      await FlutterDriverUtils.tap(context.world.driver, locator);
+      //print("button tapped");
     },
   );
 }

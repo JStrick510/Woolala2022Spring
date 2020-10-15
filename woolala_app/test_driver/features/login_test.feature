@@ -1,18 +1,23 @@
 Feature: Validate login screen
 
     Scenario: User launches the app
-        When I tap the "Google" button
+        Given The app is open
+        Then I should see "Login With:" my accounts
 
     Scenario: Google Login
-        When I tap the "google" icon
-        Then I should see "google" log-in api
+        Given My "Google" account is valid
+        When I tap the "Google" button
+        Then I should see the "homepage" screen
 
-        When I pass the "google" authentication
-        Then I should have "homepage" on screen
+        Given My "Google" account is not valid
+        When I tap the "Google" button
+        Then I should see "Login With:" my accounts
 
-    Scenario: Facebook login
-        When I tap the "facebook" icon
-        Then I should see "facebook" log-in api
+    Scenario: Facebook Login
+        Given My "Facebook" account is valid
+        When I tap the "Facebook" button
+        Then I should see the "homepage" screen
 
-        When I pass the "facebook" authentication
-        Then I should have "homepage" on screen
+        Given My "Facebook" account is not valid
+        When I tap the "Facebook" button
+        Then I should see "Login With:" my accounts
