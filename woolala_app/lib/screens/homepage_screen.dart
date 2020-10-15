@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-
+import 'package:flutter_facebook_login/flutter_facebook_login.dart';
 import 'package:http/http.dart' as http;
+
 import 'dart:convert';
 
 import 'package:woolala_app/screens/login_screen.dart';
@@ -50,6 +51,8 @@ class HomepageScreen extends StatelessWidget {
     print("Sign Out");
     googleSignIn.signOut();
 
+    FacebookLogin facebookLogin = FacebookLogin();
+    facebookLogin.logOut();
     //TODO:
     //Facebook here
 
