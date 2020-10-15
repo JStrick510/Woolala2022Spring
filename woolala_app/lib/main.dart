@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:woolala_app/screens/homepage_screen.dart';
 import 'package:woolala_app/screens/login_screen.dart';
 
 void main() {
@@ -17,7 +18,8 @@ class WooLaLa extends StatelessWidget {
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
       routes: { // easier use for multiple page navigation
-        '/' : (_) => LoginScreen() //current homepage is just the login screen
+        '/' : (_) => LoginScreen(), //login screen
+        '/home' : (_) => HomepageScreen() //home page
       },
     );
   }

@@ -21,6 +21,7 @@ environment:
   sdk: ">=2.7.0 <3.0.0"
 
 dependencies:
+  flutter_gherkin: ^1.0.5
   flutter:
     sdk: flutter
 
@@ -31,12 +32,15 @@ dependencies:
   google_sign_in: ^4.5.4
   flutter_facebook_login: ^3.0.0
   http: ^0.12.2
+  carousel_slider: ^2.3.1
 
 
 
 dev_dependencies:
-  flutter_test:
+  flutter_driver:
     sdk: flutter
+  test:
+    any
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
@@ -51,11 +55,8 @@ flutter:
 
   # To add assets to your application, add an assets section, like this:
   assets:
-     - assets/logos/logo_size.jpg
-     - assets/logos/fashionNXT_logo.png
-     - assets/logos/google_logo.png
-     - assets/logos/facebook_logo.png
-     - assets/logos/w_logo_test.png
+     - assets/logos/
+
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
