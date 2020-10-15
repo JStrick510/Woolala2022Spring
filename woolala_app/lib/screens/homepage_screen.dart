@@ -7,8 +7,6 @@ import 'dart:convert';
 
 import 'package:woolala_app/screens/login_screen.dart';
 
-final GlobalKey<ScaffoldState> _scaffoldKeyHomepage = new GlobalKey<ScaffoldState>();
-
 class HomepageScreen extends StatelessWidget {
   GoogleSignIn googleSignIn = GoogleSignIn(clientId: "566232493002-qqkorq4nvfqu9o8es6relg6fe4mj01mm.apps.googleusercontent.com");
 
@@ -19,13 +17,12 @@ class HomepageScreen extends StatelessWidget {
         actions: <Widget>[
           FlatButton(
             textColor: Colors.white,
-            onPressed: startSignOut,
+            onPressed: () => startSignOut(context),
             child: Text("Sign Out"),
             shape: CircleBorder(side: BorderSide(color: Colors.transparent)),
           )
         ],
       ),
-      key: _scaffoldKeyHomepage,
       body: Center(
         child: Container(
           padding: EdgeInsets.symmetric(vertical: 50),
@@ -48,12 +45,14 @@ class HomepageScreen extends StatelessWidget {
     );
   }
 
-  void startSignOut() {
+  void startSignOut(BuildContext context) {
     print("Sign Out");
     googleSignIn.signOut();
-    Navigator.push(_scaffoldKeyHomepage.currentContext, MaterialPageRoute(builder: (context) => LoginScreen()));
 
-    //FACEBOOK HERE
+    //TODO:
+    //Facebook here
+
+    Navigator.pushReplacementNamed(context, '/');
   }
 
 }

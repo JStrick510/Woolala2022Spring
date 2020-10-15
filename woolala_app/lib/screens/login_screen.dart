@@ -91,7 +91,7 @@ class LoginScreen extends StatelessWidget {
       print(user);
       SnackBar googleSnackBar = SnackBar(content: Text("Welcome ${user.displayName}!"));
       _scaffoldKey.currentState.showSnackBar(googleSnackBar);
-      Navigator.push(_scaffoldKey.currentContext, MaterialPageRoute(builder: (context) => HomepageScreen()));
+      Navigator.pushReplacementNamed(_scaffoldKey.currentContext, '/home');
     }
   }
 
@@ -113,8 +113,7 @@ class LoginScreen extends StatelessWidget {
               content: Text("Welcome ${profile["name"]}!"));
           _scaffoldKey.currentState.showSnackBar(googleSnackBar);
 
-          Navigator.push(_scaffoldKey.currentContext,
-              MaterialPageRoute(builder: (context) => HomepageScreen()));
+          Navigator.pushReplacementNamed(_scaffoldKey.currentContext, '/home');
 
           // final credential = FacebookAuthProvider.getCredential(accessToken: token);
           // final graphResponse = away http:get()
@@ -135,8 +134,7 @@ class LoginScreen extends StatelessWidget {
       }
     }
     else {
-      Navigator.push(_scaffoldKey.currentContext,
-          MaterialPageRoute(builder: (context) => HomepageScreen()));
+      Navigator.pushReplacementNamed(_scaffoldKey.currentContext, '/home');
     }
   }
 }
