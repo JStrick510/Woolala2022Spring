@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'homepage_screen.dart';
 
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:flutter_facebook_login/flutter_facebook_login.dart';
@@ -87,6 +88,7 @@ class LoginScreen extends StatelessWidget {
     else {
       SnackBar googleSnackBar = SnackBar(content: Text("Welcome ${user.displayName}!"));
       _scaffoldKey.currentState.showSnackBar(googleSnackBar);
+      Navigator.push(_scaffoldKey.currentContext, MaterialPageRoute(builder: (context) => HomepageScreen()));
     }
   }
 
@@ -107,6 +109,8 @@ class LoginScreen extends StatelessWidget {
             'https://graph.facebook.com/v2.12/me?fields=name,first_name,last_name,email&access_token=${token}');
         final profile = json.decode(graphResponse.body);
         print(profile);
+        Navigator.push(_scaffoldKey.currentContext, MaterialPageRoute(builder: (context) => HomepageScreen()));
+
         // final credential = FacebookAuthProvider.getCredential(accessToken: token);
         // final graphResponse = away http:get()
         // _showLoggedInUI();
