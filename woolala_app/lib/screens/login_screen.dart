@@ -93,9 +93,6 @@ class LoginScreen extends StatelessWidget {
     }
   }
 
-
-
-
   void startFacebookSignIn() async {
     FacebookLogin facebookLogin = FacebookLogin();
     final result = await facebookLogin.logIn(['email']);

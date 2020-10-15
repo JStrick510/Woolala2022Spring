@@ -23,9 +23,9 @@ class HomepageScreen extends StatelessWidget {
             gradient: LinearGradient(
                 begin: Alignment.topCenter,
                 colors: [
-                  Colors.red[900],
-                  Colors.red[800],
-                  Colors.red[600]
+                  Colors.blue[900],
+                  Colors.blue[700],
+                  Colors.blue[400]
                 ]
             ),
           ),
