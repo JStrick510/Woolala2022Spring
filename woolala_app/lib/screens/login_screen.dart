@@ -48,9 +48,10 @@ class LoginScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildSocialBtn(Function onTap, AssetImage logo) {
+  Widget _buildSocialBtn(Function onTap, AssetImage logo, String keyText) {
     return GestureDetector(
       onTap: onTap,
+      key: ValueKey(keyText),
       child: Container(
         height: 60.0, width: 60.0,
         decoration: BoxDecoration(
@@ -72,8 +73,8 @@ class LoginScreen extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: <Widget>[
-          _buildSocialBtn(startFacebookSignIn, AssetImage('assets/logos/facebook_logo.png',),),
-          _buildSocialBtn(startGoogleSignIn, AssetImage('assets/logos/google_logo.png',),),
+          _buildSocialBtn(startFacebookSignIn, AssetImage('assets/logos/facebook_logo.png',),"Facebook",),
+          _buildSocialBtn(startGoogleSignIn, AssetImage('assets/logos/google_logo.png',),"Google",),
         ],
       ),
     );
