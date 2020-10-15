@@ -87,6 +87,7 @@ class LoginScreen extends StatelessWidget {
       _scaffoldKey.currentState.showSnackBar(googleSnackBar);
     }
     else {
+      print(user);
       SnackBar googleSnackBar = SnackBar(content: Text("Welcome ${user.displayName}!"));
       _scaffoldKey.currentState.showSnackBar(googleSnackBar);
       Navigator.push(_scaffoldKey.currentContext, MaterialPageRoute(builder: (context) => HomepageScreen()));
