@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 import 'package:http/http.dart' as http;
 
@@ -8,6 +9,7 @@ import 'dart:convert';
 final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
 class HomepageScreen extends StatelessWidget {
+  GoogleSignIn googleSignIn = GoogleSignIn(clientId: "566232493002-qqkorq4nvfqu9o8es6relg6fe4mj01mm.apps.googleusercontent.com");
 
   @override
   Widget build(BuildContext context) {
@@ -43,6 +45,13 @@ class HomepageScreen extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  void startSignOut() {
+    if (!(googleSignIn.isSignedIn() != null)) {
+      googleSignIn.signOut();
+    }
+    //FACEBOOK HERE
   }
 
 }
