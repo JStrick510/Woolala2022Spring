@@ -187,8 +187,7 @@ class LoginScreen extends StatelessWidget {
     }
     else {
       print("Successfully logged in!");
-      Navigator.push(_scaffoldKey.currentContext,
-          MaterialPageRoute(builder: (context) => HomepageScreen()));
+      Navigator.pushReplacementNamed(_scaffoldKey.currentContext, '/home');
     }
   }
 }
