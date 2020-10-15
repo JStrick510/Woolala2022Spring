@@ -80,7 +80,6 @@ class LoginScreen extends StatelessWidget {
   }
 
   void startGoogleSignIn() async {
-    await googleSignIn.signOut();
     GoogleSignInAccount user = await googleSignIn.signIn();
     if (user == null) {
       print("Sign in failed.");
