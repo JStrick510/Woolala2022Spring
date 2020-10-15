@@ -38,3 +38,12 @@ StepDefinitionGeneric accountIsValid() {
     },
   );
 }
+
+StepDefinitionGeneric onPage() {
+  return given1<String, FlutterWorld>(
+    'I am on the {string} screen',
+        (key, context) async {
+
+    },
+  );
+}
