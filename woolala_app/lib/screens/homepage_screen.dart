@@ -14,6 +14,7 @@ class HomepageScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text('Homepage'),
+        key: ValueKey("homepage"),
         actions: <Widget>[
           FlatButton(
             textColor: Colors.white,

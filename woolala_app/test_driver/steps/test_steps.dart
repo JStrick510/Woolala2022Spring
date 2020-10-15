@@ -25,7 +25,8 @@ StepDefinitionGeneric iShouldSeeText() {
   return then1<String, FlutterWorld>(
     'I should see {string} on my screen',
         (key, context) async {
-
+        final locator = find.byValueKey(key);
+        await FlutterDriverUtils.isPresent(context.world.driver, locator);
     },
   );
 }
