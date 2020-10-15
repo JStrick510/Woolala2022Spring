@@ -13,6 +13,14 @@ class HomepageScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text('Homepage'),
+        actions: <Widget>[
+          FlatButton(
+            textColor: Colors.white,
+            onPressed: () {print("Signed out");},
+            child: Text("Sign Out"),
+            shape: CircleBorder(side: BorderSide(color: Colors.transparent)),
+          )
+        ],
       ),
       key: _scaffoldKey,
       body: Center(

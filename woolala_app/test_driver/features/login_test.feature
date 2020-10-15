@@ -2,7 +2,7 @@ Feature: Validate login screen
 
     Scenario: User launches the app
         When I launch the app
-        Then I should have "login" on screen
+        Then I should have "Login With:" on screen
 
     Scenario: Google Login
         When I tap the "google" icon
@@ -26,4 +26,4 @@ Feature: Validate login screen
 
     Scenario: Home Screen
         When I login with an account
-        Then I should see the Homepage Screen
+        Then I should see "Homepage" on screen

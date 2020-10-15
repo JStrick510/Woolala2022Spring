@@ -9,14 +9,15 @@ import 'package:flutter/material.dart';
 
 final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
-StepDefinitionGeneric TapIcons() {
-  return when1<String, FlutterWorld>(
-    'I tap the {string} icon',
-        (key, context) async {
-      // TODO:
-      // key could be either google or facebook
-      // need some code to check it really gets into the login page
-      },
+StepDefinitionGeneric TapButtonNTimesStep() {
+  return when2<String, int, FlutterWorld>(
+    'I tap the {string} button {int} times',
+        (key, count, context) async {
+      final locator = find.byValueKey(key);
+      for (var i = 0; i < count; i += 1) {
+        await FlutterDriverUtils.tap(context.world.driver, locator);
+      }
+    },
   );
 }
 
@@ -57,35 +58,8 @@ StepDefinitionGeneric Facebook() {
   return then<FlutterWorld>(
     'I should have "homepage" on screen',
         (context) async {
-          FacebookLogin facebookLogin = FacebookLogin();
-          final result = await facebookLogin.logIn(['email']);
 
-          switch (result.status) {
-            case FacebookLoginStatus.loggedIn:
-              final token = result.accessToken.token;
 
-              final graphResponse = await http.get(
-                  'https://graph.facebook.com/v2.12/me?fields=name,first_name,last_name,email&access_token=${token}');
-              final profile = json.decode(graphResponse.body);
-              print(profile);
-              print(profile["name"]);
-              SnackBar googleSnackBar = SnackBar(content: Text("Welcome ${profile["name"]}!"));
-              _scaffoldKey.currentState.showSnackBar(googleSnackBar);
-
-              // final credential = FacebookAuthProvider.getCredential(accessToken: token);
-              // final graphResponse = away http:get()
-              // _showLoggedInUI();
-              break;
-            case FacebookLoginStatus.cancelledByUser:
-            // _showCancelledMessage();
-              print("Sign in failed.");
-              break;
-            case FacebookLoginStatus.error:
-            // _showErrorOnUI(result.errorMessage);
-              print("Sign in failed.");
-
-              break;
-          }
     },
   );
 }
