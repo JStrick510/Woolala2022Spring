@@ -96,38 +96,46 @@ class LoginScreen extends StatelessWidget {
 
   void startFacebookSignIn() async {
     FacebookLogin facebookLogin = FacebookLogin();
-    final result = await facebookLogin.logIn(['email']);
+    var value = await facebookLogin.isLoggedIn;
+    var currentAccessToken = facebookLogin.currentAccessToken;
+    if(!value) {
+      final result = await facebookLogin.logIn(['email']);
+      switch (result.status) {
+        case FacebookLoginStatus.loggedIn:
+          final token = result.accessToken.token;
 
-    switch (result.status) {
-      case FacebookLoginStatus.loggedIn:
-        final token = result.accessToken.token;
+          final graphResponse = await http.get(
+              'https://graph.facebook.com/v2.12/me?fields=name,first_name,last_name,email&access_token=${token}');
+          final profile = json.decode(graphResponse.body);
+          print(profile);
+          SnackBar googleSnackBar = SnackBar(
+              content: Text("Welcome ${profile["name"]}!"));
+          _scaffoldKey.currentState.showSnackBar(googleSnackBar);
 
-        final graphResponse = await http.get(
-            'https://graph.facebook.com/v2.12/me?fields=name,first_name,last_name,email&access_token=${token}');
-        final profile = json.decode(graphResponse.body);
-        print(profile);
-        SnackBar googleSnackBar = SnackBar(content: Text("Welcome ${profile["name"]}!"));
-        _scaffoldKey.currentState.showSnackBar(googleSnackBar);
+          Navigator.push(_scaffoldKey.currentContext,
+              MaterialPageRoute(builder: (context) => HomepageScreen()));
 
-        Navigator.push(_scaffoldKey.currentContext, MaterialPageRoute(builder: (context) => HomepageScreen()));
-
-        // final credential = FacebookAuthProvider.getCredential(accessToken: token);
-        // final graphResponse = away http:get()
-        // _showLoggedInUI();
-        break;
-      case FacebookLoginStatus.cancelledByUser:
+          // final credential = FacebookAuthProvider.getCredential(accessToken: token);
+          // final graphResponse = away http:get()
+          // _showLoggedInUI();
+          break;
+        case FacebookLoginStatus.cancelledByUser:
         // _showCancelledMessage();
-        print("Sign in failed.");
-        SnackBar googleSnackBar = SnackBar(content: Text("Sign in failed."));
-        _scaffoldKey.currentState.showSnackBar(googleSnackBar);
-        break;
-      case FacebookLoginStatus.error:
+          print("Sign in failed.");
+          SnackBar googleSnackBar = SnackBar(content: Text("Sign in failed."));
+          _scaffoldKey.currentState.showSnackBar(googleSnackBar);
+          break;
+        case FacebookLoginStatus.error:
         // _showErrorOnUI(result.errorMessage);
-        print("Sign in failed.");
-        SnackBar googleSnackBar = SnackBar(content: Text("Sign in failed."));
-        _scaffoldKey.currentState.showSnackBar(googleSnackBar);
-
-        break;
+          print("Sign in failed.");
+          SnackBar googleSnackBar = SnackBar(content: Text("Sign in failed."));
+          _scaffoldKey.currentState.showSnackBar(googleSnackBar);
+          break;
+      }
+    }
+    else {
+      Navigator.push(_scaffoldKey.currentContext,
+          MaterialPageRoute(builder: (context) => HomepageScreen()));
     }
   }
 }
