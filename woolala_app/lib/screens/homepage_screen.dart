@@ -14,7 +14,10 @@ class HomepageScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Homepage'),
+      appBar: AppBar(leading: BackButton(
+          color: Colors.black, onPressed: () => (Navigator.pushReplacementNamed(context, '/'))
+      ),title: Text('Homepage')
+        ,
         key: ValueKey("homepage"),
         actions: <Widget>[
           FlatButton(
