@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -9,6 +10,9 @@ import 'package:woolala_app/screens/login_screen.dart';
 
 class HomepageScreen extends StatelessWidget {
   GoogleSignIn googleSignIn = GoogleSignIn(clientId: "566232493002-qqkorq4nvfqu9o8es6relg6fe4mj01mm.apps.googleusercontent.com");
+
+    var rating = 0.0;
+
 
   @override
   Widget build(BuildContext context) {
@@ -37,7 +41,21 @@ class HomepageScreen extends StatelessWidget {
                 ]
             ),
           ),
-          child: Column(
+          child: Column(children: [RatingBar(
+            initialRating: 2.5,
+            minRating: 0,
+            direction: Axis.horizontal,
+            allowHalfRating: true,
+            itemCount: 5,
+            itemPadding: EdgeInsets.symmetric(horizontal: 4.0),
+            itemBuilder: (context, _) => Icon(
+              Icons.star,
+              color: Colors.amber,
+            ),
+            onRatingUpdate: (rating) {
+              print(rating);
+            },
+          )],
             mainAxisAlignment: MainAxisAlignment.center,
           ),
         ),
