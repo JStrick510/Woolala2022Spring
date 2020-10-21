@@ -8,10 +8,24 @@ import 'dart:convert';
 
 import 'package:woolala_app/screens/login_screen.dart';
 
+Future<http.Response> sendRating(double rating) {
+  return http.post(
+    'http://10.0.2.2:5000/test',
+    headers: <String, String>{
+      'Content-Type': 'application/json',
+    },
+    body: jsonEncode(<String, double>{
+      'Rating': rating,
+    }),
+  );
+}
+
 class HomepageScreen extends StatelessWidget {
   GoogleSignIn googleSignIn = GoogleSignIn(clientId: "566232493002-qqkorq4nvfqu9o8es6relg6fe4mj01mm.apps.googleusercontent.com");
 
     var rating = 0.0;
+
+
 
 
   @override
@@ -54,6 +68,7 @@ class HomepageScreen extends StatelessWidget {
             ),
             onRatingUpdate: (rating) {
               print(rating);
+              sendRating(rating);
             },
           )],
             mainAxisAlignment: MainAxisAlignment.center,
