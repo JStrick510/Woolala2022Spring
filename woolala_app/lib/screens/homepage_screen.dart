@@ -8,22 +8,67 @@ import 'dart:convert';
 
 import 'package:woolala_app/screens/login_screen.dart';
 
-Future<http.Response> sendRating(double rating) {
+Widget starSlider() => RatingBar(
+  initialRating: 2.5,
+  minRating: 0,
+  direction: Axis.horizontal,
+  allowHalfRating: true,
+  itemCount: 5,
+  itemPadding: EdgeInsets.symmetric(horizontal: 4.0),
+  itemBuilder: (context, _) => Icon(
+    Icons.star,
+    color: Colors.amber,
+  ),
+  onRatingUpdate: (rating) {
+    print(rating);
+    //Changing rating here
+  },
+);
+
+
+
+// Will be used anytime the post is rated
+Future<http.Response> ratePost(double rating, int id) {
   return http.post(
-    'http://10.0.2.2:5000/test',
+    'http://10.0.2.2:5000/ratePost/'+id.toString()+'/'+rating.toString(),
     headers: <String, String>{
       'Content-Type': 'application/json',
     },
-    body: jsonEncode(<String, double>{
-      'Rating': rating,
+    body: jsonEncode({
     }),
   );
+}
+
+// Will be used to make the post for the first time.
+Future<http.Response> createPost(int id, String imageID, String date, String description, List comments, int userID) {
+  return http.post(
+    'http://10.0.2.2:5000/insertPost',
+    headers: <String, String>{
+      'Content-Type': 'application/json',
+    },
+    body: jsonEncode({
+      'ID' : id,
+      'UserID' : userID,
+      'ImageID' : imageID,
+      'Date' : date,
+      'Description' : description,
+      'Comments' : comments,
+      'CumulativeRating' : 0,
+      'NumRatings' : 0
+    }),
+  );
+}
+
+// Will be used to get info about the post
+Future<http.Response> getPost(double id) {
+  return http.get('http://10.0.2.2:5000/getPostInfo/'+id.toString());
 }
 
 class HomepageScreen extends StatelessWidget {
   GoogleSignIn googleSignIn = GoogleSignIn(clientId: "566232493002-qqkorq4nvfqu9o8es6relg6fe4mj01mm.apps.googleusercontent.com");
 
     var rating = 0.0;
+    var postID = 0.0;
 
 
 
@@ -55,22 +100,7 @@ class HomepageScreen extends StatelessWidget {
                 ]
             ),
           ),
-          child: Column(children: [RatingBar(
-            initialRating: 2.5,
-            minRating: 0,
-            direction: Axis.horizontal,
-            allowHalfRating: true,
-            itemCount: 5,
-            itemPadding: EdgeInsets.symmetric(horizontal: 4.0),
-            itemBuilder: (context, _) => Icon(
-              Icons.star,
-              color: Colors.amber,
-            ),
-            onRatingUpdate: (rating) {
-              print(rating);
-              sendRating(rating);
-            },
-          )],
+          child: Column(children: [starSlider()],
             mainAxisAlignment: MainAxisAlignment.center,
           ),
         ),
