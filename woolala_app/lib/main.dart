@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:woolala_app/screens/EditProfileScreen.dart';
 import 'package:woolala_app/screens/homepage_screen.dart';
 import 'package:woolala_app/screens/login_screen.dart';
+import 'package:woolala_app/screens/profile_screen.dart';
 
 void main() {
   runApp(WooLaLa());
@@ -19,7 +21,9 @@ class WooLaLa extends StatelessWidget {
       ),
       routes: { // easier use for multiple page navigation
         '/' : (_) => LoginScreen(), //login screen
-        '/home' : (_) => HomepageScreen() //home page
+        '/home' : (_) => HomepageScreen(), //home page
+        '/profile': (_) => ProfilePage('The Juice'),
+        '/editProfile': (_) => EditProfilePage()
       },
     );
   }

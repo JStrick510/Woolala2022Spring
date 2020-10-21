@@ -14,10 +14,12 @@ class HomepageScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(leading: BackButton(
-          color: Colors.black, onPressed: () => (Navigator.pushReplacementNamed(context, '/'))
-      ),title: Text('Homepage')
-        ,
+      appBar: AppBar(
+        leading: BackButton(
+          color: Colors.black,
+          onPressed: () => (Navigator.pushReplacementNamed(context, '/'))
+        ),
+        title: Text('Homepage'),
         key: ValueKey("homepage"),
         actions: <Widget>[
           FlatButton(
@@ -44,6 +46,14 @@ class HomepageScreen extends StatelessWidget {
           ),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              FlatButton(
+                color: Colors.red,
+                textColor: Colors.white,
+                onPressed: () {Navigator.pushReplacementNamed(context, '/profile');},
+                child: Text("To Profile", style: TextStyle(fontSize: 16.0),),
+              )
+            ],
           ),
         ),
       ),

@@ -52,12 +52,6 @@ class LoginScreen extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-
-
-
-
-
-
               Image.asset('./assets/logos/w_logo_test.png', width: 300, height: 150, fit: BoxFit.contain, semanticLabel: 'WooLaLa logo'),
               Text("Powered by: ", style: TextStyle(color: Colors.white, fontSize: 16),),
               Image.asset('assets/logos/fashionNXT_logo.png', width: 150, height: 30, fit: BoxFit.contain, semanticLabel: 'FashioNXT logo'),
