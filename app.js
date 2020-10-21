@@ -13,7 +13,7 @@ app.use(BodyParser.urlencoded({ extended: true }));
 var database, collection;
 
 app.listen(5000, () => {
-    MongoClient.connect(CONNECTION_URL, { useNewUrlParser: true }, (error, client) => {
+    MongoClient.connect(CONNECTION_URL, { useNewUrlParser: true, useUnifiedTopology: true }, (error, client) => {
         if(error) {
             throw error;
         }
@@ -24,11 +24,36 @@ app.listen(5000, () => {
 });
 
 
-app.post("/test", (request, response) => {
-    collection.insert(request.body, (error, result) => {
+app.post("/insertPost", (request, response) => {
+    collection.insertOne(request.body, (error, result) => {
         if(error) {
             return response.status(500).send(error);
         }
         response.send(result.result);
+    });
+});
+
+app.post("/ratePost/:id/:rating", (request, response) => {
+  collection.findOne({"ID":parseInt(request.params.id)}, function(err, document) {
+  var newNumRatings = 1 + document.NumRatings;
+  var newCumulativeRating = parseInt(request.params.rating) + document.CumulativeRating;
+  console.log(newNumRatings);
+  console.log(newCumulativeRating);
+  var newvalues = { $set: {NumRatings: newNumRatings, CumulativeRating: newCumulativeRating } };
+  collection.updateOne({"ID":parseInt(request.params.id)}, newvalues, function(err, res) {
+    if (err) throw err;
+    console.log("1 document updated");
+    //db.close();
+  });
+
+  //response.send(document);
+  });
+});
+
+
+app.get("/getPostInfo/:id", (request, response) => {
+    collection.findOne({"ID":parseInt(request.params.id)}, function(err, document) {
+    console.log(document);
+    response.send(document);
     });
 });
