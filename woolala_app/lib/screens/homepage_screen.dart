@@ -2,23 +2,28 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:flutter_facebook_login/flutter_facebook_login.dart';
+import 'package:woolala_app/screens/login_screen.dart';
 import 'package:http/http.dart' as http;
-
 import 'dart:convert';
-
 import 'package:woolala_app/screens/login_screen.dart';
 
-class HomepageScreen extends StatelessWidget {
-  GoogleSignIn googleSignIn = GoogleSignIn(clientId: "566232493002-qqkorq4nvfqu9o8es6relg6fe4mj01mm.apps.googleusercontent.com");
+//final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
+
+
+
+class HomepageScreen extends StatefulWidget {
+  final bool signedInWithGoogle;
+  HomepageScreen(this.signedInWithGoogle);
+  _HomepageScreenState createState() => _HomepageScreenState();
+}
+
+class _HomepageScreenState extends State<HomepageScreen>{
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: BackButton(
-          color: Colors.black,
-          onPressed: () => (Navigator.pushReplacementNamed(context, '/'))
-        ),
+
         title: Text('Homepage'),
         key: ValueKey("homepage"),
         actions: <Widget>[
@@ -62,14 +67,17 @@ class HomepageScreen extends StatelessWidget {
 
   void startSignOut(BuildContext context) {
     print("Sign Out");
-    googleSignIn.signOut();
-
-    FacebookLogin facebookLogin = FacebookLogin();
-    facebookLogin.logOut();
-    //TODO:
-    //Facebook here
-
-    Navigator.pushReplacementNamed(context, '/');
+    if(widget.signedInWithGoogle)
+    {
+      googleLogoutUser();
+      Navigator.pushReplacementNamed(context, '/');
+    }
+    else
+    {
+        FacebookLogin facebookLogin = FacebookLogin();
+        facebookLogin.logOut();
+        Navigator.pushReplacementNamed(context, '/');
+    }
   }
 
 }
