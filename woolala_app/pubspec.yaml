@@ -33,6 +33,7 @@ dependencies:
   google_sign_in: ^4.5.4
   flutter_facebook_login: ^3.0.0
   http: ^0.12.2
+  carousel_slider: ^2.3.1
 
 
 

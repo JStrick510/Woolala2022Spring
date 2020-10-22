@@ -1,18 +1,33 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'homepage_screen.dart';
-
+import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:flutter_facebook_login/flutter_facebook_login.dart';
-
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:http/http.dart' as http;
 
 import 'dart:convert';
 
 final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
+List<String> images = [
+  'https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/index2-1583967114.png',
+  'https://cdn.cliqueinc.com/posts/286587/best-summer-fashion-trends-2020-286587-1585948878056-main.700x0c.jpg',
+  'https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/80s-outfits-2019-1548781035.jpg',
+  'https://i.guim.co.uk/img/media/ea97c6f1ed87aaabac383a013375c6e670a24e30/0_125_2666_1598/master/2666.jpg?width=700&quality=85&auto=format&fit=max&s=0852b6f5847cf5331f4957f459dcb621'
+];
+
 class LoginScreen extends StatelessWidget {
   GoogleSignIn googleSignIn = GoogleSignIn(clientId: "566232493002-qqkorq4nvfqu9o8es6relg6fe4mj01mm.apps.googleusercontent.com");
+
+  List<T> map<T>(List list, Function handler) {
+    List<T> result = [];
+    for (var i = 0; i < list.length; i++) {
+      result.add(handler(i, list[i]));
+    }
+    return result;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -20,7 +35,7 @@ class LoginScreen extends StatelessWidget {
       key: _scaffoldKey,
       body: Center(
         child: Container(
-        padding: EdgeInsets.symmetric(vertical: 50),
+        padding: EdgeInsets.symmetric(vertical: 25),
         width: double.infinity,
         decoration: BoxDecoration(
           gradient: LinearGradient(
@@ -32,12 +47,49 @@ class LoginScreen extends StatelessWidget {
               ]
           ),
         ),
+
+
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              Image.asset('./assets/logos/w_logo_test.png', width: 350, height: 200, fit: BoxFit.contain, semanticLabel: 'WooLaLa logo'),
+
+
+
+
+
+
+              Image.asset('./assets/logos/w_logo_test.png', width: 300, height: 150, fit: BoxFit.contain, semanticLabel: 'WooLaLa logo'),
               Text("Powered by: ", style: TextStyle(color: Colors.white, fontSize: 16),),
               Image.asset('assets/logos/fashionNXT_logo.png', width: 150, height: 30, fit: BoxFit.contain, semanticLabel: 'FashioNXT logo'),
+              SizedBox(height: 25,),
+            CarouselSlider(options: CarouselOptions(
+              height: 200.0,
+              initialPage: 0,
+              enlargeCenterPage: true,
+              autoPlay: true,
+              reverse: false,
+              enableInfiniteScroll: true,
+              autoPlayInterval: Duration(seconds: 4),
+              autoPlayAnimationDuration: Duration(milliseconds: 2000),
+              scrollDirection: Axis.horizontal,),
+              items: images.map((imgUrl) {
+                return Builder(
+                  builder: (BuildContext context) {
+                    return Container(
+                      width: MediaQuery.of(context).size.width,
+                      margin: EdgeInsets.symmetric(horizontal: 10.0),
+                      decoration: BoxDecoration(
+                        color: Colors.black,
+                      ),
+                      child: Image.network(
+                        imgUrl,
+                        fit: BoxFit.fill,
+                      ),
+                    );
+                  },
+                );
+              }).toList(),
+            ),
               SizedBox(height: 25,),
               Text("Login With:", style: TextStyle(color: Colors.white, fontSize: 24),),
               _buildSocialButtonRow()
@@ -134,6 +186,7 @@ class LoginScreen extends StatelessWidget {
       }
     }
     else {
+      print("Successfully logged in!");
       Navigator.pushReplacementNamed(_scaffoldKey.currentContext, '/home');
     }
   }

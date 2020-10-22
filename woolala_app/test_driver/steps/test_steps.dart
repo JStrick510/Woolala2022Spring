@@ -25,7 +25,8 @@ StepDefinitionGeneric iShouldSeeText() {
   return then1<String, FlutterWorld>(
     'I should see {string} on my screen',
         (key, context) async {
-
+        final locator = find.byValueKey(key);
+        await FlutterDriverUtils.isPresent(context.world.driver, locator);
     },
   );
 }
@@ -34,6 +35,16 @@ StepDefinitionGeneric accountIsValid() {
   return given2<String, String, FlutterWorld>(
     'My {string} account is {string}',
         (key, validity, context) async {
+
+    },
+  );
+}
+
+StepDefinitionGeneric onPage() {
+  return given1<String, FlutterWorld>(
+    'I am on the {string} screen',
+        (key, context) async {
+
 
     },
   );

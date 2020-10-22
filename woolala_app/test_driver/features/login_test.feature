@@ -1,7 +1,7 @@
 Feature: Validate login screen
 
     Scenario: User launches the app
-        Given The "app" is open
+        Given I am on the "Login" screen
         Then I should see "Login With:" on my screen
 
     Scenario: Google Login
@@ -20,4 +20,9 @@ Feature: Validate login screen
 
         Given My "Facebook" account is "not valid"
         When I tap the "Facebook" button
+        Then I should see "Login With:" on my screen
+
+    Scenario: Sign out of an account
+        Given I am on the "Homepage" screen
+        When I tap the "sign out" button
         Then I should see "Login With:" on my screen
