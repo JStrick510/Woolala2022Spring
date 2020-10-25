@@ -3,6 +3,7 @@ import 'package:woolala_app/screens/EditProfileScreen.dart';
 import 'package:woolala_app/screens/homepage_screen.dart';
 import 'package:woolala_app/screens/login_screen.dart';
 import 'package:woolala_app/screens/profile_screen.dart';
+import 'package:woolala_app/screens/search_screen.dart';
 
 void main() {
   runApp(WooLaLa());
@@ -23,7 +24,8 @@ class WooLaLa extends StatelessWidget {
         '/' : (_) => LoginScreen(), //login screen
         '/home' : (_) => HomepageScreen(true), //home page
         '/profile': (_) => ProfilePage('The Juice'),
-        '/editProfile': (_) => EditProfilePage()
+        '/editProfile': (_) => EditProfilePage(),
+        '/search': (_) => SearchPage()
       },
     );
   }
