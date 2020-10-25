@@ -111,9 +111,10 @@ class _HomepageScreenState extends State<HomepageScreen>{
                 ]
             ),
           ),
-          child: Column(children: [starSlider()],
+          child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
+              starSlider(),
               FlatButton(
                 color: Colors.red,
                 textColor: Colors.white,
