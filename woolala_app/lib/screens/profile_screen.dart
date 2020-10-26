@@ -143,7 +143,6 @@ class _ProfilePageState extends State<ProfilePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.blueGrey[600],
         leading: IconButton (
           icon: Icon(Icons.arrow_back_outlined),
           onPressed: () => Navigator.pushReplacementNamed(context, '/home'), //place holder

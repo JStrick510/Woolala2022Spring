@@ -84,7 +84,6 @@ class _HomepageScreenState extends State<HomepageScreen>{
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.blueGrey[600],
         title: Text('WooLaLa', style: TextStyle(fontSize: 25 ), textAlign: TextAlign.center,),
         key: ValueKey("homepage"),
         actions: <Widget>[
@@ -116,40 +115,6 @@ class _HomepageScreenState extends State<HomepageScreen>{
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               starSlider(),
-
-              FlatButton(
-                color: Colors.red,
-                textColor: Colors.white,
-                onPressed: () {
-                  Navigator.pushReplacementNamed(context, '/profile');
-                },
-                child: Text(
-                  "To Profile",
-                  style: TextStyle(fontSize: 16.0),
-                ),
-              ),
-              FlatButton(
-                color: Colors.red,
-                textColor: Colors.white,
-                onPressed: () {
-                  Navigator.pushReplacementNamed(context, '/imgup');
-                },
-                child: Text(
-                  "Make post",
-                  style: TextStyle(fontSize: 16.0),
-                ),
-              ),
-              FlatButton(
-                color: Colors.red,
-                textColor: Colors.white,
-                onPressed: () {
-                  Navigator.pushReplacementNamed(context, '/search');
-                },
-                child: Text(
-                  "Search",
-                  style: TextStyle(fontSize: 16.0),
-                ),
-              )
             ],
           ),
         ),

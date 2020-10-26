@@ -65,10 +65,10 @@ class _ImageUploadScreenState extends State<ImageUploadScreen> {
             )
           ],
         ),
-        body: Center(
-          child: _image == null
+        body: Column(
+          children:[ _image == null
               ? Text('No image selected.')
-              : Image.file(_image),
+              : Image.file(_image),]
         ),
         bottomNavigationBar: Row(
                 mainAxisSize: MainAxisSize.max,

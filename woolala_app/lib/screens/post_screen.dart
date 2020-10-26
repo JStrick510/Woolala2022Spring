@@ -37,8 +37,10 @@ class _PostScreenState extends State<PostScreen> {
   @override
   Widget build(BuildContext context) {
     _image = ModalRoute.of(context).settings.arguments;
+
     return Scaffold(
-      backgroundColor: Colors.grey[800],
+      resizeToAvoidBottomInset: true,
+      // backgroundColor: Colors.grey[800],
       appBar: AppBar(
         leading: GestureDetector(
           onTap: () => Navigator.pushReplacementNamed(context, '/imgup'),
@@ -47,12 +49,19 @@ class _PostScreenState extends State<PostScreen> {
           ),
         ),
       ),
-      body: Center(
+      body: SingleChildScrollView(
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             _image == null ? Text('No image selected.') : Image.file(_image),
-            new Text(_text),
+            SizedBox(height: 20.0),
+            TextField(textInputAction: TextInputAction.go, keyboardType: TextInputType.multiline, maxLines: null, decoration: new InputDecoration(hintText: "Enter a caption!", contentPadding: const EdgeInsets.all(20.0))),
+            new Text(_text,
+                style: TextStyle(
+                    fontSize: 32.0,
+                    color: Colors.black,
+                    fontWeight: FontWeight.bold),
+                textAlign: TextAlign.center),
+            SizedBox(height: 20.0),
             new Text(date),
           ],
         ),
