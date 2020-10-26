@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -6,12 +8,37 @@ import 'package:flutter_facebook_login/flutter_facebook_login.dart';
 import 'package:woolala_app/screens/login_screen.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:mongo_dart/mongo_dart.dart' as mongo;
 
 import 'dart:io';
 import 'package:woolala_app/screens/login_screen.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:woolala_app/screens/post_screen.dart';
 import 'package:woolala_app/screens/profile_screen.dart';
+
+/*
+Center(
+        child: Container(
+          padding: EdgeInsets.symmetric(vertical: 50),
+          width: double.infinity,
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                colors: [
+                  Colors.blueGrey[700],
+                  Colors.blueGrey[400]
+                ]
+            ),
+          ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: <Widget>[
+              starSlider(),
+            ],
+          ),
+        ),
+      ),
+ */
 
 Widget starSlider() => RatingBar(
       initialRating: 2.5,
@@ -71,8 +98,8 @@ Future<http.Response> getPost(double id) {
 //final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
 class HomepageScreen extends StatefulWidget {
-  final bool signedInWithGoogle;
 
+    final bool signedInWithGoogle;
   HomepageScreen(this.signedInWithGoogle);
 
   _HomepageScreenState createState() => _HomepageScreenState();
@@ -81,6 +108,38 @@ class HomepageScreen extends StatefulWidget {
 class _HomepageScreenState extends State<HomepageScreen>{
     var rating = 0.0;
     var postID = 0.0;
+    List postList = new List();
+
+    List<String> testList = [
+      'assets/logos/w_logo_test.png',
+      'assets/logos/w_logo_test.png',
+      'assets/logos/w_logo_test.png',
+      'assets/logos/w_logo_test.png',
+      'assets/logos/w_logo_test.png',
+      'assets/logos/w_logo_test.png',
+      'assets/logos/w_logo_test.png',
+      'assets/logos/w_logo_test.png',
+      'assets/logos/w_logo_test.png',
+    ];
+
+    void _getPosts() async {
+      mongo.Db db = new mongo.Db.pool([
+        "mongodb://Developer_1:Developer_1@woolalacluster-shard-00-00.o4vv6.mongodb.net:27017/Feed?ssl=true&replicaSet=project-shard-0&authSource=admin&retryWrites=true&w=majority",
+        "mongodb://Developer_1:Developer_1@woolalacluster-shard-00-01.o4vv6.mongodb.net:27017/Feed?ssl=true&replicaSet=project-shard-0&authSource=admin&retryWrites=true&w=majority",
+        "mongodb://Developer_1:Developer_1@woolalacluster-shard-00-02.o4vv6.mongodb.net:27017/Feed?ssl=true&replicaSet=project-shard-0&authSource=admin&retryWrites=true&w=majority"
+      ]);
+      await db.open();
+      var posts = db.collection('Posts');
+      List tempList = new List();
+      tempList = await posts.find(mongo.where.sortBy('date')).toList();
+      db.close();
+
+      setState(() {
+        postList = tempList;
+      });
+    }
+    
+    
 
   @override
   Widget build(BuildContext context) {
@@ -100,26 +159,15 @@ class _HomepageScreenState extends State<HomepageScreen>{
           )
         ],
       ),
-      body: Center(
-        child: Container(
-          padding: EdgeInsets.symmetric(vertical: 50),
-          width: double.infinity,
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                colors: [
-                  Colors.blueGrey[700],
-                  Colors.blueGrey[400]
-                ]
+      body: Column(
+        children: <Widget>[
+          Expanded(
+            child: SizedBox(
+              height: 400,
+              child: _buildPostsList(),
             ),
           ),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: <Widget>[
-              starSlider(),
-            ],
-          ),
-        ),
+        ],
       ),
       bottomNavigationBar: BottomNavigationBar(
           onTap: (int index) {
@@ -168,5 +216,19 @@ class _HomepageScreenState extends State<HomepageScreen>{
         Navigator.pushReplacementNamed(context, '/');
 
     }
+  }
+
+  Widget _buildPostsList() {
+      _getPosts();
+      print(postList);
+      return ListView.builder(
+        scrollDirection: Axis.vertical,
+        itemCount: testList.length, //postList later
+        itemBuilder: (BuildContext context, int index) {
+          return new Image(
+            image: AssetImage(testList[index]),
+          );
+        },
+      );
   }
 }
