@@ -5,21 +5,33 @@ import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:flutter_facebook_login/flutter_facebook_login.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:woolala_app/models/user.dart';
 import 'package:http/http.dart' as http;
 import 'package:woolala_app/screens/homepage_screen.dart';
 import 'dart:convert';
 
 final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 final GoogleSignIn gSignIn = GoogleSignIn();
+final DateTime timestamp = DateTime.now();
+User currentUser = User();
 
 void googleLoginUser(){
+  //gSignIn.signOut();
+  print("signing in!");
   gSignIn.signIn();
 }
 
 void googleLogoutUser(){
+  print("signed out!");
   gSignIn.signOut();
 }
 
+Future<User> getDoesUserExists(String email) async{
+  print("Finding USER!");
+  http.Response res = await http.get('http://10.0.2.2:5000/doesUserExist/'+email);
+  Map userMap = jsonDecode(res.body.toString());
+  return User.fromJSON(userMap);
+}
 
 List<String> images = [
   'https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/index2-1583967114.png',
@@ -36,16 +48,18 @@ class LoginScreen extends StatefulWidget{
 class _LoginScreenState extends State<LoginScreen> {
   bool isSignedInWithGoogle = false;
   bool isSignedInWithFacebook = false;
+  bool _disposed = false;
   //GoogleSignIn googleSignIn = GoogleSignIn(clientId: "566232493002-qqkorq4nvfqu9o8es6relg6fe4mj01mm.apps.googleusercontent.com");
 
   void initState(){
+    print("init");
     super.initState();
     gSignIn.onCurrentUserChanged.listen((gSignInAccount){
       controlGoogleSignIn(gSignInAccount);
     }, onError: (gError){
       print("Error Message: " + gError);
     });
-
+  print("HREE");
     gSignIn.signInSilently(suppressErrors: false).then((gSignInAccount){
       controlGoogleSignIn(gSignInAccount);
     }).catchError((gError){
@@ -53,18 +67,45 @@ class _LoginScreenState extends State<LoginScreen> {
     });
   }
 
-  void controlGoogleSignIn(GoogleSignInAccount signInAccount){
+  @override
+  void dispose() {
+    _disposed = true;
+    super.dispose();
+  }
+
+  void controlGoogleSignIn(GoogleSignInAccount signInAccount) async{
     if(signInAccount != null)
     {
-      setState(() {
-        isSignedInWithGoogle = true;
-      });
+      print("account exists");
+      await saveUserInfoToServer();
+      if(!_disposed) {
+        setState(() {
+          isSignedInWithGoogle = true;
+        });
+      }
     }
     else{
-      setState(() {
-        isSignedInWithGoogle = false;
-      });
+      print("google account doesn't exist");
+      if(!_disposed) {
+        setState(() {
+          isSignedInWithGoogle = false;
+        });
+      }
     }
+  }
+
+  saveUserInfoToServer() async{
+    final GoogleSignInAccount gAccount = gSignIn.currentUser;
+    currentUser = await getDoesUserExists(gAccount.email);
+    //print("email: " + gAccount.email);
+    if(currentUser.userID!="")//account exists
+      {
+       print("You have an account!");
+      }
+    else{
+      print("You must make an account!");
+    }
+
   }
 
   List<T> map<T>(List list, Function handler) {
@@ -83,6 +124,19 @@ class _LoginScreenState extends State<LoginScreen> {
     else {
       return Scaffold(
         key: _scaffoldKey,
+        appBar: AppBar(
+
+          title: Text('Login'),
+          key: ValueKey("logs"),
+          actions: <Widget>[
+            FlatButton(
+              textColor: Colors.white,
+              onPressed: () => googleLogoutUser(),
+              child: Text("Sign Out"),
+              shape: CircleBorder(side: BorderSide(color: Colors.transparent)),
+            )
+          ],
+        ),
         body: Center(
           child: Container(
             padding: EdgeInsets.symmetric(vertical: 25),
@@ -114,7 +168,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     semanticLabel: 'FashioNXT logo'),
                 SizedBox(height: 25,),
                 CarouselSlider(options: CarouselOptions(
-                  height: 200.0,
+                  height: 160.0,
                   initialPage: 0,
                   enlargeCenterPage: true,
                   autoPlay: true,
@@ -210,6 +264,7 @@ class _LoginScreenState extends State<LoginScreen> {
     }
 
     void startFacebookSignIn() async {
+
       FacebookLogin facebookLogin = FacebookLogin();
       var value = await facebookLogin.isLoggedIn;
       var currentAccessToken = facebookLogin.currentAccessToken;
@@ -252,11 +307,14 @@ class _LoginScreenState extends State<LoginScreen> {
       }
       else {
         print("Successfully logged in!");
-        setState(() {
-          isSignedInWithFacebook = true;
-        });
+        if(!_disposed) {
+          setState(() {
+            isSignedInWithFacebook = true;
+          });
+        }
         Navigator.pushReplacementNamed(_scaffoldKey.currentContext, '/home');
       }
+
     }
 
 }

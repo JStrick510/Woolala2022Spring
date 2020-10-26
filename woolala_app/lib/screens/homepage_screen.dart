@@ -22,6 +22,8 @@ Widget starSlider() => RatingBar(
   onRatingUpdate: (rating) {
     print(rating);
     //Changing rating here
+    getDoesUserExists("bunghole@cunt.com");
+    getDoesUserExists("goochie69");
   },
 );
 
@@ -78,9 +80,6 @@ class _HomepageScreenState extends State<HomepageScreen>{
     var rating = 0.0;
     var postID = 0.0;
 
-
-
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -111,9 +110,10 @@ class _HomepageScreenState extends State<HomepageScreen>{
                 ]
             ),
           ),
-          child: Column(children: [starSlider()],
+          child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
+              starSlider(),
               FlatButton(
                 color: Colors.red,
                 textColor: Colors.white,
