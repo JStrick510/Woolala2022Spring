@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-//import 'package:woolala_app/lib/screens/EditProfileScreen.dart';
+import 'package:woolala_app/screens/homepage_screen.dart';
 
 class ProfilePage extends StatefulWidget{
-
   //the id of this profile
   final String userProfileID;
   ProfilePage(this.userProfileID);
@@ -144,11 +143,25 @@ class _ProfilePageState extends State<ProfilePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: BackButton(
-            color: Colors.black,
-            onPressed: () => (Navigator.pushReplacementNamed(context, '/home'))
+        backgroundColor: Colors.blueGrey[600],
+        leading: IconButton (
+          icon: Icon(Icons.arrow_back_outlined),
+          onPressed: () => Navigator.pushReplacementNamed(context, '/home'), //place holder
+          color: Colors.white,
         ),
-        title: Text('Profile'),
+        title: Text('WooLaLa', style: TextStyle(fontSize: 25, fontFamily: 'Lucida'), textAlign: TextAlign.center,),
+        key: ValueKey("homepage"),
+        actions: <Widget>[
+          IconButton (
+            icon: Icon(Icons.search_outlined),
+            color: Colors.white,
+            onPressed: () => Navigator.pushReplacementNamed(context, '/search'),
+          ),
+          IconButton(
+            icon: Icon(Icons.logout),
+            //onPressed: () => callFromHomePage(context),
+          )
+        ],
       ),
       body: ListView(
         children: <Widget>[
@@ -156,6 +169,36 @@ class _ProfilePageState extends State<ProfilePage> {
         ],
 
       ),
+      bottomNavigationBar: BottomNavigationBar(
+          onTap: (int index) {
+            switchPage(index, context);
+          },
+          items: [
+            BottomNavigationBarItem(
+              icon: Icon(Icons.home),
+              title: Text('Home'),
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.add_box_outlined),
+              title: Text("New"),
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.person),
+              title: Text("Profile"),
+            ),
+          ]
+      ),
     );
+  }
+
+  void switchPage(int index, BuildContext context) {
+    switch(index) {
+      case 0: {
+        Navigator.pushReplacementNamed(context, '/home');}
+      break;
+      case 1: {
+        Navigator.pushReplacementNamed(context, '/imgup');}
+      break;
+    }
   }
 }
