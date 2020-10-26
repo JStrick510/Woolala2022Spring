@@ -90,12 +90,12 @@ class _HomepageScreenState extends State<HomepageScreen>{
         key: ValueKey("homepage"),
         actions: <Widget>[
           IconButton (
-            icon: Icon(Icons.search_outlined),
+            icon: Icon(Icons.search),
             color: Colors.white,
             onPressed: () => Navigator.pushReplacementNamed(context, '/search'),
           ),
           IconButton(
-            icon: Icon(Icons.logout),
+            icon: Icon(Icons.clear),
             onPressed: () => startSignOut(context),
           )
         ],
@@ -131,7 +131,7 @@ class _HomepageScreenState extends State<HomepageScreen>{
               title: Text('Home', style: TextStyle(color: Theme.of(context).primaryColor),),
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.add_box_outlined, color: Colors.white,),
+              icon: Icon(Icons.add_circle_outline, color: Colors.white,),
               title: Text("New", style: TextStyle(color: Colors.white),),
             ),
             BottomNavigationBarItem(

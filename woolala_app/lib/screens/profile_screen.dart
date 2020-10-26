@@ -145,7 +145,7 @@ class _ProfilePageState extends State<ProfilePage> {
     return Scaffold(
       appBar: AppBar(
         leading: IconButton (
-          icon: Icon(Icons.arrow_back_outlined),
+          icon: Icon(Icons.arrow_back),
           onPressed: () => Navigator.pushReplacementNamed(context, '/home'), //place holder
           color: Colors.white,
         ),
@@ -153,13 +153,13 @@ class _ProfilePageState extends State<ProfilePage> {
         key: ValueKey("homepage"),
         actions: <Widget>[
           IconButton (
-            icon: Icon(Icons.search_outlined),
+            icon: Icon(Icons.search),
             color: Colors.white,
             onPressed: () => Navigator.pushReplacementNamed(context, '/search'),
           ),
           IconButton(
-            icon: Icon(Icons.logout),
-            //onPressed: () => callFromHomePage(context),
+            icon: Icon(Icons.clear),
+            onPressed: () => {},//callFromHomePage(context),
           )
         ],
       ),
@@ -179,7 +179,7 @@ class _ProfilePageState extends State<ProfilePage> {
               title: Text('Home', style: TextStyle(color: Colors.black)),
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.add_box_outlined, color: Colors.black),
+              icon: Icon(Icons.add_circle_outline, color: Colors.black),
               title: Text("New", style: TextStyle(color: Colors.black)),
             ),
             BottomNavigationBarItem(
