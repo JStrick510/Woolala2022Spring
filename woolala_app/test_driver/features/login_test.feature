@@ -26,5 +26,5 @@ Feature: Validate login screen
         Given I am on the "Login" screen
         When I tap the "Google" button
         Then I should see "Homepage" on my screen
-        When I tap the "Sign Out" button
+        When I tap the "SignOut" button
         Then I should see "Login With:" on my screen

@@ -36,6 +36,7 @@ StepDefinitionGeneric tapTheButton() {
     'I tap the {string} button',
         (key, context) async {
       final locator = find.byValueKey(key);
+      print(locator);
       await FlutterDriverUtils.tap(context.world.driver, locator);
     },
   );
