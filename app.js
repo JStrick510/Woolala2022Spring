@@ -2,7 +2,7 @@ const Express = require("express");
 const BodyParser = require("body-parser");
 const MongoClient = require("mongodb").MongoClient;
 const ObjectId = require("mongodb").ObjectID;
-const CONNECTION_URL = "mongodb+srv://Developer_1:7G0RD5tCpJkVLsnH@woolalacluster.o4vv6.mongodb.net/Feed?retryWrites=true&w=majority";
+const CONNECTION_URL = "mongodb://Developer_1:Developer_1@woolalacluster.o4vv6.mongodb.net/Feed?retryWrites=true&w=majority";
 //const CONNECTION_URL = "mongodb+srv://Lead_Devloper:poQLxqdUb4c2RfvJ@woolalacluster.o4vv6.mongodb.net/Feed?retryWrites=true&w=majority";
 const DATABASE_NAME = "Feed";
 

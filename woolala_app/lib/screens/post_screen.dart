@@ -9,6 +9,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:woolala_app/screens/login_screen.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:woolala_app/screens/homepage_screen.dart';
 
 
 class PostScreen extends StatefulWidget {
@@ -24,6 +25,7 @@ class _PostScreenState extends State<PostScreen> {
 
   @override
   Widget build(BuildContext context) {
+    _image = ModalRoute.of(context).settings.arguments;
     return Scaffold(
         backgroundColor: Colors.grey[800],
         appBar: AppBar(
@@ -56,7 +58,7 @@ class _PostScreenState extends State<PostScreen> {
                   // ),
                   FloatingActionButton(
                     child: Icon(Icons.check),
-                    onPressed: () => null,
+                    onPressed: () => {createPost(123, "1234", "05/12/2345", "test", null, 123), Navigator.pushReplacementNamed(context, '/home')},
                     heroTag: null,
                   )
                 ]
