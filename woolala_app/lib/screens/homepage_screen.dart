@@ -9,6 +9,8 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:woolala_app/screens/login_screen.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:woolala_app/screens/post_screen.dart';
+import 'package:woolala_app/screens/profile_screen.dart';
 
 Widget starSlider() => RatingBar(
       initialRating: 2.5,
@@ -74,22 +76,26 @@ class HomepageScreen extends StatefulWidget {
   _HomepageScreenState createState() => _HomepageScreenState();
 }
 
-class _HomepageScreenState extends State<HomepageScreen> {
-  var rating = 0.0;
-  var postID = 0.0;
+class _HomepageScreenState extends State<HomepageScreen>{
+    var rating = 0.0;
+    var postID = 0.0;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Homepage'),
+        backgroundColor: Colors.blueGrey[600],
+        title: Text('WooLaLa', style: TextStyle(fontSize: 25 ), textAlign: TextAlign.center,),
         key: ValueKey("homepage"),
         actions: <Widget>[
-          FlatButton(
-            textColor: Colors.white,
+          IconButton (
+            icon: Icon(Icons.search_outlined),
+            color: Colors.white,
+            onPressed: () => Navigator.pushReplacementNamed(context, '/search'),
+          ),
+          IconButton(
+            icon: Icon(Icons.logout),
             onPressed: () => startSignOut(context),
-            child: Text("Sign Out"),
-            shape: CircleBorder(side: BorderSide(color: Colors.transparent)),
           )
         ],
       ),
@@ -100,12 +106,17 @@ class _HomepageScreenState extends State<HomepageScreen> {
           decoration: BoxDecoration(
             gradient: LinearGradient(
                 begin: Alignment.topCenter,
-                colors: [Colors.blue[900], Colors.blue[700], Colors.blue[400]]),
+                colors: [
+                  Colors.blueGrey[700],
+                  Colors.blueGrey[400]
+                ]
+            ),
           ),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               starSlider(),
+
               FlatButton(
                 color: Colors.red,
                 textColor: Colors.white,
@@ -143,15 +154,46 @@ class _HomepageScreenState extends State<HomepageScreen> {
           ),
         ),
       ),
+      bottomNavigationBar: BottomNavigationBar(
+          onTap: (int index) {
+            switchPage(index, context);
+          },
+          items: [
+            BottomNavigationBarItem(
+              icon: Icon(Icons.home, color: Colors.white,),
+              title: Text('Home', style: TextStyle(color: Colors.white),),
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.add_box_outlined, color: Colors.white,),
+              title: Text("New", style: TextStyle(color: Colors.white),),
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.person, color: Colors.white,),
+              title: Text("Profile", style: TextStyle(color: Colors.white),),
+            ),
+          ],
+          backgroundColor: Colors.blueGrey[400],
+      ),
     );
   }
 
+   void switchPage(int index, BuildContext context) {
+      switch(index) {
+        case 1: {
+          Navigator.pushReplacementNamed(context, '/imgup');}
+        break;
+        case 2: {
+          Navigator.pushReplacementNamed(context, '/profile');}
+        break;
+      }
+  }
   void startSignOut(BuildContext context) {
     print("Sign Out");
     if (widget.signedInWithGoogle) {
       googleLogoutUser();
       Navigator.pushReplacementNamed(context, '/');
     } else {
+
       FacebookLogin facebookLogin = FacebookLogin();
       facebookLogin.logOut();
       Navigator.pushReplacementNamed(context, '/');
