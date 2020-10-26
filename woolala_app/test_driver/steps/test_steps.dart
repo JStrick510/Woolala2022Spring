@@ -49,3 +49,21 @@ StepDefinitionGeneric onPage() {
     },
   );
 }
+
+StepDefinitionGeneric profileIsEdited() {
+  return when1<String, FlutterWorld>(
+    '{string} is edited',
+        (key, context) async {
+
+    },
+  );
+}
+
+StepDefinitionGeneric ableToUpdate() {
+  return then1<String, FlutterWorld>(
+    'I should see {string} button able to be clicked',
+        (key, context) async {
+
+    },
+  );
+}
