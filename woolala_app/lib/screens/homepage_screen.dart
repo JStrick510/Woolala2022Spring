@@ -6,7 +6,9 @@ import 'package:flutter_facebook_login/flutter_facebook_login.dart';
 import 'package:woolala_app/screens/login_screen.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'dart:io';
 import 'package:woolala_app/screens/login_screen.dart';
+import 'package:image_picker/image_picker.dart';
 
 Widget starSlider() => RatingBar(
   initialRating: 2.5,
@@ -120,7 +122,19 @@ class _HomepageScreenState extends State<HomepageScreen>{
                 textColor: Colors.white,
                 onPressed: () {Navigator.pushReplacementNamed(context, '/profile');},
                 child: Text("To Profile", style: TextStyle(fontSize: 16.0),),
-              )
+              ),
+              FlatButton(
+                color: Colors.red,
+                textColor: Colors.white,
+                onPressed: () {Navigator.pushReplacementNamed(context, '/imgup');},
+                child: Text("Make post", style: TextStyle(fontSize: 16.0),),
+              ),
+              FlatButton(
+                color: Colors.red,
+                textColor: Colors.white,
+                onPressed: () {Navigator.pushReplacementNamed(context, '/search');},
+                child: Text("Search", style: TextStyle(fontSize: 16.0),),
+            )
             ],
           ),
         ),

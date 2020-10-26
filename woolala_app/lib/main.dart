@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:woolala_app/screens/EditProfileScreen.dart';
 import 'package:woolala_app/screens/homepage_screen.dart';
+import 'package:woolala_app/screens/imageupload_screen.dart';
 import 'package:woolala_app/screens/login_screen.dart';
 import 'package:woolala_app/screens/profile_screen.dart';
 import 'package:woolala_app/screens/search_screen.dart';
+import 'package:woolala_app/screens/post_screen.dart';
 
 void main() {
   runApp(WooLaLa());
@@ -25,7 +27,9 @@ class WooLaLa extends StatelessWidget {
         '/home' : (_) => HomepageScreen(true), //home page
         '/profile': (_) => ProfilePage('The Juice'),
         '/editProfile': (_) => EditProfilePage(),
-        '/search': (_) => SearchPage()
+        '/search': (_) => SearchPage(),
+        '/makepost': (_) => PostScreen(),
+        '/imgup': (_) => ImageUploadScreen(),
       },
     );
   }
