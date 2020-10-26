@@ -6,8 +6,10 @@ class User{
   final String facebookID;
   final String bio;
   final String username;
+  final String profilePicURL;
+  final String email;
 
-  User({this.userID, this.profileName, this.url, this.googleID, this.facebookID, this.bio,this.username});
+  User({this.userID, this.profileName, this.url, this.googleID, this.facebookID, this.bio,this.username,this.profilePicURL, this.email});
 
   User.fromJSON(Map<String, dynamic> json)
       : userID = json['userID'],
@@ -16,7 +18,9 @@ class User{
         googleID = json['googleID'],
         facebookID = json['facebookID'],
         bio = json['bio'],
-        username = json['username'];
+        username = json['username'],
+        profilePicURL = json['profilePicURL'],
+        email = json['email'];
 
   Map<String, dynamic> toJSON() =>
       {
@@ -27,6 +31,8 @@ class User{
           'facebookID': facebookID,
           'bio': bio,
           'username': username,
+          'profilePicURL': profilePicURL,
+          'email': email
       };
 
 }

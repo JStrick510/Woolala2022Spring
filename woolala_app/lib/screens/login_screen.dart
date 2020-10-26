@@ -9,6 +9,7 @@ import 'package:woolala_app/models/user.dart';
 import 'package:http/http.dart' as http;
 import 'package:woolala_app/screens/homepage_screen.dart';
 import 'dart:convert';
+import 'package:convert/convert.dart';
 
 final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 final GoogleSignIn gSignIn = GoogleSignIn();
@@ -29,10 +30,27 @@ void googleLogoutUser(){
 Future<User> getDoesUserExists(String email) async{
   print("Finding USER!");
   http.Response res = await http.get('http://10.0.2.2:5000/doesUserExist/'+email);
-  Map userMap = jsonDecode(res.body.toString());
-  return User.fromJSON(userMap);
+  if(res.body.isNotEmpty)
+  {
+      Map userMap = jsonDecode(res.body.toString());
+      return User.fromJSON(userMap);
+  }
+  else
+  {
+    return null;
+  }
 }
 
+Future<http.Response> insertUser(User u) {
+  return http.post(
+    'http://10.0.2.2:5000/insertUser',
+    headers: <String, String>{
+      'Content-Type': 'application/json',
+    },
+    body: jsonEncode(u.toJSON()),
+  );
+}
+//make this trending posts
 List<String> images = [
   'https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/index2-1583967114.png',
   'https://cdn.cliqueinc.com/posts/286587/best-summer-fashion-trends-2020-286587-1585948878056-main.700x0c.jpg',
@@ -52,15 +70,13 @@ class _LoginScreenState extends State<LoginScreen> {
   //GoogleSignIn googleSignIn = GoogleSignIn(clientId: "566232493002-qqkorq4nvfqu9o8es6relg6fe4mj01mm.apps.googleusercontent.com");
 
   void initState(){
-    print("init");
     super.initState();
     gSignIn.onCurrentUserChanged.listen((gSignInAccount){
       controlGoogleSignIn(gSignInAccount);
     }, onError: (gError){
       print("Error Message: " + gError);
     });
-  print("HREE");
-    gSignIn.signInSilently(suppressErrors: false).then((gSignInAccount){
+    gSignIn.signInSilently(suppressErrors: true).then((gSignInAccount){
       controlGoogleSignIn(gSignInAccount);
     }).catchError((gError){
       print("Error Message: " + gError);
@@ -85,7 +101,7 @@ class _LoginScreenState extends State<LoginScreen> {
       }
     }
     else{
-      print("google account doesn't exist");
+      print("No google account found");
       if(!_disposed) {
         setState(() {
           isSignedInWithGoogle = false;
@@ -98,12 +114,22 @@ class _LoginScreenState extends State<LoginScreen> {
     final GoogleSignInAccount gAccount = gSignIn.currentUser;
     currentUser = await getDoesUserExists(gAccount.email);
     //print("email: " + gAccount.email);
-    if(currentUser.userID!="")//account exists
+    if(currentUser!=null && currentUser.userID!="")//account exists
       {
        print("You have an account!");
+       //set current user
       }
     else{
       print("You must make an account!");
+      User u = User(
+        googleID: gAccount.id,
+        email: gAccount.email,
+        profileName: gAccount.displayName,
+        profilePicURL: gAccount.photoUrl,
+        bio: "This is my new Woolala Account. Me so horny!",
+        userID: base64.encode(latin1.encode(gAccount.email)).toString()
+      );
+      await insertUser(u);
     }
 
   }
@@ -260,6 +286,7 @@ class _LoginScreenState extends State<LoginScreen> {
             content: Text("Welcome ${user.displayName}!"));
         _scaffoldKey.currentState.showSnackBar(googleSnackBar);
         Navigator.pushReplacementNamed(_scaffoldKey.currentContext, '/home');
+        //Navigator.pushReplacementNamed(_scaffoldKey.currentContext, '/home');
       }
     }
 
@@ -282,9 +309,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 content: Text("Welcome ${profile["name"]}!"));
             _scaffoldKey.currentState.showSnackBar(googleSnackBar);
 
-            Navigator.pushReplacementNamed(
-                _scaffoldKey.currentContext, '/home');
-
+            Navigator.pushReplacementNamed(context, '/');
             // final credential = FacebookAuthProvider.getCredential(accessToken: token);
             // final graphResponse = away http:get()
             // _showLoggedInUI();

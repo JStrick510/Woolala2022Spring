@@ -6,7 +6,6 @@ import 'package:flutter_facebook_login/flutter_facebook_login.dart';
 import 'package:woolala_app/screens/login_screen.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import 'package:woolala_app/screens/login_screen.dart';
 
 Widget starSlider() => RatingBar(
   initialRating: 2.5,
@@ -136,8 +135,9 @@ class _HomepageScreenState extends State<HomepageScreen>{
     }
     else
     {
-        FacebookLogin facebookLogin = FacebookLogin();
-        facebookLogin.logOut();
+
+       // FacebookLogin facebookLogin = FacebookLogin();
+        //facebookLogin.logOut();
         Navigator.pushReplacementNamed(context, '/');
     }
   }
