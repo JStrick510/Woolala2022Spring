@@ -16,30 +16,6 @@ import 'package:image_picker/image_picker.dart';
 import 'package:woolala_app/screens/post_screen.dart';
 import 'package:woolala_app/screens/profile_screen.dart';
 
-/*
-Center(
-        child: Container(
-          padding: EdgeInsets.symmetric(vertical: 50),
-          width: double.infinity,
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                colors: [
-                  Colors.blueGrey[700],
-                  Colors.blueGrey[400]
-                ]
-            ),
-          ),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: <Widget>[
-              starSlider(),
-            ],
-          ),
-        ),
-      ),
- */
-
 Widget starSlider() => RatingBar(
       initialRating: 2.5,
       minRating: 0,
