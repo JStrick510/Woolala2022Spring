@@ -20,11 +20,10 @@ class PostScreen extends StatefulWidget {
 
 class _PostScreenState extends State<PostScreen> {
   File _image;
-  final picker = ImagePicker();
   String _text = "";
   TextEditingController _c;
 
-  static final DateTime now = DateTime.now();
+  static final DateTime now = DateTime.now().toLocal();
   static final DateFormat formatter = DateFormat('yyyy-MM-dd');
   final String date = formatter.format(now);
 
@@ -68,49 +67,18 @@ class _PostScreenState extends State<PostScreen> {
       ),
       bottomNavigationBar: Row(
           mainAxisSize: MainAxisSize.max,
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          mainAxisAlignment: MainAxisAlignment.end,
           children: [
-            FloatingActionButton(
-              child: Icon(Icons.chat_bubble_outline),
-              onPressed: () => {
-                showDialog(
-                    child: new Dialog(
-                      child: new Column(
-                        children: <Widget>[
-                          new TextField(
-                            decoration:
-                                new InputDecoration(hintText: "Update Info"),
-                            controller: _c,
-                          ),
-                          new FlatButton(
-                            child: new Text("Save"),
-                            onPressed: () {
-                              setState(() {
-                                this._text = _c.text;
-                              });
-                              Navigator.pop(context);
-                            },
-                          )
-                        ],
-                      ),
-                    ),
-                    context: context)
-              },
-            ),
+
             SizedBox(height: 100.0),
-            // FloatingActionButton(
-            //   child: Icon(Icons.check),
-            //   onPressed: () => null,
-            //   heroTag: null,
-            // ),
             FloatingActionButton(
               child: Icon(Icons.check),
               onPressed: () => {
                 createPost(123, "1234", date, _text, null, 123),
                 Navigator.pushReplacementNamed(context, '/home')
               },
-              heroTag: null,
-            )
+            ),
+            SizedBox(height: 100.0, width: 20),
           ]),
     );
   }

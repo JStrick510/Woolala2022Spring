@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:woolala_app/screens/homepage_screen.dart';
+import 'package:woolala_app/main.dart';
 
 class ProfilePage extends StatefulWidget{
   //the id of this profile
@@ -174,16 +175,16 @@ class _ProfilePageState extends State<ProfilePage> {
           },
           items: [
             BottomNavigationBarItem(
-              icon: Icon(Icons.home),
-              title: Text('Home'),
+              icon: Icon(Icons.home, color: Colors.black),
+              title: Text('Home', style: TextStyle(color: Colors.black)),
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.add_box_outlined),
-              title: Text("New"),
+              icon: Icon(Icons.add_box_outlined, color: Colors.black),
+              title: Text("New", style: TextStyle(color: Colors.black)),
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.person),
-              title: Text("Profile"),
+              icon: Icon(Icons.person, color: Theme.of(context).primaryColor),
+              title: Text("Profile", style: TextStyle(color: Theme.of(context).primaryColor)),
             ),
           ]
       ),

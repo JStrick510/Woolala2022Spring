@@ -11,7 +11,6 @@ import 'package:woolala_app/screens/login_screen.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:woolala_app/screens/post_screen.dart';
 
-
 class ImageUploadScreen extends StatefulWidget {
   ImageUploadScreen();
 
@@ -19,8 +18,9 @@ class ImageUploadScreen extends StatefulWidget {
 }
 
 class _ImageUploadScreenState extends State<ImageUploadScreen> {
-  File _image;
+  File _image = null;
   final picker = ImagePicker();
+  bool selected = false;
 
   Future getImageGallery() async {
     final pickedFile = await picker.getImage(source: ImageSource.gallery);
@@ -47,52 +47,51 @@ class _ImageUploadScreenState extends State<ImageUploadScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: Colors.grey[800],
-        appBar: AppBar(
-          leading: GestureDetector(
-            onTap: () => Navigator.pushReplacementNamed(context, '/home'),
-            child: Icon(
-              Icons.reply,  // add custom icons also
-            ),
+      backgroundColor: Colors.grey[800],
+      appBar: AppBar(
+        leading: GestureDetector(
+          onTap: () => Navigator.pushReplacementNamed(context, '/home'),
+          child: Icon(
+            Icons.reply, // add custom icons also
           ),
-          actions: <Widget>[
-
-            FlatButton(
-              textColor: Colors.white,
-              onPressed: () => Navigator.pushReplacementNamed(context, '/makepost', arguments: _image),
-              child: Text("Next"),
-              shape: CircleBorder(side: BorderSide(color: Colors.transparent)),
+        ),
+        actions: <Widget>[
+          FlatButton(
+            textColor: Colors.white,
+            onPressed: () => {
+              if (_image != null)
+                Navigator.pushReplacementNamed(context, '/makepost',
+                    arguments: _image)
+            },
+            child: Text("Next"),
+            shape: CircleBorder(side: BorderSide(color: Colors.transparent)),
+          )
+        ],
+      ),
+      body: Column(children: [
+        _image == null ? Text('') : Image.file(_image),
+      ]),
+      bottomNavigationBar: Row(
+          mainAxisSize: MainAxisSize.max,
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            FloatingActionButton(
+              child: Icon(Icons.camera_enhance),
+              onPressed: () => getImageCamera(),
+              heroTag: null,
+            ),
+            SizedBox(height: 100.0),
+            // FloatingActionButton(
+            //   child: Icon(Icons.check),
+            //   onPressed: () => null,
+            //   heroTag: null,
+            // ),
+            FloatingActionButton(
+              child: Icon(Icons.collections),
+              onPressed: () => getImageGallery(),
+              heroTag: null,
             )
-          ],
-        ),
-        body: Column(
-          children:[ _image == null
-              ? Text('No image selected.')
-              : Image.file(_image),]
-        ),
-        bottomNavigationBar: Row(
-                mainAxisSize: MainAxisSize.max,
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  FloatingActionButton(
-                    child: Icon(Icons.camera_enhance),
-                    onPressed: () => getImageCamera(),
-                    heroTag: null,
-                  ),
-                  SizedBox(height: 100.0),
-                  // FloatingActionButton(
-                  //   child: Icon(Icons.check),
-                  //   onPressed: () => null,
-                  //   heroTag: null,
-                  // ),
-                  FloatingActionButton(
-                    child: Icon(Icons.collections),
-                    onPressed: () => getImageGallery(),
-                    heroTag: null,
-                  )
-                ]
-        ),
-
+          ]),
     );
   }
 }

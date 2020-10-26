@@ -112,7 +112,7 @@ class _HomepageScreenState extends State<HomepageScreen>{
             ),
           ),
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.end,
             children: <Widget>[
               starSlider(),
             ],
@@ -125,8 +125,8 @@ class _HomepageScreenState extends State<HomepageScreen>{
           },
           items: [
             BottomNavigationBarItem(
-              icon: Icon(Icons.home, color: Colors.white,),
-              title: Text('Home', style: TextStyle(color: Colors.white),),
+              icon: Icon(Icons.home, color: Theme.of(context).primaryColor,),
+              title: Text('Home', style: TextStyle(color: Theme.of(context).primaryColor),),
             ),
             BottomNavigationBarItem(
               icon: Icon(Icons.add_box_outlined, color: Colors.white,),

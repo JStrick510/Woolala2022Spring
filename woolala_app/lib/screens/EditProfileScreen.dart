@@ -66,7 +66,6 @@ class _EditProfilePageState extends State<EditProfilePage>{
             color: Colors.white,
             onPressed: () => (Navigator.pushReplacementNamed(context, '/profile'))
         ),
-        backgroundColor: Colors.green,
         iconTheme: IconThemeData(color: Colors.blue),
         title: Text('Edit Profile', style: TextStyle(color: Colors.white),),
         actions: <Widget>[
