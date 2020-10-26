@@ -10,7 +10,7 @@ import 'dart:io';
 import 'package:woolala_app/screens/login_screen.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:woolala_app/screens/homepage_screen.dart';
-
+import 'package:intl/intl.dart';
 
 class PostScreen extends StatefulWidget {
   PostScreen();
@@ -21,49 +21,88 @@ class PostScreen extends StatefulWidget {
 class _PostScreenState extends State<PostScreen> {
   File _image;
   final picker = ImagePicker();
+  String _text = "";
+  TextEditingController _c;
 
+  static final DateTime now = DateTime.now();
+  static final DateFormat formatter = DateFormat('yyyy-MM-dd');
+  final String date = formatter.format(now);
+
+  @override
+  initState() {
+    _c = new TextEditingController();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
     _image = ModalRoute.of(context).settings.arguments;
     return Scaffold(
-        backgroundColor: Colors.grey[800],
-        appBar: AppBar(
-          leading: GestureDetector(
-            onTap: () => Navigator.pushReplacementNamed(context, '/imgup'),
-            child: Icon(
-              Icons.reply,  // add custom icons also
-            ),
+      backgroundColor: Colors.grey[800],
+      appBar: AppBar(
+        leading: GestureDetector(
+          onTap: () => Navigator.pushReplacementNamed(context, '/imgup'),
+          child: Icon(
+            Icons.reply, // add custom icons also
           ),
         ),
-        body: Center(
-          child: _image == null
-              ? Text('No image selected.')
-              : Image.file(_image),
+      ),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            _image == null ? Text('No image selected.') : Image.file(_image),
+            new Text(_text),
+            new Text(date),
+          ],
         ),
-        bottomNavigationBar: Row(
-                mainAxisSize: MainAxisSize.max,
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  FloatingActionButton(
-                    child: Icon(Icons.chat_bubble_outline),
-                    onPressed: () => null,
-                    heroTag: null,
-                  ),
-                  SizedBox(height: 100.0),
-                  // FloatingActionButton(
-                  //   child: Icon(Icons.check),
-                  //   onPressed: () => null,
-                  //   heroTag: null,
-                  // ),
-                  FloatingActionButton(
-                    child: Icon(Icons.check),
-                    onPressed: () => {createPost(123, "1234", "05/12/2345", "test", null, 123), Navigator.pushReplacementNamed(context, '/home')},
-                    heroTag: null,
-                  )
-                ]
-        ),
-
+      ),
+      bottomNavigationBar: Row(
+          mainAxisSize: MainAxisSize.max,
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            FloatingActionButton(
+              child: Icon(Icons.chat_bubble_outline),
+              onPressed: () => {
+                showDialog(
+                    child: new Dialog(
+                      child: new Column(
+                        children: <Widget>[
+                          new TextField(
+                            decoration:
+                                new InputDecoration(hintText: "Update Info"),
+                            controller: _c,
+                          ),
+                          new FlatButton(
+                            child: new Text("Save"),
+                            onPressed: () {
+                              setState(() {
+                                this._text = _c.text;
+                              });
+                              Navigator.pop(context);
+                            },
+                          )
+                        ],
+                      ),
+                    ),
+                    context: context)
+              },
+            ),
+            SizedBox(height: 100.0),
+            // FloatingActionButton(
+            //   child: Icon(Icons.check),
+            //   onPressed: () => null,
+            //   heroTag: null,
+            // ),
+            FloatingActionButton(
+              child: Icon(Icons.check),
+              onPressed: () => {
+                createPost(123, "1234", date, _text, null, 123),
+                Navigator.pushReplacementNamed(context, '/home')
+              },
+              heroTag: null,
+            )
+          ]),
     );
   }
 }
