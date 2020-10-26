@@ -59,7 +59,7 @@ class _ImageUploadScreenState extends State<ImageUploadScreen> {
 
             FlatButton(
               textColor: Colors.white,
-              onPressed: () => Navigator.pushReplacementNamed(context, '/makepost'),
+              onPressed: () => Navigator.pushReplacementNamed(context, '/makepost', arguments: _image),
               child: Text("Next"),
               shape: CircleBorder(side: BorderSide(color: Colors.transparent)),
             )
