@@ -9,11 +9,11 @@ Future<void> main() {
     ..features = [Glob(r"test_driver/features/login_test.feature")]
     ..reporters = [
       ProgressReporter(),
-      TestRunSummaryReporter(),
+      //TestRunSummaryReporter(),
       JsonReporter(path: './report.json')
     ] // you can include the "StdoutReporter()" without the message level parameter for verbose log information
     // ..hooks = [HookExample()]
-    ..stepDefinitions = [tapLoginButton(), appIsOpen(), iShouldSeeText(), accountIsValid(), onPage()]
+    ..stepDefinitions = [onPage(), iShouldSeeText(), accountIsValid(), tapTheButton(), isEdited(), iShouldSeeButton(), profileIsUpdated(), chooseAnImage(), selectedImageOnScreen()]
     // ..customStepParameterDefinitions = [ColourParameter()]
     ..restartAppBetweenScenarios = true
     ..targetAppPath = "test_driver/app.dart"

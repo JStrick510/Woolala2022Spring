@@ -13,17 +13,17 @@ Feature: Validate Profile
     Scenario: User updates profile
         Given I am on the "Edit Profile" screen
         When "Profile Name" is edited
-        Then I should see "Update" button able to be clicked
+        Then I should see the "Update" button
+        When I tap the "Update" button
+        Then I should see "Profile" on my screen
+        And "Profile Name" is updated
 
         Given I am on the "Edit Profile" screen
         When "Bio" is edited
-        Then I should see "Update" button able to be clicked
-
-    Scenario: User checks updated profile
-        Given I am on the "Edit Profile" screen
-        When I tap the "check mark" button
+        Then I should see the "Update" button
+        When I tap the "Update" button
         Then I should see "Profile" on my screen
-        And "Profile Name" and "Bio" is updated
+        And "Bio" is updated
 
     Scenario: User goes back to homepage
         Given I am on the "Profile" screen
