@@ -6,6 +6,7 @@ import 'package:flutter_facebook_login/flutter_facebook_login.dart';
 import 'package:woolala_app/screens/login_screen.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+
 import 'dart:io';
 import 'package:woolala_app/screens/login_screen.dart';
 import 'package:image_picker/image_picker.dart';
@@ -28,6 +29,7 @@ Widget starSlider() => RatingBar(
         //Changing rating here
       },
     );
+
 
 // Will be used anytime the post is rated
 Future<http.Response> ratePost(double rating, int id) {
@@ -157,11 +159,14 @@ class _HomepageScreenState extends State<HomepageScreen>{
     if (widget.signedInWithGoogle) {
       googleLogoutUser();
       Navigator.pushReplacementNamed(context, '/');
-    } else {
+    }
+    else
+    {
 
-      FacebookLogin facebookLogin = FacebookLogin();
-      facebookLogin.logOut();
-      Navigator.pushReplacementNamed(context, '/');
+       // FacebookLogin facebookLogin = FacebookLogin();
+        //facebookLogin.logOut();
+        Navigator.pushReplacementNamed(context, '/');
+
     }
   }
 }

@@ -51,7 +51,7 @@ The app.js had the Product_Owner inserted into the request URI already, but feel
 
 # Users:
   Developer_1
-  fOXG1slKKTNJDciP
+  Developer_1
 
   Developer_2
   5WhcVANplnf7BAep
