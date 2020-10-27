@@ -14,7 +14,7 @@ import 'package:convert/convert.dart';
 final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 final GoogleSignIn gSignIn = GoogleSignIn();
 final DateTime timestamp = DateTime.now();
-User currentUser = User();
+User currentUser;
 
 void googleLoginUser(){
   //gSignIn.signOut();
@@ -67,7 +67,7 @@ class _LoginScreenState extends State<LoginScreen> {
   bool isSignedInWithGoogle = false;
   bool isSignedInWithFacebook = false;
   bool _disposed = false;
-  //GoogleSignIn googleSignIn = GoogleSignIn(clientId: "566232493002-qqkorq4nvfqu9o8es6relg6fe4mj01mm.apps.googleusercontent.com");
+
 
   void initState(){
     super.initState();
@@ -112,11 +112,11 @@ class _LoginScreenState extends State<LoginScreen> {
 
   saveUserInfoToServer() async{
     final GoogleSignInAccount gAccount = gSignIn.currentUser;
-    currentUser = await getDoesUserExists(gAccount.email);
-    //print("email: " + gAccount.email);
-    if(currentUser!=null && currentUser.userID!="")//account exists
+    User tempUser = await getDoesUserExists(gAccount.email);
+    if(tempUser!=null && tempUser.userID!="")//account exists
       {
        print("You have an account!");
+       currentUser = tempUser;
        //set current user
       }
     else{
@@ -126,10 +126,14 @@ class _LoginScreenState extends State<LoginScreen> {
         email: gAccount.email,
         profileName: gAccount.displayName,
         profilePicURL: gAccount.photoUrl,
-        bio: "This is my new Woolala Account. Me so horny!",
-        userID: base64.encode(latin1.encode(gAccount.email)).toString()
+        bio: "This is my new Woolala Account!",
+        userID: base64.encode(latin1.encode(gAccount.email)).toString(),
+        numFollowers: 0,
+        numPosts: 0,
+        numRated: 0
       );
       await insertUser(u);
+      currentUser = u;
     }
 
   }
@@ -272,7 +276,7 @@ class _LoginScreenState extends State<LoginScreen> {
       );
     }
 
-
+/*
     void startGoogleSignIn() async {
       GoogleSignInAccount user = await gSignIn.signIn();
       if (user == null) {
@@ -289,7 +293,7 @@ class _LoginScreenState extends State<LoginScreen> {
         //Navigator.pushReplacementNamed(_scaffoldKey.currentContext, '/home');
       }
     }
-
+*/
     void startFacebookSignIn() async {
 
       FacebookLogin facebookLogin = FacebookLogin();
