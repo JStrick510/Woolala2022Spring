@@ -134,6 +134,7 @@ class _ProfilePageState extends State<ProfilePage> {
     padding: EdgeInsets.only(top: 3.0),
     child: FlatButton(
       onPressed: performFunction,
+      key: ValueKey(title),
       child: Container(
         width: 280.0,
         height: 35.0,

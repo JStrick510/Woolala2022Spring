@@ -71,7 +71,7 @@ class _EditProfilePageState extends State<EditProfilePage>{
         title: Text('Edit Profile', style: TextStyle(color: Colors.white),),
         actions: <Widget>[
           IconButton(
-            icon: Icon(Icons.done, color: Colors.white, size: 30.0,),
+            icon: Icon(Icons.done, key: ValueKey("Check Mark"), color: Colors.white, size: 30.0,),
             onPressed: () => Navigator.pushReplacementNamed(context, '/profile'),
           )
         ],
@@ -102,6 +102,7 @@ class _EditProfilePageState extends State<EditProfilePage>{
                   padding: EdgeInsets.only(top: 29.0,left: 50.0, right: 50.0),
                   child: RaisedButton(
                     onPressed: updateUserInfo,
+                    key: ValueKey("Update"),
                     child: Text("Update", style: TextStyle(color: Colors.white),
                     ),
                   ),
