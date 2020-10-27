@@ -6,14 +6,14 @@ import 'steps/test_steps.dart';
 
 Future<void> main() {
   final config = FlutterTestConfiguration()
-    ..features = [Glob(r"test_driver/features/profile_test.feature")]
+    ..features = [Glob(r"test_driver/features/**.feature")]
     ..reporters = [
       ProgressReporter(),
       //TestRunSummaryReporter(),
       JsonReporter(path: './report.json')
     ] // you can include the "StdoutReporter()" without the message level parameter for verbose log information
     // ..hooks = [HookExample()]
-    ..stepDefinitions = [loggedIn(), onPage(), iShouldSeeText(), accountIsValid(), tapTheButton(), isEdited(), iShouldSeeButton(), profileIsUpdated(), chooseAnImage(), selectedImageOnScreen()]
+    ..stepDefinitions = [loggedIn(), onPage(), iShouldSeeText(), accountIsValid(), tapTheButton(), isEdited(), iShouldSeeButton(), profileIsUpdated(), canUploadChosenImage()]
     // ..customStepParameterDefinitions = [ColourParameter()]
     ..restartAppBetweenScenarios = true
     ..targetAppPath = "test_driver/app.dart"

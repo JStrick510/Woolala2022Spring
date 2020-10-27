@@ -16,8 +16,6 @@ StepDefinitionGeneric onPage() {
   return given1<String, FlutterWorld>(
     'I am on the {string} screen',
         (key, context) async {
-
-
     },
   );
 }
@@ -28,6 +26,18 @@ StepDefinitionGeneric iShouldSeeText() {
         (key, context) async {
       final locator = find.byValueKey(key);
       await FlutterDriverUtils.isPresent(context.world.driver, locator);
+    },
+  );
+}
+
+StepDefinitionGeneric iShouldSeeButtons() {
+  return then2<String, String, FlutterWorld>(
+    'I should see {string} and {string} on my screen',
+        (key1, key2, context) async {
+      final locator1 = find.byValueKey(key1);
+      final locator2 = find.byValueKey(key2);
+      await FlutterDriverUtils.isPresent(context.world.driver, locator1);
+      await FlutterDriverUtils.isPresent(context.world.driver, locator2);
     },
   );
 }
@@ -46,7 +56,6 @@ StepDefinitionGeneric tapTheButton() {
     'I tap the {string} button',
         (key, context) async {
       final locator = find.byValueKey(key);
-      print(locator);
       await FlutterDriverUtils.tap(context.world.driver, locator);
     },
   );
@@ -56,7 +65,6 @@ StepDefinitionGeneric isEdited() {
   return when1<String, FlutterWorld>(
     '{string} is edited',
         (key, context) async {
-
     },
   );
 }
@@ -80,20 +88,10 @@ StepDefinitionGeneric profileIsUpdated() {
   );
 }
 
-StepDefinitionGeneric chooseAnImage() {
-  return when1<String, FlutterWorld>(
-    'I choose an image from {string}',
-        (key, context) async {
-
-    },
-  );
-}
-
-StepDefinitionGeneric selectedImageOnScreen() {
-  return and2<String, String, FlutterWorld>(
-    'the {string} are on the {string} screen',
-        (key1, key2, context) async {
-
+StepDefinitionGeneric canUploadChosenImage() {
+  return then<FlutterWorld>(
+    'I should be able to choose an image to upload',
+        (context) async {
     },
   );
 }

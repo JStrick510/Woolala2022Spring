@@ -78,6 +78,7 @@ class _SearchPageState extends State<SearchPage> {
       filteredResults = tempList;
     }
     return ListView.builder(
+      key: ValueKey("ListView"),
       scrollDirection: Axis.vertical,
       shrinkWrap: true,
       itemCount: results == null ? 0 : filteredResults.length,
@@ -104,6 +105,7 @@ class _SearchPageState extends State<SearchPage> {
             actions: <Widget>[
               IconButton(
                 icon: _searchIcon,
+                key: ValueKey("Search Icon"),
                 onPressed: (){_searchPressed();},
               )
             ]

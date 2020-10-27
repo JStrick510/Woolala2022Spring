@@ -91,6 +91,7 @@ class _HomepageScreenState extends State<HomepageScreen>{
         actions: <Widget>[
           IconButton (
             icon: Icon(Icons.search),
+            key: ValueKey("Search"),
             color: Colors.white,
             onPressed: () => Navigator.pushReplacementNamed(context, '/search'),
           ),
@@ -131,7 +132,7 @@ class _HomepageScreenState extends State<HomepageScreen>{
               title: Text('Home', style: TextStyle(color: Theme.of(context).primaryColor),),
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.add_circle_outline, color: Colors.white,),
+              icon: Icon(Icons.add_circle_outline, key: ValueKey("Make Post"), color: Colors.white,),
               title: Text("New", style: TextStyle(color: Colors.white),),
             ),
             BottomNavigationBarItem(
