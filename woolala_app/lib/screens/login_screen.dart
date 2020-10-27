@@ -11,7 +11,6 @@ import 'package:woolala_app/screens/homepage_screen.dart';
 import 'dart:convert';
 import 'package:convert/convert.dart';
 
-final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 final GoogleSignIn gSignIn = GoogleSignIn();
 final DateTime timestamp = DateTime.now();
 User currentUser = User();
@@ -64,6 +63,7 @@ class LoginScreen extends StatefulWidget{
 }
 
 class _LoginScreenState extends State<LoginScreen> {
+  final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   bool isSignedInWithGoogle = false;
   bool isSignedInWithFacebook = false;
   bool _disposed = false;
