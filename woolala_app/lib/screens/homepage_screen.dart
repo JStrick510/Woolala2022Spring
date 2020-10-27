@@ -135,8 +135,9 @@ class _HomepageScreenState extends State<HomepageScreen>{
               title: Text("New", style: TextStyle(color: Colors.white),),
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.person, color: Colors.white,),
+              icon: Icon(Icons.person, key: ValueKey("Profile"), color: Colors.white,),
               title: Text("Profile", style: TextStyle(color: Colors.white),),
+
             ),
           ],
           backgroundColor: Colors.blueGrey[400],

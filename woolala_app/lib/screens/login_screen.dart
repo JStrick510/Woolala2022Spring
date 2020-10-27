@@ -186,10 +186,16 @@ class _LoginScreenState extends State<LoginScreen> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                Image.asset('./assets/logos/w_logo_test.png', width: 300,
-                    height: 150,
-                    fit: BoxFit.contain,
-                    semanticLabel: 'WooLaLa logo'),
+                new IconButton(
+                  key: ValueKey("GoToHome"),
+                  icon: Image.asset('./assets/logos/w_logo_test.png', width: 300,
+                      height: 150,
+                      fit: BoxFit.contain,
+                      semanticLabel: 'WooLaLa logo'),
+                  onPressed: () => Navigator.pushReplacementNamed(_scaffoldKey.currentContext, '/home'),
+                  iconSize: 150,
+                ),
+
                 Text("Powered by: ",
                   style: TextStyle(color: Colors.white, fontSize: 16),),
                 Image.asset('assets/logos/fashionNXT_logo.png', width: 150,

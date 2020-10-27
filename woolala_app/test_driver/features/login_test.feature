@@ -7,7 +7,7 @@ Feature: Validate login screen
     Scenario: Google Login
         Given My "Google" account is "valid"
         When I tap the "Google" button
-        Then I should see "Homepage" on my screen
+        Then I should see "homepage" on my screen
 
         Given My "Google" account is "not valid"
         When I tap the "Google" button
