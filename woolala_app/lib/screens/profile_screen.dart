@@ -45,8 +45,8 @@ class _ProfilePageState extends State<ProfilePage> {
                   CircleAvatar(
                     radius: 60.0,
                     backgroundColor: Colors.transparent,
-                    backgroundImage: NetworkImage(profilePageOwner.profilePicURL),
-                  ),
+                    backgroundImage: NetworkImage(profilePageOwner.profilePicURL)
+                ),
                   Container(
                     alignment: Alignment.center,
                     padding: EdgeInsets.only(top: 5.0),
