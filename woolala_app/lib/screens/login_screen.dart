@@ -1,3 +1,4 @@
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'homepage_screen.dart';
@@ -9,6 +10,7 @@ import 'package:woolala_app/models/user.dart';
 import 'package:http/http.dart' as http;
 import 'package:woolala_app/screens/homepage_screen.dart';
 import 'dart:convert';
+import 'dart:math';
 import 'package:convert/convert.dart';
 
 final GoogleSignIn gSignIn = GoogleSignIn();
@@ -71,6 +73,12 @@ class _LoginScreenState extends State<LoginScreen> {
 
   void initState(){
     super.initState();
+    Random rand = new Random();
+    int fuck = rand.nextInt(10);
+    if(fuck%2==0 && fuck < 5)
+      loadMusic("woolala");
+    else if(fuck%2 !=0 && fuck < 5)
+      loadMusic("fuck");
     gSignIn.onCurrentUserChanged.listen((gSignInAccount){
       controlGoogleSignIn(gSignInAccount);
     }, onError: (gError){
@@ -86,6 +94,7 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   void dispose() {
     _disposed = true;
+    advancedPlayer = null;
     super.dispose();
   }
 
@@ -149,6 +158,7 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     if (isSignedInWithGoogle || isSignedInWithFacebook) {
+     //playLocalAsset();
       return HomepageScreen(isSignedInWithGoogle);
     }
     else {

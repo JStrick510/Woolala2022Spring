@@ -6,12 +6,15 @@ import 'package:flutter_facebook_login/flutter_facebook_login.dart';
 import 'package:woolala_app/screens/login_screen.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:audioplayers/audio_cache.dart';
+import 'package:audioplayers/audioplayers.dart';
 
 import 'dart:io';
 import 'package:woolala_app/screens/login_screen.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:woolala_app/screens/post_screen.dart';
 import 'package:woolala_app/screens/profile_screen.dart';
+AudioPlayer advancedPlayer;
 
 Widget starSlider() => RatingBar(
       initialRating: 2.5,
@@ -30,7 +33,15 @@ Widget starSlider() => RatingBar(
       },
     );
 
-
+Future loadMusic(String sound) async {
+  if(sound=="fuck") {
+    advancedPlayer = await AudioCache().play("Sounds/ashfuck.mp3");
+  }
+   if(sound=="woolala")
+   {
+       advancedPlayer = await AudioCache().play("Sounds/woolalaAudio.mp3");
+   }
+}
 // Will be used anytime the post is rated
 Future<http.Response> ratePost(double rating, int id) {
   return http.post(
