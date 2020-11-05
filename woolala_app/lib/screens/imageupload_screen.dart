@@ -10,6 +10,7 @@ import 'dart:io';
 import 'package:woolala_app/screens/login_screen.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:woolala_app/screens/post_screen.dart';
+import 'dart:io' as Io;
 
 class ImageUploadScreen extends StatefulWidget {
   ImageUploadScreen();
@@ -19,6 +20,7 @@ class ImageUploadScreen extends StatefulWidget {
 
 class _ImageUploadScreenState extends State<ImageUploadScreen> {
   File _image = null;
+  String img64;
   final picker = ImagePicker();
   bool selected = false;
 
@@ -27,6 +29,9 @@ class _ImageUploadScreenState extends State<ImageUploadScreen> {
     setState(() {
       if (pickedFile != null) {
         _image = File(pickedFile.path);
+        final bytes = _image.readAsBytesSync();
+        img64 = base64Encode(bytes);
+        print(img64.substring(0, 100));
       } else {
         print('No image selected.');
       }
@@ -61,7 +66,7 @@ class _ImageUploadScreenState extends State<ImageUploadScreen> {
             onPressed: () => {
               if (_image != null)
                 Navigator.pushReplacementNamed(context, '/makepost',
-                    arguments: _image)
+                    arguments: [_image, img64])
             },
             child: Text("Next"),
             shape: CircleBorder(side: BorderSide(color: Colors.transparent)),
