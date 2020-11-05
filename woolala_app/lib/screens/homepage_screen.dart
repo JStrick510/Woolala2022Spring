@@ -6,8 +6,10 @@ import 'package:flutter_facebook_login/flutter_facebook_login.dart';
 import 'package:woolala_app/screens/login_screen.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'dart:io' as Io;
 import 'package:audioplayers/audio_cache.dart';
 import 'package:audioplayers/audioplayers.dart';
+
 
 import 'dart:io';
 import 'package:woolala_app/screens/login_screen.dart';
@@ -29,6 +31,7 @@ Widget starSlider() => RatingBar(
       ),
       onRatingUpdate: (rating) {
         print(rating);
+        getPost(1234);
         //Changing rating here
       },
     );
@@ -75,8 +78,25 @@ Future<http.Response> createPost(int id, String imageID, String date,
 }
 
 // Will be used to get info about the post
-Future<http.Response> getPost(double id) {
-  return http.get('http://10.0.2.2:5000/getPostInfo/' + id.toString());
+Future<Image> getPost(double id) async{
+  http.Response res = await http.get('http://10.0.2.2:5000/getPostInfo/' + id.toString());
+  Map info = jsonDecode(res.body.toString());
+  print(info["ImageID"]);
+  final decodedBytes = base64Decode(info["ImageID"]);
+  return Image.memory(decodedBytes);
+
+  //DO THIS TO GET IMAGE
+
+  // FutureBuilder(
+  //   future: getPost(POSTID),
+  //   builder: (context, snapshot) {
+  //     if (snapshot.hasData) {
+  //       return snapshot.data;
+  //     } else {
+  //       return CircularProgressIndicator();
+  //     }
+  //   },
+  // );
 }
 
 //final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
@@ -92,6 +112,7 @@ class HomepageScreen extends StatefulWidget {
 class _HomepageScreenState extends State<HomepageScreen>{
     var rating = 0.0;
     var postID = 0.0;
+
 
   @override
   Widget build(BuildContext context) {
@@ -129,6 +150,17 @@ class _HomepageScreenState extends State<HomepageScreen>{
             mainAxisAlignment: MainAxisAlignment.end,
             children: <Widget>[
               starSlider(),
+              FutureBuilder(
+                future: getPost(1234),
+                builder: (context, snapshot) {
+                  if (snapshot.hasData) {
+                    return snapshot.data;
+                  } else {
+                    return CircularProgressIndicator();
+                  }
+                },
+              )
+
             ],
           ),
         ),

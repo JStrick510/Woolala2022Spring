@@ -31,37 +31,6 @@ https://flutter.dev/docs/get-started/codelab#step-1-create-the-starter-flutter-a
 
 NodeJS server established locally for now - make sure NodeJS is installed on your machine
 
-# MongoDB Atlas account:
-  User: fashionxtllc@gmail.com
-  Pwd: Fash10nxt*7
-
-  You need to login to the account and add your IP address to the whitelist under the "Network Access" settings tab so that your computer can access the database.
-
-  Limit Data upload because we are using a free tier account with 512MB of space.
-  To use the mongodb client on app.js run after installing node:
-      npm install mongoose
-
-The app.js had the Product_Owner inserted into the request URI already, but feel free to change it or we can all operate off of the same admin account.
-# Admins:
-  Product_Owner
-  owNONdfwaKARb9kH
-
-  Lead_Devloper
-  poQLxqdUb4c2RfvJ
-
-# Users:
-  Developer_1
-  Developer_1
-
-  Developer_2
-  5WhcVANplnf7BAep
-
-  Developer_3
-  RibMfjzEBwk2TNd8
-
-  Developer_4
-  MZhrCA6jE2VY23UM
-
 # flutter note
 
 The pubspec.yaml file apparently has some weird way to keep track of dependencies in terms of installing on local machines. We will probably run into this later, so keep note of when this file is changed.
