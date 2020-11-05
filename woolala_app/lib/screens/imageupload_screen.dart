@@ -82,6 +82,7 @@ class _ImageUploadScreenState extends State<ImageUploadScreen> {
           children: [
             FloatingActionButton(
               child: Icon(Icons.camera_enhance),
+              key: ValueKey("Camera"),
               onPressed: () => getImageCamera(),
               heroTag: null,
             ),
@@ -93,6 +94,7 @@ class _ImageUploadScreenState extends State<ImageUploadScreen> {
             // ),
             FloatingActionButton(
               child: Icon(Icons.collections),
+              key: ValueKey("Gallery"),
               onPressed: () => getImageGallery(),
               heroTag: null,
             )

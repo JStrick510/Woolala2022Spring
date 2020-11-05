@@ -25,7 +25,7 @@ class WooLaLa extends StatelessWidget {
       routes: { // easier use for multiple page navigation
         '/' : (_) => LoginScreen(), //login screen
         '/home' : (_) => HomepageScreen(true), //home page
-        '/profile': (_) => ProfilePage('The Juice'),
+        '/profile': (_) => ProfilePage(currentUser.email),
         '/editProfile': (_) => EditProfilePage(),
         '/search': (_) => SearchPage(),
         '/makepost': (_) => PostScreen(),

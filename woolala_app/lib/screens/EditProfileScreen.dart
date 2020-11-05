@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:woolala_app/screens/login_screen.dart';
 
 class EditProfilePage extends StatefulWidget{
   final String currentOnlineUserId;
@@ -28,9 +29,9 @@ class _EditProfilePageState extends State<EditProfilePage>{
       loading = true;
     });
     //access the user's info from the database and set the default text to be the current text
-    //user = user from document
-    profileNameController.text = "The Juice";
-    bioController.text = "this is my bio";
+    profileNameController.text = currentUser.profileName;
+    bioController.text = currentUser.bio;
+
     setState(() {
       loading = false;
     });
@@ -70,7 +71,7 @@ class _EditProfilePageState extends State<EditProfilePage>{
         title: Text('Edit Profile', style: TextStyle(color: Colors.white),),
         actions: <Widget>[
           IconButton(
-            icon: Icon(Icons.done, color: Colors.white, size: 30.0,),
+            icon: Icon(Icons.done, key: ValueKey("Check Mark"), color: Colors.white, size: 30.0,),
             onPressed: () => Navigator.pushReplacementNamed(context, '/profile'),
           )
         ],
@@ -84,7 +85,8 @@ class _EditProfilePageState extends State<EditProfilePage>{
                   padding: EdgeInsets.only(top: 16.0, bottom: 7.0),
                   child: CircleAvatar(
                     radius: 52.0,
-                    backgroundImage: AssetImage('assets/Icons/profile_temp_icon.jpg',),
+                    backgroundColor: Colors.transparent,
+                    backgroundImage: NetworkImage(currentUser.profilePicURL),
                   ),
                 ),
                 Padding(
@@ -100,6 +102,7 @@ class _EditProfilePageState extends State<EditProfilePage>{
                   padding: EdgeInsets.only(top: 29.0,left: 50.0, right: 50.0),
                   child: RaisedButton(
                     onPressed: updateUserInfo,
+                    key: ValueKey("Update"),
                     child: Text("Update", style: TextStyle(color: Colors.white),
                     ),
                   ),

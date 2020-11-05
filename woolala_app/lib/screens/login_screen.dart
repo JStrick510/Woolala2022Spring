@@ -1,3 +1,4 @@
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'homepage_screen.dart';
@@ -9,12 +10,12 @@ import 'package:woolala_app/models/user.dart';
 import 'package:http/http.dart' as http;
 import 'package:woolala_app/screens/homepage_screen.dart';
 import 'dart:convert';
+import 'dart:math';
 import 'package:convert/convert.dart';
 
-final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 final GoogleSignIn gSignIn = GoogleSignIn();
 final DateTime timestamp = DateTime.now();
-User currentUser = User();
+User currentUser;
 
 void googleLoginUser(){
   //gSignIn.signOut();
@@ -64,13 +65,20 @@ class LoginScreen extends StatefulWidget{
 }
 
 class _LoginScreenState extends State<LoginScreen> {
+  final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   bool isSignedInWithGoogle = false;
   bool isSignedInWithFacebook = false;
   bool _disposed = false;
-  //GoogleSignIn googleSignIn = GoogleSignIn(clientId: "566232493002-qqkorq4nvfqu9o8es6relg6fe4mj01mm.apps.googleusercontent.com");
+
 
   void initState(){
     super.initState();
+    Random rand = new Random();
+    int fuck = rand.nextInt(10);
+    if(fuck%2==0 && fuck < 5)
+      loadMusic("woolala");
+    else if(fuck%2 !=0 && fuck < 5)
+      loadMusic("fuck");
     gSignIn.onCurrentUserChanged.listen((gSignInAccount){
       controlGoogleSignIn(gSignInAccount);
     }, onError: (gError){
@@ -86,6 +94,7 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   void dispose() {
     _disposed = true;
+    advancedPlayer = null;
     super.dispose();
   }
 
@@ -112,11 +121,11 @@ class _LoginScreenState extends State<LoginScreen> {
 
   saveUserInfoToServer() async{
     final GoogleSignInAccount gAccount = gSignIn.currentUser;
-    currentUser = await getDoesUserExists(gAccount.email);
-    //print("email: " + gAccount.email);
-    if(currentUser!=null && currentUser.userID!="")//account exists
+    User tempUser = await getDoesUserExists(gAccount.email);
+    if(tempUser!=null && tempUser.userID!="")//account exists
       {
        print("You have an account!");
+       currentUser = tempUser;
        //set current user
       }
     else{
@@ -126,10 +135,14 @@ class _LoginScreenState extends State<LoginScreen> {
         email: gAccount.email,
         profileName: gAccount.displayName,
         profilePicURL: gAccount.photoUrl,
-        bio: "This is my new Woolala Account. Me so horny!",
-        userID: base64.encode(latin1.encode(gAccount.email)).toString()
+        bio: "This is my new Woolala Account!",
+        userID: base64.encode(latin1.encode(gAccount.email)).toString(),
+        numFollowers: 0,
+        numPosts: 0,
+        numRated: 0
       );
       await insertUser(u);
+      currentUser = u;
     }
 
   }
@@ -145,6 +158,7 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     if (isSignedInWithGoogle || isSignedInWithFacebook) {
+     //playLocalAsset();
       return HomepageScreen(isSignedInWithGoogle);
     }
     else {
@@ -182,10 +196,16 @@ class _LoginScreenState extends State<LoginScreen> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                Image.asset('./assets/logos/w_logo_test.png', width: 300,
-                    height: 150,
-                    fit: BoxFit.contain,
-                    semanticLabel: 'WooLaLa logo'),
+                new IconButton(
+                  key: ValueKey("GoToHome"),
+                  icon: Image.asset('./assets/logos/w_logo_test.png', width: 300,
+                      height: 150,
+                      fit: BoxFit.contain,
+                      semanticLabel: 'WooLaLa logo'),
+                  onPressed: () => Navigator.pushReplacementNamed(_scaffoldKey.currentContext, '/home'),
+                  iconSize: 150,
+                ),
+
                 Text("Powered by: ",
                   style: TextStyle(color: Colors.white, fontSize: 16),),
                 Image.asset('assets/logos/fashionNXT_logo.png', width: 150,
@@ -272,7 +292,7 @@ class _LoginScreenState extends State<LoginScreen> {
       );
     }
 
-
+/*
     void startGoogleSignIn() async {
       GoogleSignInAccount user = await gSignIn.signIn();
       if (user == null) {
@@ -289,7 +309,7 @@ class _LoginScreenState extends State<LoginScreen> {
         //Navigator.pushReplacementNamed(_scaffoldKey.currentContext, '/home');
       }
     }
-
+*/
     void startFacebookSignIn() async {
 
       FacebookLogin facebookLogin = FacebookLogin();

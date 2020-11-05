@@ -8,8 +8,24 @@ class User{
   final String username;
   final String profilePicURL;
   final String email;
+  final int numPosts;
+  final int numFollowers;
+  final int numRated;
 
-  User({this.userID, this.profileName, this.url, this.googleID, this.facebookID, this.bio,this.username,this.profilePicURL, this.email});
+  User({
+    this.userID,
+    this.profileName,
+    this.url,
+    this.googleID,
+    this.facebookID,
+    this.bio,
+    this.username,
+    this.profilePicURL,
+    this.email,
+    this.numPosts,
+    this.numFollowers,
+    this.numRated
+  });
 
   User.fromJSON(Map<String, dynamic> json)
       : userID = json['userID'],
@@ -20,7 +36,10 @@ class User{
         bio = json['bio'],
         username = json['username'],
         profilePicURL = json['profilePicURL'],
-        email = json['email'];
+        email = json['email'],
+        numPosts = json['numPosts'],
+        numFollowers = json['numFollowers'],
+        numRated = json['numRated'];
 
   Map<String, dynamic> toJSON() =>
       {
@@ -32,7 +51,14 @@ class User{
           'bio': bio,
           'username': username,
           'profilePicURL': profilePicURL,
-          'email': email
+          'email': email,
+          'numPosts' : numPosts,
+          'numFollowers' : numFollowers,
+          'numRated': numRated
       };
 
+
 }
+
+
+
