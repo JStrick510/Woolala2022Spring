@@ -112,6 +112,8 @@ class HomepageScreen extends StatefulWidget {
 class _HomepageScreenState extends State<HomepageScreen>{
     var rating = 0.0;
     var postID = 0.0;
+    final List<String> entries = <String>['A', 'B', 'C', 'D', 'E'];
+    final List<int> colorCodes = <int>[600, 500, 400, 300, 200];
 
 
   @override
@@ -134,35 +136,16 @@ class _HomepageScreenState extends State<HomepageScreen>{
         ],
       ),
       body: Center(
-        child: Container(
-          padding: EdgeInsets.symmetric(vertical: 50),
-          width: double.infinity,
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                colors: [
-                  Colors.blueGrey[700],
-                  Colors.blueGrey[400]
-                ]
-            ),
-          ),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: <Widget>[
-              starSlider(),
-              FutureBuilder(
-                future: getPost(1234),
-                builder: (context, snapshot) {
-                  if (snapshot.hasData) {
-                    return snapshot.data;
-                  } else {
-                    return CircularProgressIndicator();
-                  }
-                },
-              )
-
-            ],
-          ),
+        child: ListView.builder(
+            padding: const EdgeInsets.all(0),
+            itemCount: entries.length,
+            itemBuilder: (BuildContext context, int index) {
+              return Container(
+                height: 400,
+                color: Colors.amber[colorCodes[index]],
+                child: Center(child: Text('Entry ${entries[index]}')),
+              );
+            }
         ),
       ),
       bottomNavigationBar: BottomNavigationBar(
