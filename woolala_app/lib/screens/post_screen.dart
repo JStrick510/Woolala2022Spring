@@ -20,10 +20,8 @@ class PostScreen extends StatefulWidget {
 
 class _PostScreenState extends State<PostScreen> {
   File _image;
-  List<Object> test;
   String _text = "";
   TextEditingController _c;
-  String img64;
 
   static final DateTime now = DateTime.now().toLocal();
   static final DateFormat formatter = DateFormat('yyyy-MM-dd');
@@ -37,9 +35,8 @@ class _PostScreenState extends State<PostScreen> {
 
   @override
   Widget build(BuildContext context) {
-    test = ModalRoute.of(context).settings.arguments;
-    _image = test[0];
-    img64 = test[1];
+    _image = ModalRoute.of(context).settings.arguments;
+
     return Scaffold(
       resizeToAvoidBottomInset: true,
       // backgroundColor: Colors.grey[800],
@@ -77,7 +74,7 @@ class _PostScreenState extends State<PostScreen> {
             FloatingActionButton(
               child: Icon(Icons.check),
               onPressed: () => {
-                createPost(123, img64, date, _text, null, 123),
+                createPost(123, "1234", date, _text, null, 123),
                 Navigator.pushReplacementNamed(context, '/home')
               },
             ),
