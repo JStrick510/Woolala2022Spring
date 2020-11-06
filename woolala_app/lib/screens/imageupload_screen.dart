@@ -31,7 +31,6 @@ class _ImageUploadScreenState extends State<ImageUploadScreen> {
         _image = File(pickedFile.path);
         final bytes = _image.readAsBytesSync();
         img64 = base64Encode(bytes);
-        print(img64.substring(0, 100));
       } else {
         print('No image selected.');
       }

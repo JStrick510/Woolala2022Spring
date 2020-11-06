@@ -9,6 +9,7 @@ import 'dart:convert';
 import 'dart:io' as Io;
 import 'package:audioplayers/audio_cache.dart';
 import 'package:audioplayers/audioplayers.dart';
+import 'dart:collection';
 
 
 import 'dart:io';
@@ -18,23 +19,63 @@ import 'package:woolala_app/screens/post_screen.dart';
 import 'package:woolala_app/screens/profile_screen.dart';
 AudioPlayer advancedPlayer;
 
-Widget starSlider() => RatingBar(
+Widget starSlider(int postID) => RatingBar(
       initialRating: 2.5,
       minRating: 0,
       direction: Axis.horizontal,
       allowHalfRating: true,
       itemCount: 5,
+      unratedColor: Colors.black,
+      itemSize: 30,
       itemPadding: EdgeInsets.symmetric(horizontal: 4.0),
       itemBuilder: (context, _) => Icon(
         Icons.star,
-        color: Colors.amber,
+        color: Colors.blue,
       ),
       onRatingUpdate: (rating) {
         print(rating);
-        getPost(1234);
         //Changing rating here
+        ratePost(rating, postID);
+        //getFeed("cmpoaW5ja0BnbWFpbC5jb20=", "2020-10-28");
       },
     );
+
+Widget card(int postID)
+{
+  return FutureBuilder(
+    future: getPost(postID),
+    builder: (context, snapshot) {
+      if (snapshot.hasData) {
+        return Column(
+            children: <Widget>[
+              Container(
+                  margin: const EdgeInsets.all(0),
+                  color: Colors.white,
+                  width: double.infinity,
+                  height: 35.0,
+                  child: Row(children: <Widget>[
+                    Padding(padding: EdgeInsets.all(5), child: Text(snapshot.data[1], textAlign: TextAlign.left, style: TextStyle(color: Colors.black, fontSize: 16))),
+                    Align(alignment: Alignment.centerRight, child: Icon(Icons.more_vert))
+                  ])
+              ),
+              snapshot.data[0],
+              Padding(padding: EdgeInsets.all(5),child: Text(snapshot.data[2])),
+              Center(child: starSlider(postID)),
+              Container(
+                margin: const EdgeInsets.all(8),
+                color: Colors.grey,
+                width: double.infinity,
+                height: 1,)
+            ]
+        );
+      }
+      else {
+        return CircularProgressIndicator();
+      }
+    },);
+}
+
+
 
 Future loadMusic(String sound) async {
   if(sound=="fuck") {
@@ -57,33 +98,33 @@ Future<http.Response> ratePost(double rating, int id) {
 }
 
 // Will be used to make the post for the first time.
-Future<http.Response> createPost(int id, String imageID, String date,
-    String caption, List comments, int userID) {
+Future<http.Response> createPost(String postID, String image, String date,
+    String caption, String userID, String userName) {
   return http.post(
     'http://10.0.2.2:5000/insertPost',
     headers: <String, String>{
       'Content-Type': 'application/json',
     },
     body: jsonEncode({
-      'ID': id,
-      'UserID': userID,
-      'ImageID': imageID,
-      'Date': date,
-      'Caption': caption,
-      'Comments': comments,
-      'CumulativeRating': 0,
-      'NumRatings': 0
+      'postID': postID,
+      'userID': userID,
+      'userName': userName,
+      'image': image,
+      'date': date,
+      'caption': caption,
+      'cumulativeRating': 0,
+      'numRatings': 0
     }),
   );
 }
 
 // Will be used to get info about the post
-Future<Image> getPost(double id) async{
+Future<List> getPost(int id) async{
   http.Response res = await http.get('http://10.0.2.2:5000/getPostInfo/' + id.toString());
   Map info = jsonDecode(res.body.toString());
-  print(info["ImageID"]);
-  final decodedBytes = base64Decode(info["ImageID"]);
-  return Image.memory(decodedBytes);
+  final decodedBytes = base64Decode(info["image"]);
+  var ret = [Image.memory(decodedBytes), info["userName"], info["caption"]];
+  return ret;
 
   //DO THIS TO GET IMAGE
 
@@ -99,6 +140,13 @@ Future<Image> getPost(double id) async{
   // );
 }
 
+Future<List> getFeed(String userID, String date) async
+{
+  http.Response res = await http.get('http://10.0.2.2:5000/getFeed/' + userID + "/" + date);
+  return jsonDecode(res.body.toString())["postIDs"];
+}
+
+
 //final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
 class HomepageScreen extends StatefulWidget {
@@ -112,9 +160,7 @@ class HomepageScreen extends StatefulWidget {
 class _HomepageScreenState extends State<HomepageScreen>{
     var rating = 0.0;
     var postID = 0.0;
-    final List<String> entries = <String>['A', 'B', 'C', 'D', 'E'];
-    final List<int> colorCodes = <int>[600, 500, 400, 300, 200];
-
+    final List<int> postIDs = <int>[1, 2, 3, 4, 5, 6, 7, 8];
 
   @override
   Widget build(BuildContext context) {
@@ -136,17 +182,21 @@ class _HomepageScreenState extends State<HomepageScreen>{
         ],
       ),
       body: Center(
-        child: ListView.builder(
-            padding: const EdgeInsets.all(0),
-            itemCount: entries.length,
-            itemBuilder: (BuildContext context, int index) {
-              return Container(
-                height: 400,
-                color: Colors.amber[colorCodes[index]],
-                child: Center(child: Text('Entry ${entries[index]}')),
-              );
-            }
-        ),
+        child: FutureBuilder(
+            future: getFeed(currentUser.userID, "2020-10-28"),
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+               return  ListView.builder(
+                    padding: const EdgeInsets.all(0),
+                    itemCount: snapshot.data.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      return card(snapshot.data[index]);
+                    });
+              } else {
+                return CircularProgressIndicator();
+              }
+              },)
+
       ),
       bottomNavigationBar: BottomNavigationBar(
           onTap: (int index) {
