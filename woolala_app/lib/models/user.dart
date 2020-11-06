@@ -82,9 +82,7 @@ class User{
   Future<http.Response> setProfilePic(String pic)
   {
     profilePic = pic;
-    print("HREE");
     String request = 'http://10.0.2.2:5000/updateUserProfilePic/' + userID + '/' + profilePic ;
-    print("JACK FAG");
     return http.post(request, headers: <String, String>{'Content-Type': 'application/json',});
   }
 
