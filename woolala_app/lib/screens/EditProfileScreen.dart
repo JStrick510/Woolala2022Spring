@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:woolala_app/screens/login_screen.dart';
+import 'package:image_picker/image_picker.dart';
+import 'dart:io';
+import 'dart:convert';
 
 class EditProfilePage extends StatefulWidget{
   final String currentOnlineUserId;
@@ -18,6 +22,9 @@ class _EditProfilePageState extends State<EditProfilePage>{
   bool loading = false;
   bool _profileNameValid = true;
   bool _bioValid = true;
+  final picker = ImagePicker();
+  File _image;
+  String img64;
 
   void initState(){
     super.initState();
@@ -47,6 +54,7 @@ class _EditProfilePageState extends State<EditProfilePage>{
     {
       print("update user info on server");
       currentUser.setUserBio(bioController.text.trim());
+      currentUser.setProfileName(profileNameController.text.trim());
       SnackBar successSB = SnackBar(content: Text("Profile Updated Successfully"),);
       _scaffoldGlobalKey.currentState.showSnackBar(successSB);
     }
@@ -65,7 +73,7 @@ class _EditProfilePageState extends State<EditProfilePage>{
       appBar: AppBar(
         leading: BackButton(
             color: Colors.white,
-            onPressed: () => Navigator.pop(context),
+            onPressed: () => {Navigator.pushReplacementNamed(context, '/profile')},
         ),
         iconTheme: IconThemeData(color: Colors.blue),
         title: Text('Edit Profile', style: TextStyle(color: Colors.white),),
@@ -86,10 +94,13 @@ class _EditProfilePageState extends State<EditProfilePage>{
               children: <Widget>[
                 Padding(
                   padding: EdgeInsets.only(top: 16.0, bottom: 7.0),
-                  child: CircleAvatar(
-                    radius: 52.0,
-                    backgroundColor: Colors.transparent,
-                    backgroundImage: NetworkImage(currentUser.profilePic),
+                  child: Column(
+                    children: <Widget> [
+                      GestureDetector(
+                        onTap: () => {currentUser.setProfilePicFromGallery()},
+                        child: currentUser.createProfileAvatar()
+                      )
+                    ]
                   ),
                 ),
                 Padding(
@@ -170,6 +181,7 @@ class _EditProfilePageState extends State<EditProfilePage>{
       ],
     );
   }
+
 
 
 

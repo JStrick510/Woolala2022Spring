@@ -79,6 +79,14 @@ app.post("/updateUserProfileName/:id/:name", (request, response) => {
   });
 });
 
+app.post("/updateUserProfilePic/:id/:image64str", (request, response) => {
+  var newPic = { $set: {"profilePic": request.params.image64str} };
+  userCollection.updateOne({"userID":request.params.id}, newPic, function(err, res){
+    if (err) throw err;
+    response.send(res);
+  });
+});
+
 app.get("/getPostInfo/:id", (request, response) => {
     collection.findOne({"ID":parseInt(request.params.id)}, function(err, document) {
     console.log(document);

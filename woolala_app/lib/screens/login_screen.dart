@@ -133,9 +133,9 @@ class _LoginScreenState extends State<LoginScreen> {
       User u = User(
         googleID: gAccount.id,
         email: gAccount.email,
-        userName: gAccount.displayName,
+        userName: '@' + gAccount.displayName.replaceAll(new RegExp(r"\s+"), ""),
         profileName: gAccount.displayName,
-        profilePic: gAccount.photoUrl,
+        profilePic: 'default',
         bio: "This is my new Woolala Account!",
         userID: base64.encode(latin1.encode(gAccount.email)).toString(),
         numFollowers: 0,

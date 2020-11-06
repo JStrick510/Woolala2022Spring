@@ -16,6 +16,8 @@ import 'package:woolala_app/screens/post_screen.dart';
 import 'package:woolala_app/screens/profile_screen.dart';
 AudioPlayer advancedPlayer;
 
+String domain = "http://10.0.2.2:5000";
+
 Widget starSlider() => RatingBar(
       initialRating: 2.5,
       minRating: 0,
