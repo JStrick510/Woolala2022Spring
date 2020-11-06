@@ -1,16 +1,27 @@
+import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import 'dart:io';
+import 'package:image_picker/image_picker.dart';
+
 class User{
   final String userID;
-  final String profileName;
+  final picker = ImagePicker();
+  File _image;
+  String profileName;
   final String url;
   final String googleID;
   final String facebookID;
-  final String bio;
-  final String username;
-  final String profilePicURL;
+  String bio;
+  String userName;
+  String profilePic;
   final String email;
-  final int numPosts;
-  final int numFollowers;
-  final int numRated;
+  int numPosts;
+  int numFollowers;
+  int numRated;
+  List postIDs;
+  List following;
+
 
   User({
     this.userID,
@@ -19,12 +30,14 @@ class User{
     this.googleID,
     this.facebookID,
     this.bio,
-    this.username,
-    this.profilePicURL,
+    this.userName,
+    this.profilePic,
     this.email,
     this.numPosts,
     this.numFollowers,
-    this.numRated
+    this.numRated,
+    this.postIDs,
+    this.following
   });
 
   User.fromJSON(Map<String, dynamic> json)
@@ -34,12 +47,14 @@ class User{
         googleID = json['googleID'],
         facebookID = json['facebookID'],
         bio = json['bio'],
-        username = json['username'],
-        profilePicURL = json['profilePicURL'],
+        userName = json['userName'],
+        profilePic = json['profilePic'],
         email = json['email'],
         numPosts = json['numPosts'],
         numFollowers = json['numFollowers'],
-        numRated = json['numRated'];
+        numRated = json['numRated'],
+        following = json['following'],
+        postIDs = json['postIDs'];
 
   Map<String, dynamic> toJSON() =>
       {
@@ -49,14 +64,69 @@ class User{
           'googleID': googleID,
           'facebookID': facebookID,
           'bio': bio,
-          'username': username,
-          'profilePicURL': profilePicURL,
+          'userName': userName,
+          'profilePic': profilePic,
           'email': email,
           'numPosts' : numPosts,
           'numFollowers' : numFollowers,
-          'numRated': numRated
+          'numRated': numRated,
+          'following' : following,
+          'postIDs' : postIDs
       };
 
+  Future<http.Response> setProfileName(String p)
+  {
+    profileName = p;
+    String request = 'http://10.0.2.2:5000/updateUserProfileName/' + userID + '/' + profileName ;
+    return http.post(request, headers: <String, String>{'Content-Type': 'application/json',});
+  }
+
+    Future<http.Response> setUserBio(String b)
+    {
+      bio = b;
+      String request = 'http://10.0.2.2:5000/updateUserBio/' + userID + '/' + bio ;
+      return http.post(request, headers: <String, String>{'Content-Type': 'application/json',});
+    }
+
+  Future<http.Response> setProfilePic(String pic)
+  {
+    profilePic = pic;
+    String request = 'http://10.0.2.2:5000/updateUserProfilePic/' + userID + '/' + profilePic ;
+    return http.post(request, headers: <String, String>{'Content-Type': 'application/json',});
+  }
+
+      CircleAvatar createProfileAvatar({double radius = 60.0})
+      {
+        if(profilePic=="default")
+        {
+          return CircleAvatar(
+            radius: radius,
+            backgroundColor: Colors.red.shade800,
+            child: Text(profileName[0], style: TextStyle(fontSize: 64.0, color: Colors.white),),
+          );
+        }
+        else{
+          return CircleAvatar(
+              radius: radius,
+              backgroundImage: MemoryImage(base64Decode(profilePic)),
+          );
+        }
+      }
+
+      /*
+   setProfilePicFromGallery() async {
+    final pickedFile = await picker.getImage(source: ImageSource.gallery);
+      if (pickedFile != null) {
+        _image = File(pickedFile.path);
+        final bytes = _image.readAsBytesSync();
+        profilePic = base64Encode(bytes);
+      } else {
+        profilePic = "default";
+      }
+    setProfilePic(profilePic);
+
+  }
+*/
 
 }
 

@@ -133,13 +133,16 @@ class _LoginScreenState extends State<LoginScreen> {
       User u = User(
         googleID: gAccount.id,
         email: gAccount.email,
+        userName: '@' + gAccount.displayName.replaceAll(new RegExp(r"\s+"), ""),
         profileName: gAccount.displayName,
-        profilePicURL: gAccount.photoUrl,
+        profilePic: 'default',
         bio: "This is my new Woolala Account!",
         userID: base64.encode(latin1.encode(gAccount.email)).toString(),
         numFollowers: 0,
         numPosts: 0,
-        numRated: 0
+        numRated: 0,
+        postIDs: [],
+        following: [],
       );
       await insertUser(u);
       currentUser = u;

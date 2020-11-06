@@ -16,6 +16,7 @@ class ProfilePage extends StatefulWidget{
 class _ProfilePageState extends State<ProfilePage> {
   //the account we are currently logged into
   final String currentOnlineUserEmail = currentUser.email;
+  User profilePageOwner;
 
   createProfileTop() {
     return FutureBuilder(
@@ -29,36 +30,36 @@ class _ProfilePageState extends State<ProfilePage> {
             else
               print('Result: ${dataSnapshot.data}');
         }
-        //print(dataSnapshot);
+       // print(dataSnapshot);
         //print(dataSnapshot.data);
-        User profilePageOwner = dataSnapshot.data;
+        profilePageOwner = dataSnapshot.data;
         //eventually get this from the sign in
-        String profileName = profilePageOwner.profileName;
-        String userBio = profilePageOwner.bio;
-        int numberOfPosts = profilePageOwner.numPosts;
-        int numberOfFollowers = profilePageOwner.numFollowers;
-        int numberOfPostsRated =  profilePageOwner.numRated;
+        //String profilePic = profilePageOwner.profilePic;
+
         return Padding(
             padding: EdgeInsets.all(20.0),
               child: Column(
                 children: <Widget>[
-                  CircleAvatar(
-                    radius: 60.0,
-                    backgroundColor: Colors.transparent,
-                    backgroundImage: NetworkImage(profilePageOwner.profilePicURL)
-                ),
+                  profilePageOwner.createProfileAvatar(),
                   Container(
                     alignment: Alignment.center,
                     padding: EdgeInsets.only(top: 5.0),
                     child: Text(
-                      profileName, style: TextStyle(fontSize: 32.0, color: Colors.black, fontWeight: FontWeight.bold),
+                      profilePageOwner.profileName, style: TextStyle(fontSize: 32.0, color: Colors.black, fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                  Container(
+                    alignment: Alignment.center,
+                    padding: EdgeInsets.only(top: 1.0),
+                    child: Text(
+                      profilePageOwner.userName, style: TextStyle(fontSize: 16.0, color: Colors.black38),
                     ),
                   ),
                   Container(
                     alignment: Alignment.center,
                     padding: EdgeInsets.only(top: 3.0),
                     child: Text(
-                      userBio, style: TextStyle(fontSize: 14.0, color: Colors.black38, fontWeight: FontWeight.w600),
+                      profilePageOwner.bio, style: TextStyle(fontSize: 20.0, color: Colors.black54, fontWeight: FontWeight.w600),
                     ),
                   ),
                   Row(
@@ -73,9 +74,9 @@ class _ProfilePageState extends State<ProfilePage> {
                                 mainAxisSize: MainAxisSize.max,
                                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                 children: <Widget>[
-                                  createColumns("Posts", numberOfPosts),
-                                  createColumns("Followers", numberOfFollowers),
-                                  createColumns("Ratings", numberOfPostsRated),
+                                  createColumns("Posts", profilePageOwner.numPosts),
+                                  createColumns("Followers", profilePageOwner.numFollowers),
+                                  createColumns("Ratings", profilePageOwner.numRated),
                                 ],
                               ),
                             ),
@@ -97,6 +98,8 @@ class _ProfilePageState extends State<ProfilePage> {
       },
     );
   }
+
+
 
   Column createColumns(String title, int count){
     return Column(
@@ -152,7 +155,6 @@ class _ProfilePageState extends State<ProfilePage> {
   
   editUserProfile() {
     Navigator.pushReplacementNamed(context, '/editProfile');
-    
   }
 
   @override
