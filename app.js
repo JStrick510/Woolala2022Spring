@@ -8,6 +8,8 @@ const DATABASE_NAME = "Feed";
 
 
 var app = Express();
+app.use(Express.json({limit: '50mb'}));
+app.use(Express.urlencoded({limit: '50mb'}));
 app.use(BodyParser.json());
 app.use(BodyParser.urlencoded({ extended: true }));
 var database, collection;
@@ -83,6 +85,7 @@ app.post("/updateUserProfilePic/:id/:image64str", (request, response) => {
   var newPic = { $set: {"profilePic": request.params.image64str} };
   userCollection.updateOne({"userID":request.params.id}, newPic, function(err, res){
     if (err) throw err;
+    console.log("Profie Picture changed!");
     response.send(res);
   });
 });

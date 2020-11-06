@@ -97,7 +97,7 @@ class _EditProfilePageState extends State<EditProfilePage>{
                   child: Column(
                     children: <Widget> [
                       GestureDetector(
-                        onTap: () => {currentUser.setProfilePicFromGallery()},
+                        onTap: () => {currentUser.setProfilePicFromGallery(), Navigator.pushReplacementNamed(context, '/editProfile')},
                         child: currentUser.createProfileAvatar()
                       )
                     ]

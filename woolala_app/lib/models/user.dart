@@ -7,7 +7,7 @@ import 'package:image_picker/image_picker.dart';
 class User{
   final String userID;
   final picker = ImagePicker();
-  File _image = null;
+  File _image;
   String profileName;
   final String url;
   final String googleID;
@@ -114,6 +114,7 @@ class User{
         profilePic = "default";
       }
     setProfilePic(profilePic);
+
   }
 
 
