@@ -38,6 +38,8 @@ class _ProfilePageState extends State<ProfilePage> {
         int numberOfPosts = profilePageOwner.numPosts;
         int numberOfFollowers = profilePageOwner.numFollowers;
         int numberOfPostsRated =  profilePageOwner.numRated;
+        String profilePic = profilePageOwner.profilePic;
+
         return Padding(
             padding: EdgeInsets.all(20.0),
               child: Column(
@@ -45,7 +47,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   CircleAvatar(
                     radius: 60.0,
                     backgroundColor: Colors.transparent,
-                    backgroundImage: NetworkImage(profilePageOwner.profilePicURL)
+                    backgroundImage: NetworkImage(profilePic)
                 ),
                   Container(
                     alignment: Alignment.center,
@@ -73,9 +75,9 @@ class _ProfilePageState extends State<ProfilePage> {
                                 mainAxisSize: MainAxisSize.max,
                                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                 children: <Widget>[
-                                  createColumns("Posts", numberOfPosts),
-                                  createColumns("Followers", numberOfFollowers),
-                                  createColumns("Ratings", numberOfPostsRated),
+                                  createColumns("Posts", profilePageOwner.numPosts),
+                                  createColumns("Followers", profilePageOwner.numFollowers),
+                                  createColumns("Ratings", profilePageOwner.numRated),
                                 ],
                               ),
                             ),
@@ -151,7 +153,6 @@ class _ProfilePageState extends State<ProfilePage> {
   
   editUserProfile() {
     Navigator.pushReplacementNamed(context, '/editProfile');
-    
   }
 
   @override

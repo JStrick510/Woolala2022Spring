@@ -61,6 +61,23 @@ app.post("/ratePost/:id/:rating", (request, response) => {
   });
 });
 
+app.post("/updateUserBio/:id/:bio", (request, response) => {
+  var newBio = { $set: {"bio": request.params.bio} };
+  userCollection.updateOne({"userID":request.params.id}, newBio, function(err, res){
+    if (err) throw err;
+    console.log("USER: " + request.params.id + "\nNew Bio: " + request.params.bio);
+    response.send(res);
+  });
+});
+
+app.post("/updateUserProfileName/:id/:name", (request, response) => {
+  var newName = { $set: {"profileName": request.params.name} };
+  userCollection.updateOne({"userID":request.params.id}, newName, function(err, res){
+    if (err) throw err;
+    console.log("USER: " + request.params.id + "\nNew Name: " + request.params.bio);
+    response.send(res);
+  });
+});
 
 app.get("/getPostInfo/:id", (request, response) => {
     collection.findOne({"ID":parseInt(request.params.id)}, function(err, document) {

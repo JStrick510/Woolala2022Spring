@@ -46,7 +46,7 @@ class _EditProfilePageState extends State<EditProfilePage>{
     if(_bioValid && _profileNameValid)
     {
       print("update user info on server");
-
+      currentUser.setUserBio(bioController.text.trim());
       SnackBar successSB = SnackBar(content: Text("Profile Updated Successfully"),);
       _scaffoldGlobalKey.currentState.showSnackBar(successSB);
     }
@@ -65,14 +65,17 @@ class _EditProfilePageState extends State<EditProfilePage>{
       appBar: AppBar(
         leading: BackButton(
             color: Colors.white,
-            onPressed: () => (Navigator.pushReplacementNamed(context, '/profile'))
+            onPressed: () => Navigator.pop(context),
         ),
         iconTheme: IconThemeData(color: Colors.blue),
         title: Text('Edit Profile', style: TextStyle(color: Colors.white),),
         actions: <Widget>[
           IconButton(
             icon: Icon(Icons.done, color: Colors.white, size: 30.0,),
-            onPressed: () => Navigator.pushReplacementNamed(context, '/profile'),
+            onPressed: () => {
+              updateUserInfo(),
+              Navigator.pushReplacementNamed(context, '/profile'),
+              },
           )
         ],
       ),
@@ -86,7 +89,7 @@ class _EditProfilePageState extends State<EditProfilePage>{
                   child: CircleAvatar(
                     radius: 52.0,
                     backgroundColor: Colors.transparent,
-                    backgroundImage: NetworkImage(currentUser.profilePicURL),
+                    backgroundImage: NetworkImage(currentUser.profilePic),
                   ),
                 ),
                 Padding(
@@ -96,14 +99,6 @@ class _EditProfilePageState extends State<EditProfilePage>{
                       createProfileNameTextFormField(),
                       createBioTextFormField(),
                     ],
-                  ),
-                ),
-                Padding(
-                  padding: EdgeInsets.only(top: 29.0,left: 50.0, right: 50.0),
-                  child: RaisedButton(
-                    onPressed: updateUserInfo,
-                    child: Text("Update", style: TextStyle(color: Colors.white),
-                    ),
                   ),
                 ),
               ],

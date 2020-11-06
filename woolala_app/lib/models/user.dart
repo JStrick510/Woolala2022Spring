@@ -1,16 +1,19 @@
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+
 class User{
   final String userID;
-  final String profileName;
+  String profileName;
   final String url;
   final String googleID;
   final String facebookID;
-  final String bio;
-  final String username;
-  final String profilePicURL;
+  String bio;
+  String userName;
+  String profilePic;
   final String email;
-  final int numPosts;
-  final int numFollowers;
-  final int numRated;
+  int numPosts;
+  int numFollowers;
+  int numRated;
 
   User({
     this.userID,
@@ -19,8 +22,8 @@ class User{
     this.googleID,
     this.facebookID,
     this.bio,
-    this.username,
-    this.profilePicURL,
+    this.userName,
+    this.profilePic,
     this.email,
     this.numPosts,
     this.numFollowers,
@@ -34,8 +37,8 @@ class User{
         googleID = json['googleID'],
         facebookID = json['facebookID'],
         bio = json['bio'],
-        username = json['username'],
-        profilePicURL = json['profilePicURL'],
+        userName = json['userName'],
+        profilePic = json['profilePic'],
         email = json['email'],
         numPosts = json['numPosts'],
         numFollowers = json['numFollowers'],
@@ -49,13 +52,21 @@ class User{
           'googleID': googleID,
           'facebookID': facebookID,
           'bio': bio,
-          'username': username,
-          'profilePicURL': profilePicURL,
+          'userName': userName,
+          'profilePic': profilePic,
           'email': email,
           'numPosts' : numPosts,
           'numFollowers' : numFollowers,
           'numRated': numRated
       };
+
+
+    Future<http.Response> setUserBio(String b)
+    {
+      String request = 'http://10.0.2.2:5000/updateUserBio/' + userID + '/' + b ;
+      return http.post(request, headers: <String, String>{'Content-Type': 'application/json',});
+    }
+
 
 
 }
