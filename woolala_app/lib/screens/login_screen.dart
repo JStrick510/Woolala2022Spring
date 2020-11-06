@@ -141,6 +141,8 @@ class _LoginScreenState extends State<LoginScreen> {
         numFollowers: 0,
         numPosts: 0,
         numRated: 0,
+        postIDs: [],
+        following: [],
       );
       await insertUser(u);
       currentUser = u;
