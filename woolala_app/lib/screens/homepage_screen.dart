@@ -188,7 +188,7 @@ class _HomepageScreenState extends State<HomepageScreen>{
   void _onRefresh() async{
     postIDs = await getFeed(currentUser.userID);
     sortPosts(postIDs);
-    //numToShow = 2;
+    print(postIDs);
     // if failed,use refreshFailed()
     if(mounted)
       setState(() {});
