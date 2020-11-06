@@ -19,6 +19,7 @@ class _ProfilePageState extends State<ProfilePage> {
   User profilePageOwner;
 
   createProfileTop() {
+    setState(() {});
     return FutureBuilder(
       future: getDoesUserExists(widget.userProfileEmail),
       builder: (context, dataSnapshot) {

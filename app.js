@@ -112,6 +112,14 @@ app.get("/doesUserExist/:email", (request, response) => {
     });
 });
 
+app.get("/getUser/:userID", (request, response) => {
+    userCollection.findOne({"userID":request.params.userID}, function(err, document) {
+      if(document)
+        console.log("Found user!");
+        response.send(document);
+    });
+});
+
 
 app.get("/getFeed/:userID", (request, response) => {
       console.log('Feed requested for user ' + request.params.userID + " date: " + request.params.date);

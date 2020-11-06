@@ -60,6 +60,7 @@ Widget card(String postID)
                   width: double.infinity,
                   height: 35.0,
                   child: Row(children: <Widget>[
+
                     Padding(padding: EdgeInsets.all(5), child: Text(snapshot.data[1], textAlign: TextAlign.left, style: TextStyle(color: Colors.black, fontSize: 16))),
                     Align(alignment: Alignment.centerRight, child: Icon(Icons.more_vert))
                   ])
