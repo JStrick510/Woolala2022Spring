@@ -180,13 +180,18 @@ class _HomepageScreenState extends State<HomepageScreen>{
 
   void sortPosts(list)
   {
+    list.removeWhere((item) => item == "");
     list.sort((a, b) => int.parse(b.substring(b.indexOf(':::')+3)) - int.parse(a.substring(a.indexOf(':::')+3)));
   }
 
 
   void _onRefresh() async{
     postIDs = await getFeed(currentUser.userID);
+    sortPosts(postIDs);
+    //numToShow = 2;
     // if failed,use refreshFailed()
+    if(mounted)
+      setState(() {});
     _refreshController.refreshCompleted();
   }
 
@@ -212,7 +217,9 @@ class _HomepageScreenState extends State<HomepageScreen>{
     super.initState();
     getFeed(currentUser.userID).then((list) {
       postIDs = list;
+      print(postIDs);
       sortPosts(postIDs);
+      print(postIDs);
       setState(() {});
     }
     );
