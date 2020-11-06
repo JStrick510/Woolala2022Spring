@@ -35,6 +35,12 @@ app.post("/insertPost", (request, response) => {
         }
         response.send(result.result);
     });
+    var userID = request.body.userID;
+    var postID = request.body.postID;
+    var newVal = { $push: { postIDs: postID }};
+    userCollection.updateOne({"userID":userID}, newVal, function(err, res) {
+      console.log("Post Added");
+    });
 });
 
 //create a user
@@ -48,13 +54,13 @@ app.post("/insertUser", (request, response) => {
 });
 
 app.post("/ratePost/:id/:rating", (request, response) => {
-  collection.findOne({"postID":parseInt(request.params.id)}, function(err, document) {
+  collection.findOne({"postID":request.params.id}, function(err, document) {
   var newNumRatings = 1 + document.numRatings;
   var newCumulativeRating = parseInt(request.params.rating) + document.cumulativeRating;
   console.log(newNumRatings);
   console.log(newCumulativeRating);
   var newvalues = { $set: {numRatings: newNumRatings, cumulativeRating: newCumulativeRating } };
-  collection.updateOne({"postID":parseInt(request.params.id)}, newvalues, function(err, res) {
+  collection.updateOne({"postID":request.params.id}, newvalues, function(err, res) {
 
   console.log("1 document updated");
     });
@@ -63,7 +69,7 @@ app.post("/ratePost/:id/:rating", (request, response) => {
 
 
 app.get("/getPostInfo/:id", (request, response) => {
-    collection.findOne({"postID":parseInt(request.params.id)}, function(err, document) {
+    collection.findOne({"postID":request.params.id}, function(err, document) {
     response.send(document);
     });
 });
@@ -78,7 +84,7 @@ app.get("/doesUserExist/:email", (request, response) => {
 });
 
 
-app.get("/getFeed/:userID/:date", (request, response) => {
+app.get("/getFeed/:userID", (request, response) => {
       console.log('Feed requested for user ' + request.params.userID + " date: " + request.params.date);
 
       var postIDs = [];
