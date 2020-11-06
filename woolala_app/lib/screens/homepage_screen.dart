@@ -158,9 +158,7 @@ class HomepageScreen extends StatefulWidget {
 }
 
 class _HomepageScreenState extends State<HomepageScreen>{
-    var rating = 0.0;
-    var postID = 0.0;
-    final List<int> postIDs = <int>[1, 2, 3, 4, 5, 6, 7, 8];
+
 
   @override
   Widget build(BuildContext context) {
