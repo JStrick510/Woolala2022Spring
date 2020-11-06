@@ -12,6 +12,15 @@ import 'package:image_picker/image_picker.dart';
 import 'package:woolala_app/screens/homepage_screen.dart';
 import 'package:intl/intl.dart';
 
+
+String getNewID()
+{
+  final DateTime timeID = DateTime.now().toLocal();
+  final DateFormat formatterID = DateFormat('yyyyMMddHHmm');
+  return formatterID.format(timeID);
+}
+
+
 class PostScreen extends StatefulWidget {
   PostScreen();
 
@@ -28,6 +37,8 @@ class _PostScreenState extends State<PostScreen> {
   static final DateTime now = DateTime.now().toLocal();
   static final DateFormat formatter = DateFormat('yyyy-MM-dd');
   final String date = formatter.format(now);
+
+
 
   @override
   initState() {
@@ -77,7 +88,7 @@ class _PostScreenState extends State<PostScreen> {
             FloatingActionButton(
               child: Icon(Icons.check),
               onPressed: () => {
-                createPost(123, img64, date, _text, null, 123),
+                createPost(currentUser.userID + ":::" + getNewID() , img64, date, _text, currentUser.userID, currentUser.profileName),
                 Navigator.pushReplacementNamed(context, '/home')
               },
             ),

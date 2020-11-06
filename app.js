@@ -8,8 +8,11 @@ const DATABASE_NAME = "Feed";
 
 
 var app = Express();
+app.use(Express.json({limit: '50mb'}));
+app.use(Express.urlencoded({limit: '50mb'}));
 app.use(BodyParser.json());
 app.use(BodyParser.urlencoded({ extended: true }));
+
 var database, collection;
 
 app.listen(5000, () => {
@@ -45,26 +48,22 @@ app.post("/insertUser", (request, response) => {
 });
 
 app.post("/ratePost/:id/:rating", (request, response) => {
-  collection.findOne({"ID":parseInt(request.params.id)}, function(err, document) {
-  var newNumRatings = 1 + document.NumRatings;
-  var newCumulativeRating = parseInt(request.params.rating) + document.CumulativeRating;
+  collection.findOne({"postID":parseInt(request.params.id)}, function(err, document) {
+  var newNumRatings = 1 + document.numRatings;
+  var newCumulativeRating = parseInt(request.params.rating) + document.cumulativeRating;
   console.log(newNumRatings);
   console.log(newCumulativeRating);
-  var newvalues = { $set: {NumRatings: newNumRatings, CumulativeRating: newCumulativeRating } };
-  collection.updateOne({"ID":parseInt(request.params.id)}, newvalues, function(err, res) {
-    if (err) throw err;
-    console.log("1 document updated");
-    //db.close();
-  });
+  var newvalues = { $set: {numRatings: newNumRatings, cumulativeRating: newCumulativeRating } };
+  collection.updateOne({"postID":parseInt(request.params.id)}, newvalues, function(err, res) {
 
-  //response.send(document);
+  console.log("1 document updated");
+    });
   });
 });
 
 
 app.get("/getPostInfo/:id", (request, response) => {
-    collection.findOne({"ID":parseInt(request.params.id)}, function(err, document) {
-    console.log(document);
+    collection.findOne({"postID":parseInt(request.params.id)}, function(err, document) {
     response.send(document);
     });
 });
@@ -76,4 +75,27 @@ app.get("/doesUserExist/:email", (request, response) => {
         response.send(document);
 
     });
+});
+
+
+app.get("/getFeed/:userID/:date", (request, response) => {
+      console.log('Feed requested for user ' + request.params.userID + " date: " + request.params.date);
+
+      var postIDs = [];
+      userCollection.findOne({"userID":request.params.userID}, function(err, document) {
+        if(document)
+        {
+          var following = document.following;
+          userCollection.find({"userID": {$in: following}}).toArray(function(err, results)
+          {
+              for(var i = 0; i < results.length; i++)
+              {
+                postIDs.push(...results[i].postIDs);
+              }
+              console.log(postIDs);
+              response.send({"postIDs":postIDs});
+          });
+        }
+      });
+
 });
