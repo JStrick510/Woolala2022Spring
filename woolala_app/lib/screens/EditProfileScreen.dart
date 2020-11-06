@@ -109,6 +109,17 @@ class _EditProfilePageState extends State<EditProfilePage>{
                     children: <Widget>[
                       createProfileNameTextFormField(),
                       createBioTextFormField(),
+                      Switch(
+                        value: currentUser.private,
+                        onChanged: (value){
+                          setState(() {
+                            currentUser.private =value;
+                            print(currentUser.private);
+                          });
+                        },
+                        activeTrackColor: Colors.lightGreenAccent,
+                        activeColor: Colors.green,
+                      ),
                     ],
                   ),
                 ),
