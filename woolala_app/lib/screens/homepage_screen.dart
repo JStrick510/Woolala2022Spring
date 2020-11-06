@@ -10,6 +10,8 @@ import 'dart:io' as Io;
 import 'package:audioplayers/audio_cache.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'dart:collection';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
+
 
 
 import 'dart:io';
@@ -21,7 +23,9 @@ AudioPlayer advancedPlayer;
 
 String domain = "http://10.0.2.2:5000";
 
-Widget starSlider(int postID) => RatingBar(
+
+
+Widget starSlider(String postID) => RatingBar(
       initialRating: 2.5,
       minRating: 0,
       direction: Axis.horizontal,
@@ -42,7 +46,7 @@ Widget starSlider(int postID) => RatingBar(
       },
     );
 
-Widget card(int postID)
+Widget card(String postID)
 {
   return FutureBuilder(
     future: getPost(postID),
@@ -72,7 +76,15 @@ Widget card(int postID)
         );
       }
       else {
-        return CircularProgressIndicator();
+
+        // Returning the progress indicator would be nice in case load times are slow
+        // but it makes scrolling/loading new posts very laggy and ugly so for now
+        // a container that is roughly the average height of the pictures is used.
+
+        //return CircularProgressIndicator();
+        // return Container(  width: double.infinity,
+        //   height: 10);
+        return Placeholder();
       }
     },);
 }
@@ -89,7 +101,7 @@ Future loadMusic(String sound) async {
    }
 }
 // Will be used anytime the post is rated
-Future<http.Response> ratePost(double rating, int id) {
+Future<http.Response> ratePost(double rating, String id) {
   return http.post(domain + '/ratePost/' + id.toString() + '/' + rating.toString(),
     headers: <String, String>{
       'Content-Type': 'application/json',
@@ -119,8 +131,8 @@ Future<http.Response> createPost(String postID, String image, String date,
 }
 
 // Will be used to get info about the post
-Future<List> getPost(int id) async{
-  http.Response res = await http.get(domain + '/getPostInfo/' + id.toString());
+Future<List> getPost(String id) async{
+  http.Response res = await http.get(domain + '/getPostInfo/' + id);
   Map info = jsonDecode(res.body.toString());
   final decodedBytes = base64Decode(info["image"]);
   var ret = [Image.memory(decodedBytes), info["userName"], info["caption"]];
@@ -140,9 +152,11 @@ Future<List> getPost(int id) async{
   // );
 }
 
-Future<List> getFeed(String userID, String date) async
+
+
+Future<List> getFeed(String userID) async
 {
-  http.Response res = await http.get(domain + '/getFeed/' + userID + "/" + date);
+  http.Response res = await http.get(domain + '/getFeed/' + userID);
   return jsonDecode(res.body.toString())["postIDs"];
 }
 
@@ -158,7 +172,52 @@ class HomepageScreen extends StatefulWidget {
 }
 
 class _HomepageScreenState extends State<HomepageScreen>{
+  RefreshController _refreshController = RefreshController(initialRefresh: false);
 
+  List postIDs = [];
+  int numToShow = 2;
+  int postsPerReload = 2;
+
+  void sortPosts(list)
+  {
+    list.sort((a, b) => int.parse(b.substring(b.indexOf(':::')+3)) - int.parse(a.substring(a.indexOf(':::')+3)));
+  }
+
+
+  void _onRefresh() async{
+    postIDs = await getFeed(currentUser.userID);
+    // if failed,use refreshFailed()
+    _refreshController.refreshCompleted();
+  }
+
+  void _onLoading() async{
+    await Future.delayed(Duration(milliseconds: 1000));
+    if (numToShow + postsPerReload > postIDs.length)
+      {
+        numToShow = postIDs.length;
+      }
+    else
+      {
+        numToShow += postsPerReload;
+      }
+
+    // if failed,use loadFailed(),if no data return,use LoadNodata()
+    if(mounted)
+      setState(() {});
+    _refreshController.loadComplete();
+  }
+
+  @override
+  initState() {
+    super.initState();
+    getFeed(currentUser.userID).then((list) {
+      postIDs = list;
+      sortPosts(postIDs);
+      setState(() {});
+    }
+    );
+
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -180,20 +239,31 @@ class _HomepageScreenState extends State<HomepageScreen>{
         ],
       ),
       body: Center(
-        child: FutureBuilder(
-            future: getFeed(currentUser.userID, "2020-10-28"),
-            builder: (context, snapshot) {
-              if (snapshot.hasData) {
-               return  ListView.builder(
-                    padding: const EdgeInsets.all(0),
-                    itemCount: snapshot.data.length,
-                    itemBuilder: (BuildContext context, int index) {
-                      return card(snapshot.data[index]);
-                    });
-              } else {
-                return CircularProgressIndicator();
-              }
-              },)
+        child:
+              postIDs.length > 0 ?
+                SmartRefresher(
+                 enablePullDown: true,
+                 enablePullUp: true,
+                 header: ClassicHeader (),
+                 footer: ClassicFooter(),
+                 controller: _refreshController,
+                 onRefresh: _onRefresh,
+                 onLoading: _onLoading,
+                 child: ListView.builder(
+                     padding: const EdgeInsets.all(0),
+                     itemCount: numToShow,
+                     addAutomaticKeepAlives: true,
+                     physics: const AlwaysScrollableScrollPhysics (),
+                     itemBuilder: (BuildContext context, int index) {
+                       return card(postIDs[index]);
+                     }),
+               )
+
+              :
+
+          CircularProgressIndicator(),
+
+
 
       ),
       bottomNavigationBar: BottomNavigationBar(
@@ -246,3 +316,11 @@ class _HomepageScreenState extends State<HomepageScreen>{
     }
   }
 }
+
+
+// ListView.builder(
+// padding: const EdgeInsets.all(0),
+// itemCount: snapshot.data.length,
+// itemBuilder: (BuildContext context, int index) {
+// return card(snapshot.data[index]);
+// });
