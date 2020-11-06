@@ -97,7 +97,7 @@ class _EditProfilePageState extends State<EditProfilePage>{
                   child: Column(
                     children: <Widget> [
                       GestureDetector(
-                        onTap: () => {currentUser.setProfilePicFromGallery(), Navigator.pushReplacementNamed(context, '/editProfile')},
+                        onTap: () => {changeProfilePic()},
                         child: currentUser.createProfileAvatar()
                       )
                     ]
@@ -182,7 +182,20 @@ class _EditProfilePageState extends State<EditProfilePage>{
     );
   }
 
+  changeProfilePic() async{
+   //currentUser.setProfilePicFromGallery();
+    final pickedFile = await picker.getImage(source: ImageSource.gallery);
+    if (pickedFile != null) {
+      _image = File(pickedFile.path);
+      final bytes = _image.readAsBytesSync();
+      img64 = base64Encode(bytes);
+    } else {
+      img64 = "default";
+    }
+    print(img64.length);
+    currentUser.setProfilePic(img64);
 
+  }
 
 
 
