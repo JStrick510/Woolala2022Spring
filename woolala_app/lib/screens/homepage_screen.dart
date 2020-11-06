@@ -19,6 +19,8 @@ import 'package:woolala_app/screens/post_screen.dart';
 import 'package:woolala_app/screens/profile_screen.dart';
 AudioPlayer advancedPlayer;
 
+String domain = "http://10.0.2.2:5000";
+
 Widget starSlider(int postID) => RatingBar(
       initialRating: 2.5,
       minRating: 0,
@@ -88,8 +90,7 @@ Future loadMusic(String sound) async {
 }
 // Will be used anytime the post is rated
 Future<http.Response> ratePost(double rating, int id) {
-  return http.post(
-    'http://10.0.2.2:5000/ratePost/' + id.toString() + '/' + rating.toString(),
+  return http.post(domain + '/ratePost/' + id.toString() + '/' + rating.toString(),
     headers: <String, String>{
       'Content-Type': 'application/json',
     },
@@ -100,8 +101,7 @@ Future<http.Response> ratePost(double rating, int id) {
 // Will be used to make the post for the first time.
 Future<http.Response> createPost(String postID, String image, String date,
     String caption, String userID, String userName) {
-  return http.post(
-    'http://10.0.2.2:5000/insertPost',
+  return http.post(domain + '/insertPost',
     headers: <String, String>{
       'Content-Type': 'application/json',
     },
@@ -120,7 +120,7 @@ Future<http.Response> createPost(String postID, String image, String date,
 
 // Will be used to get info about the post
 Future<List> getPost(int id) async{
-  http.Response res = await http.get('http://10.0.2.2:5000/getPostInfo/' + id.toString());
+  http.Response res = await http.get(domain + '/getPostInfo/' + id.toString());
   Map info = jsonDecode(res.body.toString());
   final decodedBytes = base64Decode(info["image"]);
   var ret = [Image.memory(decodedBytes), info["userName"], info["caption"]];
@@ -142,7 +142,7 @@ Future<List> getPost(int id) async{
 
 Future<List> getFeed(String userID, String date) async
 {
-  http.Response res = await http.get('http://10.0.2.2:5000/getFeed/' + userID + "/" + date);
+  http.Response res = await http.get(domain + '/getFeed/' + userID + "/" + date);
   return jsonDecode(res.body.toString())["postIDs"];
 }
 
