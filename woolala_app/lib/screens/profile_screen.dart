@@ -1,50 +1,66 @@
 import 'package:flutter/material.dart';
 import 'package:woolala_app/screens/homepage_screen.dart';
 import 'package:woolala_app/main.dart';
+import 'package:woolala_app/screens/login_screen.dart';
+import 'package:woolala_app/models/user.dart';
+//import 'package:cached_network_image/cached_network_image.dart';
 
 class ProfilePage extends StatefulWidget{
   //the id of this profile
-  final String userProfileID;
-  ProfilePage(this.userProfileID);
+  final String userProfileEmail;
+  ProfilePage(this.userProfileEmail);
   @override
   _ProfilePageState createState() => _ProfilePageState();
 }
 
 class _ProfilePageState extends State<ProfilePage> {
   //the account we are currently logged into
-  final String currentOnlineUserId = "The Juice";
+  final String currentOnlineUserEmail = currentUser.email;
+  User profilePageOwner;
 
   createProfileTop() {
+    setState(() {});
     return FutureBuilder(
-      builder: (context, snapshot) {
-        if(!snapshot.hasData)
-          {
-            print('no profile info found');
-          }
+      future: getDoesUserExists(widget.userProfileEmail),
+      builder: (context, dataSnapshot) {
+        switch (dataSnapshot.connectionState) {
+          case ConnectionState.waiting: return Text('Loading....');
+          default:
+            if (dataSnapshot.hasError)
+              return Text('Error: ${dataSnapshot.error}');
+            else
+              print('Result: ${dataSnapshot.data}');
+        }
+       // print(dataSnapshot);
+        //print(dataSnapshot.data);
+        profilePageOwner = dataSnapshot.data;
         //eventually get this from the sign in
-          String user = currentOnlineUserId;
-        String userBio = 'One sexxxy mofo, straight up.';
+        //String profilePic = profilePageOwner.profilePic;
+
         return Padding(
             padding: EdgeInsets.all(20.0),
               child: Column(
                 children: <Widget>[
-                  CircleAvatar(
-                    radius: 60.0,
-                    backgroundColor: Colors.grey,
-                    backgroundImage: AssetImage('assets/Icons/profile_temp_icon.jpg'),
-                  ),
+                  profilePageOwner.createProfileAvatar(),
                   Container(
                     alignment: Alignment.center,
                     padding: EdgeInsets.only(top: 5.0),
                     child: Text(
-                      user, style: TextStyle(fontSize: 32.0, color: Colors.black, fontWeight: FontWeight.bold),
+                      profilePageOwner.profileName, style: TextStyle(fontSize: 32.0, color: Colors.black, fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                  Container(
+                    alignment: Alignment.center,
+                    padding: EdgeInsets.only(top: 1.0),
+                    child: Text(
+                      profilePageOwner.userName, style: TextStyle(fontSize: 16.0, color: Colors.black38),
                     ),
                   ),
                   Container(
                     alignment: Alignment.center,
                     padding: EdgeInsets.only(top: 3.0),
                     child: Text(
-                      userBio, style: TextStyle(fontSize: 14.0, color: Colors.black38, fontWeight: FontWeight.w600),
+                      profilePageOwner.bio, style: TextStyle(fontSize: 20.0, color: Colors.black54, fontWeight: FontWeight.w600),
                     ),
                   ),
                   Row(
@@ -59,9 +75,9 @@ class _ProfilePageState extends State<ProfilePage> {
                                 mainAxisSize: MainAxisSize.max,
                                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                 children: <Widget>[
-                                  createColumns("Posts", 0),
-                                  createColumns("Followers", 0),
-                                  createColumns("Ratings", 3),
+                                  createColumns("Posts", profilePageOwner.numPosts),
+                                  createColumns("Followers", profilePageOwner.numFollowers),
+                                  createColumns("Ratings", profilePageOwner.numRated),
                                 ],
                               ),
                             ),
@@ -84,6 +100,8 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
+
+
   Column createColumns(String title, int count){
     return Column(
       mainAxisSize: MainAxisSize.max,
@@ -105,13 +123,13 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   createButton(){
-    bool ownProfile = currentOnlineUserId == widget.userProfileID;
+    bool ownProfile = currentOnlineUserEmail == widget.userProfileEmail;
     if(ownProfile)
     {
       return createButtonTitleAndFunction(title: 'Edit Profile', performFunction: editUserProfile,);
     }
     else{
-
+      return createButtonTitleAndFunction(title: 'Follow',);
     }
   }
 
@@ -120,6 +138,7 @@ class _ProfilePageState extends State<ProfilePage> {
     padding: EdgeInsets.only(top: 3.0),
     child: FlatButton(
       onPressed: performFunction,
+      key: ValueKey(title),
       child: Container(
         width: 280.0,
         height: 35.0,
@@ -137,7 +156,6 @@ class _ProfilePageState extends State<ProfilePage> {
   
   editUserProfile() {
     Navigator.pushReplacementNamed(context, '/editProfile');
-    
   }
 
   @override

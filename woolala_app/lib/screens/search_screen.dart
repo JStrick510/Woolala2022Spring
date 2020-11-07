@@ -23,7 +23,8 @@ class _SearchPageState extends State<SearchPage> {
     await db.open();
     var coll = db.collection('Users');
     List tempList = new List();
-    tempList = await coll.find(mongo.where.sortBy('name')).toList();
+    tempList = await coll.find(mongo.where.sortBy('profileName')).toList();
+    //print(tempList);
     db.close();
 
     setState(() {
@@ -70,20 +71,21 @@ class _SearchPageState extends State<SearchPage> {
     if (!(_searchText.isEmpty)) {
       List tempList = new List();
       for (int i = 0; i < filteredResults.length; i++) {
-        if (filteredResults[i]['name'].toLowerCase().contains(_searchText.toLowerCase())) {
+        if (filteredResults[i]['profileName'].toLowerCase().contains(_searchText.toLowerCase())) {
           tempList.add(filteredResults[i]);
         }
       }
       filteredResults = tempList;
     }
     return ListView.builder(
+      key: ValueKey("ListView"),
       scrollDirection: Axis.vertical,
       shrinkWrap: true,
       itemCount: results == null ? 0 : filteredResults.length,
       itemBuilder: (BuildContext context, int index) {
         return new ListTile(
-          title: Text(filteredResults[index]['name']),
-          onTap: () => print(filteredResults[index]['name']),
+          title: Text(filteredResults[index]['profileName']),
+          onTap: () => print(filteredResults[index]['profileName']),
         );
       },
     );
@@ -103,6 +105,7 @@ class _SearchPageState extends State<SearchPage> {
             actions: <Widget>[
               IconButton(
                 icon: _searchIcon,
+                key: ValueKey("Search Icon"),
                 onPressed: (){_searchPressed();},
               )
             ]
