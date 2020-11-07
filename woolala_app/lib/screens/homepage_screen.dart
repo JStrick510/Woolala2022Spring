@@ -13,19 +13,19 @@ import 'dart:collection';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 
-
 import 'dart:io';
 import 'package:woolala_app/screens/login_screen.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:woolala_app/screens/post_screen.dart';
 import 'package:woolala_app/screens/profile_screen.dart';
+
 AudioPlayer advancedPlayer;
 
 String domain = "http://10.0.2.2:5000";
 
 
-
-Widget starSlider(String postID) => RatingBar(
+Widget starSlider(String postID) =>
+    RatingBar(
       initialRating: 2.5,
       minRating: 0,
       direction: Axis.horizontal,
@@ -34,10 +34,11 @@ Widget starSlider(String postID) => RatingBar(
       unratedColor: Colors.black,
       itemSize: 30,
       itemPadding: EdgeInsets.symmetric(horizontal: 4.0),
-      itemBuilder: (context, _) => Icon(
-        Icons.star,
-        color: Colors.blue,
-      ),
+      itemBuilder: (context, _) =>
+          Icon(
+            Icons.star,
+            color: Colors.blue,
+          ),
       onRatingUpdate: (rating) {
         print(rating);
         //Changing rating here
@@ -46,8 +47,7 @@ Widget starSlider(String postID) => RatingBar(
       },
     );
 
-Widget card(String postID)
-{
+Widget card(String postID) {
   return FutureBuilder(
     future: getPost(postID),
     builder: (context, snapshot) {
@@ -61,12 +61,17 @@ Widget card(String postID)
                   height: 35.0,
                   child: Row(children: <Widget>[
 
-                    Padding(padding: EdgeInsets.all(5), child: Text(snapshot.data[1], textAlign: TextAlign.left, style: TextStyle(color: Colors.black, fontSize: 16))),
-                    Align(alignment: Alignment.centerRight, child: Icon(Icons.more_vert))
+                    Padding(padding: EdgeInsets.all(5),
+                        child: Text(snapshot.data[1], textAlign: TextAlign.left,
+                            style: TextStyle(
+                                color: Colors.black, fontSize: 16))),
+                    Align(alignment: Alignment.centerRight,
+                        child: Icon(Icons.more_vert))
                   ])
               ),
               snapshot.data[0],
-              Padding(padding: EdgeInsets.all(5),child: Text(snapshot.data[2])),
+              Padding(
+                  padding: EdgeInsets.all(5), child: Text(snapshot.data[2])),
               Center(child: starSlider(postID)),
               Container(
                 margin: const EdgeInsets.all(8),
@@ -77,7 +82,6 @@ Widget card(String postID)
         );
       }
       else {
-
         // Returning the progress indicator would be nice in case load times are slow
         // but it makes scrolling/loading new posts very laggy and ugly so for now
         // a container that is roughly the average height of the pictures is used.
@@ -91,20 +95,19 @@ Widget card(String postID)
 }
 
 
-
 Future loadMusic(String sound) async {
-  if(sound=="fuck") {
+  if (sound == "fuck") {
     advancedPlayer = await AudioCache().play("Sounds/ashfuck.mp3");
   }
-   if(sound=="woolala")
-   {
-       advancedPlayer = await AudioCache().play("Sounds/woolalaAudio.mp3");
-   }
+  if (sound == "woolala") {
+    advancedPlayer = await AudioCache().play("Sounds/woolalaAudio.mp3");
+  }
 }
 
 // Will be used anytime the post is rated
 Future<http.Response> ratePost(double rating, String id) {
-  return http.post(domain + '/ratePost/' + id.toString() + '/' + rating.toString(),
+  return http.post(
+    domain + '/ratePost/' + id.toString() + '/' + rating.toString(),
     headers: <String, String>{
       'Content-Type': 'application/json',
     },
@@ -133,7 +136,7 @@ Future<http.Response> createPost(String postID, String image, String date,
 }
 
 // Will be used to get info about the post
-Future<List> getPost(String id) async{
+Future<List> getPost(String id) async {
   http.Response res = await http.get(domain + '/getPostInfo/' + id);
   Map info = jsonDecode(res.body.toString());
   final decodedBytes = base64Decode(info["image"]);
@@ -155,7 +158,6 @@ Future<List> getPost(String id) async{
 }
 
 
-
 Future<List> getFeed(String userID) async
 {
   http.Response res = await http.get(domain + '/getFeed/' + userID);
@@ -174,43 +176,43 @@ class HomepageScreen extends StatefulWidget {
 }
 
 
-class _HomepageScreenState extends State<HomepageScreen>{
-  RefreshController _refreshController = RefreshController(initialRefresh: false);
+class _HomepageScreenState extends State<HomepageScreen> {
+  RefreshController _refreshController = RefreshController(
+      initialRefresh: false);
 
   List postIDs = [];
   int numToShow = 2;
   int postsPerReload = 2;
 
-  void sortPosts(list)
-  {
+  void sortPosts(list) {
     list.removeWhere((item) => item == "");
-    list.sort((a, b) => int.parse(b.substring(b.indexOf(':::')+3)) - int.parse(a.substring(a.indexOf(':::')+3)));
+    list.sort((a, b) =>
+    int.parse(b.substring(b.indexOf(':::') + 3)) -
+        int.parse(a.substring(a.indexOf(':::') + 3)));
   }
 
 
-  void _onRefresh() async{
+  void _onRefresh() async {
     postIDs = await getFeed(currentUser.userID);
     sortPosts(postIDs);
     print(postIDs);
     // if failed,use refreshFailed()
-    if(mounted)
+    if (mounted)
       setState(() {});
     _refreshController.refreshCompleted();
   }
 
-  void _onLoading() async{
+  void _onLoading() async {
     await Future.delayed(Duration(milliseconds: 1000));
-    if (numToShow + postsPerReload > postIDs.length)
-      {
-        numToShow = postIDs.length;
-      }
-    else
-      {
-        numToShow += postsPerReload;
-      }
+    if (numToShow + postsPerReload > postIDs.length) {
+      numToShow = postIDs.length;
+    }
+    else {
+      numToShow += postsPerReload;
+    }
 
     // if failed,use loadFailed(),if no data return,use LoadNodata()
-    if(mounted)
+    if (mounted)
       setState(() {});
     _refreshController.loadComplete();
   }
@@ -226,88 +228,80 @@ class _HomepageScreenState extends State<HomepageScreen>{
       setState(() {});
     }
     );
-
   }
 
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          'WooLaLa',
-          style: TextStyle(fontSize: 25),
-          textAlign: TextAlign.center,
-        ),
-        key: ValueKey("homepage"),
-        actions: <Widget>[
-          IconButton(
-            icon: Icon(Icons.search),
-            key: ValueKey("Search"),
-            color: Colors.white,
-            onPressed: () => Navigator.pushReplacementNamed(context, '/search'),
+        appBar: AppBar(
+          title: Text(
+            'WooLaLa',
+            style: TextStyle(fontSize: 25),
+            textAlign: TextAlign.center,
           ),
-          IconButton(
-            icon: Icon(Icons.clear),
-            onPressed: () => startSignOut(context),
+          key: ValueKey("homepage"),
+          actions: <Widget>[
+            IconButton(
+              icon: Icon(Icons.search),
+              key: ValueKey("Search"),
+              color: Colors.white,
+              onPressed: () =>
+                  Navigator.pushReplacementNamed(context, '/search'),
+            ),
+            IconButton(
+              icon: Icon(Icons.clear),
+              onPressed: () => startSignOut(context),
+            )
+          ],
+        ),
+        body: Center(
+          child:
+          postIDs.length > 0 ?
+          SmartRefresher(
+            enablePullDown: true,
+            enablePullUp: true,
+            header: ClassicHeader(),
+            footer: ClassicFooter(),
+            controller: _refreshController,
+            onRefresh: _onRefresh,
+            onLoading: _onLoading,
+            child: ListView.builder(
+                padding: const EdgeInsets.all(0),
+                itemCount: numToShow,
+                addAutomaticKeepAlives: true,
+                physics: const AlwaysScrollableScrollPhysics (),
+                itemBuilder: (BuildContext context, int index) {
+                  return card(postIDs[index]);
+                }),
           )
-        ],
-      ),
-      body: Center(
-        child:
-              postIDs.length > 0 ?
-                SmartRefresher(
-                 enablePullDown: true,
-                 enablePullUp: true,
-                 header: ClassicHeader (),
-                 footer: ClassicFooter(),
-                 controller: _refreshController,
-                 onRefresh: _onRefresh,
-                 onLoading: _onLoading,
-                 child: ListView.builder(
-                     padding: const EdgeInsets.all(0),
-                     itemCount: numToShow,
-                     addAutomaticKeepAlives: true,
-                     physics: const AlwaysScrollableScrollPhysics (),
-                     itemBuilder: (BuildContext context, int index) {
-                       return card(postIDs[index]);
-                     }),
-               )
 
               :
 
           CircularProgressIndicator(),
 
-      ),
+        ),
       bottomNavigationBar: BottomNavigationBar(
         onTap: (int index) {
           switchPage(index, context);
         },
         items: [
           BottomNavigationBarItem(
-            icon: Icon(
-              Icons.home,
-              color: Theme.of(context).primaryColor,
-            ),
-            title: Text(
-              'Home',
-              style: TextStyle(color: Theme.of(context).primaryColor),
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.add_circle_outline, key: ValueKey("Make Post"), color: Colors.white,),
-              title: Text("New", style: TextStyle(color: Colors.white),),
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.person, key: ValueKey("Profile"), color: Colors.white,),
-              title: Text("Profile", style: TextStyle(color: Colors.white),),
+            icon: Icon(Icons.home, color: Theme.of(context).primaryColor,),
+            title: Text('Home', style: TextStyle(color: Theme.of(context).primaryColor),),
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.add_circle_outline, key: ValueKey("Make Post"), color: Colors.white,),
+            title: Text("New", style: TextStyle(color: Colors.white),),
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.person, key: ValueKey("Profile"), color: Colors.white,),
+            title: Text("Profile", style: TextStyle(color: Colors.white),),
 
-
-            ),
           ),
         ],
         backgroundColor: Colors.blueGrey[400],
-      ),
-    );
+      ),);
   }
 
   void switchPage(int index, BuildContext context) {
