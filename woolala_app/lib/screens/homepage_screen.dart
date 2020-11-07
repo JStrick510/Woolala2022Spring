@@ -30,7 +30,6 @@ Widget starSlider() => RatingBar(
       },
     );
 
-
 // Will be used anytime the post is rated
 Future<http.Response> ratePost(double rating, int id) {
   return http.post(
@@ -78,18 +77,22 @@ class HomepageScreen extends StatefulWidget {
   _HomepageScreenState createState() => _HomepageScreenState();
 }
 
-class _HomepageScreenState extends State<HomepageScreen>{
-    var rating = 0.0;
-    var postID = 0.0;
+class _HomepageScreenState extends State<HomepageScreen> {
+  var rating = 0.0;
+  var postID = 0.0;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('WooLaLa', style: TextStyle(fontSize: 25 ), textAlign: TextAlign.center,),
+        title: Text(
+          'WooLaLa',
+          style: TextStyle(fontSize: 25),
+          textAlign: TextAlign.center,
+        ),
         key: ValueKey("homepage"),
         actions: <Widget>[
-          IconButton (
+          IconButton(
             icon: Icon(Icons.search),
             color: Colors.white,
             onPressed: () => Navigator.pushReplacementNamed(context, '/search'),
@@ -107,11 +110,7 @@ class _HomepageScreenState extends State<HomepageScreen>{
           decoration: BoxDecoration(
             gradient: LinearGradient(
                 begin: Alignment.topCenter,
-                colors: [
-                  Colors.blueGrey[700],
-                  Colors.blueGrey[400]
-                ]
-            ),
+                colors: [Colors.blueGrey[700], Colors.blueGrey[400]]),
           ),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.end,
@@ -122,51 +121,69 @@ class _HomepageScreenState extends State<HomepageScreen>{
         ),
       ),
       bottomNavigationBar: BottomNavigationBar(
-          onTap: (int index) {
-            switchPage(index, context);
-          },
-          items: [
-            BottomNavigationBarItem(
-              icon: Icon(Icons.home, color: Theme.of(context).primaryColor,),
-              title: Text('Home', style: TextStyle(color: Theme.of(context).primaryColor),),
+        onTap: (int index) {
+          switchPage(index, context);
+        },
+        items: [
+          BottomNavigationBarItem(
+            icon: Icon(
+              Icons.home,
+              color: Theme.of(context).primaryColor,
             ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.add_circle_outline, color: Colors.white,),
-              title: Text("New", style: TextStyle(color: Colors.white),),
+            title: Text(
+              'Home',
+              style: TextStyle(color: Theme.of(context).primaryColor),
             ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.person, color: Colors.white,),
-              title: Text("Profile", style: TextStyle(color: Colors.white),),
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(
+              Icons.add_circle_outline,
+              color: Colors.white,
             ),
-          ],
-          backgroundColor: Colors.blueGrey[400],
+            title: Text(
+              "New",
+              style: TextStyle(color: Colors.white),
+            ),
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(
+              Icons.person,
+              color: Colors.white,
+            ),
+            title: Text(
+              "Profile",
+              style: TextStyle(color: Colors.white),
+            ),
+          ),
+        ],
+        backgroundColor: Colors.blueGrey[400],
       ),
     );
   }
 
-   void switchPage(int index, BuildContext context) {
-      switch(index) {
-        case 1: {
-          Navigator.pushReplacementNamed(context, '/imgup');}
+  void switchPage(int index, BuildContext context) {
+    switch (index) {
+      case 1:
+        {
+          Navigator.pushReplacementNamed(context, '/imgup');
+        }
         break;
-        case 2: {
-          Navigator.pushReplacementNamed(context, '/profile');}
+      case 2:
+        {
+          Navigator.pushReplacementNamed(context, '/profile');
+        }
         break;
-      }
+    }
   }
+
   void startSignOut(BuildContext context) {
     print("Sign Out");
     if (widget.signedInWithGoogle) {
       googleLogoutUser();
       Navigator.pushReplacementNamed(context, '/');
-    }
-    else
-    {
-
-       // FacebookLogin facebookLogin = FacebookLogin();
-        //facebookLogin.logOut();
-        Navigator.pushReplacementNamed(context, '/');
-
+    } else {
+      facebookLogoutUser();
+      Navigator.pushReplacementNamed(context, '/');
     }
   }
 }

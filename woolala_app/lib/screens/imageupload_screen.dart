@@ -10,6 +10,7 @@ import 'dart:io';
 import 'package:woolala_app/screens/login_screen.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:woolala_app/screens/post_screen.dart';
+import 'package:intl/intl.dart';
 
 class ImageUploadScreen extends StatefulWidget {
   ImageUploadScreen();
@@ -21,6 +22,12 @@ class _ImageUploadScreenState extends State<ImageUploadScreen> {
   File _image = null;
   final picker = ImagePicker();
   bool selected = false;
+  String _text = "";
+  TextEditingController _c;
+
+  static final DateTime now = DateTime.now().toLocal();
+  static final DateFormat formatter = DateFormat('yyyy-MM-dd');
+  final String date = formatter.format(now);
 
   Future getImageGallery() async {
     final pickedFile = await picker.getImage(source: ImageSource.gallery);
@@ -52,7 +59,7 @@ class _ImageUploadScreenState extends State<ImageUploadScreen> {
         leading: GestureDetector(
           onTap: () => Navigator.pushReplacementNamed(context, '/home'),
           child: Icon(
-            Icons.reply, // add custom icons also
+            Icons.arrow_back_outlined, // add custom icons also
           ),
         ),
         actions: <Widget>[
@@ -70,6 +77,16 @@ class _ImageUploadScreenState extends State<ImageUploadScreen> {
       ),
       body: Column(children: [
         _image == null ? Text('') : Image.file(_image),
+        SizedBox(height: 20.0),
+        TextField(textInputAction: TextInputAction.go, keyboardType: TextInputType.multiline, maxLines: null, decoration: new InputDecoration(hintText: "Enter a caption!", contentPadding: const EdgeInsets.all(20.0))),
+        new Text(_text,
+            style: TextStyle(
+                fontSize: 32.0,
+                color: Colors.black,
+                fontWeight: FontWeight.bold),
+            textAlign: TextAlign.center),
+        SizedBox(height: 20.0),
+        new Text(date),
       ]),
       bottomNavigationBar: Row(
           mainAxisSize: MainAxisSize.max,
