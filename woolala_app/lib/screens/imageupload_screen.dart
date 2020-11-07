@@ -10,6 +10,7 @@ import 'dart:io';
 import 'package:woolala_app/screens/login_screen.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:woolala_app/screens/post_screen.dart';
+import 'dart:io' as Io;
 import 'package:intl/intl.dart';
 
 class ImageUploadScreen extends StatefulWidget {
@@ -20,6 +21,7 @@ class ImageUploadScreen extends StatefulWidget {
 
 class _ImageUploadScreenState extends State<ImageUploadScreen> {
   File _image = null;
+  String img64;
   final picker = ImagePicker();
   bool selected = false;
   String _text = "";
@@ -34,6 +36,8 @@ class _ImageUploadScreenState extends State<ImageUploadScreen> {
     setState(() {
       if (pickedFile != null) {
         _image = File(pickedFile.path);
+        final bytes = _image.readAsBytesSync();
+        img64 = base64Encode(bytes);
       } else {
         print('No image selected.');
       }
@@ -45,6 +49,8 @@ class _ImageUploadScreenState extends State<ImageUploadScreen> {
     setState(() {
       if (pickedFile != null) {
         _image = File(pickedFile.path);
+        final bytes = _image.readAsBytesSync();
+        img64 = base64Encode(bytes);
       } else {
         print('No image selected.');
       }
@@ -68,7 +74,7 @@ class _ImageUploadScreenState extends State<ImageUploadScreen> {
             onPressed: () => {
               if (_image != null)
                 Navigator.pushReplacementNamed(context, '/makepost',
-                    arguments: _image)
+                    arguments: [_image, img64])
             },
             child: Text("Next"),
             shape: CircleBorder(side: BorderSide(color: Colors.transparent)),
@@ -94,6 +100,7 @@ class _ImageUploadScreenState extends State<ImageUploadScreen> {
           children: [
             FloatingActionButton(
               child: Icon(Icons.camera_enhance),
+              key: ValueKey("Camera"),
               onPressed: () => getImageCamera(),
               heroTag: null,
             ),
@@ -105,6 +112,7 @@ class _ImageUploadScreenState extends State<ImageUploadScreen> {
             // ),
             FloatingActionButton(
               child: Icon(Icons.collections),
+              key: ValueKey("Gallery"),
               onPressed: () => getImageGallery(),
               heroTag: null,
             )
