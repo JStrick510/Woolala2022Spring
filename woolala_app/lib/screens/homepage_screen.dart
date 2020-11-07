@@ -101,6 +101,7 @@ Future loadMusic(String sound) async {
        advancedPlayer = await AudioCache().play("Sounds/woolalaAudio.mp3");
    }
 }
+
 // Will be used anytime the post is rated
 Future<http.Response> ratePost(double rating, String id) {
   return http.post(domain + '/ratePost/' + id.toString() + '/' + rating.toString(),
@@ -172,6 +173,7 @@ class HomepageScreen extends StatefulWidget {
   _HomepageScreenState createState() => _HomepageScreenState();
 }
 
+
 class _HomepageScreenState extends State<HomepageScreen>{
   RefreshController _refreshController = RefreshController(initialRefresh: false);
 
@@ -227,14 +229,19 @@ class _HomepageScreenState extends State<HomepageScreen>{
 
   }
 
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('WooLaLa', style: TextStyle(fontSize: 25 ), textAlign: TextAlign.center,),
+        title: Text(
+          'WooLaLa',
+          style: TextStyle(fontSize: 25),
+          textAlign: TextAlign.center,
+        ),
         key: ValueKey("homepage"),
         actions: <Widget>[
-          IconButton (
+          IconButton(
             icon: Icon(Icons.search),
             key: ValueKey("Search"),
             color: Colors.white,
@@ -271,17 +278,20 @@ class _HomepageScreenState extends State<HomepageScreen>{
 
           CircularProgressIndicator(),
 
-
-
       ),
       bottomNavigationBar: BottomNavigationBar(
-          onTap: (int index) {
-            switchPage(index, context);
-          },
-          items: [
-            BottomNavigationBarItem(
-              icon: Icon(Icons.home, color: Theme.of(context).primaryColor,),
-              title: Text('Home', style: TextStyle(color: Theme.of(context).primaryColor),),
+        onTap: (int index) {
+          switchPage(index, context);
+        },
+        items: [
+          BottomNavigationBarItem(
+            icon: Icon(
+              Icons.home,
+              color: Theme.of(context).primaryColor,
+            ),
+            title: Text(
+              'Home',
+              style: TextStyle(color: Theme.of(context).primaryColor),
             ),
             BottomNavigationBarItem(
               icon: Icon(Icons.add_circle_outline, key: ValueKey("Make Post"), color: Colors.white,),
@@ -291,36 +301,38 @@ class _HomepageScreenState extends State<HomepageScreen>{
               icon: Icon(Icons.person, key: ValueKey("Profile"), color: Colors.white,),
               title: Text("Profile", style: TextStyle(color: Colors.white),),
 
+
             ),
-          ],
-          backgroundColor: Colors.blueGrey[400],
+          ),
+        ],
+        backgroundColor: Colors.blueGrey[400],
       ),
     );
   }
 
-   void switchPage(int index, BuildContext context) {
-      switch(index) {
-        case 1: {
-          Navigator.pushReplacementNamed(context, '/imgup');}
+  void switchPage(int index, BuildContext context) {
+    switch (index) {
+      case 1:
+        {
+          Navigator.pushReplacementNamed(context, '/imgup');
+        }
         break;
-        case 2: {
-          Navigator.pushReplacementNamed(context, '/profile');}
+      case 2:
+        {
+          Navigator.pushReplacementNamed(context, '/profile');
+        }
         break;
-      }
+    }
   }
+
   void startSignOut(BuildContext context) {
     print("Sign Out");
     if (widget.signedInWithGoogle) {
       googleLogoutUser();
       Navigator.pushReplacementNamed(context, '/');
-    }
-    else
-    {
-
-       // FacebookLogin facebookLogin = FacebookLogin();
-        //facebookLogin.logOut();
-        Navigator.pushReplacementNamed(context, '/');
-
+    } else {
+      facebookLogoutUser();
+      Navigator.pushReplacementNamed(context, '/');
     }
   }
 }
