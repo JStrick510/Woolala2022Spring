@@ -108,7 +108,10 @@ app.get("/doesUserExist/:email", (request, response) => {
       if(document)
         console.log(document);
         response.send(document);
-
+      else
+      {
+      response.send(err);
+      }
     });
 });
 

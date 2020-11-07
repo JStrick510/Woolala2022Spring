@@ -40,9 +40,9 @@ void facebookLogoutUser() {
 
 // called by saveUserInfoToServer
 Future<User> getDoesUserExists(String email) async {
-  print("Finding USER!");
-  http.Response res =
-      await http.get('http://10.0.2.2:5000/doesUserExist/' + email);
+  print("Finding user!");
+  print(email);
+  http.Response res = await http.get(domain + "/doesUserExist/" + email);
   if (res.body.isNotEmpty) {
     Map userMap = jsonDecode(res.body.toString());
     return User.fromJSON(userMap);
@@ -53,6 +53,7 @@ Future<User> getDoesUserExists(String email) async {
 
 // called by saveUserInfoToServer
 Future<http.Response> insertUser(User u) {
+  print("INSERTING A USER");
   return http.post(
     'http://10.0.2.2:5000/insertUser',
     headers: <String, String>{
@@ -86,13 +87,13 @@ class _LoginScreenState extends State<LoginScreen> {
     print("Init State");
     super.initState();
     var keepGoing = true;
-    Random rand = new Random();
-    int fuck = rand.nextInt(10);
-    if(fuck%2==0 && fuck < 5)
-      loadMusic("woolala");
-    else if(fuck%2 !=0 && fuck < 5)
-      loadMusic("fuck");
-    gSignIn.onCurrentUserChanged.listen((gSignInAccount){
+    // Random rand = new Random();
+    // int fuck = rand.nextInt(10);
+    // if (fuck % 2 == 0 && fuck < 5)
+    //   loadMusic("woolala");
+    // else if (fuck % 2 != 0 && fuck < 5) loadMusic("fuck");
+
+    gSignIn.onCurrentUserChanged.listen((gSignInAccount) {
       controlGoogleSignIn(gSignInAccount);
       keepGoing = false;
     }, onError: (gError) {
@@ -107,7 +108,7 @@ class _LoginScreenState extends State<LoginScreen> {
       });
     }
     if (keepGoing) {
-
+      print("FACEBOOK");
       controlFacebookSignIn();
     }
   }
@@ -144,77 +145,85 @@ class _LoginScreenState extends State<LoginScreen> {
     var tempToken = (await facebookLogin.currentAccessToken);
     if (tempToken == null) {
       print("NULL");
-      setState(() {
-        isSignedInWithFacebook = false;
-      });
+      if (!_disposed) {
+        setState(() {
+          isSignedInWithFacebook = false;
+        });
+      }
     } else {
       print("NOT NULL");
+      await saveFacebookUserInfoToServer();
+      if (!_disposed) {
+        setState(() {
+          isSignedInWithFacebook = true;
+        });
+      }
     }
-    print(tempToken);
-    var token = tempToken.token;
-    print(token);
-    final graphResponse = await http.get(
-        'https://graph.facebook.com/v2.12/me?fields=name,first_name,last_name,email&access_token=${token}');
-    final profile = json.decode(graphResponse.body);
-    print(profile);
-    isSignedInWithFacebook = true;
   }
 
-  // called in controlGoogleSignIn
+// called in controlGoogleSignIn
   saveGoogleUserInfoToServer() async {
     final GoogleSignInAccount gAccount = gSignIn.currentUser;
     User tempUser = await getDoesUserExists(gAccount.email);
-    if(tempUser!=null && tempUser.userID!="")//account exists
-      {
-       print("You have an account!");
-       currentUser = tempUser;
-       //set current user
-      }
-    else{
-      print("You must make an account!");
-      User u = User(
-        googleID: gAccount.id,
-        email: gAccount.email,
-        userName: '@' + gAccount.displayName.replaceAll(new RegExp(r"\s+"), ""),
-        profileName: gAccount.displayName,
-        profilePic: 'default',
-        bio: "This is my new Woolala Account!",
-        userID: base64.encode(latin1.encode(gAccount.email)).toString(),
-        numFollowers: 0,
-        numPosts: 0,
-        numRated: 0,
-        postIDs: [],
-        following: [],
-        private: false
-      );
-      await insertUser(u);
-      currentUser = u;
-    }
-  }
-
-  // called in controlGoogleSignIn
-  saveFacebookUserInfoToServer() async {
-    final GoogleSignInAccount gAccount = gSignIn.currentUser;
-    currentUser = await getDoesUserExists(gAccount.email);
-    //print("email: " + gAccount.email);
-    if (currentUser != null && currentUser.userID != "") //account exists
+    if (tempUser != null && tempUser.userID != "") //account exists
     {
       print("You have an account!");
+      currentUser = tempUser;
       //set current user
     } else {
       print("You must make an account!");
       User u = User(
           googleID: gAccount.id,
           email: gAccount.email,
+          userName:
+              '@' + gAccount.displayName.replaceAll(new RegExp(r"\s+"), ""),
           profileName: gAccount.displayName,
-          profilePicURL: gAccount.photoUrl,
+          profilePic: 'default',
+          bio: "This is my new Woolala Account!",
+          userID: base64.encode(latin1.encode(gAccount.email)).toString(),
+          numFollowers: 0,
+          numPosts: 0,
+          numRated: 0,
+          postIDs: [],
+          following: [],
+          private: false);
+      print("about to call insert user");
+      await insertUser(u);
+      currentUser = u;
+    }
+  }
+
+// called in controlGoogleSignIn
+  saveFacebookUserInfoToServer() async {
+    var tempToken = (await facebookLogin.currentAccessToken);
+    var token = tempToken.token;
+    print(token);
+    final graphResponse = await http.get(
+        'https://graph.facebook.com/v2.12/me?fields=name,first_name,last_name,picture.type(large),email&access_token=${token}');
+    final profile = json.decode(graphResponse.body);
+    print(profile);
+    String id = profile['id'];
+    print("facebook profile test: ");
+    print(profile);
+    User tempUser = await getDoesUserExists(profile['email']);
+    if (tempUser != null && tempUser.userID != "") //account exists
+    {
+      print("You have an account!");
+      currentUser = tempUser;
+    } else {
+      print("You must make an account!");
+      User u = User(
+          facebookID: profile['id'],
+          email: profile['email'],
+          profileName: profile['name'],
+          profilePic: profile['picture']['data']['url'],
           bio: "This is my new Woolala Account. Me so !",
-          userID: base64.encode(latin1.encode(gAccount.email)).toString());
+          userID: base64.encode(latin1.encode(profile['email'])).toString());
       await insertUser(u);
     }
   }
 
-  // used in the CarouselSlider
+// used in the CarouselSlider
   List<T> map<T>(List list, Function handler) {
     List<T> result = [];
     for (var i = 0; i < list.length; i++) {
@@ -227,7 +236,7 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     print("Build!");
     if (isSignedInWithGoogle || isSignedInWithFacebook) {
-     //playLocalAsset();
+      //playLocalAsset();
       return HomepageScreen(isSignedInWithGoogle);
     } else {
       return Scaffold(
@@ -238,7 +247,7 @@ class _LoginScreenState extends State<LoginScreen> {
           actions: <Widget>[
             FlatButton(
               textColor: Colors.white,
-              onPressed: () => googleLogoutUser(),
+              onPressed: () => {googleLogoutUser(), facebookLogoutUser()},
               child: Text("Sign Out"),
               shape: CircleBorder(side: BorderSide(color: Colors.transparent)),
             )
@@ -260,17 +269,19 @@ class _LoginScreenState extends State<LoginScreen> {
               children: <Widget>[
                 new IconButton(
                   key: ValueKey("GoToHome"),
-                  icon: Image.asset('./assets/logos/w_logo_test.png', width: 300,
+                  icon: Image.asset('./assets/logos/w_logo_test.png',
+                      width: 300,
                       height: 150,
                       fit: BoxFit.contain,
                       semanticLabel: 'WooLaLa logo'),
-                  onPressed: () => Navigator.pushReplacementNamed(_scaffoldKey.currentContext, '/home'),
                   iconSize: 150,
                 ),
-
-                Text("Powered by: ",
-                  style: TextStyle(color: Colors.white, fontSize: 16),),
-                Image.asset('assets/logos/fashionNXT_logo.png', width: 150,
+                Text(
+                  "Powered by: ",
+                  style: TextStyle(color: Colors.white, fontSize: 16),
+                ),
+                Image.asset('assets/logos/fashionNXT_logo.png',
+                    width: 150,
                     height: 30,
                     fit: BoxFit.contain,
                     semanticLabel: 'FashioNXT logo'),
@@ -344,6 +355,9 @@ class _LoginScreenState extends State<LoginScreen> {
             image: logo,
           ),
         ),
+      ),
+    );
+  }
 
   Widget _buildSocialButtonRow() {
     return Padding(
@@ -368,4 +382,5 @@ class _LoginScreenState extends State<LoginScreen> {
         ],
       ),
     );
-  }}
+  }
+}
