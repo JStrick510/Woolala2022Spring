@@ -16,9 +16,8 @@ class User{
   String userName;
   String profilePic;
   final String email;
-  int numPosts;
-  int numFollowers;
   int numRated;
+  List followers;
   List postIDs;
   List following;
   bool private;
@@ -34,12 +33,11 @@ class User{
     this.userName,
     this.profilePic,
     this.email,
-    this.numPosts,
-    this.numFollowers,
     this.numRated,
     this.postIDs,
     this.following,
-    this.private
+    this.private,
+    this.followers
   });
 
   User.fromJSON(Map<String, dynamic> json)
@@ -52,8 +50,7 @@ class User{
         userName = json['userName'],
         profilePic = json['profilePic'],
         email = json['email'],
-        numPosts = json['numPosts'],
-        numFollowers = json['numFollowers'],
+        followers = json['followers'],
         numRated = json['numRated'],
         following = json['following'],
         postIDs = json['postIDs'],
@@ -70,18 +67,39 @@ class User{
           'userName': userName,
           'profilePic': profilePic,
           'email': email,
-          'numPosts' : numPosts,
-          'numFollowers' : numFollowers,
+          'followers' : followers,
           'numRated': numRated,
           'following' : following,
           'postIDs' : postIDs,
           'private' : private
       };
 
+  Future<double> getAvgScore() async{
+    double average = 0.0;
+    for(int i =0; i<postIDs.length;i++)
+      {
+          String req = 'http://10.0.2.2:5000/getPostInfo/' + postIDs[i];
+          http.Response res = await http.get(req);
+          Map postDetails = jsonDecode(res.body.toString());
+          average += double.parse(postDetails['cumulativeRating']) / double.parse(postDetails['numRatings']);
+      }
+    if(postIDs.length > 0) {
+      average = average / postIDs.length;
+      }
+      return average;
+  }
+
   Future<http.Response> setProfileName(String p)
   {
     profileName = p;
     String request = 'http://10.0.2.2:5000/updateUserProfileName/' + userID + '/' + profileName ;
+    return http.post(request, headers: <String, String>{'Content-Type': 'application/json',});
+  }
+
+  Future<http.Response> setPrivacy(bool p)
+  {
+    private = p;
+    String request = 'http://10.0.2.2:5000/updateUserPrivacy/' + userID + '/' + private.toString() ;
     return http.post(request, headers: <String, String>{'Content-Type': 'application/json',});
   }
 

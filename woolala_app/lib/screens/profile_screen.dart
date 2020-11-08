@@ -75,9 +75,10 @@ class _ProfilePageState extends State<ProfilePage> {
                                 mainAxisSize: MainAxisSize.max,
                                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                 children: <Widget>[
-                                  createColumns("Posts", profilePageOwner.numPosts),
-                                  createColumns("Followers", profilePageOwner.numFollowers),
-                                  createColumns("Ratings", profilePageOwner.numRated),
+                                  createIntColumns("Posts", profilePageOwner.postIDs.length),
+                                  createIntColumns("Following", profilePageOwner.following.length),
+                                  createIntColumns("Followers", profilePageOwner.followers.length),
+                                  //getAverages("Avg. Rating", profilePageOwner.getAvgScore()),
                                 ],
                               ),
                             ),
@@ -100,15 +101,39 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-
-
-  Column createColumns(String title, int count){
+  Column createIntColumns(String title, int count){
     return Column(
       mainAxisSize: MainAxisSize.max,
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
         Text(
           count.toString(),
+          style: TextStyle(fontSize: 20.0, color: Colors.black, fontWeight: FontWeight.bold),
+        ),
+        Container(
+          margin: EdgeInsets.only(top: 5.0),
+          child: Text(
+            title,
+            style: TextStyle(fontSize: 16.0, color: Colors.black, fontWeight: FontWeight.w400),
+          ),
+        ),
+      ],
+    );
+  }
+
+
+  getAverages(String title, Future<double> count) async{
+    final val = await count;
+    createDoubleColumns(title, val);
+  }
+
+  Column createDoubleColumns(String title, double count) {
+    return Column(
+      mainAxisSize: MainAxisSize.max,
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: <Widget>[
+        Text(
+          count.toStringAsFixed(2),
           style: TextStyle(fontSize: 20.0, color: Colors.black, fontWeight: FontWeight.bold),
         ),
         Container(

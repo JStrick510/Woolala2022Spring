@@ -67,6 +67,7 @@ app.post("/ratePost/:id/:rating", (request, response) => {
   });
 });
 
+
 app.post("/updateUserBio/:id/:bio", (request, response) => {
   var newBio = { $set: {"bio": request.params.bio} };
   userCollection.updateOne({"userID":request.params.id}, newBio, function(err, res){
@@ -85,10 +86,18 @@ app.post("/updateUserProfileName/:id/:name", (request, response) => {
   });
 });
 
+app.post("/updateUserPrivacy/:id/:private", (request, response) => {
+  var newPrivacy = { $set: {"private": request.params.private} };
+  userCollection.updateOne({"userID":request.params.id}, newPrivacy, function(err, res){
+    if (err) throw err;
+    console.log("USER: " + request.params.id + "\nNew Name: " + request.params.bio);
+    response.send(res);
+  });
+});
+
 app.post("/updateUserProfilePic/:id/:image64str", (request, response) => {
   console.log(request.params.image64str);
   var newPic = { $set: {"profilePic": request.params.image64str} };
-  //console.log(request.params.image64str);
  console.log(newPic);
   userCollection.updateOne({"userID":request.params.id}, newPic, function(err, res){
     if (err) throw err;

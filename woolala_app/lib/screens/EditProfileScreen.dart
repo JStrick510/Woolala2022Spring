@@ -109,17 +109,7 @@ class _EditProfilePageState extends State<EditProfilePage>{
                     children: <Widget>[
                       createProfileNameTextFormField(),
                       createBioTextFormField(),
-                      Switch(
-                        value: currentUser.private,
-                        onChanged: (value){
-                          setState(() {
-                            currentUser.private =value;
-                            print(currentUser.private);
-                          });
-                        },
-                        activeTrackColor: Colors.lightGreenAccent,
-                        activeColor: Colors.green,
-                      ),
+                      createPrivacySwitch(),
                     ],
                   ),
                 ),
@@ -128,6 +118,34 @@ class _EditProfilePageState extends State<EditProfilePage>{
           )
         ],
       )
+    );
+  }
+
+  Row createPrivacySwitch(){
+  return Row(
+    crossAxisAlignment: CrossAxisAlignment.center,
+    children: <Widget>[
+    Padding(
+        padding: EdgeInsets.only(top: 15.0),
+        child: Text(
+          "Private Account",
+          style: TextStyle(color: Colors.black, fontSize: 16.0),
+        ),
+        ),
+      Padding(
+          padding: EdgeInsets.only(top: 15.0),
+          child: Switch(
+            value: currentUser.private,
+            onChanged: (value){
+              setState(() {
+                currentUser.setPrivacy(value);
+              });
+            },
+            activeTrackColor: Colors.lightGreenAccent,
+            activeColor: Colors.green,
+            ),
+        ),
+      ],
     );
   }
 
