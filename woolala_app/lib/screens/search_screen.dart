@@ -87,7 +87,10 @@ class _SearchPageState extends State<SearchPage> {
       itemCount: results == null ? 0 : filteredResults.length,
       itemBuilder: (BuildContext context, int index) {
         return new ListTile(
+          leading: CircleAvatar(
+          ),
           title: Text(filteredResults[index]['profileName']),
+          subtitle: Text(filteredResults[index]['userName']),
           trailing: Wrap(
             spacing: 12,
             children: <Widget>[

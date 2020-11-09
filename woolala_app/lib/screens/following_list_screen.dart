@@ -28,16 +28,24 @@ class _FollowingListScreenState extends State<FollowingListScreen> {
   User currentProfile;
   List followingList = new List();
   List followingEmailList = new List();
+  List followingUserNameList = new List();
 
   Future<String> getProfileName(String userID) async {
     http.Response res = await http.get(domain + "/getUser/" + userID);
     Map userMap = jsonDecode(res.body.toString());
     return User.fromJSON(userMap).profileName;
   }
+
   Future<String> getUserEmail(String userID) async {
     http.Response res = await http.get(domain + "/getUser/" + userID);
     Map userMap = jsonDecode(res.body.toString());
     return User.fromJSON(userMap).email;
+  }
+
+  Future<String>getUserName(String userID) async {
+    http.Response res = await http.get(domain + "/getUser/" + userID);
+    Map userMap = jsonDecode(res.body.toString());
+    return User.fromJSON(userMap).userName;
   }
 
   listbuilder() async {
@@ -50,8 +58,10 @@ class _FollowingListScreenState extends State<FollowingListScreen> {
     for(int i = 0; i < tempFollowingList.length; i++){
       String tempProfileName = await getProfileName(tempFollowingList[i]);
       String tempUserEmail = await getUserEmail(tempFollowingList[i]);
+      String tempUserName = await getUserName(tempFollowingList[i]);
       followingList.add(tempProfileName);
       followingEmailList.add(tempUserEmail);
+      followingUserNameList.add(tempUserName);
     }
     //print(followerList);
   }
@@ -68,7 +78,11 @@ class _FollowingListScreenState extends State<FollowingListScreen> {
           itemCount:  followingList.length,
           itemBuilder: (BuildContext context, int index) {
             return new ListTile(
+              leading: CircleAvatar(
+
+              ),
               title: Text(followingList[index]),
+              subtitle: Text(followingUserNameList[index]),
               trailing: Wrap(
                 spacing: 12,
                 children: <Widget>[

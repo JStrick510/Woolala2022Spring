@@ -29,6 +29,7 @@ class _FollowerListScreenState extends State<FollowerListScreen> {
   User currentProfile;
   List followerList = new List();
   List followerEmailList = new List();
+  List followerUserNameList = new List();
 
   Future<String> getProfileName(String userID) async {
     http.Response res = await http.get(domain + "/getUser/" + userID);
@@ -42,6 +43,12 @@ class _FollowerListScreenState extends State<FollowerListScreen> {
     return User.fromJSON(userMap).email;
   }
 
+  Future<String>getUserName(String userID) async {
+    http.Response res = await http.get(domain + "/getUser/" + userID);
+    Map userMap = jsonDecode(res.body.toString());
+    return User.fromJSON(userMap).userName;
+  }
+
   listbuilder() async {
     currentProfile = await getDoesUserExists(widget.userEmail);
     print(currentProfile.profileName);
@@ -52,8 +59,10 @@ class _FollowerListScreenState extends State<FollowerListScreen> {
     for(int i = 0; i < tempFollowerList.length; i++){
       String tempProfileName = await getProfileName(tempFollowerList[i]);
       String tempUserEmail = await getUserEmail(tempFollowerList[i]);
+      String tempUserName = await getUserName(tempFollowerList[i]);
       followerList.add(tempProfileName);
       followerEmailList.add(tempUserEmail);
+      followerUserNameList.add(tempUserName);
     }
     //print(followerList);
   }
@@ -70,7 +79,11 @@ class _FollowerListScreenState extends State<FollowerListScreen> {
           itemBuilder: (BuildContext context, int index) {
 
             return new ListTile(
+              leading: CircleAvatar(
+
+              ),
               title: Text(followerList[index]),
+              subtitle: Text(followerUserNameList[index]),
               onTap: () {
                 Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => ProfilePage(followerEmailList[index])));
               },
