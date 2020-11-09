@@ -14,6 +14,7 @@ import 'package:intl/intl.dart';
 import 'package:mongo_dart/mongo_dart.dart' as mongo;
 import 'package:woolala_app/models/user.dart';
 import 'package:woolala_app/screens/profile_screen.dart';
+import 'package:woolala_app/models/user.dart';
 
 class FollowerListScreen extends StatefulWidget {
   final String userEmail;
@@ -64,6 +65,7 @@ class _FollowerListScreenState extends State<FollowerListScreen> {
       followerEmailList.add(tempUserEmail);
       followerUserNameList.add(tempUserName);
     }
+    return followerList;
     //print(followerList);
   }
 
@@ -71,26 +73,34 @@ class _FollowerListScreenState extends State<FollowerListScreen> {
     return FutureBuilder(
       future: listbuilder(),
       builder: (context, snapshot) {
-        return ListView.builder(
-          key: ValueKey("ListView"),
-          scrollDirection: Axis.vertical,
-          shrinkWrap: true,
-          itemCount: followerList.length,
-          itemBuilder: (BuildContext context, int index) {
+        if(snapshot.hasData){
+          return ListView.builder(
+            key: ValueKey("ListView"),
+            scrollDirection: Axis.vertical,
+            shrinkWrap: true,
+            itemCount: followerList.length,
+            itemBuilder: (BuildContext context, int index) {
+              return new ListTile(
+                leading: CircleAvatar(
+                  child: Text(followerList[index][0]),
+                ),
+                title: Text(followerList[index]),
+                subtitle: Text(followerUserNameList[index]),
+                onTap: () {
+                  Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => ProfilePage(followerEmailList[index])));
+                },
 
-            return new ListTile(
-              leading: CircleAvatar(
+              );
+            },
+          );
+        }
+        else if(snapshot.hasError){
+          return Center(child: Text("No Results"));
+        }
+        else {
+          return Center(child: CircularProgressIndicator());
+        }
 
-              ),
-              title: Text(followerList[index]),
-              subtitle: Text(followerUserNameList[index]),
-              onTap: () {
-                Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => ProfilePage(followerEmailList[index])));
-              },
-
-            );
-          },
-        );
       },
     );
   }

@@ -88,6 +88,7 @@ class _SearchPageState extends State<SearchPage> {
       itemBuilder: (BuildContext context, int index) {
         return new ListTile(
           leading: CircleAvatar(
+            child: Text(filteredResults[index]['profileName'][0]),
           ),
           title: Text(filteredResults[index]['profileName']),
           subtitle: Text(filteredResults[index]['userName']),

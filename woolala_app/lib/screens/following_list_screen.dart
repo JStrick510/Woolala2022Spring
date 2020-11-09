@@ -63,6 +63,7 @@ class _FollowingListScreenState extends State<FollowingListScreen> {
       followingEmailList.add(tempUserEmail);
       followingUserNameList.add(tempUserName);
     }
+    return followingList;
     //print(followerList);
   }
 
@@ -71,36 +72,45 @@ class _FollowingListScreenState extends State<FollowingListScreen> {
     return FutureBuilder(
       future: listbuilder(),
       builder: (context, snapshot) {
-        return ListView.builder(
-          key: ValueKey("ListView"),
-          scrollDirection: Axis.vertical,
-          shrinkWrap: true,
-          itemCount:  followingList.length,
-          itemBuilder: (BuildContext context, int index) {
-            return new ListTile(
-              leading: CircleAvatar(
-
-              ),
-              title: Text(followingList[index]),
-              subtitle: Text(followingUserNameList[index]),
-              trailing: Wrap(
-                spacing: 12,
-                children: <Widget>[
-                  new Container(
-                    child: new IconButton(
-                      icon: Icon(Icons.remove_circle_outline),
-                      onPressed: () {},
+        if(snapshot.hasData){
+          return ListView.builder(
+            key: ValueKey("ListView"),
+            scrollDirection: Axis.vertical,
+            shrinkWrap: true,
+            itemCount:  followingList.length,
+            itemBuilder: (BuildContext context, int index) {
+              return new ListTile(
+                leading: CircleAvatar(
+                  child: Text(followingList[index][0]),
+                ),
+                title: Text(followingList[index]),
+                subtitle: Text(followingUserNameList[index]),
+                trailing: Wrap(
+                  spacing: 12,
+                  children: <Widget>[
+                    new Container(
+                      child: new IconButton(
+                        icon: Icon(Icons.remove_circle_outline),
+                        onPressed: () {},
+                      ),
                     ),
-                  ),
-                ],
+                  ],
 
-              ),
-              onTap: () {
-                Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => ProfilePage(followingEmailList[index])));
-              },
-            );
-          },
-        );
+                ),
+                onTap: () {
+                  Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => ProfilePage(followingEmailList[index])));
+                },
+              );
+            },
+          );
+        }
+        else if(snapshot.hasError){
+          return Center(child: Text("No Results"));
+        }
+        else{
+          return Center(child: CircularProgressIndicator());
+        }
+
       },
     );
   }
