@@ -17,6 +17,7 @@ import 'package:woolala_app/screens/login_screen.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:woolala_app/screens/post_screen.dart';
 import 'package:woolala_app/screens/profile_screen.dart';
+import 'package:woolala_app/screens/search_screen.dart';
 
 AudioPlayer advancedPlayer;
 
@@ -231,7 +232,7 @@ class _HomepageScreenState extends State<HomepageScreen> {
             icon: Icon(Icons.search),
             key: ValueKey("Search"),
             color: Colors.white,
-            onPressed: () => Navigator.pushReplacementNamed(context, '/search'),
+            onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => SearchPage())),
           ),
           IconButton(
             icon: Icon(Icons.clear),

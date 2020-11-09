@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:woolala_app/screens/EditProfileScreen.dart';
+import 'package:woolala_app/screens/follower_list_screen.dart';
+import 'package:woolala_app/screens/following_list_screen.dart';
 import 'package:woolala_app/screens/homepage_screen.dart';
 import 'package:woolala_app/screens/imageupload_screen.dart';
 import 'package:woolala_app/screens/login_screen.dart';
@@ -31,6 +33,8 @@ class WooLaLa extends StatelessWidget {
         '/search': (_) => SearchPage(),
         '/makepost': (_) => PostScreen(),
         '/imgup': (_) => ImageUploadScreen(),
+        '/followerlist' : (_) => FollowerListScreen(currentUser.email),
+        '/followinglist' : (_) => FollowingListScreen(currentUser.email),
       },
     );
   }

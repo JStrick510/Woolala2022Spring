@@ -21,6 +21,7 @@ class User{
   int numRated;
   List postIDs;
   List following;
+  List followers;
   bool private;
 
 
@@ -36,6 +37,7 @@ class User{
     this.email,
     this.numPosts,
     this.numFollowers,
+    this.followers,
     this.numRated,
     this.postIDs,
     this.following,
@@ -55,6 +57,7 @@ class User{
         numPosts = json['numPosts'],
         numFollowers = json['numFollowers'],
         numRated = json['numRated'],
+        followers = json['followers'],
         following = json['following'],
         postIDs = json['postIDs'],
         private = json['private'];
@@ -72,6 +75,7 @@ class User{
           'email': email,
           'numPosts' : numPosts,
           'numFollowers' : numFollowers,
+          'followers' : followers,
           'numRated': numRated,
           'following' : following,
           'postIDs' : postIDs,

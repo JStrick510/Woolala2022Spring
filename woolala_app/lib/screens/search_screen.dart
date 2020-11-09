@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mongo_dart/mongo_dart.dart' as mongo;
+import 'package:woolala_app/screens/profile_screen.dart';
 
 class SearchPage extends StatefulWidget{
   @override
@@ -85,7 +86,7 @@ class _SearchPageState extends State<SearchPage> {
       itemBuilder: (BuildContext context, int index) {
         return new ListTile(
           title: Text(filteredResults[index]['profileName']),
-          onTap: () => print(filteredResults[index]['profileName']),
+          onTap: () => Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => ProfilePage(filteredResults[index]['email']))),
         );
       },
     );
@@ -99,7 +100,7 @@ class _SearchPageState extends State<SearchPage> {
         appBar: AppBar(
             leading: BackButton(
                 color: Colors.white,
-                onPressed: () => (Navigator.pushReplacementNamed(context, '/home'))
+                onPressed: () => (Navigator.pop(context))
             ),
             title: _appBarTitle,
             actions: <Widget>[
@@ -116,7 +117,26 @@ class _SearchPageState extends State<SearchPage> {
               _buildList(),
 
             ]
-        )
+        ),
+      bottomNavigationBar: BottomNavigationBar(
+          onTap: (int index) {
+            switchPage(index, context);
+          },
+          items: [
+            BottomNavigationBarItem(
+              icon: Icon(Icons.home, color: Colors.black),
+              title: Text('Home', style: TextStyle(color: Colors.black)),
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.add_circle_outline, color: Colors.black),
+              title: Text("New", style: TextStyle(color: Colors.black)),
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.person, color: Theme.of(context).primaryColor),
+              title: Text("Profile", style: TextStyle(color: Theme.of(context).primaryColor)),
+            ),
+          ]
+      ),
     );
 
   }
@@ -126,5 +146,15 @@ class _SearchPageState extends State<SearchPage> {
     _getNames();
   }
 
+  void switchPage(int index, BuildContext context) {
+    switch(index) {
+      case 0: {
+        Navigator.pushReplacementNamed(context, '/home');}
+      break;
+      case 1: {
+        Navigator.pushReplacementNamed(context, '/imgup');}
+      break;
+    }
+  }
 }
 

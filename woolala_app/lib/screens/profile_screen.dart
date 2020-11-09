@@ -3,6 +3,9 @@ import 'package:woolala_app/screens/homepage_screen.dart';
 import 'package:woolala_app/main.dart';
 import 'package:woolala_app/screens/login_screen.dart';
 import 'package:woolala_app/models/user.dart';
+import 'package:woolala_app/screens/follower_list_screen.dart';
+import 'package:woolala_app/screens/following_list_screen.dart';
+import 'package:woolala_app/screens/search_screen.dart';
 //import 'package:cached_network_image/cached_network_image.dart';
 
 class ProfilePage extends StatefulWidget{
@@ -76,8 +79,21 @@ class _ProfilePageState extends State<ProfilePage> {
                                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                 children: <Widget>[
                                   createColumns("Posts", profilePageOwner.numPosts),
-                                  createColumns("Followers", profilePageOwner.numFollowers),
+                                  GestureDetector(
+                                    onTap: () {
+                                      Navigator.push(context, MaterialPageRoute(builder: (context) => FollowerListScreen(widget.userProfileEmail)));
+                                    },
+                                    child: createColumns("Followers", profilePageOwner.numFollowers),
+                                  ),
+
                                   createColumns("Ratings", profilePageOwner.numRated),
+
+                                  GestureDetector(
+                                    onTap: () {
+                                      Navigator.push(context, MaterialPageRoute(builder: (context) => FollowingListScreen(widget.userProfileEmail)));
+                                    },
+                                    child: createColumns("Following", profilePageOwner.following.length),
+                                  ),
                                 ],
                               ),
                             ),
@@ -122,12 +138,29 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  createButton(){
+  Future<bool> checkIfFollowing() async{
+    User currentUser = await getDoesUserExists(currentOnlineUserEmail);
+    User viewingUser = await getDoesUserExists(widget.userProfileEmail);
+    for(int i = 0; i < currentUser.following.length; i++) {
+      if(currentUser.following[i] == viewingUser.userID){
+        print("true!");
+        return true;
+      }
+    }
+    return false;
+    }
+
+  createButton() {
     bool ownProfile = currentOnlineUserEmail == widget.userProfileEmail;
+    //bool checker =  await checkIfFollowing();
+
     if(ownProfile)
     {
       return createButtonTitleAndFunction(title: 'Edit Profile', performFunction: editUserProfile,);
     }
+    //else if(checker){
+    //  return createButtonTitleAndFunction(title: 'Following',);
+    //}
     else{
       return createButtonTitleAndFunction(title: 'Follow',);
     }
@@ -164,7 +197,7 @@ class _ProfilePageState extends State<ProfilePage> {
       appBar: AppBar(
         leading: IconButton (
           icon: Icon(Icons.arrow_back),
-          onPressed: () => Navigator.pushReplacementNamed(context, '/home'), //place holder
+          onPressed: () => Navigator.pop(context), //place holder
           color: Colors.white,
         ),
         title: Text('WooLaLa', style: TextStyle(fontSize: 25, fontFamily: 'Lucida'), textAlign: TextAlign.center,),
@@ -173,7 +206,7 @@ class _ProfilePageState extends State<ProfilePage> {
           IconButton (
             icon: Icon(Icons.search),
             color: Colors.white,
-            onPressed: () => Navigator.pushReplacementNamed(context, '/search'),
+            onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => SearchPage())),
           ),
           IconButton(
             icon: Icon(Icons.clear),

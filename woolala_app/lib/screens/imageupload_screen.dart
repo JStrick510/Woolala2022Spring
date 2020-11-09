@@ -65,7 +65,7 @@ class _ImageUploadScreenState extends State<ImageUploadScreen> {
         leading: GestureDetector(
           onTap: () => Navigator.pushReplacementNamed(context, '/home'),
           child: Icon(
-            Icons.arrow_back_outlined, // add custom icons also
+            Icons.arrow_back, // add custom icons also
           ),
         ),
         actions: <Widget>[

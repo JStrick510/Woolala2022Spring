@@ -125,7 +125,6 @@ app.get("/getUser/:userID", (request, response) => {
     });
 });
 
-
 app.get("/getFeed/:userID", (request, response) => {
       console.log('Feed requested for user ' + request.params.userID + " date: " + request.params.date);
 
