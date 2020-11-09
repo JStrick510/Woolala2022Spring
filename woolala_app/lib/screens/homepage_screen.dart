@@ -214,16 +214,7 @@ class _HomepageScreenState extends State<HomepageScreen>{
                               Align(alignment: Alignment.centerRight, child: Icon(Icons.more_vert))
                             ] ,mainAxisAlignment: MainAxisAlignment.spaceBetween,)
                         ),
-
-                        GestureDetector(
-                            onTap: () {
-
-                              setState(() {showStars = true;});
-                              print("ass");
-                            },
-                            child: Stack(children: <Widget>[postInfo.data[0], showStars ? starSlider(postID) : Container(width: 0, height: 0)])),
-
-
+                        postInfo.data[0],
                         Container(alignment: Alignment(-1.0, 0.0), child: Padding(padding: EdgeInsets.all(5), child:Text(postInfo.data[1], textAlign: TextAlign.left))),
                         Center(child: starSlider(postID)),
                         Container(
@@ -282,7 +273,7 @@ class _HomepageScreenState extends State<HomepageScreen>{
                      itemBuilder: (BuildContext context, int index) {
                        // The height on this will need to be edited to match whatever height is set for the picture
                        return SizedBox(width: double.infinity,
-                                      height: 1000,
+                                      height: 800,
                                       child:card(postIDs[index]));
                      }),
                )
