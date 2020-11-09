@@ -106,8 +106,10 @@ app.get("/getPostInfo/:id", (request, response) => {
 app.get("/doesUserExist/:email", (request, response) => {
     userCollection.findOne({"email":request.params.email}, function(err, document) {
       if(document)
+      {
         console.log(document);
         response.send(document);
+        }
       else
       {
       response.send(err);

@@ -220,6 +220,8 @@ class _HomepageScreenState extends State<HomepageScreen> {
   @override
   initState() {
     super.initState();
+    if(currentUser == null)
+      print("HOLD THE FUCKING PHONE");
     getFeed(currentUser.userID).then((list) {
       postIDs = list;
       print(postIDs);
