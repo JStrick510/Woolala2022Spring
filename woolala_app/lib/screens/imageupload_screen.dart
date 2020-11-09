@@ -63,7 +63,7 @@ class _ImageUploadScreenState extends State<ImageUploadScreen> {
       backgroundColor: Colors.grey[800],
       appBar: AppBar(
         leading: GestureDetector(
-          onTap: () => Navigator.pushReplacementNamed(context, '/home'),
+          onTap: () => Navigator.pop(context),
           child: Icon(
             Icons.arrow_back, // add custom icons also
           ),
