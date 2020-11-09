@@ -206,7 +206,7 @@ class _HomepageScreenState extends State<HomepageScreen> {
   @override
   initState() {
     super.initState();
-    if (currentUser == null)
+    if (currentUser != null)
       getFeed(currentUser.userID).then((list) {
         postIDs = list;
         print(postIDs);
