@@ -43,7 +43,6 @@ Future<User> getDoesUserExists(String email) async {
 // called by save user to server methods
 Future<http.Response> insertUser(User u) {
   print("Inserting new user to the db.");
-  print(u.toJSON());
   return http.post(
     'http://10.0.2.2:5000/insertUser',
     headers: <String, String>{
@@ -86,28 +85,16 @@ class _LoginScreenState extends State<LoginScreen> {
 
   void facebookLoginUser() async {
     var facebookLoginResult = await facebookLogin.logIn(['email']);
-
     switch (facebookLoginResult.status) {
       case FacebookLoginStatus.error:
-        // onLoginStatusChanged(false);
+        print("Facebook login error.");
         break;
       case FacebookLoginStatus.cancelledByUser:
-        // onLoginStatusChanged(false);
+        print("Facebook login cancelled by user.");
         break;
       case FacebookLoginStatus.loggedIn:
-        // var graphResponse = await http.get(
-        //     'https://graph.facebook.com/v2.12/me?fields=name,first_name,last_name,email,picture.height(200)&access_token=${facebookLoginResult.accessToken.token}');
-        //
-        // var profile = json.decode(graphResponse.body);
-        // print(profile.toString());
-
         signInProcess();
         break;
-
-        facebookLogin.loginBehavior = FacebookLoginBehavior.nativeWithFallback;
-        print("Facebook signing in!");
-        final temp = facebookLogin.logIn(['email']);
-        print(temp);
     }
   }
 
@@ -182,8 +169,6 @@ class _LoginScreenState extends State<LoginScreen> {
     print("Calling saveGoogleUserInfoToServer.");
     final GoogleSignInAccount gAccount = gSignIn.currentUser;
     User tempUser = await getDoesUserExists(gAccount.email);
-    print("WJKOLDASJDKLASL");
-    print("TEST THIS BITCH OUT MOFO ${tempUser}");
     if (tempUser != null && tempUser.userID != "") //account exists
     {
       print("User account found with Google email.");
@@ -220,10 +205,7 @@ class _LoginScreenState extends State<LoginScreen> {
         'https://graph.facebook.com/v2.12/me?fields=name,first_name,last_name,picture.type(large),email&access_token=${token}');
     final profile = json.decode(graphResponse.body);
     User tempUser = await getDoesUserExists(profile['email']);
-    // print(tempUser);
-    // print(tempUser.toJSON());
-    print("TEST");
-    print(base64.encode(latin1.encode(profile['email'])).toString());
+    print(profile['picture']['data']['url']);
     switch (tempUser) {
       case null:
         print("Making an account with Facebook.");
@@ -231,11 +213,10 @@ class _LoginScreenState extends State<LoginScreen> {
             facebookID: profile['id'],
             email: profile['email'],
             profileName: profile['name'],
-            profilePic: profile['picture']['data']['url'],
+            profilePic: "default",
             bio: "This is my new Woolala Account!",
             userID: base64.encode(latin1.encode(profile['email'])).toString(),
-            userName: '@' +
-                profile['name'].replaceAll(new RegExp(r"\s+"), ""),
+            userName: '@' + profile['name'].replaceAll(new RegExp(r"\s+"), ""),
             numFollowers: 0,
             numPosts: 0,
             numRated: 0,
@@ -250,22 +231,6 @@ class _LoginScreenState extends State<LoginScreen> {
         currentUser = tempUser;
         break;
     }
-
-    // if (tempUser != null && tempUser.userID != "") //account exists
-    // {
-    //   print("User account found with Facebook email.");
-    //   currentUser = tempUser;
-    // } else {
-    //   print("Making an account with Facebook.");
-    //   User u = User(
-    //       facebookID: profile['id'],
-    //       email: profile['email'],
-    //       profileName: profile['name'],
-    //       profilePic: profile['picture']['data']['url'],
-    //       bio: "This is my new Woolala Account!",
-    //       userID: base64.encode(latin1.encode(profile['email'])).toString());
-    //   await insertUser(u);
-    // }
   }
 
 // used in the CarouselSlider
