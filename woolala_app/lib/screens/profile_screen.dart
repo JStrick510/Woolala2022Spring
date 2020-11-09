@@ -20,6 +20,7 @@ class _ProfilePageState extends State<ProfilePage> {
   //the account we are currently logged into
   final String currentOnlineUserEmail = currentUser.email;
   User profilePageOwner;
+  bool checker = false;
 
   createProfileTop() {
     setState(() {});
@@ -99,8 +100,16 @@ class _ProfilePageState extends State<ProfilePage> {
                             ),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: <Widget>[
-                                createButton(),
+                              children: [
+                                Expanded(
+                                  child: FutureBuilder(
+                                    future: checkIfFollowing(),
+                                    builder: (context, snapshot){
+                                      return createButton();
+                                    },
+                                  ),
+                                ),
+                                //createButton(),
                               ],
                             )
                           ],
@@ -138,35 +147,33 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  Future<bool> checkIfFollowing() async{
+ checkIfFollowing() async{
     User currentUser = await getDoesUserExists(currentOnlineUserEmail);
     User viewingUser = await getDoesUserExists(widget.userProfileEmail);
     for(int i = 0; i < currentUser.following.length; i++) {
       if(currentUser.following[i] == viewingUser.userID){
         print("true!");
-        return true;
+        checker = true;
       }
     }
-    return false;
-    }
+   }
 
   createButton() {
     bool ownProfile = currentOnlineUserEmail == widget.userProfileEmail;
-    //bool checker =  await checkIfFollowing();
-
     if(ownProfile)
     {
-      return createButtonTitleAndFunction(title: 'Edit Profile', performFunction: editUserProfile,);
+      return createButtonTitleAndFunction(title: 'Edit Profile', performFunction: editUserProfile, color: Colors.white);
     }
-    //else if(checker){
-    //  return createButtonTitleAndFunction(title: 'Following',);
-    //}
+    else if(checker){
+      Color followingColor = Colors.white;
+      return createButtonTitleAndFunction(title: 'Following',color: followingColor);
+    }
     else{
-      return createButtonTitleAndFunction(title: 'Follow',);
+      return createButtonTitleAndFunction(title: 'Follow',color: Colors.blue);
     }
   }
 
-  Container createButtonTitleAndFunction({String title, Function performFunction}){
+  Container createButtonTitleAndFunction({String title, Function performFunction, Color color}){
   return Container(
     padding: EdgeInsets.only(top: 3.0),
     child: FlatButton(
@@ -178,7 +185,7 @@ class _ProfilePageState extends State<ProfilePage> {
         child: Text(title, style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),),
         alignment: Alignment.center,
         decoration: BoxDecoration(
-            color: Colors.white,
+            color: color,
             border: Border.all(color: Colors.black, width: 2.0),
             borderRadius: BorderRadius.circular(6.0),
         ),
