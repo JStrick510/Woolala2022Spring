@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:mongo_dart/mongo_dart.dart' as mongo;
 import 'package:woolala_app/screens/profile_screen.dart';
 
+import 'login_screen.dart';
+
 class SearchPage extends StatefulWidget{
   @override
   _SearchPageState createState() => _SearchPageState();
@@ -154,6 +156,11 @@ class _SearchPageState extends State<SearchPage> {
       case 1: {
         Navigator.pushReplacementNamed(context, '/imgup');}
       break;
+      case 2:
+        {
+          Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => ProfilePage(currentUser.email)));
+        }
+        break;
     }
   }
 }

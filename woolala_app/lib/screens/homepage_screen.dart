@@ -313,7 +313,7 @@ class _HomepageScreenState extends State<HomepageScreen> {
         break;
       case 2:
         {
-          Navigator.pushReplacementNamed(context, '/profile');
+          Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => ProfilePage(currentUser.email)));
         }
         break;
     }
