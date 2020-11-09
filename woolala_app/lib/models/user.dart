@@ -103,14 +103,14 @@ class User{
     return http.post(request, headers: <String, String>{'Content-Type': 'application/json',});
   }
 
-      CircleAvatar createProfileAvatar({double radius = 60.0})
+      CircleAvatar createProfileAvatar({double radius = 60.0, double font = 64.0})
       {
         if(profilePic=="default")
         {
           return CircleAvatar(
             radius: radius,
             backgroundColor: Colors.red.shade800,
-            child: Text(profileName[0], style: TextStyle(fontSize: 64.0, color: Colors.white),),
+            child: Text(profileName[0], style: TextStyle(fontSize: font, color: Colors.white),),
           );
         }
         else{

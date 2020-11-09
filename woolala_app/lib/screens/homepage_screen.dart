@@ -4,6 +4,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:flutter_facebook_login/flutter_facebook_login.dart';
 import 'package:woolala_app/screens/login_screen.dart';
+import 'package:woolala_app/models/user.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'dart:io' as Io;
@@ -42,52 +43,10 @@ Widget starSlider(String postID) => RatingBar(
         ratePost(rating, postID);
         //getFeed("cmpoaW5ja0BnbWFpbC5jb20=", "2020-10-28");
       },
-    );
+);
 
-Widget card(String postID) {
-  return FutureBuilder(
-    future: getPost(postID),
-    builder: (context, snapshot) {
-      if (snapshot.hasData) {
-        return Column(children: <Widget>[
-          Container(
-              margin: const EdgeInsets.all(0),
-              color: Colors.white,
-              width: double.infinity,
-              height: 35.0,
-              child: Row(children: <Widget>[
-                Padding(
-                    padding: EdgeInsets.all(5),
-                    child: Text(snapshot.data[1],
-                        textAlign: TextAlign.left,
-                        style: TextStyle(color: Colors.black, fontSize: 16))),
-                Align(
-                    alignment: Alignment.centerRight,
-                    child: Icon(Icons.more_vert))
-              ])),
-          snapshot.data[0],
-          Padding(padding: EdgeInsets.all(5), child: Text(snapshot.data[2])),
-          Center(child: starSlider(postID)),
-          Container(
-            margin: const EdgeInsets.all(8),
-            color: Colors.grey,
-            width: double.infinity,
-            height: 1,
-          )
-        ]);
-      } else {
-        // Returning the progress indicator would be nice in case load times are slow
-        // but it makes scrolling/loading new posts very laggy and ugly so for now
-        // a container that is roughly the average height of the pictures is used.
 
-        //return CircularProgressIndicator();
-        // return Container(  width: double.infinity,
-        //   height: 10);
-        return Placeholder();
-      }
-    },
-  );
-}
+
 
 Future loadMusic(String sound) async {
   if (sound == "fuck") {
@@ -135,7 +94,7 @@ Future<List> getPost(String id) async {
   http.Response res = await http.get(domain + '/getPostInfo/' + id);
   Map info = jsonDecode(res.body.toString());
   final decodedBytes = base64Decode(info["image"]);
-  var ret = [Image.memory(decodedBytes), info["userName"], info["caption"]];
+  var ret = [Image.memory(decodedBytes), info["caption"], info["userID"]];
   return ret;
 
   //DO THIS TO GET IMAGE
@@ -152,6 +111,15 @@ Future<List> getPost(String id) async {
   // );
 }
 
+
+Future<User> getUserFromDB(String userID) async{
+  http.Response res = await http.get(domain + '/getUser/'+userID);
+  Map userMap = jsonDecode(res.body.toString());
+  return User.fromJSON(userMap);
+}
+
+
+
 Future<List> getFeed(String userID) async {
   http.Response res = await http.get(domain + '/getFeed/' + userID);
   return jsonDecode(res.body.toString())["postIDs"];
@@ -161,9 +129,7 @@ Future<List> getFeed(String userID) async {
 
 class HomepageScreen extends StatefulWidget {
   final bool signedInWithGoogle;
-
   HomepageScreen(this.signedInWithGoogle);
-
   _HomepageScreenState createState() => _HomepageScreenState();
 }
 
@@ -207,15 +173,61 @@ class _HomepageScreenState extends State<HomepageScreen> {
   @override
   initState() {
     super.initState();
-    if (currentUser != null)
-      getFeed(currentUser.userID).then((list) {
-        postIDs = list;
-        print(postIDs);
-        sortPosts(postIDs);
-        print(postIDs);
-        setState(() {});
-      });
+    getFeed(currentUser.userID).then((list) {
+      postIDs = list;
+      sortPosts(postIDs);
+      print(postIDs);
+      setState(() {});
+    }
+    );
+
   }
+  bool showStars = false;
+
+  Widget card(String postID)
+  {
+
+    return FutureBuilder(
+      future: getPost(postID),
+      builder: (context, postInfo) {
+        if (postInfo.hasData) {
+          return FutureBuilder(
+              future: getUserFromDB(postInfo.data[2]),
+              builder: (context, userInfo) {
+                if (userInfo.hasData) {
+                  return Column(
+                      children: <Widget>[
+                        Container(
+                            margin: const EdgeInsets.all(0),
+                            color: Colors.white,
+                            width: double.infinity,
+                            height: 35.0,
+                            child: Row(children: <Widget>[Row(children: <Widget>[Padding(child: userInfo.data.createProfileAvatar(radius: 15.0, font: 18.0), padding: EdgeInsets.all(2)),
+                              Padding(padding: EdgeInsets.all(5), child: Text(userInfo.data.profileName, textAlign: TextAlign.left, style: TextStyle(color: Colors.black, fontSize: 16)))],
+                                mainAxisAlignment: MainAxisAlignment.start ),
+                              Align(alignment: Alignment.centerRight, child: Icon(Icons.more_vert))
+                            ] ,mainAxisAlignment: MainAxisAlignment.spaceBetween,)
+                        ),
+                        postInfo.data[0],
+                        Container(alignment: Alignment(-1.0, 0.0), child: Padding(padding: EdgeInsets.all(5), child:Text(postInfo.data[1], textAlign: TextAlign.left))),
+                        Center(child: starSlider(postID)),
+                        Container(
+                          margin: const EdgeInsets.all(8),
+                          color: Colors.grey,
+                          width: double.infinity,
+                          height: 1,),
+                      ]
+                  ); }
+                else{
+                  return CircularProgressIndicator();}
+              });
+        }
+        else {
+          return CircularProgressIndicator();
+        }
+      },);
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -241,25 +253,32 @@ class _HomepageScreenState extends State<HomepageScreen> {
         ],
       ),
       body: Center(
-        child: postIDs.length > 0
-            ? SmartRefresher(
-                enablePullDown: true,
-                enablePullUp: true,
-                header: ClassicHeader(),
-                footer: ClassicFooter(),
-                controller: _refreshController,
-                onRefresh: _onRefresh,
-                onLoading: _onLoading,
-                child: ListView.builder(
-                    padding: const EdgeInsets.all(0),
-                    itemCount: numToShow,
-                    addAutomaticKeepAlives: true,
-                    physics: const AlwaysScrollableScrollPhysics(),
-                    itemBuilder: (BuildContext context, int index) {
-                      return card(postIDs[index]);
-                    }),
-              )
-            : CircularProgressIndicator(),
+
+        child:
+              postIDs.length > 0 ?
+                SmartRefresher(
+                 enablePullDown: true,
+                 enablePullUp: true,
+                 header: ClassicHeader (),
+                 footer: ClassicFooter(),
+                 controller: _refreshController,
+                 onRefresh: _onRefresh,
+                 onLoading: _onLoading,
+                 child: ListView.builder(
+                     padding: const EdgeInsets.all(0),
+                     itemCount: numToShow,
+                     addAutomaticKeepAlives: true,
+                     physics: const AlwaysScrollableScrollPhysics (),
+                     itemBuilder: (BuildContext context, int index) {
+                       // The height on this will need to be edited to match whatever height is set for the picture
+                       return SizedBox(width: double.infinity,
+                                      height: 800,
+                                      child:card(postIDs[index]));
+                     }),
+               )
+              :
+               CircularProgressIndicator(),
+
       ),
       bottomNavigationBar: BottomNavigationBar(
         onTap: (int index) {
