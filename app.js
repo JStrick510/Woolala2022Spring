@@ -106,9 +106,14 @@ app.get("/getPostInfo/:id", (request, response) => {
 app.get("/doesUserExist/:email", (request, response) => {
     userCollection.findOne({"email":request.params.email}, function(err, document) {
       if(document)
+      {
         console.log(document);
         response.send(document);
-
+        }
+      else
+      {
+      response.send(err);
+      }
     });
 });
 
@@ -119,7 +124,6 @@ app.get("/getUser/:userID", (request, response) => {
         response.send(document);
     });
 });
-
 
 app.get("/getFeed/:userID", (request, response) => {
       console.log('Feed requested for user ' + request.params.userID);

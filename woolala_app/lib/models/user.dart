@@ -21,6 +21,8 @@ class User{
   int numRated;
   List postIDs;
   List following;
+  List followers;
+  bool private;
 
 
   User({
@@ -35,9 +37,11 @@ class User{
     this.email,
     this.numPosts,
     this.numFollowers,
+    this.followers,
     this.numRated,
     this.postIDs,
-    this.following
+    this.following,
+    this.private
   });
 
   User.fromJSON(Map<String, dynamic> json)
@@ -53,8 +57,10 @@ class User{
         numPosts = json['numPosts'],
         numFollowers = json['numFollowers'],
         numRated = json['numRated'],
+        followers = json['followers'],
         following = json['following'],
-        postIDs = json['postIDs'];
+        postIDs = json['postIDs'],
+        private = json['private'];
 
   Map<String, dynamic> toJSON() =>
       {
@@ -69,9 +75,11 @@ class User{
           'email': email,
           'numPosts' : numPosts,
           'numFollowers' : numFollowers,
+          'followers' : followers,
           'numRated': numRated,
           'following' : following,
-          'postIDs' : postIDs
+          'postIDs' : postIDs,
+          'private' : private
       };
 
   Future<http.Response> setProfileName(String p)

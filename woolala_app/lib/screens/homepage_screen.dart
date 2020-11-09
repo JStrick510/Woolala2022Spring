@@ -13,18 +13,16 @@ import 'package:audioplayers/audioplayers.dart';
 import 'dart:collection';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
-
-
 import 'dart:io';
 import 'package:woolala_app/screens/login_screen.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:woolala_app/screens/post_screen.dart';
 import 'package:woolala_app/screens/profile_screen.dart';
+import 'package:woolala_app/screens/search_screen.dart';
+
 AudioPlayer advancedPlayer;
 
 String domain = "http://10.0.2.2:5000";
-
-
 
 Widget starSlider(String postID) => RatingBar(
       initialRating: 2.5,
@@ -50,19 +48,19 @@ Widget starSlider(String postID) => RatingBar(
 
 
 
-
 Future loadMusic(String sound) async {
-  if(sound=="fuck") {
+  if (sound == "fuck") {
     advancedPlayer = await AudioCache().play("Sounds/ashfuck.mp3");
   }
-   if(sound=="woolala")
-   {
-       advancedPlayer = await AudioCache().play("Sounds/woolalaAudio.mp3");
-   }
+  if (sound == "woolala") {
+    advancedPlayer = await AudioCache().play("Sounds/woolalaAudio.mp3");
+  }
 }
+
 // Will be used anytime the post is rated
 Future<http.Response> ratePost(double rating, String id) {
-  return http.post(domain + '/ratePost/' + id.toString() + '/' + rating.toString(),
+  return http.post(
+    domain + '/ratePost/' + id.toString() + '/' + rating.toString(),
     headers: <String, String>{
       'Content-Type': 'application/json',
     },
@@ -73,7 +71,8 @@ Future<http.Response> ratePost(double rating, String id) {
 // Will be used to make the post for the first time.
 Future<http.Response> createPost(String postID, String image, String date,
     String caption, String userID, String userName) {
-  return http.post(domain + '/insertPost',
+  return http.post(
+    domain + '/insertPost',
     headers: <String, String>{
       'Content-Type': 'application/json',
     },
@@ -91,7 +90,7 @@ Future<http.Response> createPost(String postID, String image, String date,
 }
 
 // Will be used to get info about the post
-Future<List> getPost(String id) async{
+Future<List> getPost(String id) async {
   http.Response res = await http.get(domain + '/getPostInfo/' + id);
   Map info = jsonDecode(res.body.toString());
   final decodedBytes = base64Decode(info["image"]);
@@ -112,6 +111,7 @@ Future<List> getPost(String id) async{
   // );
 }
 
+
 Future<User> getUserFromDB(String userID) async{
   http.Response res = await http.get(domain + '/getUser/'+userID);
   Map userMap = jsonDecode(res.body.toString());
@@ -120,12 +120,10 @@ Future<User> getUserFromDB(String userID) async{
 
 
 
-Future<List> getFeed(String userID) async
-{
+Future<List> getFeed(String userID) async {
   http.Response res = await http.get(domain + '/getFeed/' + userID);
   return jsonDecode(res.body.toString())["postIDs"];
 }
-
 
 //final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
@@ -135,44 +133,40 @@ class HomepageScreen extends StatefulWidget {
   _HomepageScreenState createState() => _HomepageScreenState();
 }
 
-class _HomepageScreenState extends State<HomepageScreen>{
-  RefreshController _refreshController = RefreshController(initialRefresh: false);
+class _HomepageScreenState extends State<HomepageScreen> {
+  RefreshController _refreshController =
+      RefreshController(initialRefresh: false);
 
   List postIDs = [];
   int numToShow = 2;
   int postsPerReload = 2;
 
-  void sortPosts(list)
-  {
+  void sortPosts(list) {
     list.removeWhere((item) => item == "");
-    list.sort((a, b) => int.parse(b.substring(b.indexOf(':::')+3)) - int.parse(a.substring(a.indexOf(':::')+3)));
+    list.sort((a, b) =>
+        int.parse(b.substring(b.indexOf(':::') + 3)) -
+        int.parse(a.substring(a.indexOf(':::') + 3)));
   }
 
-
-  void _onRefresh() async{
+  void _onRefresh() async {
     postIDs = await getFeed(currentUser.userID);
     sortPosts(postIDs);
     print(postIDs);
     // if failed,use refreshFailed()
-    if(mounted)
-      setState(() {});
+    if (mounted) setState(() {});
     _refreshController.refreshCompleted();
   }
 
-  void _onLoading() async{
+  void _onLoading() async {
     await Future.delayed(Duration(milliseconds: 1000));
-    if (numToShow + postsPerReload > postIDs.length)
-      {
-        numToShow = postIDs.length;
-      }
-    else
-      {
-        numToShow += postsPerReload;
-      }
+    if (numToShow + postsPerReload > postIDs.length) {
+      numToShow = postIDs.length;
+    } else {
+      numToShow += postsPerReload;
+    }
 
     // if failed,use loadFailed(),if no data return,use LoadNodata()
-    if(mounted)
-      setState(() {});
+    if (mounted) setState(() {});
     _refreshController.loadComplete();
   }
 
@@ -239,14 +233,18 @@ class _HomepageScreenState extends State<HomepageScreen>{
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('WooLaLa', style: TextStyle(fontSize: 25 ), textAlign: TextAlign.center,),
+        title: Text(
+          'WooLaLa',
+          style: TextStyle(fontSize: 25),
+          textAlign: TextAlign.center,
+        ),
         key: ValueKey("homepage"),
         actions: <Widget>[
-          IconButton (
+          IconButton(
             icon: Icon(Icons.search),
             key: ValueKey("Search"),
             color: Colors.white,
-            onPressed: () => Navigator.pushReplacementNamed(context, '/search'),
+            onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => SearchPage())),
           ),
           IconButton(
             icon: Icon(Icons.clear),
@@ -255,6 +253,7 @@ class _HomepageScreenState extends State<HomepageScreen>{
         ],
       ),
       body: Center(
+
         child:
               postIDs.length > 0 ?
                 SmartRefresher(
@@ -279,58 +278,77 @@ class _HomepageScreenState extends State<HomepageScreen>{
                )
               :
                CircularProgressIndicator(),
+
       ),
       bottomNavigationBar: BottomNavigationBar(
-          onTap: (int index) {
-            switchPage(index, context);
-          },
-          items: [
-            BottomNavigationBarItem(
-              icon: Icon(Icons.home, color: Theme.of(context).primaryColor,),
-              title: Text('Home', style: TextStyle(color: Theme.of(context).primaryColor),),
+        onTap: (int index) {
+          switchPage(index, context);
+        },
+        items: [
+          BottomNavigationBarItem(
+            icon: Icon(
+              Icons.home,
+              color: Theme.of(context).primaryColor,
             ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.add_circle_outline, key: ValueKey("Make Post"), color: Colors.white,),
-              title: Text("New", style: TextStyle(color: Colors.white),),
+            title: Text(
+              'Home',
+              style: TextStyle(color: Theme.of(context).primaryColor),
             ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.person, key: ValueKey("Profile"), color: Colors.white,),
-              title: Text("Profile", style: TextStyle(color: Colors.white),),
-
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(
+              Icons.add_circle_outline,
+              key: ValueKey("Make Post"),
+              color: Colors.white,
             ),
-          ],
-          backgroundColor: Colors.blueGrey[400],
+            title: Text(
+              "New",
+              style: TextStyle(color: Colors.white),
+            ),
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(
+              Icons.person,
+              key: ValueKey("Profile"),
+              color: Colors.white,
+            ),
+            title: Text(
+              "Profile",
+              style: TextStyle(color: Colors.white),
+            ),
+          ),
+        ],
+        backgroundColor: Colors.blueGrey[400],
       ),
     );
   }
 
-   void switchPage(int index, BuildContext context) {
-      switch(index) {
-        case 1: {
-          Navigator.pushReplacementNamed(context, '/imgup');}
+  void switchPage(int index, BuildContext context) {
+    switch (index) {
+      case 1:
+        {
+          Navigator.pushReplacementNamed(context, '/imgup');
+        }
         break;
-        case 2: {
-          Navigator.pushReplacementNamed(context, '/profile');}
+      case 2:
+        {
+          Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => ProfilePage(currentUser.email)));
+        }
         break;
-      }
+    }
   }
+
   void startSignOut(BuildContext context) {
     print("Sign Out");
     if (widget.signedInWithGoogle) {
       googleLogoutUser();
       Navigator.pushReplacementNamed(context, '/');
-    }
-    else
-    {
-
-       // FacebookLogin facebookLogin = FacebookLogin();
-        //facebookLogin.logOut();
-        Navigator.pushReplacementNamed(context, '/');
-
+    } else {
+      facebookLogoutUser();
+      Navigator.pushReplacementNamed(context, '/');
     }
   }
 }
-
 
 // ListView.builder(
 // padding: const EdgeInsets.all(0),

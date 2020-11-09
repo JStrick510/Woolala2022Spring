@@ -58,7 +58,7 @@ class _PostScreenState extends State<PostScreen> {
         leading: GestureDetector(
           onTap: () => Navigator.pushReplacementNamed(context, '/imgup'),
           child: Icon(
-            Icons.reply, // add custom icons also
+            Icons.arrow_back, // add custom icons also
           ),
         ),
       ),

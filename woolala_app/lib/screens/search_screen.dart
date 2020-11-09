@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:mongo_dart/mongo_dart.dart' as mongo;
+import 'package:woolala_app/screens/profile_screen.dart';
+
+import 'login_screen.dart';
 
 class SearchPage extends StatefulWidget{
   @override
@@ -14,7 +17,7 @@ class _SearchPageState extends State<SearchPage> {
   Icon _searchIcon = new Icon(Icons.search);
   Widget _appBarTitle = new Text( 'Search' );
 
-  void _getNames() async {
+   _getNames() async {
     mongo.Db db = new mongo.Db.pool([
       "mongodb://Developer_1:Developer_1@woolalacluster-shard-00-00.o4vv6.mongodb.net:27017/Feed?ssl=true&replicaSet=project-shard-0&authSource=admin&retryWrites=true&w=majority",
       "mongodb://Developer_1:Developer_1@woolalacluster-shard-00-01.o4vv6.mongodb.net:27017/Feed?ssl=true&replicaSet=project-shard-0&authSource=admin&retryWrites=true&w=majority",
@@ -31,6 +34,7 @@ class _SearchPageState extends State<SearchPage> {
       results = tempList;
       filteredResults = results;
     });
+    return results;
   }
   void _searchPressed() {
     setState(() {
@@ -77,6 +81,47 @@ class _SearchPageState extends State<SearchPage> {
       }
       filteredResults = tempList;
     }
+    return FutureBuilder(
+      future: _getNames(),
+      builder: (context, snapshot){
+        if(snapshot.hasData){
+          return ListView.builder(
+            key: ValueKey("ListView"),
+            scrollDirection: Axis.vertical,
+            shrinkWrap: true,
+            itemCount: results == null ? 0 : filteredResults.length,
+            itemBuilder: (BuildContext context, int index) {
+              return new ListTile(
+                leading: CircleAvatar(
+                  child: Text(filteredResults[index]['profileName'][0]),
+                ),
+                title: Text(filteredResults[index]['profileName']),
+                subtitle: Text(filteredResults[index]['userName']),
+                trailing: Wrap(
+                  spacing: 12,
+                  children: <Widget>[
+                    new Container(
+                      child: new IconButton(
+                        icon: Icon(Icons.add),
+                        onPressed: () {},
+                      ),
+                    ),
+                  ],
+                ),
+                onTap: () => Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => ProfilePage(filteredResults[index]['email']))),
+              );
+            },
+          );
+        }
+
+        else if(snapshot.hasError){
+          return Center(child: Text("No Results"));
+        }
+        else{
+          return Center(child: CircularProgressIndicator());
+        }
+      },
+    );
     return ListView.builder(
       key: ValueKey("ListView"),
       scrollDirection: Axis.vertical,
@@ -84,8 +129,23 @@ class _SearchPageState extends State<SearchPage> {
       itemCount: results == null ? 0 : filteredResults.length,
       itemBuilder: (BuildContext context, int index) {
         return new ListTile(
+          leading: CircleAvatar(
+            child: Text(filteredResults[index]['profileName'][0]),
+          ),
           title: Text(filteredResults[index]['profileName']),
-          onTap: () => print(filteredResults[index]['profileName']),
+          subtitle: Text(filteredResults[index]['userName']),
+          trailing: Wrap(
+            spacing: 12,
+            children: <Widget>[
+              new Container(
+                child: new IconButton(
+                  icon: Icon(Icons.add),
+                  onPressed: () {},
+                ),
+              ),
+            ],
+          ),
+          onTap: () => Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => ProfilePage(filteredResults[index]['email']))),
         );
       },
     );
@@ -99,7 +159,7 @@ class _SearchPageState extends State<SearchPage> {
         appBar: AppBar(
             leading: BackButton(
                 color: Colors.white,
-                onPressed: () => (Navigator.pushReplacementNamed(context, '/home'))
+                onPressed: () => (Navigator.pop(context))
             ),
             title: _appBarTitle,
             actions: <Widget>[
@@ -116,7 +176,26 @@ class _SearchPageState extends State<SearchPage> {
               _buildList(),
 
             ]
-        )
+        ),
+      bottomNavigationBar: BottomNavigationBar(
+          onTap: (int index) {
+            switchPage(index, context);
+          },
+          items: [
+            BottomNavigationBarItem(
+              icon: Icon(Icons.home, color: Colors.black),
+              title: Text('Home', style: TextStyle(color: Colors.black)),
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.add_circle_outline, color: Colors.black),
+              title: Text("New", style: TextStyle(color: Colors.black)),
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.person, color: Theme.of(context).primaryColor),
+              title: Text("Profile", style: TextStyle(color: Theme.of(context).primaryColor)),
+            ),
+          ]
+      ),
     );
 
   }
@@ -126,5 +205,20 @@ class _SearchPageState extends State<SearchPage> {
     _getNames();
   }
 
+  void switchPage(int index, BuildContext context) {
+    switch(index) {
+      case 0: {
+        Navigator.pushReplacementNamed(context, '/home');}
+      break;
+      case 1: {
+        Navigator.pushReplacementNamed(context, '/imgup');}
+      break;
+      case 2:
+        {
+          Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => ProfilePage(currentUser.email)));
+        }
+        break;
+    }
+  }
 }
 
