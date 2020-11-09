@@ -88,6 +88,17 @@ class _SearchPageState extends State<SearchPage> {
       itemBuilder: (BuildContext context, int index) {
         return new ListTile(
           title: Text(filteredResults[index]['profileName']),
+          trailing: Wrap(
+            spacing: 12,
+            children: <Widget>[
+              new Container(
+                child: new IconButton(
+                  icon: Icon(Icons.add),
+                  onPressed: () {},
+                ),
+              ),
+            ],
+          ),
           onTap: () => Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => ProfilePage(filteredResults[index]['email']))),
         );
       },
