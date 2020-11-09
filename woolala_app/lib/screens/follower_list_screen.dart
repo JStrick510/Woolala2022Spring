@@ -26,7 +26,7 @@ class FollowerListScreen extends StatefulWidget {
 class _FollowerListScreenState extends State<FollowerListScreen> {
 
   List followerNameList = new List();
-  User currentProfile = currentUser;
+  User currentProfile;
   List followerList = new List();
   List followerEmailList = new List();
 
@@ -43,6 +43,7 @@ class _FollowerListScreenState extends State<FollowerListScreen> {
   }
 
   listbuilder() async {
+    currentProfile = await getDoesUserExists(widget.userEmail);
     print(currentProfile.profileName);
     List tempFollowerList = new List();
     tempFollowerList = currentProfile.followers;
@@ -56,11 +57,6 @@ class _FollowerListScreenState extends State<FollowerListScreen> {
     }
     //print(followerList);
   }
-clearLists(){
-  followerNameList.clear();
-  followerList.clear();
-  followerEmailList.clear();
-}
 
     Widget _buildList() {
     return FutureBuilder(
@@ -138,6 +134,5 @@ clearLists(){
   @override
   void initState() {
     super.initState();
-    clearLists();
   }
 }

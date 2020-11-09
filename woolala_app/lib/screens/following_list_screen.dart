@@ -24,7 +24,8 @@ class FollowingListScreen extends StatefulWidget {
 
 
 class _FollowingListScreenState extends State<FollowingListScreen> {
-  User currentProfile = currentUser;
+
+  User currentProfile;
   List followingList = new List();
   List followingEmailList = new List();
 
@@ -40,14 +41,15 @@ class _FollowingListScreenState extends State<FollowingListScreen> {
   }
 
   listbuilder() async {
+    currentProfile = await getDoesUserExists(widget.userEmail);
     print(currentProfile.profileName);
-    List tempFollowerList = new List();
-    tempFollowerList = currentProfile.followers;
-    print(tempFollowerList);
+    List tempFollowingList = new List();
+    tempFollowingList = currentProfile.following;
+    print(tempFollowingList);
 
-    for(int i = 0; i < tempFollowerList.length; i++){
-      String tempProfileName = await getProfileName(tempFollowerList[i]);
-      String tempUserEmail = await getUserEmail(tempFollowerList[i]);
+    for(int i = 0; i < tempFollowingList.length; i++){
+      String tempProfileName = await getProfileName(tempFollowingList[i]);
+      String tempUserEmail = await getUserEmail(tempFollowingList[i]);
       followingList.add(tempProfileName);
       followingEmailList.add(tempUserEmail);
     }
