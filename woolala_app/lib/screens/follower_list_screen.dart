@@ -68,11 +68,13 @@ class _FollowerListScreenState extends State<FollowerListScreen> {
           shrinkWrap: true,
           itemCount: followerList.length,
           itemBuilder: (BuildContext context, int index) {
+
             return new ListTile(
               title: Text(followerList[index]),
               onTap: () {
                 Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => ProfilePage(followerEmailList[index])));
               },
+
             );
           },
         );

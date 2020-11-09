@@ -69,7 +69,21 @@ class _FollowingListScreenState extends State<FollowingListScreen> {
           itemBuilder: (BuildContext context, int index) {
             return new ListTile(
               title: Text(followingList[index]),
-              onTap: () => Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => ProfilePage(followingEmailList[index]))),
+              trailing: Wrap(
+                spacing: 12,
+                children: <Widget>[
+                  new Container(
+                    child: new IconButton(
+                      icon: Icon(Icons.remove_circle_outline),
+                      onPressed: () {},
+                    ),
+                  ),
+                ],
+
+              ),
+              onTap: () {
+                Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => ProfilePage(followingEmailList[index])));
+              },
             );
           },
         );
