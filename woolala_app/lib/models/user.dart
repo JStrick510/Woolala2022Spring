@@ -121,8 +121,8 @@ class User{
 
   Future<http.Response> setUserName(String u) async
   {
-    http.Response res = await isUserNameTaken(u);
-    if(res.body.isNotEmpty) {
+    //http.Response res = await isUserNameTaken(u);
+   // if(res.body.isNotEmpty) {
       //print(isUserNameTaken(u));
       String uName = u;
       if (u[0] != '@') {
@@ -133,8 +133,8 @@ class User{
           userName;
       return http.post(request,
           headers: <String, String>{'Content-Type': 'application/json',});
-    }
-    return null;
+    //}
+
   }
 
   Future<http.Response> isUserNameTaken(String n)

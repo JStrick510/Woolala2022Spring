@@ -10,6 +10,7 @@ import 'package:woolala_app/models/user.dart';
 import 'package:http/http.dart' as http;
 import 'package:woolala_app/screens/homepage_screen.dart';
 import 'dart:convert';
+import 'package:woolala_app/screens/createUserName.dart';
 import 'dart:math';
 import 'package:convert/convert.dart';
 
@@ -70,6 +71,7 @@ class _LoginScreenState extends State<LoginScreen> {
   bool isSignedInWithGoogle = false;
   bool isSignedInWithFacebook = false;
   bool _disposed = false;
+  bool _firstTimeLogin = false;
 
   // called automatically on app launch
   void initState() {
@@ -178,7 +180,7 @@ class _LoginScreenState extends State<LoginScreen> {
       User u = User(
         googleID: gAccount.id,
         email: gAccount.email,
-        userName: '@' + gAccount.displayName.replaceAll(new RegExp(r"\s+"), ""),
+        userName: '@' + base64.encode(latin1.encode(gAccount.email)).toString(),
         profileName: gAccount.displayName,
         profilePic: 'default',
         bio: "This is my new Woolala Account!",
@@ -191,6 +193,7 @@ class _LoginScreenState extends State<LoginScreen> {
       );
       await insertUser(u);
       currentUser = u;
+      _firstTimeLogin = true;
     }
   }
 
@@ -214,7 +217,7 @@ class _LoginScreenState extends State<LoginScreen> {
             profilePic: "default",
             bio: "This is my new Woolala Account!",
             userID: base64.encode(latin1.encode(profile['email'])).toString(),
-            userName: '@' + profile['name'].replaceAll(new RegExp(r"\s+"), ""),
+            userName: '@' + base64.encode(latin1.encode(profile['email'])).toString(),
             numRated: 0,
             postIDs: [],
             following: [],
@@ -222,6 +225,7 @@ class _LoginScreenState extends State<LoginScreen> {
             private: false);
         await insertUser(u);
         currentUser = u;
+        _firstTimeLogin = true;
         break;
       default:
         print("User account found with Facebook email.");
@@ -241,8 +245,13 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-    print("Building.");
-    if (isSignedInWithGoogle || isSignedInWithFacebook) {
+
+    if(_firstTimeLogin)
+      {
+        print("Building.");
+        return CreateUserName();
+      }
+    else if (isSignedInWithGoogle || isSignedInWithFacebook) {
       return HomepageScreen(isSignedInWithGoogle);
     } else {
       return Scaffold(
