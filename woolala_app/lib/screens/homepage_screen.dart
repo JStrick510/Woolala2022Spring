@@ -22,6 +22,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:woolala_app/screens/post_screen.dart';
 import 'package:woolala_app/screens/profile_screen.dart';
 import 'package:woolala_app/screens/search_screen.dart';
+import 'package:woolala_app/widgets/bottom_nav.dart';
 
 AudioPlayer advancedPlayer;
 
@@ -134,6 +135,7 @@ class HomepageScreen extends StatefulWidget {
   final bool signedInWithGoogle;
   HomepageScreen(this.signedInWithGoogle);
   _HomepageScreenState createState() => _HomepageScreenState();
+  
 }
 
 class _HomepageScreenState extends State<HomepageScreen> {
@@ -205,9 +207,12 @@ class _HomepageScreenState extends State<HomepageScreen> {
     _refreshController.loadComplete();
   }
 
+
+
   @override
   initState() {
     super.initState();
+    if (currentUser != null)
     getFeed(currentUser.userID).then((list) {
       postIDs = list;
       sortPosts(postIDs);
@@ -265,6 +270,10 @@ class _HomepageScreenState extends State<HomepageScreen> {
 
   @override
   Widget build(BuildContext context) {
+
+    BottomNav bottomBar = BottomNav(context);
+    bottomBar.currentIndex = 0;
+
     return Scaffold(
         appBar: AppBar(
           title: Text(
@@ -317,60 +326,12 @@ class _HomepageScreenState extends State<HomepageScreen> {
       ),
       bottomNavigationBar: BottomNavigationBar(
         onTap: (int index) {
-          switchPage(index, context);
+          bottomBar.switchPage(index, context);
         },
-        items: [
-          BottomNavigationBarItem(
-            icon: Icon(
-              Icons.home,
-              color: Theme.of(context).primaryColor,
-            ),
-            title: Text(
-              'Home',
-              style: TextStyle(color: Theme.of(context).primaryColor),
-            ),
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(
-              Icons.add_circle_outline,
-              key: ValueKey("Make Post"),
-              color: Colors.white,
-            ),
-            title: Text(
-              "New",
-              style: TextStyle(color: Colors.white),
-            ),
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(
-              Icons.person,
-              key: ValueKey("Profile"),
-              color: Colors.white,
-            ),
-            title: Text(
-              "Profile",
-              style: TextStyle(color: Colors.white),
-            ),
-          ),
-        ],
+        items: bottomBar.bottom_items,
         backgroundColor: Colors.blueGrey[400],
       ),
     );
-  }
-
-  void switchPage(int index, BuildContext context) {
-    switch (index) {
-      case 1:
-        {
-          Navigator.pushReplacementNamed(context, '/imgup');
-        }
-        break;
-      case 2:
-        {
-          Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => ProfilePage(currentUser.email)));
-        }
-        break;
-    }
   }
 
   void startSignOut(BuildContext context) {

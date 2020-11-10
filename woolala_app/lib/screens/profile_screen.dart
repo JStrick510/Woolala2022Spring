@@ -6,6 +6,7 @@ import 'package:woolala_app/models/user.dart';
 import 'package:woolala_app/screens/follower_list_screen.dart';
 import 'package:woolala_app/screens/following_list_screen.dart';
 import 'package:woolala_app/screens/search_screen.dart';
+import 'package:woolala_app/widgets/bottom_nav.dart';
 //import 'package:cached_network_image/cached_network_image.dart';
 
 class ProfilePage extends StatefulWidget{
@@ -248,6 +249,8 @@ class _ProfilePageState extends State<ProfilePage> {
 
   @override
   Widget build(BuildContext context) {
+    BottomNav bottomBar = BottomNav(context);
+    bottomBar.currentIndex = 2;
     return Scaffold(
       appBar: AppBar(
         leading: IconButton (
@@ -276,35 +279,12 @@ class _ProfilePageState extends State<ProfilePage> {
 
       ),
       bottomNavigationBar: BottomNavigationBar(
-          onTap: (int index) {
-            switchPage(index, context);
-          },
-          items: [
-            BottomNavigationBarItem(
-              icon: Icon(Icons.home, color: Colors.black),
-              title: Text('Home', style: TextStyle(color: Colors.black)),
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.add_circle_outline, color: Colors.black),
-              title: Text("New", style: TextStyle(color: Colors.black)),
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.person, color: Theme.of(context).primaryColor),
-              title: Text("Profile", style: TextStyle(color: Theme.of(context).primaryColor)),
-            ),
-          ]
+        onTap: (int index) {
+          bottomBar.switchPage(index, context);
+        },
+        items: bottomBar.bottom_items,
+        backgroundColor: Colors.blueGrey[400],
       ),
     );
-  }
-
-  void switchPage(int index, BuildContext context) {
-    switch(index) {
-      case 0: {
-        Navigator.pushReplacementNamed(context, '/home');}
-      break;
-      case 1: {
-        Navigator.pushReplacementNamed(context, '/imgup');}
-      break;
-    }
   }
 }
