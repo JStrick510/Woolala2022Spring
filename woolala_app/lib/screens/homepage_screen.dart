@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -7,6 +9,7 @@ import 'package:woolala_app/screens/login_screen.dart';
 import 'package:woolala_app/models/user.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:mongo_dart/mongo_dart.dart' as mongo;
 import 'dart:io' as Io;
 import 'package:audioplayers/audio_cache.dart';
 import 'package:audioplayers/audioplayers.dart';
@@ -136,12 +139,44 @@ class HomepageScreen extends StatefulWidget {
 }
 
 class _HomepageScreenState extends State<HomepageScreen> {
-  RefreshController _refreshController =
-      RefreshController(initialRefresh: false);
+  RefreshController _refreshController = RefreshController(
+      initialRefresh: false);
+    var rating = 0.0;
+    var postID = 0.0;
+    List postList = new List();
+
+    List<String> testList = [
+      'assets/logos/w_logo_test.png',
+      'assets/logos/w_logo_test.png',
+      'assets/logos/w_logo_test.png',
+      'assets/logos/w_logo_test.png',
+      'assets/logos/w_logo_test.png',
+      'assets/logos/w_logo_test.png',
+      'assets/logos/w_logo_test.png',
+      'assets/logos/w_logo_test.png',
+      'assets/logos/w_logo_test.png',
+    ];
 
   List postIDs = [];
   int numToShow = 2;
   int postsPerReload = 2;
+
+  void _getPosts() async {
+      mongo.Db db = new mongo.Db.pool([
+        "mongodb://Developer_1:Developer_1@woolalacluster-shard-00-00.o4vv6.mongodb.net:27017/Feed?ssl=true&replicaSet=project-shard-0&authSource=admin&retryWrites=true&w=majority",
+        "mongodb://Developer_1:Developer_1@woolalacluster-shard-00-01.o4vv6.mongodb.net:27017/Feed?ssl=true&replicaSet=project-shard-0&authSource=admin&retryWrites=true&w=majority",
+        "mongodb://Developer_1:Developer_1@woolalacluster-shard-00-02.o4vv6.mongodb.net:27017/Feed?ssl=true&replicaSet=project-shard-0&authSource=admin&retryWrites=true&w=majority"
+      ]);
+      await db.open();
+      var posts = db.collection('Posts');
+      List tempList = new List();
+      tempList = await posts.find(mongo.where.sortBy('date')).toList();
+      db.close();
+
+      setState(() {
+        postList = tempList;
+      });
+  }
 
   void sortPosts(list) {
     list.removeWhere((item) => item == "");
@@ -233,7 +268,6 @@ class _HomepageScreenState extends State<HomepageScreen> {
       },);
   }
 
-
   @override
   Widget build(BuildContext context) {
 
@@ -241,26 +275,27 @@ class _HomepageScreenState extends State<HomepageScreen> {
     bottomBar.currentIndex = 0;
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          'WooLaLa',
-          style: TextStyle(fontSize: 25),
-          textAlign: TextAlign.center,
-        ),
-        key: ValueKey("homepage"),
-        actions: <Widget>[
-          IconButton(
-            icon: Icon(Icons.search),
-            key: ValueKey("Search"),
-            color: Colors.white,
-            onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => SearchPage())),
+        appBar: AppBar(
+          title: Text(
+            'WooLaLa',
+            style: TextStyle(fontSize: 25),
+            textAlign: TextAlign.center,
           ),
-          IconButton(
-            icon: Icon(Icons.clear),
-            onPressed: () => startSignOut(context),
-          )
-        ],
-      ),
+          key: ValueKey("homepage"),
+          actions: <Widget>[
+            IconButton(
+              icon: Icon(Icons.search),
+              key: ValueKey("Search"),
+              color: Colors.white,
+              onPressed: () =>
+                  Navigator.pushReplacementNamed(context, '/search'),
+            ),
+            IconButton(
+              icon: Icon(Icons.clear),
+              onPressed: () => startSignOut(context),
+            )
+          ],
+        ),
       body: Center(
 
         child:
@@ -308,6 +343,20 @@ class _HomepageScreenState extends State<HomepageScreen> {
       facebookLogoutUser();
       Navigator.pushReplacementNamed(context, '/');
     }
+  }
+
+  Widget _buildPostsList() {
+      _getPosts();
+      print(postList);
+      return ListView.builder(
+        scrollDirection: Axis.vertical,
+        itemCount: testList.length, //postList later
+        itemBuilder: (BuildContext context, int index) {
+          return new Image(
+            image: AssetImage(testList[index]),
+          );
+        },
+      );
   }
 }
 

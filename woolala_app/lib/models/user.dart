@@ -3,6 +3,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
+import 'dart:math';
 
 class User{
   final String userID;
@@ -16,14 +17,11 @@ class User{
   String userName;
   String profilePic;
   final String email;
-  int numPosts;
-  int numFollowers;
   int numRated;
+  List followers;
   List postIDs;
   List following;
-  List followers;
   bool private;
-
 
   User({
     this.userID,
@@ -35,13 +33,11 @@ class User{
     this.userName,
     this.profilePic,
     this.email,
-    this.numPosts,
-    this.numFollowers,
-    this.followers,
     this.numRated,
     this.postIDs,
     this.following,
-    this.private
+    this.private,
+    this.followers,
   });
 
   User.fromJSON(Map<String, dynamic> json)
@@ -54,10 +50,8 @@ class User{
         userName = json['userName'],
         profilePic = json['profilePic'],
         email = json['email'],
-        numPosts = json['numPosts'],
-        numFollowers = json['numFollowers'],
-        numRated = json['numRated'],
         followers = json['followers'],
+        numRated = json['numRated'],
         following = json['following'],
         postIDs = json['postIDs'],
         private = json['private'];
@@ -73,8 +67,6 @@ class User{
           'userName': userName,
           'profilePic': profilePic,
           'email': email,
-          'numPosts' : numPosts,
-          'numFollowers' : numFollowers,
           'followers' : followers,
           'numRated': numRated,
           'following' : following,
@@ -82,10 +74,41 @@ class User{
           'private' : private
       };
 
+  Future<double> getAvgScore() async{
+    double average = 0.0;
+    for(int i =0; i<postIDs.length;i++)
+      {
+        if(postIDs[i]!= '')
+          {
+            String req = 'http://10.0.2.2:5000/getPostInfo/' + postIDs[i];
+            http.Response res = await http.get(req);
+            Map postDetails = jsonDecode(res.body.toString());
+            if(postDetails['numRatings'].toDouble() < 1)
+              {
+                average += 0;
+              }
+            else{
+                  average = average + (postDetails['cumulativeRating'].toDouble() / postDetails['numRatings'].toDouble());
+                }
+          }
+      }
+    if(postIDs.length > 0) {
+      average = average / postIDs.length;
+      }
+      return average;
+  }
+
   Future<http.Response> setProfileName(String p)
   {
     profileName = p;
     String request = 'http://10.0.2.2:5000/updateUserProfileName/' + userID + '/' + profileName ;
+    return http.post(request, headers: <String, String>{'Content-Type': 'application/json',});
+  }
+
+  Future<http.Response> setPrivacy(bool p)
+  {
+    private = p;
+    String request = 'http://10.0.2.2:5000/updateUserPrivacy/' + userID + '/' + private.toString() ;
     return http.post(request, headers: <String, String>{'Content-Type': 'application/json',});
   }
 
@@ -95,6 +118,35 @@ class User{
       String request = 'http://10.0.2.2:5000/updateUserBio/' + userID + '/' + bio ;
       return http.post(request, headers: <String, String>{'Content-Type': 'application/json',});
     }
+
+  Future<http.Response> setUserName(String u) async
+  {
+    http.Response res = await isUserNameTaken(u);
+    if(res.body.isNotEmpty) {
+      //print(isUserNameTaken(u));
+      String uName = u;
+      if (u[0] != '@') {
+        uName = '@' + u;
+      }
+      userName = uName;
+      String request = 'http://10.0.2.2:5000/updateUserName/' + userID + '/' +
+          userName;
+      return http.post(request,
+          headers: <String, String>{'Content-Type': 'application/json',});
+    }
+    return null;
+  }
+
+  Future<http.Response> isUserNameTaken(String n)
+  {
+    String uName = n;
+    if (uName.isNotEmpty && uName[0] != '@') {
+        uName = '@' + n;
+      }
+      String request = 'http://10.0.2.2:5000/getUserByUserName/' + uName;
+      return http.get(request, headers: <String, String>{'Content-Type': 'application/json',});
+
+  }
 
   Future<http.Response> setProfilePic(String pic)
   {
@@ -137,6 +189,3 @@ class User{
 */
 
 }
-
-
-

@@ -176,21 +176,19 @@ class _LoginScreenState extends State<LoginScreen> {
     } else {
       print("Making an account with Google.");
       User u = User(
-          googleID: gAccount.id,
-          email: gAccount.email,
-          userName:
-              '@' + gAccount.displayName.replaceAll(new RegExp(r"\s+"), ""),
-          profileName: gAccount.displayName,
-          profilePic: 'default',
-          bio: "This is my new Woolala Account!",
-          userID: base64.encode(latin1.encode(gAccount.email)).toString(),
-          numFollowers: 0,
-          numPosts: 0,
-          numRated: 0,
-          postIDs: [],
-          following: [],
-          private: false);
-      print("about to call insert user");
+        googleID: gAccount.id,
+        email: gAccount.email,
+        userName: '@' + gAccount.displayName.replaceAll(new RegExp(r"\s+"), ""),
+        profileName: gAccount.displayName,
+        profilePic: 'default',
+        bio: "This is my new Woolala Account!",
+        userID: base64.encode(latin1.encode(gAccount.email)).toString(),
+        followers: [],
+        numRated: 0,
+        postIDs: [],
+        following: [],
+        private: false
+      );
       await insertUser(u);
       currentUser = u;
     }
@@ -217,11 +215,10 @@ class _LoginScreenState extends State<LoginScreen> {
             bio: "This is my new Woolala Account!",
             userID: base64.encode(latin1.encode(profile['email'])).toString(),
             userName: '@' + profile['name'].replaceAll(new RegExp(r"\s+"), ""),
-            numFollowers: 0,
-            numPosts: 0,
             numRated: 0,
             postIDs: [],
             following: [],
+            followers: [],
             private: false);
         await insertUser(u);
         currentUser = u;

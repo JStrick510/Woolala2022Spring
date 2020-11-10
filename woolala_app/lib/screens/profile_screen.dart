@@ -24,24 +24,18 @@ class _ProfilePageState extends State<ProfilePage> {
   bool checker = false;
 
   createProfileTop() {
-    setState(() {});
     return FutureBuilder(
       future: getDoesUserExists(widget.userProfileEmail),
       builder: (context, dataSnapshot) {
         switch (dataSnapshot.connectionState) {
-          case ConnectionState.waiting: return Text('Loading....');
+          case ConnectionState.waiting: return CircularProgressIndicator();
           default:
             if (dataSnapshot.hasError)
               return Text('Error: ${dataSnapshot.error}');
             else
               print('Result: ${dataSnapshot.data}');
         }
-       // print(dataSnapshot);
-        //print(dataSnapshot.data);
         profilePageOwner = dataSnapshot.data;
-        //eventually get this from the sign in
-        //String profilePic = profilePageOwner.profilePic;
-
         return Padding(
             padding: EdgeInsets.all(20.0),
               child: Column(
@@ -80,22 +74,20 @@ class _ProfilePageState extends State<ProfilePage> {
                                 mainAxisSize: MainAxisSize.max,
                                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                 children: <Widget>[
-                                  createColumns("Posts", profilePageOwner.numPosts),
+                                  createIntColumns("Posts", profilePageOwner.postIDs.length),
                                   GestureDetector(
                                     onTap: () {
                                       Navigator.push(context, MaterialPageRoute(builder: (context) => FollowerListScreen(widget.userProfileEmail)));
                                     },
-                                    child: createColumns("Followers", profilePageOwner.numFollowers),
+                                    child: createIntColumns("Followers", profilePageOwner.followers.length),
                                   ),
-
-                                  createColumns("Ratings", profilePageOwner.numRated),
-
                                   GestureDetector(
                                     onTap: () {
                                       Navigator.push(context, MaterialPageRoute(builder: (context) => FollowingListScreen(widget.userProfileEmail)));
                                     },
-                                    child: createColumns("Following", profilePageOwner.following.length),
+                                    child: createIntColumns("Following", profilePageOwner.following.length),
                                   ),
+                                  createAveragesColumn("Avg."),
                                 ],
                               ),
                             ),
@@ -112,7 +104,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                 ),
                                 //createButton(),
                               ],
-                            )
+                            ),
                           ],
                         ),
                       ),
@@ -120,28 +112,84 @@ class _ProfilePageState extends State<ProfilePage> {
                   ),
                 ],
             ),
-
         );
       },
     );
   }
 
-
-
-  Column createColumns(String title, int count){
+  Column createIntColumns(String title, int count){
     return Column(
       mainAxisSize: MainAxisSize.max,
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
         Text(
-          count.toString(),
+          getFormattedText(count.toString()),
           style: TextStyle(fontSize: 20.0, color: Colors.black, fontWeight: FontWeight.bold),
         ),
         Container(
-          margin: EdgeInsets.only(top: 5.0),
+          margin: EdgeInsets.only(top: 3.0),
           child: Text(
             title,
             style: TextStyle(fontSize: 16.0, color: Colors.black, fontWeight: FontWeight.w400),
+          ),
+        ),
+      ],
+    );
+  }
+  String getFormattedText(String number)
+  {
+    if(number.length < 4)
+      {//text < 1000
+        return number;
+      }
+    else if(number.length < 7)
+      {//text < 1,000,000
+        return number[0] + "." + number[1] + " K";
+      }
+    else if(number.length < 10)
+      {//text < 1,000,000,000
+        return number[0] + "." + number[1] + " M";
+      }
+    else{
+      // text > 1 billion
+      return number[0] + "." + number[1] + " B";
+    }
+
+  }
+    createAveragesColumn(String title) {
+      return FutureBuilder(
+        future: profilePageOwner.getAvgScore(),
+        builder: (context, snapshot){
+
+          switch (snapshot.connectionState) {
+            case ConnectionState.waiting: return CircularProgressIndicator();
+            default:
+              if (snapshot.hasError)
+                print('Error: ${snapshot.error}');
+              else
+                print('Result: ${snapshot.data}');
+          }
+
+          double avg = snapshot.data;
+          return createDoubleColumns(title, avg);
+        }
+      );
+    }
+
+  Column createDoubleColumns(String title, double count) {
+    return Column(
+      mainAxisSize: MainAxisSize.max,
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: <Widget>[
+        Text(
+          count.toStringAsFixed(2),
+          style: TextStyle(fontSize: 20.0, color: Colors.black, fontWeight: FontWeight.bold),
+        ),
+        Container(
+          margin: EdgeInsets.only(top: 3.0),
+          child: Text(
+            title,
+            style: TextStyle(fontSize: 18.0, color: Colors.black, fontWeight: FontWeight.w400),
           ),
         ),
       ],
@@ -194,7 +242,7 @@ class _ProfilePageState extends State<ProfilePage> {
     ),
   );
   }
-  
+
   editUserProfile() {
     Navigator.pushReplacementNamed(context, '/editProfile');
   }
@@ -239,5 +287,4 @@ class _ProfilePageState extends State<ProfilePage> {
       ),
     );
   }
-
 }
