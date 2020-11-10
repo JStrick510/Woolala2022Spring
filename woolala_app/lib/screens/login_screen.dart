@@ -215,11 +215,10 @@ class _LoginScreenState extends State<LoginScreen> {
             bio: "This is my new Woolala Account!",
             userID: base64.encode(latin1.encode(profile['email'])).toString(),
             userName: '@' + profile['name'].replaceAll(new RegExp(r"\s+"), ""),
-            numFollowers: 0,
-            numPosts: 0,
             numRated: 0,
             postIDs: [],
             following: [],
+            followers: [],
             private: false);
         await insertUser(u);
         currentUser = u;

@@ -21,7 +21,6 @@ class User{
   List followers;
   List postIDs;
   List following;
-  List followers;
   bool private;
 
   User({
@@ -53,7 +52,6 @@ class User{
         email = json['email'],
         followers = json['followers'],
         numRated = json['numRated'],
-        followers = json['followers'],
         following = json['following'],
         postIDs = json['postIDs'],
         private = json['private'];

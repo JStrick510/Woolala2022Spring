@@ -272,12 +272,6 @@ class _HomepageScreenState extends State<HomepageScreen> {
             style: TextStyle(fontSize: 25),
             textAlign: TextAlign.center,
           ),
-          IconButton(
-            icon: Icon(Icons.clear),
-            onPressed: () => startSignOut(context),
-          )
-        ],
-      ),
           key: ValueKey("homepage"),
           actions: <Widget>[
             IconButton(
@@ -293,31 +287,6 @@ class _HomepageScreenState extends State<HomepageScreen> {
             )
           ],
         ),
-        body: Center(
-          child: SizedBox(
-              height: 400,
-              child: _buildPostsList(),
-          ),
-          postIDs.length > 0 ?
-          SmartRefresher(
-            enablePullDown: true,
-            enablePullUp: true,
-            header: ClassicHeader(),
-            footer: ClassicFooter(),
-            controller: _refreshController,
-            onRefresh: _onRefresh,
-            onLoading: _onLoading,
-            child: ListView.builder(
-                padding: const EdgeInsets.all(0),
-                itemCount: numToShow,
-                addAutomaticKeepAlives: true,
-                physics: const AlwaysScrollableScrollPhysics (),
-                itemBuilder: (BuildContext context, int index) {
-                  return card(postIDs[index]);
-                }),
-          )
-        ],
-      ),
       body: Center(
 
         child:
