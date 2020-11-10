@@ -12,6 +12,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:woolala_app/screens/post_screen.dart';
 import 'dart:io' as Io;
 import 'package:intl/intl.dart';
+import 'package:image_cropper/image_cropper.dart';
 
 class ImageUploadScreen extends StatefulWidget {
   ImageUploadScreen();
@@ -19,42 +20,48 @@ class ImageUploadScreen extends StatefulWidget {
   _ImageUploadScreenState createState() => _ImageUploadScreenState();
 }
 
+Future<File> cropImage(imagePath) async {
+  print("testing cropImage function");
+  File croppedImage = await ImageCropper.cropImage(
+    sourcePath: imagePath,
+    maxWidth: 1000,
+    maxHeight: 1000,
+  );
+  return croppedImage;
+}
+
 class _ImageUploadScreenState extends State<ImageUploadScreen> {
   File _image = null;
   String img64;
   final picker = ImagePicker();
   bool selected = false;
-  String _text = "";
-  TextEditingController _c;
-
-  static final DateTime now = DateTime.now().toLocal();
-  static final DateFormat formatter = DateFormat('yyyy-MM-dd');
-  final String date = formatter.format(now);
 
   Future getImageGallery() async {
     final pickedFile = await picker.getImage(source: ImageSource.gallery);
-    setState(() {
-      if (pickedFile != null) {
-        _image = File(pickedFile.path);
-        final bytes = _image.readAsBytesSync();
-        img64 = base64Encode(bytes);
-      } else {
-        print('No image selected.');
-      }
-    });
+    if (pickedFile != null) {
+      _image = await cropImage(pickedFile.path);
+      // _image = File(pickedFile.path);
+      final bytes = _image.readAsBytesSync();
+      img64 = base64Encode(bytes);
+      Navigator.pushReplacementNamed(context, '/makepost',
+          arguments: [_image, img64]);
+    } else {
+      print('No image selected.');
+    }
   }
 
   Future getImageCamera() async {
     final pickedFile = await picker.getImage(source: ImageSource.camera);
-    setState(() {
-      if (pickedFile != null) {
-        _image = File(pickedFile.path);
-        final bytes = _image.readAsBytesSync();
-        img64 = base64Encode(bytes);
-      } else {
-        print('No image selected.');
-      }
-    });
+    if (pickedFile != null) {
+      _image = await cropImage(pickedFile.path);
+      // _image = File(pickedFile.path);
+      final bytes = _image.readAsBytesSync();
+      img64 = base64Encode(bytes);
+      Navigator.pushReplacementNamed(context, '/makepost',
+          arguments: [_image, img64]);
+    } else {
+      print('No image selected.');
+    }
   }
 
   @override
@@ -83,16 +90,6 @@ class _ImageUploadScreenState extends State<ImageUploadScreen> {
       ),
       body: Column(children: [
         _image == null ? Text('') : Image.file(_image),
-        SizedBox(height: 20.0),
-        TextField(textInputAction: TextInputAction.go, keyboardType: TextInputType.multiline, maxLines: null, decoration: new InputDecoration(hintText: "Enter a caption!", contentPadding: const EdgeInsets.all(20.0))),
-        new Text(_text,
-            style: TextStyle(
-                fontSize: 32.0,
-                color: Colors.black,
-                fontWeight: FontWeight.bold),
-            textAlign: TextAlign.center),
-        SizedBox(height: 20.0),
-        new Text(date),
       ]),
       bottomNavigationBar: Row(
           mainAxisSize: MainAxisSize.max,

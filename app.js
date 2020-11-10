@@ -67,6 +67,7 @@ app.post("/ratePost/:id/:rating", (request, response) => {
   });
 });
 
+
 app.post("/updateUserBio/:id/:bio", (request, response) => {
   var newBio = { $set: {"bio": request.params.bio} };
   userCollection.updateOne({"userID":request.params.id}, newBio, function(err, res){
@@ -76,11 +77,30 @@ app.post("/updateUserBio/:id/:bio", (request, response) => {
   });
 });
 
+app.post("/updateUserName/:id/:name", (request, response) => {
+  var newName = { $set: {"userName": request.params.name} };
+  userCollection.updateOne({"userID":request.params.id}, newName, function(err, res){
+    if (err) throw err;
+    console.log("USER: " + request.params.id + "\nNew Name: " + request.params.name);
+    response.send(res);
+  });
+});
+
 app.post("/updateUserProfileName/:id/:name", (request, response) => {
   var newName = { $set: {"profileName": request.params.name} };
   userCollection.updateOne({"userID":request.params.id}, newName, function(err, res){
     if (err) throw err;
-    console.log("USER: " + request.params.id + "\nNew Name: " + request.params.bio);
+    console.log("New Name: " + request.params.name);
+    response.send(res);
+  });
+});
+
+app.post("/updateUserPrivacy/:id/:private", (request, response) => {
+  var privacyBool = request.params.private == 'true';
+  var newPrivacy = { $set: {"private": privacyBool}};
+  userCollection.updateOne({"userID":request.params.id}, newPrivacy, function(err, res){
+    if (err) throw err;
+    console.log("Account Privacy: " + privacyBool);
     response.send(res);
   });
 });
@@ -88,7 +108,6 @@ app.post("/updateUserProfileName/:id/:name", (request, response) => {
 app.post("/updateUserProfilePic/:id/:image64str", (request, response) => {
   console.log(request.params.image64str);
   var newPic = { $set: {"profilePic": request.params.image64str} };
-  //console.log(request.params.image64str);
  console.log(newPic);
   userCollection.updateOne({"userID":request.params.id}, newPic, function(err, res){
     if (err) throw err;
@@ -120,13 +139,22 @@ app.get("/doesUserExist/:email", (request, response) => {
 app.get("/getUser/:userID", (request, response) => {
     userCollection.findOne({"userID":request.params.userID}, function(err, document) {
       if(document)
-        console.log("Found user!");
+        console.log("Found user: " + request.params.userID);
         response.send(document);
     });
 });
 
+app.get("/getUserByUserName/:userName", (request, response) => {
+    userCollection.findOne({"userName":request.params.userName}, function(err, document) {
+      if(document)
+        console.log("Found user! with UserName: " + requ.params.userName);
+        response.send(document);
+    });
+});
+
+
 app.get("/getFeed/:userID", (request, response) => {
-      console.log('Feed requested for user ' + request.params.userID + " date: " + request.params.date);
+      console.log('Feed requested for user ' + request.params.userID);
 
       var postIDs = [];
       userCollection.findOne({"userID":request.params.userID}, function(err, document) {
