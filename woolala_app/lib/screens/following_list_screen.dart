@@ -14,17 +14,18 @@ import 'package:intl/intl.dart';
 import 'package:mongo_dart/mongo_dart.dart' as mongo;
 import 'package:woolala_app/models/user.dart';
 import 'package:woolala_app/screens/profile_screen.dart';
+import 'package:woolala_app/widgets/bottom_nav.dart';
 
 class FollowingListScreen extends StatefulWidget {
   final String userEmail;
+
   FollowingListScreen(this.userEmail);
+
   @override
   _FollowingListScreenState createState() => _FollowingListScreenState();
 }
 
-
 class _FollowingListScreenState extends State<FollowingListScreen> {
-
   User currentProfile;
   List followingList = new List();
   List followingEmailList = new List();
@@ -42,7 +43,7 @@ class _FollowingListScreenState extends State<FollowingListScreen> {
     return User.fromJSON(userMap).email;
   }
 
-  Future<String>getUserName(String userID) async {
+  Future<String> getUserName(String userID) async {
     http.Response res = await http.get(domain + "/getUser/" + userID);
     Map userMap = jsonDecode(res.body.toString());
     return User.fromJSON(userMap).userName;
@@ -55,7 +56,7 @@ class _FollowingListScreenState extends State<FollowingListScreen> {
     tempFollowingList = currentProfile.following;
     print(tempFollowingList);
 
-    for(int i = 0; i < tempFollowingList.length; i++){
+    for (int i = 0; i < tempFollowingList.length; i++) {
       String tempProfileName = await getProfileName(tempFollowingList[i]);
       String tempUserEmail = await getUserEmail(tempFollowingList[i]);
       String tempUserName = await getUserName(tempFollowingList[i]);
@@ -67,17 +68,16 @@ class _FollowingListScreenState extends State<FollowingListScreen> {
     //print(followerList);
   }
 
-
-    Widget _buildList() {
+  Widget _buildList() {
     return FutureBuilder(
       future: listbuilder(),
       builder: (context, snapshot) {
-        if(snapshot.hasData){
+        if (snapshot.hasData) {
           return ListView.builder(
             key: ValueKey("ListView"),
             scrollDirection: Axis.vertical,
             shrinkWrap: true,
-            itemCount:  followingList.length,
+            itemCount: followingList.length,
             itemBuilder: (BuildContext context, int index) {
               return new ListTile(
                 leading: CircleAvatar(
@@ -95,76 +95,47 @@ class _FollowingListScreenState extends State<FollowingListScreen> {
                       ),
                     ),
                   ],
-
                 ),
                 onTap: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => ProfilePage(followingEmailList[index])));
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (BuildContext context) =>
+                              ProfilePage(followingEmailList[index])));
                 },
               );
             },
           );
-        }
-        else if(snapshot.hasError){
+        } else if (snapshot.hasError) {
           return Center(child: Text("No Results"));
-        }
-        else{
+        } else {
           return Center(child: CircularProgressIndicator());
         }
-
       },
     );
   }
 
   @override
   Widget build(BuildContext context) {
+    BottomNav bottomBar = BottomNav(context);
     return Scaffold(
-        appBar: AppBar(
-            leading: BackButton(
-                color: Colors.white,
-                onPressed: () {
+      appBar: AppBar(
+          leading: BackButton(
+              color: Colors.white,
+              onPressed: () {
                 //(Navigator.pushReplacementNamed(context, '/profile'))
                 Navigator.pop(context);
-                }
-            ),
-            title: Text("Following"),
-            actions: <Widget>[
-            ]
-        ),
-        body: ListView(
-            padding: const EdgeInsets.all(8),
-            children: <Widget>[
-              _buildList(),
-            ]
-        ),
+              }),
+          title: Text("Following"),
+          actions: <Widget>[]),
+      body: ListView(padding: const EdgeInsets.all(8), children: <Widget>[
+        _buildList(),
+      ]),
       bottomNavigationBar: BottomNavigationBar(
           onTap: (int index) {
-            switchPage(index, context);
+            bottomBar.switchPage(index, context);
           },
-          items: [
-            BottomNavigationBarItem(
-              icon: Icon(Icons.home, color: Colors.black),
-              title: Text('Home', style: TextStyle(color: Colors.black)),
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.add_circle_outline, color: Colors.black),
-              title: Text("New", style: TextStyle(color: Colors.black)),
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.person, color: Theme.of(context).primaryColor),
-              title: Text("Profile", style: TextStyle(color: Theme.of(context).primaryColor)),
-            ),
-          ]
-      ),
+          items: bottomBar.bottom_items),
     );
-  }
-  void switchPage(int index, BuildContext context) {
-    switch(index) {
-      case 0: {
-        Navigator.pushReplacementNamed(context, '/home');}
-      break;
-      case 1: {
-        Navigator.pushReplacementNamed(context, '/imgup');}
-      break;
-    }
   }
 }

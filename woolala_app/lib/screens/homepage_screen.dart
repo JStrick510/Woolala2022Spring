@@ -166,7 +166,7 @@ class HomepageScreen extends StatefulWidget {
   HomepageScreen(this.signedInWithGoogle);
 
   _HomepageScreenState createState() => _HomepageScreenState();
-  
+
 }
 
 class _HomepageScreenState extends State<HomepageScreen> {
