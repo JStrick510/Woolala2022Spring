@@ -77,20 +77,30 @@ app.post("/updateUserBio/:id/:bio", (request, response) => {
   });
 });
 
+app.post("/updateUserName/:id/:name", (request, response) => {
+  var newName = { $set: {"userName": request.params.name} };
+  userCollection.updateOne({"userID":request.params.id}, newName, function(err, res){
+    if (err) throw err;
+    console.log("USER: " + request.params.id + "\nNew Name: " + request.params.name);
+    response.send(res);
+  });
+});
+
 app.post("/updateUserProfileName/:id/:name", (request, response) => {
   var newName = { $set: {"profileName": request.params.name} };
   userCollection.updateOne({"userID":request.params.id}, newName, function(err, res){
     if (err) throw err;
-    console.log("USER: " + request.params.id + "\nNew Name: " + request.params.bio);
+    console.log("New Name: " + request.params.name);
     response.send(res);
   });
 });
 
 app.post("/updateUserPrivacy/:id/:private", (request, response) => {
-  var newPrivacy = { $set: {"private": request.params.private} };
+  var privacyBool = request.params.private == 'true';
+  var newPrivacy = { $set: {"private": privacyBool}};
   userCollection.updateOne({"userID":request.params.id}, newPrivacy, function(err, res){
     if (err) throw err;
-    console.log("USER: " + request.params.id + "\nNew Name: " + request.params.bio);
+    console.log("Account Privacy: " + privacyBool);
     response.send(res);
   });
 });
@@ -125,6 +135,14 @@ app.get("/getUser/:userID", (request, response) => {
     userCollection.findOne({"userID":request.params.userID}, function(err, document) {
       if(document)
         console.log("Found user!");
+        response.send(document);
+    });
+});
+
+app.get("/getUserByUserName/:userName", (request, response) => {
+    userCollection.findOne({"userName":request.params.userName}, function(err, document) {
+      if(document)
+        console.log("Found user! with UserName: " + requ.params.userName);
         response.send(document);
     });
 });
