@@ -4,6 +4,7 @@ import 'package:woolala_app/screens/login_screen.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 import 'dart:convert';
+import 'package:http/http.dart' as http;
 
 class EditProfilePage extends StatefulWidget{
   final String currentOnlineUserId;
@@ -17,15 +18,14 @@ class EditProfilePage extends StatefulWidget{
 
 class _EditProfilePageState extends State<EditProfilePage>{
   TextEditingController profileNameController = TextEditingController();
-  TextEditingController userNameController = TextEditingController();
   TextEditingController bioController = TextEditingController();
   final _scaffoldGlobalKey = GlobalKey<ScaffoldState>();
   bool loading = false;
   bool _profileNameValid = true;
   bool _bioValid = true;
-  bool _userNameValid = true;
   final picker = ImagePicker();
   File _image;
+  PickedFile pickedFile;
   String img64;
 
   void initState(){
@@ -41,7 +41,6 @@ class _EditProfilePageState extends State<EditProfilePage>{
     //access the user's info from the database and set the default text to be the current text
     profileNameController.text = currentUser.profileName;
     bioController.text = currentUser.bio;
-    userNameController.text = currentUser.userName;
 
     setState(() {
       loading = false;
@@ -53,14 +52,13 @@ class _EditProfilePageState extends State<EditProfilePage>{
     setState(() {
       profileNameController.text.trim().length < 2 || profileNameController.text.isEmpty ? _profileNameValid = false : _profileNameValid = true;
       bioController.text.trim().length > 140 ? _bioValid = false : _bioValid = true;
-      //userNameController.text.isEmpty || userNameController.text.trim().length > 30  ? _userNameValid = false : _userNameValid = true;
+
     });
-    if(_bioValid && _profileNameValid && _userNameValid)
+    if(_bioValid && _profileNameValid)
     {
       print("update user info on server");
       currentUser.setUserBio(bioController.text.trim());
       currentUser.setProfileName(profileNameController.text.trim());
-      //currentUser.setUserName(userNameController.text.trim());
       SnackBar successSB = SnackBar(content: Text("Profile Updated Successfully"),);
       _scaffoldGlobalKey.currentState.showSnackBar(successSB);
     }
@@ -102,8 +100,8 @@ class _EditProfilePageState extends State<EditProfilePage>{
                   child: Column(
                     children: <Widget> [
                       GestureDetector(
-                        onTap: () => {print("Change pic from gallery")},
-                        child: currentUser.createProfileAvatar()
+                        onTap: () => {print("Change profile Pic")},//pickImage(), setState((){})},
+                        child: currentUser.createProfileAvatar(),
                       )
                     ]
                   ),
@@ -113,7 +111,6 @@ class _EditProfilePageState extends State<EditProfilePage>{
                   child: Column(
                     children: <Widget>[
                       createProfileNameTextFormField(),
-                      //createUserNameTextFormField(),
                       createBioTextFormField(),
                       createPrivacySwitch(),
                     ],
@@ -217,39 +214,26 @@ class _EditProfilePageState extends State<EditProfilePage>{
     );
   }
 
-  Column createUserNameTextFormField(){
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        Padding(
-          padding: EdgeInsets.only(top: 13.0),
-          child: Text(
-            "User Name: @YourName",
-            style: TextStyle(color: Colors.black),
-          ),
-        ),
-        TextField(
-          style: TextStyle(color: Colors.black),
-          controller: userNameController,
-          decoration: InputDecoration(
-            hintText: "Enter a UNIQUE user name here",
-            enabledBorder: UnderlineInputBorder(
-              borderSide: BorderSide(color: Colors.grey),
-            ),
-            focusedBorder: UnderlineInputBorder(
-              borderSide: BorderSide(color: Colors.black),
-            ),
-            hintStyle: TextStyle(color: Colors.grey),
-            errorText: _userNameValid ? null : "User Name is invalid or already taken",
-          ),
-        )
+    createProfilePicturePicker(){
+      return FutureBuilder(
+        future: changeProfilePic(),
+        builder: (context, snapshot) {
+          switch (snapshot.connectionState) {
+            case ConnectionState.waiting:
+              return CircularProgressIndicator();
+            default:
+              if (snapshot.hasError)
+                print('Error: ${snapshot.error}');
+              else
+                print('Result: ${snapshot.data}');
+              }
+          return currentUser.createProfileAvatar();
+          }
+        );
+    }
 
-      ],
-    );
-  }
-  /*
   changeProfilePic() async{
-   //currentUser.setProfilePicFromGallery();
+  print("Picture Changing...");
     final pickedFile = await picker.getImage(source: ImageSource.gallery);
     if (pickedFile != null) {
       _image = File(pickedFile.path);
@@ -258,11 +242,24 @@ class _EditProfilePageState extends State<EditProfilePage>{
     } else {
       img64 = "default";
     }
-    print(img64.length);
-    currentUser.setProfilePic(img64);
-
+    await currentUser.setProfilePic(img64);
+    print("Picture");
   }
-*/
+
+  Future pickImage() async {
+    pickedFile = await picker.getImage(source: ImageSource.gallery, imageQuality: 70);
+    if (pickedFile != null) {
+      _image = File(pickedFile.path);
+      final bytes = _image.readAsBytesSync();
+      img64 = base64Encode(bytes);
+    } else {
+      img64 = "default";
+    }
+    //print(img64);
+    http.Response res = await currentUser.setProfilePic(img64);
+    Navigator.pushReplacementNamed(context, '/editProfile');
+  }
+
 
 
 }

@@ -151,12 +151,14 @@ class User{
   Future<http.Response> setProfilePic(String pic)
   {
     profilePic = pic;
+    //print(profilePic);
     String request = 'http://10.0.2.2:5000/updateUserProfilePic/' + userID + '/' + profilePic ;
     return http.post(request, headers: <String, String>{'Content-Type': 'application/json',});
   }
 
       CircleAvatar createProfileAvatar({double radius = 60.0, double font = 64.0})
       {
+
         if(profilePic=="default")
         {
           return CircleAvatar(
@@ -173,19 +175,7 @@ class User{
         }
       }
 
-      /*
-   setProfilePicFromGallery() async {
-    final pickedFile = await picker.getImage(source: ImageSource.gallery);
-      if (pickedFile != null) {
-        _image = File(pickedFile.path);
-        final bytes = _image.readAsBytesSync();
-        profilePic = base64Encode(bytes);
-      } else {
-        profilePic = "default";
-      }
-    setProfilePic(profilePic);
 
-  }
-*/
+
 
 }

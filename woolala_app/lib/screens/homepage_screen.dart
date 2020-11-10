@@ -288,7 +288,7 @@ class _HomepageScreenState extends State<HomepageScreen> {
               key: ValueKey("Search"),
               color: Colors.white,
               onPressed: () =>
-                  Navigator.pushReplacementNamed(context, '/search'),
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => SearchPage())),
             ),
             IconButton(
               icon: Icon(Icons.clear),

@@ -248,7 +248,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
     if(_firstTimeLogin)
       {
-        print("Building.");
+        //print("Building.");
         return CreateUserName();
       }
     else if (isSignedInWithGoogle || isSignedInWithFacebook) {

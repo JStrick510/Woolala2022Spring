@@ -22,19 +22,8 @@ class _CreateUserNameState extends State<CreateUserName> {
 
   void initState(){
     super.initState();
-    displayUserInfo();
   }
 
-  displayUserInfo() async{
-    setState(() {
-      loading = true;
-    });
-    //access the user's info from the database and set the default text to be the current text
-    userNameController.text = currentUser.userName;
-    setState(() {
-      loading = false;
-    });
-  }
 
   updateUserInfo() async
   {
@@ -43,8 +32,6 @@ class _CreateUserNameState extends State<CreateUserName> {
     });
 
     http.Response res = await currentUser.isUserNameTaken(userNameController.text.trim());
-    print("STUCK");
-    print(res.body);
     if(res.body.isEmpty)
       {
         setState(() {
@@ -53,7 +40,7 @@ class _CreateUserNameState extends State<CreateUserName> {
       }
     if(_userNameValid)
     {
-      print("update user info on server");
+      //print("update user info on server");
       currentUser.setUserName(userNameController.text.trim());
       SnackBar successSB = SnackBar(content: Text("User Name Updated Successfully"),);
       _scaffoldGlobalKey.currentState.showSnackBar(successSB);

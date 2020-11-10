@@ -126,7 +126,7 @@ app.get("/doesUserExist/:email", (request, response) => {
     userCollection.findOne({"email":request.params.email}, function(err, document) {
       if(document)
       {
-        console.log(document);
+        //console.log(document);
         response.send(document);
         }
       else
