@@ -17,11 +17,13 @@ class EditProfilePage extends StatefulWidget{
 
 class _EditProfilePageState extends State<EditProfilePage>{
   TextEditingController profileNameController = TextEditingController();
+  TextEditingController userNameController = TextEditingController();
   TextEditingController bioController = TextEditingController();
   final _scaffoldGlobalKey = GlobalKey<ScaffoldState>();
   bool loading = false;
   bool _profileNameValid = true;
   bool _bioValid = true;
+  bool _userNameValid = true;
   final picker = ImagePicker();
   File _image;
   String img64;
@@ -34,10 +36,12 @@ class _EditProfilePageState extends State<EditProfilePage>{
   displayUserInfo() async{
     setState(() {
       loading = true;
+
     });
     //access the user's info from the database and set the default text to be the current text
     profileNameController.text = currentUser.profileName;
     bioController.text = currentUser.bio;
+    userNameController.text = currentUser.userName;
 
     setState(() {
       loading = false;
@@ -49,12 +53,14 @@ class _EditProfilePageState extends State<EditProfilePage>{
     setState(() {
       profileNameController.text.trim().length < 2 || profileNameController.text.isEmpty ? _profileNameValid = false : _profileNameValid = true;
       bioController.text.trim().length > 140 ? _bioValid = false : _bioValid = true;
+      //userNameController.text.isEmpty || userNameController.text.trim().length > 30  ? _userNameValid = false : _userNameValid = true;
     });
-    if(_bioValid && _profileNameValid)
+    if(_bioValid && _profileNameValid && _userNameValid)
     {
       print("update user info on server");
       currentUser.setUserBio(bioController.text.trim());
       currentUser.setProfileName(profileNameController.text.trim());
+      //currentUser.setUserName(userNameController.text.trim());
       SnackBar successSB = SnackBar(content: Text("Profile Updated Successfully"),);
       _scaffoldGlobalKey.currentState.showSnackBar(successSB);
     }
@@ -82,7 +88,6 @@ class _EditProfilePageState extends State<EditProfilePage>{
             icon: Icon(Icons.done, color: Colors.white, size: 30.0,),
             onPressed: () => {
               updateUserInfo(),
-              Navigator.pushReplacementNamed(context, '/profile'),
               },
           )
         ],
@@ -108,18 +113,9 @@ class _EditProfilePageState extends State<EditProfilePage>{
                   child: Column(
                     children: <Widget>[
                       createProfileNameTextFormField(),
+                      //createUserNameTextFormField(),
                       createBioTextFormField(),
-                      Switch(
-                        value: currentUser.private,
-                        onChanged: (value){
-                          setState(() {
-                            currentUser.private =value;
-                            print(currentUser.private);
-                          });
-                        },
-                        activeTrackColor: Colors.lightGreenAccent,
-                        activeColor: Colors.green,
-                      ),
+                      createPrivacySwitch(),
                     ],
                   ),
                 ),
@@ -128,6 +124,34 @@ class _EditProfilePageState extends State<EditProfilePage>{
           )
         ],
       )
+    );
+  }
+
+  Row createPrivacySwitch(){
+  return Row(
+    crossAxisAlignment: CrossAxisAlignment.center,
+    children: <Widget>[
+    Padding(
+        padding: EdgeInsets.only(top: 15.0),
+        child: Text(
+          "Private Account",
+          style: TextStyle(color: Colors.black, fontSize: 16.0),
+        ),
+        ),
+      Padding(
+          padding: EdgeInsets.only(top: 15.0),
+          child: Switch(
+            value: currentUser.private,
+            onChanged: (value){
+              setState(() {
+                currentUser.setPrivacy(value);
+              });
+            },
+            activeTrackColor: Colors.lightGreenAccent,
+            activeColor: Colors.green,
+            ),
+        ),
+      ],
     );
   }
 
@@ -193,6 +217,36 @@ class _EditProfilePageState extends State<EditProfilePage>{
     );
   }
 
+  Column createUserNameTextFormField(){
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        Padding(
+          padding: EdgeInsets.only(top: 13.0),
+          child: Text(
+            "User Name: @YourName",
+            style: TextStyle(color: Colors.black),
+          ),
+        ),
+        TextField(
+          style: TextStyle(color: Colors.black),
+          controller: userNameController,
+          decoration: InputDecoration(
+            hintText: "Enter a UNIQUE user name here",
+            enabledBorder: UnderlineInputBorder(
+              borderSide: BorderSide(color: Colors.grey),
+            ),
+            focusedBorder: UnderlineInputBorder(
+              borderSide: BorderSide(color: Colors.black),
+            ),
+            hintStyle: TextStyle(color: Colors.grey),
+            errorText: _userNameValid ? null : "User Name is invalid or already taken",
+          ),
+        )
+
+      ],
+    );
+  }
   /*
   changeProfilePic() async{
    //currentUser.setProfilePicFromGallery();
