@@ -1,7 +1,8 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:mongo_dart/mongo_dart.dart' as mongo;
 import 'package:woolala_app/screens/profile_screen.dart';
-
+import 'package:http/http.dart' as http;
+import 'homepage_screen.dart';
 import 'login_screen.dart';
 
 class SearchPage extends StatefulWidget{
@@ -16,25 +17,16 @@ class _SearchPageState extends State<SearchPage> {
   List filteredResults = new List(); // names filtered by search text
   Icon _searchIcon = new Icon(Icons.search);
   Widget _appBarTitle = new Text( 'Search' );
+  List userList;
 
-   _getNames() async {
-    mongo.Db db = new mongo.Db.pool([
-      "mongodb://Developer_1:Developer_1@woolalacluster-shard-00-00.o4vv6.mongodb.net:27017/Feed?ssl=true&replicaSet=project-shard-0&authSource=admin&retryWrites=true&w=majority",
-      "mongodb://Developer_1:Developer_1@woolalacluster-shard-00-01.o4vv6.mongodb.net:27017/Feed?ssl=true&replicaSet=project-shard-0&authSource=admin&retryWrites=true&w=majority",
-      "mongodb://Developer_1:Developer_1@woolalacluster-shard-00-02.o4vv6.mongodb.net:27017/Feed?ssl=true&replicaSet=project-shard-0&authSource=admin&retryWrites=true&w=majority"
-    ]);
-    await db.open();
-    var coll = db.collection('Users');
-    List tempList = new List();
-    tempList = await coll.find(mongo.where.sortBy('profileName')).toList();
-    //print(tempList);
-    db.close();
-
-    setState(() {
-      results = tempList;
-      filteredResults = results;
-    });
-    return results;
+  Future<List> getAllUsers() async{
+     print("Getting all Users.");
+     http.Response res = await http.get(domain + "/getAllUsers");
+     if (res.body.isNotEmpty) {
+       results = jsonDecode(res.body.toString());
+       filteredResults = results;
+     }
+     return results;
   }
   void _searchPressed() {
     setState(() {
@@ -82,12 +74,13 @@ class _SearchPageState extends State<SearchPage> {
       filteredResults = tempList;
     }
     return FutureBuilder(
-      future: _getNames(),
+      future: getAllUsers(),
       builder: (context, snapshot){
         if(snapshot.hasData){
           return ListView.builder(
             key: ValueKey("ListView"),
             scrollDirection: Axis.vertical,
+            physics: const AlwaysScrollableScrollPhysics(),
             shrinkWrap: true,
             itemCount: results == null ? 0 : filteredResults.length,
             itemBuilder: (BuildContext context, int index) {
@@ -120,33 +113,6 @@ class _SearchPageState extends State<SearchPage> {
         else{
           return Center(child: CircularProgressIndicator());
         }
-      },
-    );
-    return ListView.builder(
-      key: ValueKey("ListView"),
-      scrollDirection: Axis.vertical,
-      shrinkWrap: true,
-      itemCount: results == null ? 0 : filteredResults.length,
-      itemBuilder: (BuildContext context, int index) {
-        return new ListTile(
-          leading: CircleAvatar(
-            child: Text(filteredResults[index]['profileName'][0]),
-          ),
-          title: Text(filteredResults[index]['profileName']),
-          subtitle: Text(filteredResults[index]['userName']),
-          trailing: Wrap(
-            spacing: 12,
-            children: <Widget>[
-              new Container(
-                child: new IconButton(
-                  icon: Icon(Icons.add),
-                  onPressed: () {},
-                ),
-              ),
-            ],
-          ),
-          onTap: () => Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => ProfilePage(filteredResults[index]['email']))),
-        );
       },
     );
   }
@@ -202,7 +168,8 @@ class _SearchPageState extends State<SearchPage> {
   @override
   void initState() {
     super.initState();
-    _getNames();
+    //_getNames();
+    getAllUsers();
   }
 
   void switchPage(int index, BuildContext context) {

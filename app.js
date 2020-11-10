@@ -147,8 +147,17 @@ app.get("/getUser/:userID", (request, response) => {
 app.get("/getUserByUserName/:userName", (request, response) => {
     userCollection.findOne({"userName":request.params.userName}, function(err, document) {
       if(document)
-        console.log("Found user! with UserName: " + requ.params.userName);
+        console.log("Found user! with UserName: " + request.params.userName);
         response.send(document);
+    });
+});
+
+app.get("/getAllUsers", (request, response) => {
+    userCollection.find({}).toArray(function(err, documents) {
+        if(documents)
+            console.log("Retrieved all Users");
+            response.send(documents);
+            console.log(documents);
     });
 });
 

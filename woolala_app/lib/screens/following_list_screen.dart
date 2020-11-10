@@ -65,7 +65,6 @@ class _FollowingListScreenState extends State<FollowingListScreen> {
       followingUserNameList.add(tempUserName);
     }
     return followingList;
-    //print(followerList);
   }
 
   Widget _buildList() {
