@@ -6,6 +6,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:flutter_facebook_login/flutter_facebook_login.dart';
 import 'package:woolala_app/screens/login_screen.dart';
+import 'package:woolala_app/models/user.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:mongo_dart/mongo_dart.dart' as mongo;
@@ -15,18 +16,18 @@ import 'package:audioplayers/audioplayers.dart';
 import 'dart:collection';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
+import 'dart:io';
 import 'package:woolala_app/screens/login_screen.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:woolala_app/screens/post_screen.dart';
 import 'package:woolala_app/screens/profile_screen.dart';
+import 'package:woolala_app/screens/search_screen.dart';
 
 AudioPlayer advancedPlayer;
 
 String domain = "http://10.0.2.2:5000";
 
-
-Widget starSlider(String postID) =>
-    RatingBar(
+Widget starSlider(String postID) => RatingBar(
       initialRating: 2.5,
       minRating: 0,
       direction: Axis.horizontal,
@@ -35,65 +36,19 @@ Widget starSlider(String postID) =>
       unratedColor: Colors.black,
       itemSize: 30,
       itemPadding: EdgeInsets.symmetric(horizontal: 4.0),
-      itemBuilder: (context, _) =>
-          Icon(
-            Icons.star,
-            color: Colors.blue,
-          ),
+      itemBuilder: (context, _) => Icon(
+        Icons.star,
+        color: Colors.blue,
+      ),
       onRatingUpdate: (rating) {
         print(rating);
         //Changing rating here
         ratePost(rating, postID);
         //getFeed("cmpoaW5ja0BnbWFpbC5jb20=", "2020-10-28");
       },
-    );
+);
 
-Widget card(String postID) {
-  return FutureBuilder(
-    future: getPost(postID),
-    builder: (context, snapshot) {
-      if (snapshot.hasData) {
-        return Column(
-            children: <Widget>[
-              Container(
-                  margin: const EdgeInsets.all(0),
-                  color: Colors.white,
-                  width: double.infinity,
-                  height: 35.0,
-                  child: Row(children: <Widget>[
 
-                    Padding(padding: EdgeInsets.all(5),
-                        child: Text(snapshot.data[1], textAlign: TextAlign.left,
-                            style: TextStyle(
-                                color: Colors.black, fontSize: 16))),
-                    Align(alignment: Alignment.centerRight,
-                        child: Icon(Icons.more_vert))
-                  ])
-              ),
-              snapshot.data[0],
-              Padding(
-                  padding: EdgeInsets.all(5), child: Text(snapshot.data[2])),
-              Center(child: starSlider(postID)),
-              Container(
-                margin: const EdgeInsets.all(8),
-                color: Colors.grey,
-                width: double.infinity,
-                height: 1,)
-            ]
-        );
-      }
-      else {
-        // Returning the progress indicator would be nice in case load times are slow
-        // but it makes scrolling/loading new posts very laggy and ugly so for now
-        // a container that is roughly the average height of the pictures is used.
-
-        //return CircularProgressIndicator();
-        // return Container(  width: double.infinity,
-        //   height: 10);
-        return Placeholder();
-      }
-    },);
-}
 
 
 Future loadMusic(String sound) async {
@@ -119,7 +74,8 @@ Future<http.Response> ratePost(double rating, String id) {
 // Will be used to make the post for the first time.
 Future<http.Response> createPost(String postID, String image, String date,
     String caption, String userID, String userName) {
-  return http.post(domain + '/insertPost',
+  return http.post(
+    domain + '/insertPost',
     headers: <String, String>{
       'Content-Type': 'application/json',
     },
@@ -141,7 +97,7 @@ Future<List> getPost(String id) async {
   http.Response res = await http.get(domain + '/getPostInfo/' + id);
   Map info = jsonDecode(res.body.toString());
   final decodedBytes = base64Decode(info["image"]);
-  var ret = [Image.memory(decodedBytes), info["userName"], info["caption"]];
+  var ret = [Image.memory(decodedBytes), info["caption"], info["userID"]];
   return ret;
 
   //DO THIS TO GET IMAGE
@@ -159,20 +115,24 @@ Future<List> getPost(String id) async {
 }
 
 
-Future<List> getFeed(String userID) async
-{
+Future<User> getUserFromDB(String userID) async{
+  http.Response res = await http.get(domain + '/getUser/'+userID);
+  Map userMap = jsonDecode(res.body.toString());
+  return User.fromJSON(userMap);
+}
+
+
+
+Future<List> getFeed(String userID) async {
   http.Response res = await http.get(domain + '/getFeed/' + userID);
   return jsonDecode(res.body.toString())["postIDs"];
 }
 
-
 //final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
 class HomepageScreen extends StatefulWidget {
-
-    final bool signedInWithGoogle;
+  final bool signedInWithGoogle;
   HomepageScreen(this.signedInWithGoogle);
-
   _HomepageScreenState createState() => _HomepageScreenState();
 }
 
@@ -198,7 +158,7 @@ class _HomepageScreenState extends State<HomepageScreen> {
   List postIDs = [];
   int numToShow = 2;
   int postsPerReload = 2;
-  
+
   void _getPosts() async {
       mongo.Db db = new mongo.Db.pool([
         "mongodb://Developer_1:Developer_1@woolalacluster-shard-00-00.o4vv6.mongodb.net:27017/Feed?ssl=true&replicaSet=project-shard-0&authSource=admin&retryWrites=true&w=majority",
@@ -219,18 +179,16 @@ class _HomepageScreenState extends State<HomepageScreen> {
   void sortPosts(list) {
     list.removeWhere((item) => item == "");
     list.sort((a, b) =>
-    int.parse(b.substring(b.indexOf(':::') + 3)) -
+        int.parse(b.substring(b.indexOf(':::') + 3)) -
         int.parse(a.substring(a.indexOf(':::') + 3)));
   }
-
 
   void _onRefresh() async {
     postIDs = await getFeed(currentUser.userID);
     sortPosts(postIDs);
     print(postIDs);
     // if failed,use refreshFailed()
-    if (mounted)
-      setState(() {});
+    if (mounted) setState(() {});
     _refreshController.refreshCompleted();
   }
 
@@ -238,14 +196,12 @@ class _HomepageScreenState extends State<HomepageScreen> {
     await Future.delayed(Duration(milliseconds: 1000));
     if (numToShow + postsPerReload > postIDs.length) {
       numToShow = postIDs.length;
-    }
-    else {
+    } else {
       numToShow += postsPerReload;
     }
 
     // if failed,use loadFailed(),if no data return,use LoadNodata()
-    if (mounted)
-      setState(() {});
+    if (mounted) setState(() {});
     _refreshController.loadComplete();
   }
 
@@ -254,12 +210,57 @@ class _HomepageScreenState extends State<HomepageScreen> {
     super.initState();
     getFeed(currentUser.userID).then((list) {
       postIDs = list;
-      print(postIDs);
       sortPosts(postIDs);
       print(postIDs);
       setState(() {});
     }
     );
+
+  }
+  bool showStars = false;
+
+  Widget card(String postID)
+  {
+
+    return FutureBuilder(
+      future: getPost(postID),
+      builder: (context, postInfo) {
+        if (postInfo.hasData) {
+          return FutureBuilder(
+              future: getUserFromDB(postInfo.data[2]),
+              builder: (context, userInfo) {
+                if (userInfo.hasData) {
+                  return Column(
+                      children: <Widget>[
+                        Container(
+                            margin: const EdgeInsets.all(0),
+                            color: Colors.white,
+                            width: double.infinity,
+                            height: 35.0,
+                            child: Row(children: <Widget>[Row(children: <Widget>[Padding(child: userInfo.data.createProfileAvatar(radius: 15.0, font: 18.0), padding: EdgeInsets.all(2)),
+                              Padding(padding: EdgeInsets.all(5), child: Text(userInfo.data.profileName, textAlign: TextAlign.left, style: TextStyle(color: Colors.black, fontSize: 16)))],
+                                mainAxisAlignment: MainAxisAlignment.start ),
+                              Align(alignment: Alignment.centerRight, child: Icon(Icons.more_vert))
+                            ] ,mainAxisAlignment: MainAxisAlignment.spaceBetween,)
+                        ),
+                        postInfo.data[0],
+                        Container(alignment: Alignment(-1.0, 0.0), child: Padding(padding: EdgeInsets.all(5), child:Text(postInfo.data[1], textAlign: TextAlign.left))),
+                        Center(child: starSlider(postID)),
+                        Container(
+                          margin: const EdgeInsets.all(8),
+                          color: Colors.grey,
+                          width: double.infinity,
+                          height: 1,),
+                      ]
+                  ); }
+                else{
+                  return CircularProgressIndicator();}
+              });
+        }
+        else {
+          return CircularProgressIndicator();
+        }
+      },);
   }
 
   @override
@@ -315,33 +316,77 @@ class _HomepageScreenState extends State<HomepageScreen> {
                   return card(postIDs[index]);
                 }),
           )
+        ],
+      ),
+      body: Center(
 
+        child:
+              postIDs.length > 0 ?
+                SmartRefresher(
+                 enablePullDown: true,
+                 enablePullUp: true,
+                 header: ClassicHeader (),
+                 footer: ClassicFooter(),
+                 controller: _refreshController,
+                 onRefresh: _onRefresh,
+                 onLoading: _onLoading,
+                 child: ListView.builder(
+                     padding: const EdgeInsets.all(0),
+                     itemCount: numToShow,
+                     addAutomaticKeepAlives: true,
+                     physics: const AlwaysScrollableScrollPhysics (),
+                     itemBuilder: (BuildContext context, int index) {
+                       // The height on this will need to be edited to match whatever height is set for the picture
+                       return SizedBox(width: double.infinity,
+                                      height: 800,
+                                      child:card(postIDs[index]));
+                     }),
+               )
               :
+               CircularProgressIndicator(),
 
-          CircularProgressIndicator(),
-
-        ),
+      ),
       bottomNavigationBar: BottomNavigationBar(
         onTap: (int index) {
           switchPage(index, context);
         },
         items: [
           BottomNavigationBarItem(
-            icon: Icon(Icons.home, color: Theme.of(context).primaryColor,),
-            title: Text('Home', style: TextStyle(color: Theme.of(context).primaryColor),),
+            icon: Icon(
+              Icons.home,
+              color: Theme.of(context).primaryColor,
+            ),
+            title: Text(
+              'Home',
+              style: TextStyle(color: Theme.of(context).primaryColor),
+            ),
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.add_circle_outline, key: ValueKey("Make Post"), color: Colors.white,),
-            title: Text("New", style: TextStyle(color: Colors.white),),
+            icon: Icon(
+              Icons.add_circle_outline,
+              key: ValueKey("Make Post"),
+              color: Colors.white,
+            ),
+            title: Text(
+              "New",
+              style: TextStyle(color: Colors.white),
+            ),
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.person, key: ValueKey("Profile"), color: Colors.white,),
-            title: Text("Profile", style: TextStyle(color: Colors.white),),
-
+            icon: Icon(
+              Icons.person,
+              key: ValueKey("Profile"),
+              color: Colors.white,
+            ),
+            title: Text(
+              "Profile",
+              style: TextStyle(color: Colors.white),
+            ),
           ),
         ],
         backgroundColor: Colors.blueGrey[400],
-      ),);
+      ),
+    );
   }
 
   void switchPage(int index, BuildContext context) {
@@ -353,7 +398,7 @@ class _HomepageScreenState extends State<HomepageScreen> {
         break;
       case 2:
         {
-          Navigator.pushReplacementNamed(context, '/profile');
+          Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => ProfilePage(currentUser.email)));
         }
         break;
     }
@@ -384,7 +429,6 @@ class _HomepageScreenState extends State<HomepageScreen> {
       );
   }
 }
-
 
 // ListView.builder(
 // padding: const EdgeInsets.all(0),

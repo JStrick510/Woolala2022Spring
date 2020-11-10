@@ -18,19 +18,9 @@ final facebookLogin = FacebookLogin();
 final DateTime timestamp = DateTime.now();
 User currentUser;
 
-void googleLoginUser() {
-  print("Google signing in!");
-  gSignIn.signIn();
-}
-
 void googleLogoutUser() {
   print("Google signed out!");
   gSignIn.signOut();
-}
-
-void facebookLoginUser() {
-  print("Facebook signing in!");
-  facebookLogin.logIn(['email']);
 }
 
 void facebookLogoutUser() {
@@ -38,10 +28,9 @@ void facebookLogoutUser() {
   facebookLogin.logOut();
 }
 
-// called by saveUserInfoToServer
+// called by save user to server methods
 Future<User> getDoesUserExists(String email) async {
-  print("Finding user!");
-  print(email);
+  print("Calling getDoesUserExists.");
   http.Response res = await http.get(domain + "/doesUserExist/" + email);
   if (res.body.isNotEmpty) {
     Map userMap = jsonDecode(res.body.toString());
@@ -51,9 +40,9 @@ Future<User> getDoesUserExists(String email) async {
   }
 }
 
-// called by saveUserInfoToServer
+// called by save user to server methods
 Future<http.Response> insertUser(User u) {
-  print("INSERTING A USER");
+  print("Inserting new user to the db.");
   return http.post(
     'http://10.0.2.2:5000/insertUser',
     headers: <String, String>{
@@ -84,31 +73,43 @@ class _LoginScreenState extends State<LoginScreen> {
 
   // called automatically on app launch
   void initState() {
-    print("Init State");
+    print("Calling initState");
     super.initState();
-    var keepGoing = true;
-    // Random rand = new Random();
-    // int fuck = rand.nextInt(10);
-    // if (fuck % 2 == 0 && fuck < 5)
-    //   loadMusic("woolala");
-    // else if (fuck % 2 != 0 && fuck < 5) loadMusic("fuck");
+    signInProcess();
+  }
 
-    gSignIn.onCurrentUserChanged.listen((gSignInAccount) {
-      controlGoogleSignIn(gSignInAccount);
-      keepGoing = false;
-    }, onError: (gError) {
-      print("Error Message: " + gError);
-    });
+  void googleLoginUser() {
+    print("Google signing in!");
+    gSignIn.signIn();
+  }
+
+  void facebookLoginUser() async {
+    var facebookLoginResult = await facebookLogin.logIn(['email']);
+    switch (facebookLoginResult.status) {
+      case FacebookLoginStatus.error:
+        print("Facebook login error.");
+        break;
+      case FacebookLoginStatus.cancelledByUser:
+        print("Facebook login cancelled by user.");
+        break;
+      case FacebookLoginStatus.loggedIn:
+        signInProcess();
+        break;
+    }
+  }
+
+  void signInProcess() {
+    print("Calling signInProcess.");
+    var keepGoing = true;
     if (keepGoing) {
       gSignIn.signInSilently(suppressErrors: true).then((gSignInAccount) {
-        controlGoogleSignIn(gSignInAccount);
         keepGoing = false;
+        controlGoogleSignIn(gSignInAccount);
       }).catchError((gError) {
         print("Error Message: " + gError);
       });
     }
     if (keepGoing) {
-      print("FACEBOOK");
       controlFacebookSignIn();
     }
   }
@@ -123,8 +124,9 @@ class _LoginScreenState extends State<LoginScreen> {
 
   // called during initState
   void controlGoogleSignIn(GoogleSignInAccount signInAccount) async {
+    print("Calling controlGoogleSignIn.");
     if (signInAccount != null) {
-      print("account exists");
+      print("Google - Account token remembered.");
       await saveGoogleUserInfoToServer();
       if (!_disposed) {
         setState(() {
@@ -132,7 +134,7 @@ class _LoginScreenState extends State<LoginScreen> {
         });
       }
     } else {
-      print("No google account found");
+      print("Google - no account found.");
       if (!_disposed) {
         setState(() {
           isSignedInWithGoogle = false;
@@ -142,16 +144,17 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void controlFacebookSignIn() async {
+    print("Calling controlFacebookSignIn.");
     var tempToken = (await facebookLogin.currentAccessToken);
     if (tempToken == null) {
-      print("NULL");
+      print("Facebook - no account found.");
       if (!_disposed) {
         setState(() {
           isSignedInWithFacebook = false;
         });
       }
     } else {
-      print("NOT NULL");
+      print("Facebook - Account token remembered.");
       await saveFacebookUserInfoToServer();
       if (!_disposed) {
         setState(() {
@@ -163,15 +166,15 @@ class _LoginScreenState extends State<LoginScreen> {
 
 // called in controlGoogleSignIn
   saveGoogleUserInfoToServer() async {
+    print("Calling saveGoogleUserInfoToServer.");
     final GoogleSignInAccount gAccount = gSignIn.currentUser;
     User tempUser = await getDoesUserExists(gAccount.email);
     if (tempUser != null && tempUser.userID != "") //account exists
     {
-      print("You have an account!");
+      print("User account found with Google email.");
       currentUser = tempUser;
-      //set current user
     } else {
-      print("You must make an account!");
+      print("Making an account with Google.");
       User u = User(
           googleID: gAccount.id,
           email: gAccount.email,
@@ -195,31 +198,38 @@ class _LoginScreenState extends State<LoginScreen> {
 
 // called in controlGoogleSignIn
   saveFacebookUserInfoToServer() async {
+    print("Calling saveFacebookUserInfoToServer.");
     var tempToken = (await facebookLogin.currentAccessToken);
     var token = tempToken.token;
-    print(token);
     final graphResponse = await http.get(
         'https://graph.facebook.com/v2.12/me?fields=name,first_name,last_name,picture.type(large),email&access_token=${token}');
     final profile = json.decode(graphResponse.body);
-    print(profile);
-    String id = profile['id'];
-    print("facebook profile test: ");
-    print(profile);
     User tempUser = await getDoesUserExists(profile['email']);
-    if (tempUser != null && tempUser.userID != "") //account exists
-    {
-      print("You have an account!");
-      currentUser = tempUser;
-    } else {
-      print("You must make an account!");
-      User u = User(
-          facebookID: profile['id'],
-          email: profile['email'],
-          profileName: profile['name'],
-          profilePic: profile['picture']['data']['url'],
-          bio: "This is my new Woolala Account. Me so !",
-          userID: base64.encode(latin1.encode(profile['email'])).toString());
-      await insertUser(u);
+    print(profile['picture']['data']['url']);
+    switch (tempUser) {
+      case null:
+        print("Making an account with Facebook.");
+        User u = User(
+            facebookID: profile['id'],
+            email: profile['email'],
+            profileName: profile['name'],
+            profilePic: "default",
+            bio: "This is my new Woolala Account!",
+            userID: base64.encode(latin1.encode(profile['email'])).toString(),
+            userName: '@' + profile['name'].replaceAll(new RegExp(r"\s+"), ""),
+            numFollowers: 0,
+            numPosts: 0,
+            numRated: 0,
+            postIDs: [],
+            following: [],
+            private: false);
+        await insertUser(u);
+        currentUser = u;
+        break;
+      default:
+        print("User account found with Facebook email.");
+        currentUser = tempUser;
+        break;
     }
   }
 
@@ -234,9 +244,8 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-    print("Build!");
+    print("Building.");
     if (isSignedInWithGoogle || isSignedInWithFacebook) {
-      //playLocalAsset();
       return HomepageScreen(isSignedInWithGoogle);
     } else {
       return Scaffold(
@@ -336,7 +345,10 @@ class _LoginScreenState extends State<LoginScreen> {
 
   Widget _buildSocialBtn(Function onTap, AssetImage logo, String keyText) {
     return GestureDetector(
-      onTap: onTap,
+      onTap: () {
+        onTap();
+        signInProcess();
+      },
       key: ValueKey(keyText),
       child: Container(
         height: 60.0,

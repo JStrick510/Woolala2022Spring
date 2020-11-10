@@ -106,8 +106,10 @@ app.get("/getPostInfo/:id", (request, response) => {
 app.get("/doesUserExist/:email", (request, response) => {
     userCollection.findOne({"email":request.params.email}, function(err, document) {
       if(document)
+      {
         console.log(document);
         response.send(document);
+        }
       else
       {
       response.send(err);
@@ -118,14 +120,13 @@ app.get("/doesUserExist/:email", (request, response) => {
 app.get("/getUser/:userID", (request, response) => {
     userCollection.findOne({"userID":request.params.userID}, function(err, document) {
       if(document)
-        console.log("Found user!");
+        console.log("Found user: " + request.params.userID);
         response.send(document);
     });
 });
 
-
 app.get("/getFeed/:userID", (request, response) => {
-      console.log('Feed requested for user ' + request.params.userID + " date: " + request.params.date);
+      console.log('Feed requested for user ' + request.params.userID);
 
       var postIDs = [];
       userCollection.findOne({"userID":request.params.userID}, function(err, document) {
