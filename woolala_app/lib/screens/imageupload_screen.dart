@@ -22,10 +22,18 @@ class ImageUploadScreen extends StatefulWidget {
 
 Future<File> cropImage(imagePath) async {
   print("testing cropImage function");
+  print(imagePath);
   File croppedImage = await ImageCropper.cropImage(
     sourcePath: imagePath,
-    maxWidth: 1000,
     maxHeight: 1000,
+    maxWidth: 1000,
+    aspectRatio: CropAspectRatio(ratioX: 1, ratioY: 1),
+    androidUiSettings: AndroidUiSettings(
+        toolbarTitle: 'WooLaLa',
+        activeControlsWidgetColor : Colors.green,
+        toolbarColor: Colors.blue,
+        toolbarWidgetColor: Colors.grey,
+        ),
   );
   return croppedImage;
 }
