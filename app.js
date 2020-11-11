@@ -183,3 +183,19 @@ app.get("/getFeed/:userID", (request, response) => {
       });
 
 });
+
+app.post("/follow/:you/:them", (request, response) => {
+    var currentUserID = request.params.you;
+    var followUserID = request.params.them;
+    var updateCurrent = { $push: { following: followUserID }};
+    var updateOther = { $push: { followers: currentUserID }};
+
+    userCollection.updateOne({"userID":currentUserID}, updateCurrent, function(err, res) {
+      console.log(currentUserID + " now has " + followUserID + " in their following array");
+    });
+
+    userCollection.updateOne({"userID":followUserID}, updateOther, function(err, res) {
+      console.log(followUserID + " now has " + currentUserID + " in their followers array");
+    });
+    response.send({});
+});
