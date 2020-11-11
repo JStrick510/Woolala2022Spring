@@ -38,8 +38,6 @@ class _PostScreenState extends State<PostScreen> {
   static final DateFormat formatter = DateFormat('yyyy-MM-dd');
   final String date = formatter.format(now);
 
-
-
   @override
   initState() {
     _c = new TextEditingController();
@@ -67,15 +65,7 @@ class _PostScreenState extends State<PostScreen> {
           children: <Widget>[
             _image == null ? Text('No image selected.') : Image.file(_image),
             SizedBox(height: 20.0),
-            TextField(textInputAction: TextInputAction.go, keyboardType: TextInputType.multiline, maxLines: null, decoration: new InputDecoration(hintText: "Enter a caption!", contentPadding: const EdgeInsets.all(20.0))),
-            new Text(_text,
-                style: TextStyle(
-                    fontSize: 32.0,
-                    color: Colors.black,
-                    fontWeight: FontWeight.bold),
-                textAlign: TextAlign.center),
-            SizedBox(height: 20.0),
-            new Text(date),
+            TextField(textInputAction: TextInputAction.go, keyboardType: TextInputType.multiline, maxLines: null, decoration: new InputDecoration(hintText: "Enter a caption!", contentPadding: const EdgeInsets.all(20.0)), controller: _c,),
           ],
         ),
       ),
@@ -88,6 +78,11 @@ class _PostScreenState extends State<PostScreen> {
             FloatingActionButton(
               child: Icon(Icons.check),
               onPressed: () => {
+
+              setState(() {
+              this._text = _c.text;
+              }),
+                print(_text),
                 createPost(currentUser.userID + ":::" + getNewID() , img64, date, _text, currentUser.userID, currentUser.profileName),
                 Navigator.pushReplacementNamed(context, '/home')
               },
