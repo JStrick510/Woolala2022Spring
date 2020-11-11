@@ -38,6 +38,7 @@ class _SearchPageState extends State<SearchPage> {
        results = jsonDecode(res.body.toString());
        filteredResults = results;
      }
+     setState((){});
      return results;
   }
   void _searchPressed() {
