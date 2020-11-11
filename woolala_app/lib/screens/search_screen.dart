@@ -5,6 +5,18 @@ import 'package:http/http.dart' as http;
 import 'homepage_screen.dart';
 import 'login_screen.dart';
 
+Future<http.Response> follow(String currentAccountID, String otherAccountID) {
+  return http.post(
+    domain + '/follow/' + currentAccountID + '/' + otherAccountID,
+    headers: <String, String>{
+      'Content-Type': 'application/json',
+    },
+    body: jsonEncode({}),
+  );
+}
+
+
+
 class SearchPage extends StatefulWidget{
   @override
   _SearchPageState createState() => _SearchPageState();
@@ -96,7 +108,7 @@ class _SearchPageState extends State<SearchPage> {
                     new Container(
                       child: new IconButton(
                         icon: Icon(Icons.add),
-                        onPressed: () {},
+                        onPressed: () {follow(currentUser.userID, filteredResults[index]['userID']);},
                       ),
                     ),
                   ],
