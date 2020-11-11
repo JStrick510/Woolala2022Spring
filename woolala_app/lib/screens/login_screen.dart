@@ -188,7 +188,7 @@ class _LoginScreenState extends State<LoginScreen> {
         followers: [],
         numRated: 0,
         postIDs: [],
-        following: ["11", "12", base64.encode(latin1.encode(gAccount.email)).toString()],
+        following: [base64.encode(latin1.encode(gAccount.email)).toString()],
         private: false
       );
       await insertUser(u);
@@ -220,7 +220,7 @@ class _LoginScreenState extends State<LoginScreen> {
             userName: '@' + base64.encode(latin1.encode(profile['email'])).toString(),
             numRated: 0,
             postIDs: [],
-            following: ["11", "12", base64.encode(latin1.encode(profile['email'])).toString()],
+            following: [base64.encode(latin1.encode(profile['email'])).toString()],
             followers: [],
             private: false);
         await insertUser(u);

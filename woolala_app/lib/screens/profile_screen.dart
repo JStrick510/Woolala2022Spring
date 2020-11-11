@@ -79,13 +79,13 @@ class _ProfilePageState extends State<ProfilePage> {
                                     onTap: () {
                                       Navigator.push(context, MaterialPageRoute(builder: (context) => FollowerListScreen(widget.userProfileEmail)));
                                     },
-                                    child: createIntColumns("Followers", profilePageOwner.followers.length),
+                                    child: createIntColumns("Followers", profilePageOwner.followers.length -1 ),
                                   ),
                                   GestureDetector(
                                     onTap: () {
                                       Navigator.push(context, MaterialPageRoute(builder: (context) => FollowingListScreen(widget.userProfileEmail)));
                                     },
-                                    child: createIntColumns("Following", profilePageOwner.following.length),
+                                    child: createIntColumns("Following", profilePageOwner.following.length -1 ),
                                   ),
                                   createAveragesColumn("Avg."),
                                 ],
