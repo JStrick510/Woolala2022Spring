@@ -28,7 +28,8 @@ AudioPlayer advancedPlayer;
 
 String domain = "http://10.0.2.2:5000";
 
-Widget starSlider(String postID) => RatingBar(
+Widget starSlider(String postID) =>
+    RatingBar(
       initialRating: 2.5,
       minRating: 0,
       direction: Axis.horizontal,
@@ -37,20 +38,18 @@ Widget starSlider(String postID) => RatingBar(
       unratedColor: Colors.black,
       itemSize: 30,
       itemPadding: EdgeInsets.symmetric(horizontal: 4.0),
-      itemBuilder: (context, _) => Icon(
-        Icons.star,
-        color: Colors.blue,
-      ),
+      itemBuilder: (context, _) =>
+          Icon(
+            Icons.star,
+            color: Colors.blue,
+          ),
       onRatingUpdate: (rating) {
         print(rating);
         //Changing rating here
         ratePost(rating, postID);
         //getFeed("cmpoaW5ja0BnbWFpbC5jb20=", "2020-10-28");
       },
-);
-
-
-
+    );
 
 Future loadMusic(String sound) async {
   if (sound == "fuck") {
@@ -115,14 +114,11 @@ Future<List> getPost(String id) async {
   // );
 }
 
-
-Future<User> getUserFromDB(String userID) async{
-  http.Response res = await http.get(domain + '/getUser/'+userID);
+Future<User> getUserFromDB(String userID) async {
+  http.Response res = await http.get(domain + '/getUser/' + userID);
   Map userMap = jsonDecode(res.body.toString());
   return User.fromJSON(userMap);
 }
-
-
 
 Future<List> getFeed(String userID) async {
   http.Response res = await http.get(domain + '/getFeed/' + userID);
@@ -133,55 +129,56 @@ Future<List> getFeed(String userID) async {
 
 class HomepageScreen extends StatefulWidget {
   final bool signedInWithGoogle;
-  HomepageScreen(this.signedInWithGoogle);
-  _HomepageScreenState createState() => _HomepageScreenState();
 
+  HomepageScreen(this.signedInWithGoogle);
+
+  _HomepageScreenState createState() => _HomepageScreenState();
 }
 
 class _HomepageScreenState extends State<HomepageScreen> {
-  RefreshController _refreshController = RefreshController(
-      initialRefresh: false);
-    var rating = 0.0;
-    var postID = 0.0;
-    List postList = new List();
+  RefreshController _refreshController =
+  RefreshController(initialRefresh: false);
+  var rating = 0.0;
+  var postID = 0.0;
+  List postList = new List();
 
-    List<String> testList = [
-      'assets/logos/w_logo_test.png',
-      'assets/logos/w_logo_test.png',
-      'assets/logos/w_logo_test.png',
-      'assets/logos/w_logo_test.png',
-      'assets/logos/w_logo_test.png',
-      'assets/logos/w_logo_test.png',
-      'assets/logos/w_logo_test.png',
-      'assets/logos/w_logo_test.png',
-      'assets/logos/w_logo_test.png',
-    ];
+  List<String> testList = [
+    'assets/logos/w_logo_test.png',
+    'assets/logos/w_logo_test.png',
+    'assets/logos/w_logo_test.png',
+    'assets/logos/w_logo_test.png',
+    'assets/logos/w_logo_test.png',
+    'assets/logos/w_logo_test.png',
+    'assets/logos/w_logo_test.png',
+    'assets/logos/w_logo_test.png',
+    'assets/logos/w_logo_test.png',
+  ];
 
   List postIDs = [];
   int numToShow = 2;
   int postsPerReload = 2;
 
   void _getPosts() async {
-      mongo.Db db = new mongo.Db.pool([
-        "mongodb://Developer_1:Developer_1@woolalacluster-shard-00-00.o4vv6.mongodb.net:27017/Feed?ssl=true&replicaSet=project-shard-0&authSource=admin&retryWrites=true&w=majority",
-        "mongodb://Developer_1:Developer_1@woolalacluster-shard-00-01.o4vv6.mongodb.net:27017/Feed?ssl=true&replicaSet=project-shard-0&authSource=admin&retryWrites=true&w=majority",
-        "mongodb://Developer_1:Developer_1@woolalacluster-shard-00-02.o4vv6.mongodb.net:27017/Feed?ssl=true&replicaSet=project-shard-0&authSource=admin&retryWrites=true&w=majority"
-      ]);
-      await db.open();
-      var posts = db.collection('Posts');
-      List tempList = new List();
-      tempList = await posts.find(mongo.where.sortBy('date')).toList();
-      db.close();
+    mongo.Db db = new mongo.Db.pool([
+      "mongodb://Developer_1:Developer_1@woolalacluster-shard-00-00.o4vv6.mongodb.net:27017/Feed?ssl=true&replicaSet=project-shard-0&authSource=admin&retryWrites=true&w=majority",
+      "mongodb://Developer_1:Developer_1@woolalacluster-shard-00-01.o4vv6.mongodb.net:27017/Feed?ssl=true&replicaSet=project-shard-0&authSource=admin&retryWrites=true&w=majority",
+      "mongodb://Developer_1:Developer_1@woolalacluster-shard-00-02.o4vv6.mongodb.net:27017/Feed?ssl=true&replicaSet=project-shard-0&authSource=admin&retryWrites=true&w=majority"
+    ]);
+    await db.open();
+    var posts = db.collection('Posts');
+    List tempList = new List();
+    tempList = await posts.find(mongo.where.sortBy('date')).toList();
+    db.close();
 
-      setState(() {
-        postList = tempList;
-      });
+    setState(() {
+      postList = tempList;
+    });
   }
 
   void sortPosts(list) {
     list.removeWhere((item) => item == "");
     list.sort((a, b) =>
-        int.parse(b.substring(b.indexOf(':::') + 3)) -
+    int.parse(b.substring(b.indexOf(':::') + 3)) -
         int.parse(a.substring(a.indexOf(':::') + 3)));
   }
 
@@ -207,26 +204,21 @@ class _HomepageScreenState extends State<HomepageScreen> {
     _refreshController.loadComplete();
   }
 
-
-
   @override
   initState() {
     super.initState();
     if (currentUser != null)
-    getFeed(currentUser.userID).then((list) {
-      postIDs = list;
-      sortPosts(postIDs);
-      print(postIDs);
-      setState(() {});
-    }
-    );
-
+      getFeed(currentUser.userID).then((list) {
+        postIDs = list;
+        sortPosts(postIDs);
+        print(postIDs);
+        setState(() {});
+      });
   }
+
   bool showStars = false;
 
-  Widget card(String postID)
-  {
-
+  Widget card(String postID) {
     return FutureBuilder(
       future: getPost(postID),
       builder: (context, postInfo) {
@@ -235,94 +227,128 @@ class _HomepageScreenState extends State<HomepageScreen> {
               future: getUserFromDB(postInfo.data[2]),
               builder: (context, userInfo) {
                 if (userInfo.hasData) {
-                  return Column(
-                      children: <Widget>[
-                        Container(
-                            margin: const EdgeInsets.all(0),
-                            color: Colors.white,
-                            width: double.infinity,
-                            height: 35.0,
-                            child: Row(children: <Widget>[Row(children: <Widget>[Padding(child: userInfo.data.createProfileAvatar(radius: 15.0, font: 18.0), padding: EdgeInsets.all(2)),
-                              Padding(padding: EdgeInsets.all(5), child: Text(userInfo.data.profileName, textAlign: TextAlign.left, style: TextStyle(color: Colors.black, fontSize: 16)))],
-                                mainAxisAlignment: MainAxisAlignment.start ),
-                              Align(alignment: Alignment.centerRight, child: Icon(Icons.more_vert))
-                            ] ,mainAxisAlignment: MainAxisAlignment.spaceBetween,)
-                        ),
-                        postInfo.data[0],
-                        Container(alignment: Alignment(-1.0, 0.0), child: Padding(padding: EdgeInsets.all(5), child:Text(postInfo.data[1], textAlign: TextAlign.left))),
-                        Center(child: starSlider(postID)),
-                        Container(
-                          margin: const EdgeInsets.all(8),
-                          color: Colors.grey,
-                          width: double.infinity,
-                          height: 1,),
-                      ]
-                  ); }
-                else{
-                  return CircularProgressIndicator();}
+                  return Column(children: <Widget>[
+                    Container(
+                        margin: const EdgeInsets.all(0),
+                        color: Colors.white,
+                        width: double.infinity,
+                        height: 35.0,
+                        child: Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: <Widget>[
+                              Row(
+                                children: <Widget>[
+                                   Padding(
+                                            child: userInfo.data.createProfileAvatar(
+                                            radius: 15.0, font: 18.0),
+                                            padding: EdgeInsets.all(5)
+                                        ),
+                                    GestureDetector(
+                                            onTap: () =>
+                                            {
+                                              Navigator.push(context, MaterialPageRoute(
+                                                  builder: (BuildContext context) =>
+                                                      ProfilePage(userInfo.data.email)))
+                                            },
+                                            child: Padding(
+                                                padding: EdgeInsets.all(5),
+                                                child: Text(userInfo.data.profileName,
+                                                    textAlign: TextAlign.left,
+                                                    style: TextStyle(
+                                                        color: Colors.black, fontSize: 16
+                                                    )
+                                                )
+                                            )
+                                    ),
+                                ],
+                              ),
+                              Align(
+                                  alignment: Alignment.centerRight,
+                                  child: Icon(Icons.more_vert)
+                              )
+                            ],
+                    //mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      )
+                    ),
+                postInfo.data[0],
+                Container(
+                alignment: Alignment(-1.0, 0.0),
+                child: Padding(
+                padding: EdgeInsets.all(5),
+                child: Text(postInfo.data[1],
+                textAlign: TextAlign.left))),
+                Center(child: starSlider(postID)),
+                Container(
+                margin: const EdgeInsets.all(8),
+                color: Colors.grey,
+                width: double.infinity,
+                height: 1,
+                ),
+                ]);
+                } else {
+                return CircularProgressIndicator();
+                }
               });
-        }
-        else {
+        } else {
           return CircularProgressIndicator();
         }
-      },);
+      },
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-
     BottomNav bottomBar = BottomNav(context);
     bottomBar.currentIndex = 0;
 
     return Scaffold(
-        appBar: AppBar(
-          title: Text(
-            'WooLaLa',
-            style: TextStyle(fontSize: 25),
-            textAlign: TextAlign.center,
-          ),
-          key: ValueKey("homepage"),
-          actions: <Widget>[
-            IconButton(
-              icon: Icon(Icons.search),
-              key: ValueKey("Search"),
-              color: Colors.white,
-              onPressed: () =>
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => SearchPage())),
-            ),
-            IconButton(
-              icon: Icon(Icons.clear),
-              onPressed: () => startSignOut(context),
-            )
-          ],
+      appBar: AppBar(
+        title: Text(
+          'WooLaLa',
+          style: TextStyle(fontSize: 25),
+          textAlign: TextAlign.center,
         ),
+        key: ValueKey("homepage"),
+        actions: <Widget>[
+          IconButton(
+            icon: Icon(Icons.search),
+            key: ValueKey("Search"),
+            color: Colors.white,
+            onPressed: () =>
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => SearchPage())),
+          ),
+          IconButton(
+            icon: Icon(Icons.clear),
+            onPressed: () => startSignOut(context),
+          )
+        ],
+      ),
       body: Center(
-
-        child:
-              postIDs.length > 0 ?
-                SmartRefresher(
-                 enablePullDown: true,
-                 enablePullUp: true,
-                 header: ClassicHeader (),
-                 footer: ClassicFooter(),
-                 controller: _refreshController,
-                 onRefresh: _onRefresh,
-                 onLoading: _onLoading,
-                 child: ListView.builder(
-                     padding: const EdgeInsets.all(0),
-                     itemCount: numToShow,
-                     addAutomaticKeepAlives: true,
-                     physics: const AlwaysScrollableScrollPhysics (),
-                     itemBuilder: (BuildContext context, int index) {
-                       // The height on this will need to be edited to match whatever height is set for the picture
-                       return SizedBox(width: double.infinity,
-                                      height: 800,
-                                      child:card(postIDs[index]));
-                     }),
-               )
-              :
-               CircularProgressIndicator(),
-
+        child: postIDs.length > 0
+            ? SmartRefresher(
+          enablePullDown: true,
+          enablePullUp: true,
+          header: ClassicHeader(),
+          footer: ClassicFooter(),
+          controller: _refreshController,
+          onRefresh: _onRefresh,
+          onLoading: _onLoading,
+          child: ListView.builder(
+              padding: const EdgeInsets.all(0),
+              itemCount: numToShow,
+              addAutomaticKeepAlives: true,
+              physics: const AlwaysScrollableScrollPhysics(),
+              itemBuilder: (BuildContext context, int index) {
+                // The height on this will need to be edited to match whatever height is set for the picture
+                return SizedBox(
+                    width: double.infinity,
+                    height: 800,
+                    child: card(postIDs[index]));
+              }),
+        )
+            : CircularProgressIndicator(),
       ),
       bottomNavigationBar: BottomNavigationBar(
         onTap: (int index) {
@@ -346,17 +372,17 @@ class _HomepageScreenState extends State<HomepageScreen> {
   }
 
   Widget _buildPostsList() {
-      _getPosts();
-      print(postList);
-      return ListView.builder(
-        scrollDirection: Axis.vertical,
-        itemCount: testList.length, //postList later
-        itemBuilder: (BuildContext context, int index) {
-          return new Image(
-            image: AssetImage(testList[index]),
-          );
-        },
-      );
+    _getPosts();
+    print(postList);
+    return ListView.builder(
+      scrollDirection: Axis.vertical,
+      itemCount: testList.length, //postList later
+      itemBuilder: (BuildContext context, int index) {
+        return new Image(
+          image: AssetImage(testList[index]),
+        );
+      },
+    );
   }
 }
 

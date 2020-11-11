@@ -121,9 +121,6 @@ class User{
 
   Future<http.Response> setUserName(String u) async
   {
-    //http.Response res = await isUserNameTaken(u);
-   // if(res.body.isNotEmpty) {
-      //print(isUserNameTaken(u));
       String uName = u;
       if (u[0] != '@') {
         uName = '@' + u;
@@ -133,8 +130,6 @@ class User{
           userName;
       return http.post(request,
           headers: <String, String>{'Content-Type': 'application/json',});
-    //}
-
   }
 
   Future<http.Response> isUserNameTaken(String n)
@@ -145,7 +140,6 @@ class User{
       }
       String request = 'http://10.0.2.2:5000/getUserByUserName/' + uName;
       return http.get(request, headers: <String, String>{'Content-Type': 'application/json',});
-
   }
 
   Future<http.Response> setProfilePic(String pic)
