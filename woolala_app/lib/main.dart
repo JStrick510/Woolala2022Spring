@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:woolala_app/screens/EditProfileScreen.dart';
+import 'package:woolala_app/screens/createUserName.dart';
+import 'package:woolala_app/screens/follower_list_screen.dart';
+import 'package:woolala_app/screens/following_list_screen.dart';
 import 'package:woolala_app/screens/homepage_screen.dart';
 import 'package:woolala_app/screens/imageupload_screen.dart';
 import 'package:woolala_app/screens/login_screen.dart';
@@ -22,6 +25,7 @@ class WooLaLa extends StatelessWidget {
         // This makes the visual density adapt to the platform that you run the app on. For desktop platforms, the controls will be smaller and closer together (more dense) than on mobile platforms.
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
+      initialRoute: '/',
       routes: { // easier use for multiple page navigation
         '/' : (_) => LoginScreen(), //login screen
         '/home' : (_) => HomepageScreen(true), //home page
@@ -30,6 +34,9 @@ class WooLaLa extends StatelessWidget {
         '/search': (_) => SearchPage(),
         '/makepost': (_) => PostScreen(),
         '/imgup': (_) => ImageUploadScreen(),
+        '/followerlist' : (_) => FollowerListScreen(currentUser.email),
+        '/followinglist' : (_) => FollowingListScreen(currentUser.email),
+        '/createAccount' : (_) => CreateUserName(),
       },
     );
   }

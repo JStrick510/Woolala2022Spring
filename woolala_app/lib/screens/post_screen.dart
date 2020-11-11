@@ -12,6 +12,15 @@ import 'package:image_picker/image_picker.dart';
 import 'package:woolala_app/screens/homepage_screen.dart';
 import 'package:intl/intl.dart';
 
+
+String getNewID()
+{
+  final DateTime timeID = DateTime.now().toLocal();
+  final DateFormat formatterID = DateFormat('yyyyMMddHHmm');
+  return formatterID.format(timeID);
+}
+
+
 class PostScreen extends StatefulWidget {
   PostScreen();
 
@@ -20,8 +29,10 @@ class PostScreen extends StatefulWidget {
 
 class _PostScreenState extends State<PostScreen> {
   File _image;
+  List<Object> test;
   String _text = "";
   TextEditingController _c;
+  String img64;
 
   static final DateTime now = DateTime.now().toLocal();
   static final DateFormat formatter = DateFormat('yyyy-MM-dd');
@@ -35,8 +46,9 @@ class _PostScreenState extends State<PostScreen> {
 
   @override
   Widget build(BuildContext context) {
-    _image = ModalRoute.of(context).settings.arguments;
-
+    test = ModalRoute.of(context).settings.arguments;
+    _image = test[0];
+    img64 = test[1];
     return Scaffold(
       resizeToAvoidBottomInset: true,
       // backgroundColor: Colors.grey[800],
@@ -44,7 +56,7 @@ class _PostScreenState extends State<PostScreen> {
         leading: GestureDetector(
           onTap: () => Navigator.pushReplacementNamed(context, '/imgup'),
           child: Icon(
-            Icons.reply, // add custom icons also
+            Icons.arrow_back, // add custom icons also
           ),
         ),
       ),
@@ -53,15 +65,7 @@ class _PostScreenState extends State<PostScreen> {
           children: <Widget>[
             _image == null ? Text('No image selected.') : Image.file(_image),
             SizedBox(height: 20.0),
-            TextField(textInputAction: TextInputAction.go, keyboardType: TextInputType.multiline, maxLines: null, decoration: new InputDecoration(hintText: "Enter a caption!", contentPadding: const EdgeInsets.all(20.0))),
-            new Text(_text,
-                style: TextStyle(
-                    fontSize: 32.0,
-                    color: Colors.black,
-                    fontWeight: FontWeight.bold),
-                textAlign: TextAlign.center),
-            SizedBox(height: 20.0),
-            new Text(date),
+            TextField(textInputAction: TextInputAction.go, keyboardType: TextInputType.multiline, maxLines: null, decoration: new InputDecoration(hintText: "Enter a caption!", contentPadding: const EdgeInsets.all(20.0)), controller: _c,),
           ],
         ),
       ),
@@ -74,7 +78,12 @@ class _PostScreenState extends State<PostScreen> {
             FloatingActionButton(
               child: Icon(Icons.check),
               onPressed: () => {
-                createPost(123, "1234", date, _text, null, 123),
+
+              setState(() {
+              this._text = _c.text;
+              }),
+                print(_text),
+                createPost(currentUser.userID + ":::" + getNewID() , img64, date, _text, currentUser.userID, currentUser.profileName),
                 Navigator.pushReplacementNamed(context, '/home')
               },
             ),

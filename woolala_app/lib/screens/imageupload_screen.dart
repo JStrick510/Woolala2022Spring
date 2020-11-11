@@ -10,6 +10,9 @@ import 'dart:io';
 import 'package:woolala_app/screens/login_screen.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:woolala_app/screens/post_screen.dart';
+import 'dart:io' as Io;
+import 'package:intl/intl.dart';
+import 'package:image_cropper/image_cropper.dart';
 
 class ImageUploadScreen extends StatefulWidget {
   ImageUploadScreen();
@@ -17,31 +20,56 @@ class ImageUploadScreen extends StatefulWidget {
   _ImageUploadScreenState createState() => _ImageUploadScreenState();
 }
 
+Future<File> cropImage(imagePath) async {
+  print("testing cropImage function");
+  print(imagePath);
+  File croppedImage = await ImageCropper.cropImage(
+    sourcePath: imagePath,
+    maxHeight: 1000,
+    maxWidth: 1000,
+    aspectRatio: CropAspectRatio(ratioX: 1, ratioY: 1),
+    androidUiSettings: AndroidUiSettings(
+        toolbarTitle: 'WooLaLa',
+        activeControlsWidgetColor : Colors.green,
+        toolbarColor: Colors.blue,
+        toolbarWidgetColor: Colors.grey,
+        ),
+  );
+  return croppedImage;
+}
+
 class _ImageUploadScreenState extends State<ImageUploadScreen> {
   File _image = null;
+  String img64;
   final picker = ImagePicker();
   bool selected = false;
 
   Future getImageGallery() async {
     final pickedFile = await picker.getImage(source: ImageSource.gallery);
-    setState(() {
-      if (pickedFile != null) {
-        _image = File(pickedFile.path);
-      } else {
-        print('No image selected.');
-      }
-    });
+    if (pickedFile != null) {
+      _image = await cropImage(pickedFile.path);
+      // _image = File(pickedFile.path);
+      final bytes = _image.readAsBytesSync();
+      img64 = base64Encode(bytes);
+      Navigator.pushReplacementNamed(context, '/makepost',
+          arguments: [_image, img64]);
+    } else {
+      print('No image selected.');
+    }
   }
 
   Future getImageCamera() async {
     final pickedFile = await picker.getImage(source: ImageSource.camera);
-    setState(() {
-      if (pickedFile != null) {
-        _image = File(pickedFile.path);
-      } else {
-        print('No image selected.');
-      }
-    });
+    if (pickedFile != null) {
+      _image = await cropImage(pickedFile.path);
+      // _image = File(pickedFile.path);
+      final bytes = _image.readAsBytesSync();
+      img64 = base64Encode(bytes);
+      Navigator.pushReplacementNamed(context, '/makepost',
+          arguments: [_image, img64]);
+    } else {
+      print('No image selected.');
+    }
   }
 
   @override
@@ -50,9 +78,9 @@ class _ImageUploadScreenState extends State<ImageUploadScreen> {
       backgroundColor: Colors.grey[800],
       appBar: AppBar(
         leading: GestureDetector(
-          onTap: () => Navigator.pushReplacementNamed(context, '/home'),
+          onTap: () => Navigator.pop(context),
           child: Icon(
-            Icons.reply, // add custom icons also
+            Icons.arrow_back, // add custom icons also
           ),
         ),
         actions: <Widget>[
@@ -61,7 +89,7 @@ class _ImageUploadScreenState extends State<ImageUploadScreen> {
             onPressed: () => {
               if (_image != null)
                 Navigator.pushReplacementNamed(context, '/makepost',
-                    arguments: _image)
+                    arguments: [_image, img64])
             },
             child: Text("Next"),
             shape: CircleBorder(side: BorderSide(color: Colors.transparent)),

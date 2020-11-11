@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:woolala_app/screens/login_screen.dart';
+import 'package:image_picker/image_picker.dart';
+import 'dart:io';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 
 class EditProfilePage extends StatefulWidget{
   final String currentOnlineUserId;
@@ -18,6 +23,10 @@ class _EditProfilePageState extends State<EditProfilePage>{
   bool loading = false;
   bool _profileNameValid = true;
   bool _bioValid = true;
+  final picker = ImagePicker();
+  File _image;
+  PickedFile pickedFile;
+  String img64;
 
   void initState(){
     super.initState();
@@ -27,6 +36,7 @@ class _EditProfilePageState extends State<EditProfilePage>{
   displayUserInfo() async{
     setState(() {
       loading = true;
+
     });
     //access the user's info from the database and set the default text to be the current text
     profileNameController.text = currentUser.profileName;
@@ -42,11 +52,13 @@ class _EditProfilePageState extends State<EditProfilePage>{
     setState(() {
       profileNameController.text.trim().length < 2 || profileNameController.text.isEmpty ? _profileNameValid = false : _profileNameValid = true;
       bioController.text.trim().length > 140 ? _bioValid = false : _bioValid = true;
+
     });
     if(_bioValid && _profileNameValid)
     {
       print("update user info on server");
-
+      currentUser.setUserBio(bioController.text.trim());
+      currentUser.setProfileName(profileNameController.text.trim());
       SnackBar successSB = SnackBar(content: Text("Profile Updated Successfully"),);
       _scaffoldGlobalKey.currentState.showSnackBar(successSB);
     }
@@ -65,14 +77,16 @@ class _EditProfilePageState extends State<EditProfilePage>{
       appBar: AppBar(
         leading: BackButton(
             color: Colors.white,
-            onPressed: () => (Navigator.pushReplacementNamed(context, '/profile'))
+            onPressed: () => {Navigator.pushReplacementNamed(context, '/profile')},
         ),
         iconTheme: IconThemeData(color: Colors.blue),
         title: Text('Edit Profile', style: TextStyle(color: Colors.white),),
         actions: <Widget>[
           IconButton(
-            icon: Icon(Icons.done, key: ValueKey("Check Mark"), color: Colors.white, size: 30.0,),
-            onPressed: () => Navigator.pushReplacementNamed(context, '/profile'),
+            icon: Icon(Icons.done, color: Colors.white, size: 30.0,),
+            onPressed: () => {
+              updateUserInfo(),
+              },
           )
         ],
       ),
@@ -83,10 +97,13 @@ class _EditProfilePageState extends State<EditProfilePage>{
               children: <Widget>[
                 Padding(
                   padding: EdgeInsets.only(top: 16.0, bottom: 7.0),
-                  child: CircleAvatar(
-                    radius: 52.0,
-                    backgroundColor: Colors.transparent,
-                    backgroundImage: NetworkImage(currentUser.profilePicURL),
+                  child: Column(
+                    children: <Widget> [
+                      GestureDetector(
+                        onTap: () => {print("Change profile Pic")},//pickImage(), setState((){})},
+                        child: currentUser.createProfileAvatar(),
+                      )
+                    ]
                   ),
                 ),
                 Padding(
@@ -95,16 +112,8 @@ class _EditProfilePageState extends State<EditProfilePage>{
                     children: <Widget>[
                       createProfileNameTextFormField(),
                       createBioTextFormField(),
+                      createPrivacySwitch(),
                     ],
-                  ),
-                ),
-                Padding(
-                  padding: EdgeInsets.only(top: 29.0,left: 50.0, right: 50.0),
-                  child: RaisedButton(
-                    onPressed: updateUserInfo,
-                    key: ValueKey("Update"),
-                    child: Text("Update", style: TextStyle(color: Colors.white),
-                    ),
                   ),
                 ),
               ],
@@ -112,6 +121,34 @@ class _EditProfilePageState extends State<EditProfilePage>{
           )
         ],
       )
+    );
+  }
+
+  Row createPrivacySwitch(){
+  return Row(
+    crossAxisAlignment: CrossAxisAlignment.center,
+    children: <Widget>[
+    Padding(
+        padding: EdgeInsets.only(top: 15.0),
+        child: Text(
+          "Private Account",
+          style: TextStyle(color: Colors.black, fontSize: 16.0),
+        ),
+        ),
+      Padding(
+          padding: EdgeInsets.only(top: 15.0),
+          child: Switch(
+            value: currentUser.private,
+            onChanged: (value){
+              setState(() {
+                currentUser.setPrivacy(value);
+              });
+            },
+            activeTrackColor: Colors.lightGreenAccent,
+            activeColor: Colors.green,
+            ),
+        ),
+      ],
     );
   }
 
@@ -177,6 +214,51 @@ class _EditProfilePageState extends State<EditProfilePage>{
     );
   }
 
+    createProfilePicturePicker(){
+      return FutureBuilder(
+        future: changeProfilePic(),
+        builder: (context, snapshot) {
+          switch (snapshot.connectionState) {
+            case ConnectionState.waiting:
+              return CircularProgressIndicator();
+            default:
+              if (snapshot.hasError)
+                print('Error: ${snapshot.error}');
+              else
+                print('Result: ${snapshot.data}');
+              }
+          return currentUser.createProfileAvatar();
+          }
+        );
+    }
+
+  changeProfilePic() async{
+  print("Picture Changing...");
+    final pickedFile = await picker.getImage(source: ImageSource.gallery);
+    if (pickedFile != null) {
+      _image = File(pickedFile.path);
+      final bytes = _image.readAsBytesSync();
+      img64 = base64Encode(bytes);
+    } else {
+      img64 = "default";
+    }
+    await currentUser.setProfilePic(img64);
+    print("Picture");
+  }
+
+  Future pickImage() async {
+    pickedFile = await picker.getImage(source: ImageSource.gallery, imageQuality: 70);
+    if (pickedFile != null) {
+      _image = File(pickedFile.path);
+      final bytes = _image.readAsBytesSync();
+      img64 = base64Encode(bytes);
+    } else {
+      img64 = "default";
+    }
+    //print(img64);
+    http.Response res = await currentUser.setProfilePic(img64);
+    Navigator.pushReplacementNamed(context, '/editProfile');
+  }
 
 
 
