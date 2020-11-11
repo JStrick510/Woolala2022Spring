@@ -79,7 +79,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                     onTap: () {
                                       Navigator.push(context, MaterialPageRoute(builder: (context) => FollowerListScreen(widget.userProfileEmail)));
                                     },
-                                    child: createIntColumns("Followers", profilePageOwner.followers.length -1 ),
+                                    child: createIntColumns("Followers", profilePageOwner.followers.length ),
                                   ),
                                   GestureDetector(
                                     onTap: () {
