@@ -8,6 +8,7 @@ import 'package:woolala_app/screens/following_list_screen.dart';
 import 'package:woolala_app/screens/search_screen.dart';
 import 'package:woolala_app/widgets/bottom_nav.dart';
 //import 'package:cached_network_image/cached_network_image.dart';
+import 'package:http/http.dart' as http;
 
 class ProfilePage extends StatefulWidget{
   //the id of this profile
@@ -22,6 +23,11 @@ class _ProfilePageState extends State<ProfilePage> {
   final String currentOnlineUserEmail = currentUser.email;
   User profilePageOwner;
   bool checker = false;
+  User viewingUser;
+
+  void initState(){
+    super.initState();
+  }
 
   createProfileTop() {
     return FutureBuilder(
@@ -79,13 +85,13 @@ class _ProfilePageState extends State<ProfilePage> {
                                     onTap: () {
                                       Navigator.push(context, MaterialPageRoute(builder: (context) => FollowerListScreen(widget.userProfileEmail)));
                                     },
-                                    child: createIntColumns("Followers", profilePageOwner.followers.length ),
+                                    child: createIntColumns("Followers", profilePageOwner.followers.length),
                                   ),
                                   GestureDetector(
                                     onTap: () {
                                       Navigator.push(context, MaterialPageRoute(builder: (context) => FollowingListScreen(widget.userProfileEmail)));
                                     },
-                                    child: createIntColumns("Following", profilePageOwner.following.length -1 ),
+                                    child: createIntColumns("Following", profilePageOwner.following.length),
                                   ),
                                   createAveragesColumn("Avg."),
                                 ],
@@ -198,7 +204,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
  checkIfFollowing() async{
     User currentUser = await getDoesUserExists(currentOnlineUserEmail);
-    User viewingUser = await getDoesUserExists(widget.userProfileEmail);
+    viewingUser = await getDoesUserExists(widget.userProfileEmail);
     for(int i = 0; i < currentUser.following.length; i++) {
       if(currentUser.following[i] == viewingUser.userID){
         print("true!");
@@ -214,33 +220,87 @@ class _ProfilePageState extends State<ProfilePage> {
       return createButtonTitleAndFunction(title: 'Edit Profile', performFunction: editUserProfile, color: Colors.white);
     }
     else if(checker){
-      Color followingColor = Colors.white;
-      return createButtonTitleAndFunction(title: 'Following',color: followingColor);
+      return createButtonTitleAndFunction(title: 'Unfollow', futureFunctionName: "unfollowUser", color: Colors.red[400]);
     }
     else{
-      return createButtonTitleAndFunction(title: 'Follow',color: Colors.blue);
+      return createButtonTitleAndFunction(title: 'Follow', futureFunctionName: "followUser" , color: Colors.blue);
     }
   }
 
-  Container createButtonTitleAndFunction({String title, Function performFunction, Color color}){
-  return Container(
-    padding: EdgeInsets.only(top: 3.0),
-    child: FlatButton(
-      onPressed: performFunction,
-      key: ValueKey(title),
-      child: Container(
-        width: 280.0,
-        height: 35.0,
-        child: Text(title, style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),),
-        alignment: Alignment.center,
-        decoration: BoxDecoration(
-            color: color,
-            border: Border.all(color: Colors.black, width: 2.0),
-            borderRadius: BorderRadius.circular(6.0),
+  Widget createButtonTitleAndFunction({String title, Function performFunction, String futureFunctionName, Color color}){
+    if(futureFunctionName == "followUser"){
+        return Container(
+          padding: EdgeInsets.only(top: 3.0),
+          child: FlatButton(
+            onPressed: (){
+              FutureBuilder(
+                future: follow(currentUser.userID, viewingUser.userID),
+                builder:(context, snapshot){}
+              );
+            },
+            key: ValueKey(title),
+            child: Container(
+              width: 280.0,
+              height: 35.0,
+              child: Text(title, style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),),
+              alignment: Alignment.center,
+              decoration: BoxDecoration(
+                color: color,
+                border: Border.all(color: Colors.black, width: 2.0),
+                borderRadius: BorderRadius.circular(6.0),
+              ),
+            ),
+          ),
+        );
+    }
+    else if(futureFunctionName == "unfollowUser"){
+        return Container(
+          padding: EdgeInsets.only(top: 3.0),
+          child: FlatButton(
+            onPressed: (){
+              FutureBuilder(
+                  future: unfollow(currentUser.userID, viewingUser.userID),
+                  builder:(context, snapshot){}
+              );
+            },
+            key: ValueKey(title),
+            child: Container(
+              width: 280.0,
+              height: 35.0,
+              child: Text(title, style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),),
+              alignment: Alignment.center,
+              decoration: BoxDecoration(
+                color: color,
+                border: Border.all(color: Colors.black, width: 2.0),
+                borderRadius: BorderRadius.circular(6.0),
+              ),
+            ),
+          ),
+        );
+
+    }
+    else{
+      return Container(
+        padding: EdgeInsets.only(top: 3.0),
+        child: FlatButton(
+          onPressed: performFunction,
+          key: ValueKey(title),
+          child: Container(
+            width: 280.0,
+            height: 35.0,
+            child: Text(title, style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),),
+            alignment: Alignment.center,
+            decoration: BoxDecoration(
+              color: color,
+              border: Border.all(color: Colors.black, width: 2.0),
+              borderRadius: BorderRadius.circular(6.0),
+            ),
+          ),
         ),
-      ),
-    ),
-  );
+      );
+    }
+
+
   }
 
   editUserProfile() {

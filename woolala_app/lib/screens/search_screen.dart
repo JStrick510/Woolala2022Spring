@@ -15,6 +15,15 @@ Future<http.Response> follow(String currentAccountID, String otherAccountID) {
   );
 }
 
+Future<http.Response> unfollow(String currentAccountID, String otherAccountID) {
+  return http.post(
+    domain + '/unfollow/' + currentAccountID + '/' + otherAccountID,
+    headers: <String, String>{
+      'Content-Type': 'application/json',
+    },
+    body: jsonEncode({}),
+  );
+}
 
 
 class SearchPage extends StatefulWidget{
@@ -86,6 +95,7 @@ class _SearchPageState extends State<SearchPage> {
       }
       filteredResults = tempList;
     }
+
     return FutureBuilder(
       future: getAllUsers(),
       builder: (context, snapshot){
@@ -103,9 +113,10 @@ class _SearchPageState extends State<SearchPage> {
                 ),
                 title: Text(filteredResults[index]['profileName']),
                 subtitle: Text(filteredResults[index]['userName']),
-                trailing: Wrap(
+                /*trailing: Wrap(
                   spacing: 12,
-                  children: <Widget>[
+                  children: <Widget> [
+
                     new Container(
                       child: new IconButton(
                         icon: Icon(Icons.add),
@@ -113,7 +124,7 @@ class _SearchPageState extends State<SearchPage> {
                       ),
                     ),
                   ],
-                ),
+                ),*/
                 onTap: () => Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => ProfilePage(filteredResults[index]['email']))),
               );
             },
@@ -129,7 +140,6 @@ class _SearchPageState extends State<SearchPage> {
       },
     );
   }
-
 
 
   @override

@@ -15,6 +15,7 @@ import 'package:mongo_dart/mongo_dart.dart' as mongo;
 import 'package:woolala_app/models/user.dart';
 import 'package:woolala_app/screens/profile_screen.dart';
 import 'package:woolala_app/widgets/bottom_nav.dart';
+import 'package:woolala_app/screens/search_screen.dart';
 
 class FollowingListScreen extends StatefulWidget {
   final String userEmail;
@@ -30,6 +31,8 @@ class _FollowingListScreenState extends State<FollowingListScreen> {
   List followingList = new List();
   List followingEmailList = new List();
   List followingUserNameList = new List();
+  List followingUserIDList = new List();
+
 
   Future<String> getProfileName(String userID) async {
     http.Response res = await http.get(domain + "/getUser/" + userID);
@@ -48,6 +51,11 @@ class _FollowingListScreenState extends State<FollowingListScreen> {
     Map userMap = jsonDecode(res.body.toString());
     return User.fromJSON(userMap).userName;
   }
+  Future<String> getUserID(String userID) async {
+    http.Response res = await http.get(domain + "/getUser/" + userID);
+    Map userMap = jsonDecode(res.body.toString());
+    return User.fromJSON(userMap).userID;
+  }
 
   listbuilder() async {
     currentProfile = await getDoesUserExists(widget.userEmail);
@@ -60,9 +68,11 @@ class _FollowingListScreenState extends State<FollowingListScreen> {
       String tempProfileName = await getProfileName(tempFollowingList[i]);
       String tempUserEmail = await getUserEmail(tempFollowingList[i]);
       String tempUserName = await getUserName(tempFollowingList[i]);
+      String tempUserID = await getUserID(tempFollowingList[i]);
       followingList.add(tempProfileName);
       followingEmailList.add(tempUserEmail);
       followingUserNameList.add(tempUserName);
+      followingUserIDList.add(tempUserID);
     }
     return followingList;
   }
@@ -71,7 +81,7 @@ class _FollowingListScreenState extends State<FollowingListScreen> {
     return FutureBuilder(
       future: listbuilder(),
       builder: (context, snapshot) {
-        if (snapshot.hasData) {
+        if (snapshot.hasData && currentUser.userID == currentProfile.userID) {
           return ListView.builder(
             key: ValueKey("ListView"),
             scrollDirection: Axis.vertical,
@@ -90,7 +100,22 @@ class _FollowingListScreenState extends State<FollowingListScreen> {
                     new Container(
                       child: new IconButton(
                         icon: Icon(Icons.remove_circle_outline),
-                        onPressed: () {},
+                        onPressed: () {
+                          unfollow(currentUser.userID, followingUserIDList[index]);
+                          followingList.remove(followingList[index]);
+                          _buildList();
+                          Navigator.pushReplacement(
+                            context,
+                              PageRouteBuilder(
+                                pageBuilder: (context, animation1, animation2) => FollowingListScreen(currentUser.email),
+                                transitionDuration: Duration(seconds: 0),
+                              )
+                              /*MaterialPageRoute(
+                                builder: (BuildContext context) =>
+                                    FollowingListScreen(currentUser.email)
+                            )*/
+                          );
+                          },
                       ),
                     ),
                   ],
@@ -105,7 +130,32 @@ class _FollowingListScreenState extends State<FollowingListScreen> {
               );
             },
           );
-        } else if (snapshot.hasError) {
+        }
+        else if (snapshot.hasData && currentUser.userID != currentProfile.userID){
+          return ListView.builder(
+            key: ValueKey("ListView"),
+            scrollDirection: Axis.vertical,
+            shrinkWrap: true,
+            itemCount: followingList.length,
+            itemBuilder: (BuildContext context, int index) {
+              return new ListTile(
+                leading: CircleAvatar(
+                  child: Text(followingList[index][0]),
+                ),
+                title: Text(followingList[index]),
+                subtitle: Text(followingUserNameList[index]),
+                onTap: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (BuildContext context) =>
+                              ProfilePage(followingEmailList[index])));
+                },
+              );
+            },
+          );
+        }
+        else if (snapshot.hasError) {
           return Center(child: Text("No Results"));
         } else {
           return Center(child: CircularProgressIndicator());

@@ -157,7 +157,7 @@ app.get("/getAllUsers", (request, response) => {
         if(documents)
             console.log("Retrieved all Users");
             response.send(documents);
-            console.log(documents);
+            //console.log(documents);
     });
 });
 
@@ -196,6 +196,22 @@ app.post("/follow/:you/:them", (request, response) => {
 
     userCollection.updateOne({"userID":followUserID}, updateOther, function(err, res) {
       console.log(followUserID + " now has " + currentUserID + " in their followers array");
+    });
+    response.send({});
+});
+
+app.post("/unfollow/:you/:them", (request, response) => {
+    var currentUserID = request.params.you;
+    var unfollowUserID = request.params.them;
+    var updateCurrent = { $pull: {following: unfollowUserID}};
+    var updateOther = { $pull: {followers: currentUserID}};
+
+    userCollection.updateOne({"userID":currentUserID}, updateCurrent, function(err, res) {
+      console.log(currentUserID + " now does not have " + unfollowUserID + " in their following array");
+    });
+
+    userCollection.updateOne({"userID":unfollowUserID}, updateOther, function(err, res) {
+      console.log(unfollowUserID + " now does not have " + currentUserID + " in their followers array");
     });
     response.send({});
 });
