@@ -342,10 +342,6 @@ class _ProfilePageState extends State<ProfilePage> {
             color: Colors.white,
             onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => SearchPage())),
           ),
-          IconButton(
-            icon: Icon(Icons.clear),
-            onPressed: () => {},//callFromHomePage(context),
-          )
         ],
       ),
       body: ListView(

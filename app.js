@@ -155,7 +155,7 @@ app.get("/getUserByUserName/:userName", (request, response) => {
 app.get("/getAllUsers", (request, response) => {
     userCollection.find({}).toArray(function(err, documents) {
         if(documents)
-            console.log("Retrieved all Users");
+            //console.log("Retrieved all Users");
             response.send(documents);
             //console.log(documents);
     });

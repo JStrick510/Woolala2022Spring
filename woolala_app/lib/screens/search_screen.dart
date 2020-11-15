@@ -50,6 +50,9 @@ class _SearchPageState extends State<SearchPage> {
      setState((){});
      return results;
   }
+
+
+
   void _searchPressed() {
     setState(() {
       if (this._searchIcon.icon == Icons.search) {
@@ -148,7 +151,7 @@ class _SearchPageState extends State<SearchPage> {
         appBar: AppBar(
             leading: BackButton(
                 color: Colors.white,
-                onPressed: () => (Navigator.pop(context))
+                onPressed: () => ( Navigator.pop(context))
             ),
             title: _appBarTitle,
             actions: <Widget>[
