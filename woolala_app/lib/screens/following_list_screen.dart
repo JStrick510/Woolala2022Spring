@@ -110,10 +110,6 @@ class _FollowingListScreenState extends State<FollowingListScreen> {
                                 pageBuilder: (context, animation1, animation2) => FollowingListScreen(currentUser.email),
                                 transitionDuration: Duration(seconds: 0),
                               )
-                              /*MaterialPageRoute(
-                                builder: (BuildContext context) =>
-                                    FollowingListScreen(currentUser.email)
-                            )*/
                           );
                           },
                       ),

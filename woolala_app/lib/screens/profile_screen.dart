@@ -236,6 +236,14 @@ class _ProfilePageState extends State<ProfilePage> {
               FutureBuilder(
                 future: follow(currentUser.userID, viewingUser.userID),
                 builder:(context, snapshot){}
+
+              );
+              Navigator.pushReplacement(
+                  context,
+                  PageRouteBuilder(
+                    pageBuilder: (context, animation1, animation2) => ProfilePage(viewingUser.email),
+                    transitionDuration: Duration(seconds: 0),
+                  )
               );
             },
             key: ValueKey(title),
@@ -261,6 +269,14 @@ class _ProfilePageState extends State<ProfilePage> {
               FutureBuilder(
                   future: unfollow(currentUser.userID, viewingUser.userID),
                   builder:(context, snapshot){}
+
+              );
+              Navigator.pushReplacement(
+                  context,
+                  PageRouteBuilder(
+                    pageBuilder: (context, animation1, animation2) => ProfilePage(viewingUser.email),
+                    transitionDuration: Duration(seconds: 0),
+                  )
               );
             },
             key: ValueKey(title),
