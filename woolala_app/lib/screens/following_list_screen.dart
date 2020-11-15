@@ -170,6 +170,13 @@ class _FollowingListScreenState extends State<FollowingListScreen> {
               onPressed: () {
                 //(Navigator.pushReplacementNamed(context, '/profile'))
                 Navigator.pop(context);
+                Navigator.pushReplacement(
+                    context,
+                    PageRouteBuilder(
+                      pageBuilder: (context, animation1, animation2) => ProfilePage(currentProfile.email),
+                      transitionDuration: Duration(seconds: 0),
+                    )
+                );
               }),
           title: Text("Following"),
           actions: <Widget>[]),
