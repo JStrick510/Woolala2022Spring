@@ -98,15 +98,14 @@ class _SearchPageState extends State<SearchPage> {
       }
       filteredResults = tempList;
     }
-
     return FutureBuilder(
       future: getAllUsers(),
       builder: (context, snapshot){
         if(snapshot.hasData){
           return ListView.builder(
-            key: ValueKey("ListView"),
+            //key: ValueKey("ListView"),
+            physics: NeverScrollableScrollPhysics(),
             scrollDirection: Axis.vertical,
-            physics: const AlwaysScrollableScrollPhysics(),
             shrinkWrap: true,
             itemCount: results == null ? 0 : filteredResults.length,
             itemBuilder: (BuildContext context, int index) {
@@ -163,7 +162,8 @@ class _SearchPageState extends State<SearchPage> {
             ]
         ),
         body: ListView(
-            padding: const EdgeInsets.all(8),
+            //padding: const EdgeInsets.all(8),
+            scrollDirection: Axis.vertical,
             children: <Widget>[
               _buildList(),
 
