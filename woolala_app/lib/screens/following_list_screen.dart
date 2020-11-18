@@ -16,6 +16,7 @@ import 'package:woolala_app/models/user.dart';
 import 'package:woolala_app/screens/profile_screen.dart';
 import 'package:woolala_app/widgets/bottom_nav.dart';
 import 'package:woolala_app/screens/search_screen.dart';
+import 'package:woolala_app/main.dart';
 
 class FollowingListScreen extends StatefulWidget {
   final String userEmail;

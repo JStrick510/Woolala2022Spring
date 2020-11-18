@@ -4,6 +4,7 @@ import 'package:woolala_app/screens/profile_screen.dart';
 import 'package:http/http.dart' as http;
 import 'homepage_screen.dart';
 import 'login_screen.dart';
+import 'package:woolala_app/main.dart';
 
 Future<http.Response> follow(String currentAccountID, String otherAccountID) {
   return http.post(
