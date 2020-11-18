@@ -278,15 +278,15 @@ class _HomepageScreenState extends State<HomepageScreen> {
   @override
   Widget build(BuildContext context) {
     BottomNav bottomBar = BottomNav(context);
-    bottomBar.currentIndex = 0;
+    bottomBar.currentIndex = 1;
 
     return Scaffold(
       appBar: AppBar(
         title: Text(
           'WooLaLa',
-          style: TextStyle(fontSize: 25),
-          textAlign: TextAlign.center,
+          style: TextStyle(fontSize: 25)
         ),
+        centerTitle: true,
         key: ValueKey("homepage"),
         actions: <Widget>[
           IconButton(
@@ -299,7 +299,7 @@ class _HomepageScreenState extends State<HomepageScreen> {
                     MaterialPageRoute(builder: (context) => SearchPage())),
           ),
           IconButton(
-            icon: Icon(Icons.clear),
+            icon: Icon(Icons.logout),
             onPressed: () => startSignOut(context),
           )
         ],
