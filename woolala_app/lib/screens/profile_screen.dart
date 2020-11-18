@@ -327,6 +327,7 @@ class _ProfilePageState extends State<ProfilePage> {
   Widget build(BuildContext context) {
     BottomNav bottomBar = BottomNav(context);
     bottomBar.currentIndex = 2;
+
     return Scaffold(
       appBar: AppBar(
         leading: IconButton (
@@ -335,6 +336,7 @@ class _ProfilePageState extends State<ProfilePage> {
           color: Colors.white,
         ),
         title: Text('WooLaLa', style: TextStyle(fontSize: 25, fontFamily: 'Lucida'), textAlign: TextAlign.center,),
+        centerTitle: true,
         key: ValueKey("homepage"),
         actions: <Widget>[
           IconButton (

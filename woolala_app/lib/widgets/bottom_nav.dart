@@ -6,14 +6,22 @@ class BottomNav {
   BottomNav(context);
   BuildContext context;
 
-  int currentIndex = 0;
+  int currentIndex = 1;
 
    List bottom_items = <BottomNavigationBarItem>[
-      BottomNavigationBarItem(
-        icon: Icon(
-          Icons.home,
-          color: Colors.blue,
-        ),
+     BottomNavigationBarItem(
+       icon: Icon(
+         Icons.add_circle_outline,
+         key: ValueKey("Make Post"),
+         color: Colors.white),
+       title: Text(
+         "New",
+         style: TextStyle(color: Colors.white),
+       ),
+     ),
+     BottomNavigationBarItem(
+        icon: Icon(Icons.home_outlined, color: Colors.white),
+        activeIcon: Icon(Icons.home, color: Colors.white),
         title: Text(
           'Home',
           style: TextStyle(color: Colors.white),
@@ -21,19 +29,12 @@ class BottomNav {
       ),
       BottomNavigationBarItem(
         icon: Icon(
-          Icons.add_circle_outline,
-          key: ValueKey("Make Post"),
+          Icons.person_outline,
+          key: ValueKey("Profile"),
           color: Colors.white,
         ),
-        title: Text(
-          "New",
-          style: TextStyle(color: Colors.white),
-        ),
-      ),
-      BottomNavigationBarItem(
-        icon: Icon(
+        activeIcon: Icon(
           Icons.person,
-          key: ValueKey("Profile"),
           color: Colors.white,
         ),
         title: Text(
@@ -47,15 +48,16 @@ class BottomNav {
     switch (index) {
       case 0:
         {
-          if (currentIndex != 0) {
-            Navigator.pushReplacementNamed(context, '/home');
+          if (!(ModalRoute.of(context).settings.name == '/imgup')) {
+            Navigator.pushNamed(context, '/imgup');
+
           }
         }
         break;
       case 1:
         {
-          if (!(ModalRoute.of(context).settings.name == '/imgup')) {
-            Navigator.pushNamed(context, '/imgup');
+          if (currentIndex != 1) {
+            Navigator.pushReplacementNamed(context, '/home');
           }
         }
         break;
@@ -70,4 +72,5 @@ class BottomNav {
         break;
     }
   }
+
 }
