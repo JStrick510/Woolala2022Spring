@@ -25,6 +25,6 @@
   },
   "homepage": "https://github.com/FashioNXT/WooLaLa2020#readme",
   "engines": {
-    "node": "12.12.1"
+    "node": "12.13.1"
   }
 }
