@@ -23,10 +23,12 @@ import 'package:woolala_app/screens/post_screen.dart';
 import 'package:woolala_app/screens/profile_screen.dart';
 import 'package:woolala_app/screens/search_screen.dart';
 import 'package:woolala_app/widgets/bottom_nav.dart';
+import 'package:woolala_app/main.dart';
 
 AudioPlayer advancedPlayer;
 
-String domain = "http://10.0.2.2:5000";
+
+
 
 Widget starSlider(String postID) =>
     RatingBar(
@@ -278,15 +280,15 @@ class _HomepageScreenState extends State<HomepageScreen> {
   @override
   Widget build(BuildContext context) {
     BottomNav bottomBar = BottomNav(context);
-    bottomBar.currentIndex = 0;
+    bottomBar.currentIndex = 1;
 
     return Scaffold(
       appBar: AppBar(
         title: Text(
           'WooLaLa',
-          style: TextStyle(fontSize: 25),
-          textAlign: TextAlign.center,
+          style: TextStyle(fontSize: 25)
         ),
+        centerTitle: true,
         key: ValueKey("homepage"),
         actions: <Widget>[
           IconButton(
@@ -299,7 +301,7 @@ class _HomepageScreenState extends State<HomepageScreen> {
                     MaterialPageRoute(builder: (context) => SearchPage())),
           ),
           IconButton(
-            icon: Icon(Icons.clear),
+            icon: Icon(Icons.logout),
             onPressed: () => startSignOut(context),
           )
         ],
@@ -328,7 +330,7 @@ class _HomepageScreenState extends State<HomepageScreen> {
                     child: card(postIDs[index]));
               }),
         )
-            : CircularProgressIndicator(),
+            : Padding(padding: EdgeInsets.all(70.0), child: Text("Follow People to see their posts on your feed!", style: TextStyle(fontSize: 30, color: Colors.grey, fontFamily: 'Lucida'))),
       ),
       bottomNavigationBar: BottomNavigationBar(
         onTap: (int index) {
