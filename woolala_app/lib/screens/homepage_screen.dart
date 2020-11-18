@@ -23,10 +23,12 @@ import 'package:woolala_app/screens/post_screen.dart';
 import 'package:woolala_app/screens/profile_screen.dart';
 import 'package:woolala_app/screens/search_screen.dart';
 import 'package:woolala_app/widgets/bottom_nav.dart';
+import 'package:woolala_app/main.dart';
 
 AudioPlayer advancedPlayer;
 
-String domain = "http://10.0.2.2:5000";
+
+
 
 Widget starSlider(String postID) =>
     RatingBar(
