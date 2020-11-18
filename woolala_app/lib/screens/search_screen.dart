@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:woolala_app/screens/profile_screen.dart';
 import 'package:http/http.dart' as http;
+import 'package:woolala_app/widgets/bottom_nav.dart';
 import 'homepage_screen.dart';
 import 'login_screen.dart';
 
@@ -146,6 +147,9 @@ class _SearchPageState extends State<SearchPage> {
 
   @override
   Widget build(BuildContext context) {
+    BottomNav bottomBar = BottomNav(context);
+    bottomBar.currentIndex = 10;
+
     return Scaffold(
         appBar: AppBar(
             leading: BackButton(
@@ -171,22 +175,10 @@ class _SearchPageState extends State<SearchPage> {
         ),
       bottomNavigationBar: BottomNavigationBar(
           onTap: (int index) {
-            switchPage(index, context);
+            bottomBar.switchPage(index, context);
           },
-          items: [
-            BottomNavigationBarItem(
-              icon: Icon(Icons.home, color: Colors.black),
-              title: Text('Home', style: TextStyle(color: Colors.black)),
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.add_circle_outline, color: Colors.black),
-              title: Text("New", style: TextStyle(color: Colors.black)),
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.person, color: Theme.of(context).primaryColor),
-              title: Text("Profile", style: TextStyle(color: Theme.of(context).primaryColor)),
-            ),
-          ]
+          items: bottomBar.bottom_items,
+          backgroundColor: Colors.blueGrey[400],
       ),
     );
 
@@ -196,22 +188,6 @@ class _SearchPageState extends State<SearchPage> {
     super.initState();
     //_getNames();
     getAllUsers();
-  }
-
-  void switchPage(int index, BuildContext context) {
-    switch(index) {
-      case 0: {
-        Navigator.pushReplacementNamed(context, '/home');}
-      break;
-      case 1: {
-        Navigator.pushReplacementNamed(context, '/imgup');}
-      break;
-      case 2:
-        {
-          Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => ProfilePage(currentUser.email)));
-        }
-        break;
-    }
   }
 }
 
