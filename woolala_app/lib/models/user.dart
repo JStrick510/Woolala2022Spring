@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
 import 'dart:math';
+import 'package:woolala_app/screens/homepage_screen.dart';
 
 class User{
   final String userID;
@@ -80,7 +81,7 @@ class User{
       {
         if(postIDs[i]!= '')
           {
-            String req = 'http://10.0.2.2:5000/getPostInfo/' + postIDs[i];
+            String req = domain + '/getPostInfo/' + postIDs[i];
             http.Response res = await http.get(req);
             Map postDetails = jsonDecode(res.body.toString());
             if(postDetails['numRatings'].toDouble() < 1)
@@ -101,21 +102,21 @@ class User{
   Future<http.Response> setProfileName(String p)
   {
     profileName = p;
-    String request = 'http://10.0.2.2:5000/updateUserProfileName/' + userID + '/' + profileName ;
+    String request = domain + '/updateUserProfileName/' + userID + '/' + profileName ;
     return http.post(request, headers: <String, String>{'Content-Type': 'application/json',});
   }
 
   Future<http.Response> setPrivacy(bool p)
   {
     private = p;
-    String request = 'http://10.0.2.2:5000/updateUserPrivacy/' + userID + '/' + private.toString() ;
+    String request = domain + '/updateUserPrivacy/' + userID + '/' + private.toString() ;
     return http.post(request, headers: <String, String>{'Content-Type': 'application/json',});
   }
 
     Future<http.Response> setUserBio(String b)
     {
       bio = b;
-      String request = 'http://10.0.2.2:5000/updateUserBio/' + userID + '/' + bio ;
+      String request = domain + '/updateUserBio/' + userID + '/' + bio ;
       return http.post(request, headers: <String, String>{'Content-Type': 'application/json',});
     }
 
@@ -126,7 +127,7 @@ class User{
         uName = '@' + u;
       }
       userName = uName;
-      String request = 'http://10.0.2.2:5000/updateUserName/' + userID + '/' +
+      String request = domain + '/updateUserName/' + userID + '/' +
           userName;
       return http.post(request,
           headers: <String, String>{'Content-Type': 'application/json',});
@@ -138,7 +139,7 @@ class User{
     if (uName.isNotEmpty && uName[0] != '@') {
         uName = '@' + n;
       }
-      String request = 'http://10.0.2.2:5000/getUserByUserName/' + uName;
+      String request = domain + '/getUserByUserName/' + uName;
       return http.get(request, headers: <String, String>{'Content-Type': 'application/json',});
   }
 
@@ -146,7 +147,7 @@ class User{
   {
     profilePic = pic;
     //print(profilePic);
-    String request = 'http://10.0.2.2:5000/updateUserProfilePic/' + userID + '/' + profilePic ;
+    String request = domain + '/updateUserProfilePic/' + userID + '/' + profilePic ;
     return http.post(request, headers: <String, String>{'Content-Type': 'application/json',});
   }
 

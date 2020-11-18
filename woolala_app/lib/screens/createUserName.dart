@@ -30,14 +30,21 @@ class _CreateUserNameState extends State<CreateUserName> {
     setState(() {
       userNameController.text.isEmpty || userNameController.text.trim().length > 30  ? _userNameValid = false : _userNameValid = true;
     });
-
-    http.Response res = await currentUser.isUserNameTaken(userNameController.text.trim());
-    if(res.body.isEmpty)
+    String nameToSend = userNameController.text.trim();
+    if(nameToSend.contains(new RegExp('[^a-zA-Z0-9_]')))
       {
+        setState(() {
+          _userNameValid = false;
+        });
+      }
+    else {
+      http.Response res = await currentUser.isUserNameTaken(nameToSend);
+      if (res.body.isEmpty) {
         setState(() {
           _userNameValid = true;
         });
       }
+    }
     if(_userNameValid)
     {
       //print("update user info on server");
@@ -47,7 +54,7 @@ class _CreateUserNameState extends State<CreateUserName> {
       Navigator.pushReplacementNamed(context, '/home');
     }
     else{
-      SnackBar failedSB = SnackBar(content: Text("Failed to update UserName"),);
+      SnackBar failedSB = SnackBar(content: Text("Invalid Characters in Username or it is already taken"),);
       _scaffoldGlobalKey.currentState.showSnackBar(failedSB);
     }
 
