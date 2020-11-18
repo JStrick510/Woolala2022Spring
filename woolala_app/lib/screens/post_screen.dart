@@ -35,7 +35,7 @@ class _PostScreenState extends State<PostScreen> {
   String img64;
 
   static final DateTime now = DateTime.now().toLocal();
-  static final DateFormat formatter = DateFormat('MM-dd-yyyy');
+  static final DateFormat formatter = DateFormat('yyyy-MM-dd');
   final String date = formatter.format(now);
 
   @override

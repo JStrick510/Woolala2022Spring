@@ -97,7 +97,7 @@ Future<List> getPost(String id) async {
   http.Response res = await http.get(domain + '/getPostInfo/' + id);
   Map info = jsonDecode(res.body.toString());
   final decodedBytes = base64Decode(info["image"]);
-  var ret = [Image.memory(decodedBytes), info["caption"], info["userID"], info["date"]];
+  var ret = [Image.memory(decodedBytes), info["caption"], info["userID"]];
   return ret;
 
   //DO THIS TO GET IMAGE
@@ -136,15 +136,44 @@ class HomepageScreen extends StatefulWidget {
 }
 
 class _HomepageScreenState extends State<HomepageScreen> {
+  RefreshController _refreshController =
+  RefreshController(initialRefresh: false);
+  var rating = 0.0;
+  var postID = 0.0;
+  List postList = new List();
 
-  RefreshController _refreshController = RefreshController(
-      initialRefresh: false);
-
+  List<String> testList = [
+    'assets/logos/w_logo_test.png',
+    'assets/logos/w_logo_test.png',
+    'assets/logos/w_logo_test.png',
+    'assets/logos/w_logo_test.png',
+    'assets/logos/w_logo_test.png',
+    'assets/logos/w_logo_test.png',
+    'assets/logos/w_logo_test.png',
+    'assets/logos/w_logo_test.png',
+    'assets/logos/w_logo_test.png',
+  ];
 
   List postIDs = [];
-  int numToShow;
+  int numToShow = 2;
   int postsPerReload = 2;
 
+  void _getPosts() async {
+    mongo.Db db = new mongo.Db.pool([
+      "mongodb://Developer_1:Developer_1@woolalacluster-shard-00-00.o4vv6.mongodb.net:27017/Feed?ssl=true&replicaSet=project-shard-0&authSource=admin&retryWrites=true&w=majority",
+      "mongodb://Developer_1:Developer_1@woolalacluster-shard-00-01.o4vv6.mongodb.net:27017/Feed?ssl=true&replicaSet=project-shard-0&authSource=admin&retryWrites=true&w=majority",
+      "mongodb://Developer_1:Developer_1@woolalacluster-shard-00-02.o4vv6.mongodb.net:27017/Feed?ssl=true&replicaSet=project-shard-0&authSource=admin&retryWrites=true&w=majority"
+    ]);
+    await db.open();
+    var posts = db.collection('Posts');
+    List tempList = new List();
+    tempList = await posts.find(mongo.where.sortBy('date')).toList();
+    db.close();
+
+    setState(() {
+      postList = tempList;
+    });
+  }
 
   void sortPosts(list) {
     list.removeWhere((item) => item == "");
@@ -179,19 +208,12 @@ class _HomepageScreenState extends State<HomepageScreen> {
   initState() {
     super.initState();
     if (currentUser != null)
-    getFeed(currentUser.userID).then((list) {
-      postIDs = list;
-      if (postIDs.length < postsPerReload)
-        numToShow = postIDs.length;
-      else
-        numToShow = postsPerReload;
-      sortPosts(postIDs);
-      print(postIDs);
-      setState(() {});
-    }
-    );
-
-
+      getFeed(currentUser.userID).then((list) {
+        postIDs = list;
+        sortPosts(postIDs);
+        print(postIDs);
+        setState(() {});
+      });
   }
 
   bool showStars = false;
@@ -255,7 +277,6 @@ class _HomepageScreenState extends State<HomepageScreen> {
                 padding: EdgeInsets.all(5),
                 child: Text(postInfo.data[1],
                 textAlign: TextAlign.left))),
-                Center(child: Padding(padding: EdgeInsets.all(5), child:Text(postInfo.data[3], textAlign: TextAlign.left))),
                 Center(child: starSlider(postID)),
                 Container(
                 margin: const EdgeInsets.all(8),
@@ -265,11 +286,11 @@ class _HomepageScreenState extends State<HomepageScreen> {
                 ),
                 ]);
                 } else {
-                return Container();
+                return CircularProgressIndicator();
                 }
               });
         } else {
-          return Container();
+          return CircularProgressIndicator();
         }
       },
     );
@@ -305,7 +326,6 @@ class _HomepageScreenState extends State<HomepageScreen> {
         ],
       ),
       body: Center(
-
         child: postIDs.length > 0
             ? SmartRefresher(
           enablePullDown: true,
@@ -324,7 +344,7 @@ class _HomepageScreenState extends State<HomepageScreen> {
                 // The height on this will need to be edited to match whatever height is set for the picture
                 return SizedBox(
                     width: double.infinity,
-                    height: 580,
+                    height: 800,
                     child: card(postIDs[index]));
               }),
         )
@@ -351,4 +371,24 @@ class _HomepageScreenState extends State<HomepageScreen> {
     }
   }
 
+  Widget _buildPostsList() {
+    _getPosts();
+    print(postList);
+    return ListView.builder(
+      scrollDirection: Axis.vertical,
+      itemCount: testList.length, //postList later
+      itemBuilder: (BuildContext context, int index) {
+        return new Image(
+          image: AssetImage(testList[index]),
+        );
+      },
+    );
+  }
 }
+
+// ListView.builder(
+// padding: const EdgeInsets.all(0),
+// itemCount: snapshot.data.length,
+// itemBuilder: (BuildContext context, int index) {
+// return card(snapshot.data[index]);
+// });
