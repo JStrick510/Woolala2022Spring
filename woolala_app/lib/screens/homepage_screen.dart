@@ -23,16 +23,16 @@ import 'package:woolala_app/screens/post_screen.dart';
 import 'package:woolala_app/screens/profile_screen.dart';
 import 'package:woolala_app/screens/search_screen.dart';
 import 'package:woolala_app/widgets/bottom_nav.dart';
+import 'package:woolala_app/widgets/card.dart';
 import 'package:woolala_app/main.dart';
 
 AudioPlayer advancedPlayer;
 
 
 
-
-Widget starSlider(String postID) =>
+Widget starSlider(String postID, num) =>
     RatingBar(
-      initialRating: 2.5,
+      initialRating: num,
       minRating: 0,
       direction: Axis.horizontal,
       allowHalfRating: true,
@@ -196,86 +196,6 @@ class _HomepageScreenState extends State<HomepageScreen> {
 
   }
 
-  bool showStars = false;
-
-  Widget card(String postID) {
-    return FutureBuilder(
-      future: getPost(postID),
-      builder: (context, postInfo) {
-        if (postInfo.hasData) {
-          return FutureBuilder(
-              future: getUserFromDB(postInfo.data[2]),
-              builder: (context, userInfo) {
-                if (userInfo.hasData) {
-                  return Column(children: <Widget>[
-                    Container(
-                        margin: const EdgeInsets.all(0),
-                        color: Colors.white,
-                        width: double.infinity,
-                        height: 35.0,
-                        child: Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: <Widget>[
-                              Row(
-                                children: <Widget>[
-                                   Padding(
-                                            child: userInfo.data.createProfileAvatar(
-                                            radius: 15.0, font: 18.0),
-                                            padding: EdgeInsets.all(5)
-                                        ),
-                                    GestureDetector(
-                                            onTap: () =>
-                                            {
-                                              Navigator.push(context, MaterialPageRoute(
-                                                  builder: (BuildContext context) =>
-                                                      ProfilePage(userInfo.data.email)))
-                                            },
-                                            child: Padding(
-                                                padding: EdgeInsets.all(5),
-                                                child: Text(userInfo.data.profileName,
-                                                    textAlign: TextAlign.left,
-                                                    style: TextStyle(
-                                                        color: Colors.black, fontSize: 16
-                                                    )
-                                                )
-                                            )
-                                    ),
-                                ],
-                              ),
-                              Align(
-                                  alignment: Alignment.centerRight,
-                                  child: Icon(Icons.more_vert)
-                              )
-                            ],
-                    //mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      )
-                    ),
-                postInfo.data[0],
-                Container(
-                alignment: Alignment(-1.0, 0.0),
-                child: Padding(
-                padding: EdgeInsets.all(5),
-                child: Text(postInfo.data[1],
-                textAlign: TextAlign.left))),
-                Center(child: Padding(padding: EdgeInsets.all(5), child:Text(postInfo.data[3], textAlign: TextAlign.left))),
-                Center(child: starSlider(postID)),
-                Container(
-                margin: const EdgeInsets.all(8),
-                color: Colors.grey,
-                width: double.infinity,
-                height: 1,
-                ),
-                ]);
-                } else {
-                return Container();
-                }
-              });
-        } else {
-          return Container();
-        }
-      },
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -301,7 +221,7 @@ class _HomepageScreenState extends State<HomepageScreen> {
                     MaterialPageRoute(builder: (context) => SearchPage())),
           ),
           IconButton(
-            icon: Icon(Icons.logout),
+            icon: Icon(IconData(59464, fontFamily: 'MaterialIcons')),
             onPressed: () => startSignOut(context),
           )
         ],
@@ -327,7 +247,7 @@ class _HomepageScreenState extends State<HomepageScreen> {
                 return SizedBox(
                     width: double.infinity,
                     height: 580,
-                    child: card(postIDs[index]));
+                    child: FeedCard(postIDs[index]));
               }),
         )
             : Padding(padding: EdgeInsets.all(70.0), child: Text("Follow People to see their posts on your feed!", style: TextStyle(fontSize: 30, color: Colors.grey, fontFamily: 'Lucida'))),
@@ -354,3 +274,6 @@ class _HomepageScreenState extends State<HomepageScreen> {
   }
 
 }
+
+
+
