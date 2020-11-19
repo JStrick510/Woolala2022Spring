@@ -20,7 +20,7 @@ class BottomNav {
        ),
      ),
      BottomNavigationBarItem(
-        icon: Icon(Icons.home_outlined, color: Colors.white),
+        icon: Icon(Icons.home, color: Colors.white),
         activeIcon: Icon(Icons.home, color: Colors.white),
         title: Text(
           'Home',

@@ -301,7 +301,7 @@ class _HomepageScreenState extends State<HomepageScreen> {
                     MaterialPageRoute(builder: (context) => SearchPage())),
           ),
           IconButton(
-            icon: Icon(Icons.logout),
+            icon: Icon(Icons.clear),
             onPressed: () => startSignOut(context),
           )
         ],
