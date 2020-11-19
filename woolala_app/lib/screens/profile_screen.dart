@@ -91,7 +91,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                     onTap: () {
                                       Navigator.push(context, MaterialPageRoute(builder: (context) => FollowingListScreen(widget.userProfileEmail)));
                                     },
-                                    child: createIntColumns("Following", profilePageOwner.following.length),
+                                    child: createIntColumns("Following", profilePageOwner.following.length-1),
                                   ),
                                   createAveragesColumn("Avg."),
                                 ],

@@ -22,12 +22,17 @@ class EditProfilePage extends StatefulWidget{
   _EditProfilePageState createState() => _EditProfilePageState();
 }
 
-void unFollow(String currentAccountID, String otherAccountID) async{
+Future<void> unFollow(String currentAccountID, String otherAccountID) async{
   http.Response res = await http.post(domain + '/unfollow/' + currentAccountID + '/' + otherAccountID);
 }
 
 Future<void> deleteUser(String currentAccountID) async{
   http.Response res = await http.post(domain + '/deleteUser/' + currentAccountID);
+  print(res);
+}
+
+Future<void> deletePosts(String currentAccountID) async{
+  http.Response res = await http.post(domain + '/deleteAllPosts/' + currentAccountID);
 }
 
 class _EditProfilePageState extends State<EditProfilePage>{
@@ -50,12 +55,13 @@ class _EditProfilePageState extends State<EditProfilePage>{
     followingList = currentUser.following;
     followerList = currentUser.followers;
     for(int i = 0; i < followingList.length; i++){
-      unFollow(currentUser.userID, followingList[i]);
+      await unFollow(currentUser.userID, followingList[i]);
     }
     for(int i = 0; i < followerList.length; i++){
-      unfollow(followerList[i], currentUser.userID);
+      await unfollow(followerList[i], currentUser.userID);
     }
-    await deleteUser(currentUser.userID);
+    await deletePosts(currentUser.userID);
+    //await deleteUser(currentUser.userID);
   }
 
   void initState(){
@@ -218,8 +224,9 @@ class _EditProfilePageState extends State<EditProfilePage>{
 
     Widget continueButton = FlatButton(
       child: Text("Continue"),
-      onPressed: () {
+      onPressed: () async {
         unFollowAll();
+        deleteUser(currentUser.userID);
         Navigator.popUntil(context, ModalRoute.withName('/'));
         googleLogoutUser();
         Navigator.pushNamed(context, '/');
