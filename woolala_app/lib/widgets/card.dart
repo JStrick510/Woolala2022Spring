@@ -66,7 +66,7 @@ Widget build(BuildContext context) {
               if (userInfo.hasData) {
                 return Column(children: <Widget>[
                   Container(
-                      margin: const EdgeInsets.all(0),
+                      margin: const EdgeInsets.all(2),
                       color: Colors.white,
                       width: double.infinity,
                       height: 35.0,
@@ -144,19 +144,66 @@ Widget build(BuildContext context) {
                       }),
                   Container(
                       alignment: Alignment(-1.0, 0.0),
-                      child: Padding(
-                          padding: EdgeInsets.all(5),
-                          child: Text(postInfo.data[1],
-                              textAlign: TextAlign.left))),
-                  Center(child: Padding(padding: EdgeInsets.all(5),
-                      child: Text(
-                          postInfo.data[3], textAlign: TextAlign.left))),
-                  Center(child: starSlider(widget.postID, stars)),
-                  Container(
-                    margin: const EdgeInsets.all(8),
-                    color: Colors.grey,
-                    width: double.infinity,
-                    height: 1,
+                      child: Column(
+                          children: <Widget>[
+                            Center(
+                                child: Row(
+                                    mainAxisSize: MainAxisSize.max,
+                                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                    children: <Widget>[
+                                      new IconButton(
+                                        icon: Icon(Icons.share),
+                                        iconSize: 28,
+                                      ),
+                                      starSlider(widget.postID, stars),
+                                      new IconButton(
+                                        icon: Icon(Icons.add_shopping_cart),
+                                        iconSize: 28,
+                                      ),
+                                    ]
+                                )
+                            ),
+                            Align(
+                                alignment: Alignment.centerLeft,
+                                child: Padding(
+                                  padding: EdgeInsets.fromLTRB(10.0,4.0,10.0,2.0),
+                                  child: Text(
+                                    currentUser.userName,
+                                    textAlign: TextAlign.left,
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 15
+                                    ),
+                                  ),
+                                )
+                            ),
+                            Align(
+                                alignment: Alignment.centerLeft,
+                                child: Padding(
+                                    padding: EdgeInsets.fromLTRB(10.0,1.0,10.0,2.0),
+                                    child: Text(
+                                      postInfo.data[1],
+                                      textAlign: TextAlign.left,
+                                      style: TextStyle(fontSize: 18,),
+                                    )
+                                )
+                            ),
+                          ]
+                      )
+                  ),
+                  Align(
+                      alignment: Alignment.centerLeft,
+                      child:Padding(
+                          padding: EdgeInsets.fromLTRB(10.0,1.0,10.0,2.0),
+                          child:Text(
+                            postInfo.data[3],
+                            textAlign: TextAlign.left,
+                            style: TextStyle(
+                                fontSize: 15,
+                                fontWeight: FontWeight.w500
+                            ),
+                          )
+                      )
                   ),
                 ]);
               } else {
