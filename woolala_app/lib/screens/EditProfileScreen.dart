@@ -1,10 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:woolala_app/models/user.dart';
+import 'package:woolala_app/screens/search_screen.dart';
 import 'package:woolala_app/screens/login_screen.dart';
+import 'package:woolala_app/screens/profile_screen.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+
+import '../main.dart';
+import 'following_list_screen.dart';
 
 class EditProfilePage extends StatefulWidget{
   final String currentOnlineUserId;
@@ -14,6 +20,19 @@ class EditProfilePage extends StatefulWidget{
 
   @override
   _EditProfilePageState createState() => _EditProfilePageState();
+}
+
+Future<void> unFollow(String currentAccountID, String otherAccountID) async{
+  http.Response res = await http.post(domain + '/unfollow/' + currentAccountID + '/' + otherAccountID);
+}
+
+Future<void> deleteUser(String currentAccountID) async{
+  http.Response res = await http.post(domain + '/deleteUser/' + currentAccountID);
+  print(res);
+}
+
+Future<void> deletePosts(String currentAccountID) async{
+  http.Response res = await http.post(domain + '/deleteAllPosts/' + currentAccountID);
 }
 
 class _EditProfilePageState extends State<EditProfilePage>{
@@ -27,6 +46,23 @@ class _EditProfilePageState extends State<EditProfilePage>{
   File _image;
   PickedFile pickedFile;
   String img64;
+
+  //Lists to delete the followers and following.
+  List followingList = new List();
+  List followerList = new List();
+
+  unFollowAll()  async{
+    followingList = currentUser.following;
+    followerList = currentUser.followers;
+    for(int i = 0; i < followingList.length; i++){
+      await unFollow(currentUser.userID, followingList[i]);
+    }
+    for(int i = 0; i < followerList.length; i++){
+      await unfollow(followerList[i], currentUser.userID);
+    }
+    await deletePosts(currentUser.userID);
+    //await deleteUser(currentUser.userID);
+  }
 
   void initState(){
     super.initState();
@@ -79,6 +115,7 @@ class _EditProfilePageState extends State<EditProfilePage>{
             color: Colors.white,
             onPressed: () => {Navigator.pushReplacementNamed(context, '/profile')},
         ),
+
         iconTheme: IconThemeData(color: Colors.blue),
         title: Text('Edit Profile', style: TextStyle(color: Colors.white),),
         actions: <Widget>[
@@ -113,6 +150,7 @@ class _EditProfilePageState extends State<EditProfilePage>{
                       createProfileNameTextFormField(),
                       createBioTextFormField(),
                       createPrivacySwitch(),
+                      createDeleteButton(),
                     ],
                   ),
                 ),
@@ -151,6 +189,67 @@ class _EditProfilePageState extends State<EditProfilePage>{
       ],
     );
   }
+
+  Row createDeleteButton(){
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: <Widget>[
+        Padding(
+          padding: EdgeInsets.only(top: 15.0),
+          child: Text(
+            "Delete Account",
+            style: TextStyle(color: Colors.black, fontSize: 16.0),
+          ),
+        ),
+        Padding(
+          padding: EdgeInsets.only(top: 15.0),
+          child: RaisedButton(
+            child: Text('delete'),
+            color: Colors.red,
+            padding: EdgeInsets.all(5.0),
+            onPressed: () {
+              showDeleteConfirmation(context);
+            },
+          ),
+        ),
+      ],
+    );
+  }
+
+  showDeleteConfirmation(BuildContext context){
+    Widget cancelButton = FlatButton(
+      child: Text("Cancel"),
+      onPressed: () {Navigator.of(context).pop();},
+    );
+
+    Widget continueButton = FlatButton(
+      child: Text("Continue"),
+      onPressed: () async {
+        unFollowAll();
+        deleteUser(currentUser.userID);
+        Navigator.popUntil(context, ModalRoute.withName('/'));
+        googleLogoutUser();
+        Navigator.pushNamed(context, '/');
+      },
+    );
+
+    AlertDialog deleteConfirmation = AlertDialog(
+      title: Text('Delete Account'),
+      content: Text("Are you sure you want to delete your Woolala Account?"),
+      actions: [
+        cancelButton,
+        continueButton,
+      ],
+    );
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return deleteConfirmation;
+      },
+    );
+  }
+
+
 
   Column createProfileNameTextFormField(){
     return Column(

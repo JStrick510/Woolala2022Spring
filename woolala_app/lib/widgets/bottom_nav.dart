@@ -11,7 +11,7 @@ class BottomNav {
    List bottom_items = <BottomNavigationBarItem>[
      BottomNavigationBarItem(
        icon: Icon(
-         Icons.add_circle_outline,
+         Icons.add_circle,
          key: ValueKey("Make Post"),
          color: Colors.white),
        title: Text(
@@ -20,7 +20,7 @@ class BottomNav {
        ),
      ),
      BottomNavigationBarItem(
-        icon: Icon(IconData(0xe22a, fontFamily: 'MaterialIcons'), color: Colors.white),
+        icon: Icon(Icons.home, color: Colors.white),
         activeIcon: Icon(Icons.home, color: Colors.white),
         title: Text(
           'Home',
@@ -29,7 +29,7 @@ class BottomNav {
       ),
       BottomNavigationBarItem(
         icon: Icon(
-          Icons.person_outline,
+          Icons.person,
           key: ValueKey("Profile"),
           color: Colors.white,
         ),

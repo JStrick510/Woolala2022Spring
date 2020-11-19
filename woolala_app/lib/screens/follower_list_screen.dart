@@ -1,80 +1,56 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:google_sign_in/google_sign_in.dart';
-import 'package:flutter_rating_bar/flutter_rating_bar.dart';
-import 'package:flutter_facebook_login/flutter_facebook_login.dart';
 import 'package:woolala_app/screens/login_screen.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import 'dart:io';
-import 'package:woolala_app/screens/login_screen.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:woolala_app/screens/homepage_screen.dart';
-import 'package:intl/intl.dart';
-import 'package:mongo_dart/mongo_dart.dart' as mongo;
 import 'package:woolala_app/models/user.dart';
 import 'package:woolala_app/screens/profile_screen.dart';
-import 'package:woolala_app/models/user.dart';
 import 'package:woolala_app/widgets/bottom_nav.dart';
 import 'package:woolala_app/main.dart';
+import 'package:woolala_app/screens/following_list_screen.dart';
 
+//Create Stateful Widget
 class FollowerListScreen extends StatefulWidget {
   final String userEmail;
-
   FollowerListScreen(this.userEmail);
-
   @override
   _FollowerListScreenState createState() => _FollowerListScreenState();
 }
 
 class _FollowerListScreenState extends State<FollowerListScreen> {
+  //Lists to build the ListView
   List followerNameList = new List();
   User currentProfile;
   List followerList = new List();
   List followerEmailList = new List();
   List followerUserNameList = new List();
 
-  Future<String> getProfileName(String userID) async {
-    http.Response res = await http.get(domain + "/getUser/" + userID);
-    Map userMap = jsonDecode(res.body.toString());
-    return User.fromJSON(userMap).profileName;
-  }
-
-  Future<String> getUserEmail(String userID) async {
-    http.Response res = await http.get(domain + "/getUser/" + userID);
-    Map userMap = jsonDecode(res.body.toString());
-    return User.fromJSON(userMap).email;
-  }
-
-  Future<String> getUserName(String userID) async {
-    http.Response res = await http.get(domain + "/getUser/" + userID);
-    Map userMap = jsonDecode(res.body.toString());
-    return User.fromJSON(userMap).userName;
-  }
-
+  //Build the list Asynchronously
   listbuilder() async {
+    //Make sure the user Exists
     currentProfile = await getDoesUserExists(widget.userEmail);
-    print(currentProfile.profileName);
+
+    //Follower list of the user
     List tempFollowerList = new List();
     tempFollowerList = currentProfile.followers;
-    print(tempFollowerList);
 
+    //Go through the Follower List of userIDs and grab their profileName, email, and userName
     for (int i = 0; i < tempFollowerList.length; i++) {
       String tempProfileName = await getProfileName(tempFollowerList[i]);
       String tempUserEmail = await getUserEmail(tempFollowerList[i]);
       String tempUserName = await getUserName(tempFollowerList[i]);
+      //Add each to their respective Lists
       followerList.add(tempProfileName);
       followerEmailList.add(tempUserEmail);
       followerUserNameList.add(tempUserName);
     }
     return followerList;
-    //print(followerList);
   }
-
+  //Build the list using a Futurebuilder for Async
   Widget _buildList() {
     return FutureBuilder(
       future: listbuilder(),
       builder: (context, snapshot) {
+        //Make sure the snapshot is valid without errors
         if (snapshot.hasData) {
           return ListView.builder(
             key: ValueKey("ListView"),
@@ -83,6 +59,7 @@ class _FollowerListScreenState extends State<FollowerListScreen> {
             itemCount: followerList.length,
             itemBuilder: (BuildContext context, int index) {
               return new ListTile(
+                //Create the circular avatar for the user
                 leading: CircleAvatar(
                   child: Text(followerList[index][0]),
                 ),

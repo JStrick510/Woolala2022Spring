@@ -25,9 +25,10 @@ import 'package:woolala_app/screens/search_screen.dart';
 import 'package:woolala_app/widgets/bottom_nav.dart';
 import 'package:woolala_app/widgets/card.dart';
 import 'package:woolala_app/main.dart';
+import 'package:social_share_plugin/social_share_plugin.dart';
+import 'package:social_share/social_share.dart';
 
 AudioPlayer advancedPlayer;
-
 
 
 Widget starSlider(String postID, num) =>
@@ -197,6 +198,7 @@ class _HomepageScreenState extends State<HomepageScreen> {
   }
 
 
+
   @override
   Widget build(BuildContext context) {
     BottomNav bottomBar = BottomNav(context);
@@ -221,7 +223,7 @@ class _HomepageScreenState extends State<HomepageScreen> {
                     MaterialPageRoute(builder: (context) => SearchPage())),
           ),
           IconButton(
-            icon: Icon(IconData(59464, fontFamily: 'MaterialIcons')),
+            icon: Icon(Icons.exit_to_app),
             onPressed: () => startSignOut(context),
           )
         ],
@@ -246,7 +248,7 @@ class _HomepageScreenState extends State<HomepageScreen> {
                 // The height on this will need to be edited to match whatever height is set for the picture
                 return SizedBox(
                     width: double.infinity,
-                    height: 580,
+                    height: 620,
                     child: FeedCard(postIDs[index]));
               }),
         )

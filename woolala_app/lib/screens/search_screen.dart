@@ -3,10 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:woolala_app/screens/profile_screen.dart';
 import 'package:http/http.dart' as http;
 import 'package:woolala_app/widgets/bottom_nav.dart';
-import 'homepage_screen.dart';
-import 'login_screen.dart';
 import 'package:woolala_app/main.dart';
 
+//Database call for Following people
 Future<http.Response> follow(String currentAccountID, String otherAccountID) {
   return http.post(
     domain + '/follow/' + currentAccountID + '/' + otherAccountID,
@@ -16,7 +15,7 @@ Future<http.Response> follow(String currentAccountID, String otherAccountID) {
     body: jsonEncode({}),
   );
 }
-
+//Database call for Unfollowing people
 Future<http.Response> unfollow(String currentAccountID, String otherAccountID) {
   return http.post(
     domain + '/unfollow/' + currentAccountID + '/' + otherAccountID,
@@ -26,8 +25,7 @@ Future<http.Response> unfollow(String currentAccountID, String otherAccountID) {
     body: jsonEncode({}),
   );
 }
-
-
+//Create Stateful Widget
 class SearchPage extends StatefulWidget{
   @override
   _SearchPageState createState() => _SearchPageState();
@@ -40,10 +38,12 @@ class _SearchPageState extends State<SearchPage> {
   List filteredResults = new List(); // names filtered by search text
   Icon _searchIcon = new Icon(Icons.search);
   Widget _appBarTitle = new Text( 'Search' );
-  List userList;
 
+  //Declare a Future List to call the getAllUsers function once
+  Future<List> _future;
+
+  //Asynchronously gets all users from the database
   Future<List> getAllUsers() async{
-     print("Getting all Users.");
      http.Response res = await http.get(domain + "/getAllUsers");
      if (res.body.isNotEmpty) {
        results = jsonDecode(res.body.toString());
@@ -52,15 +52,15 @@ class _SearchPageState extends State<SearchPage> {
      setState((){});
      return results;
   }
-
-
-
+  //When the Search Icon has been pressed, change the app bar to a TextField and change focus
   void _searchPressed() {
     setState(() {
       if (this._searchIcon.icon == Icons.search) {
         this._searchIcon = new Icon(Icons.close);
         this._appBarTitle = new TextField(
           controller: _filter,
+          autofocus: true,
+          cursorColor: Colors.white,
           decoration: new InputDecoration(
               prefixIcon: new Icon(Icons.search),
               hintText: 'Search...'
@@ -74,6 +74,7 @@ class _SearchPageState extends State<SearchPage> {
       }
     });
   }
+  //Listener for the changes in the filter
   @override
   _SearchPageState() {
     _filter.addListener(() {
@@ -90,7 +91,9 @@ class _SearchPageState extends State<SearchPage> {
     });
   }
 
+  //Build the List using FutureBuilder
   Widget _buildList() {
+    //filter the list
     if (!(_searchText.isEmpty)) {
       List tempList = new List();
       for (int i = 0; i < filteredResults.length; i++) {
@@ -100,12 +103,13 @@ class _SearchPageState extends State<SearchPage> {
       }
       filteredResults = tempList;
     }
+    //Build the List
     return FutureBuilder(
-      future: getAllUsers(),
+      future: _future,
       builder: (context, snapshot){
         if(snapshot.hasData){
           return ListView.builder(
-            //key: ValueKey("ListView"),
+            key: ValueKey("ListView"),
             physics: NeverScrollableScrollPhysics(),
             scrollDirection: Axis.vertical,
             shrinkWrap: true,
@@ -117,18 +121,6 @@ class _SearchPageState extends State<SearchPage> {
                 ),
                 title: Text(filteredResults[index]['profileName']),
                 subtitle: Text(filteredResults[index]['userName']),
-                /*trailing: Wrap(
-                  spacing: 12,
-                  children: <Widget> [
-
-                    new Container(
-                      child: new IconButton(
-                        icon: Icon(Icons.add),
-                        onPressed: () {follow(currentUser.userID, filteredResults[index]['userID']);},
-                      ),
-                    ),
-                  ],
-                ),*/
                 onTap: () => Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => ProfilePage(filteredResults[index]['email']))),
               );
             },
@@ -184,11 +176,13 @@ class _SearchPageState extends State<SearchPage> {
     );
 
   }
+  //Runs when the page first loads
   @override
   void initState() {
     super.initState();
-    //_getNames();
-    getAllUsers();
+    _future = getAllUsers();
+    //Make the search pressed upon load
+    _searchPressed();
   }
 }
 
