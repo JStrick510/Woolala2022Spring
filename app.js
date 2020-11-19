@@ -215,3 +215,9 @@ app.post("/unfollow/:you/:them", (request, response) => {
     });
     response.send({});
 });
+
+app.post("/deleteUser/:ID", (request, response) => {
+    userCollection.deleteOne({"userID": request.params.ID}, function(err, res) {
+        console.log("Deleted User: " + request.params.ID);
+    });
+});

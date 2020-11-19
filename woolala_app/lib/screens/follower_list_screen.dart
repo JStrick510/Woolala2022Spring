@@ -75,7 +75,7 @@ class _FollowerListScreenState extends State<FollowerListScreen> {
               );
             },
           );
-        } else if (snapshot.hasError || followerList.length == 0) {
+        } else if (snapshot.hasError) {
           return Center(child: Text("No Results"));
         } else {
           return Center(child: CircularProgressIndicator());
