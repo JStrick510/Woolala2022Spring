@@ -24,11 +24,10 @@ import 'package:woolala_app/screens/profile_screen.dart';
 import 'package:woolala_app/screens/search_screen.dart';
 import 'package:woolala_app/widgets/bottom_nav.dart';
 import 'package:woolala_app/main.dart';
+import 'package:social_share_plugin/social_share_plugin.dart';
+import 'package:social_share/social_share.dart';
 
 AudioPlayer advancedPlayer;
-
-
-
 
 Widget starSlider(String postID) =>
     RatingBar(
@@ -199,6 +198,7 @@ class _HomepageScreenState extends State<HomepageScreen> {
   bool showStars = false;
 
   Widget card(String postID) {
+
     return FutureBuilder(
       future: getPost(postID),
       builder: (context, postInfo) {
@@ -207,65 +207,116 @@ class _HomepageScreenState extends State<HomepageScreen> {
               future: getUserFromDB(postInfo.data[2]),
               builder: (context, userInfo) {
                 if (userInfo.hasData) {
-                  return Column(children: <Widget>[
-                    Container(
-                        margin: const EdgeInsets.all(0),
-                        color: Colors.white,
-                        width: double.infinity,
-                        height: 35.0,
-                        child: Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: <Widget>[
-                              Row(
+                  return Column(
+                      children: <Widget>[
+                        Container(
+                            margin: const EdgeInsets.all(2),
+                            color: Colors.white,
+                            width: double.infinity,
+                            height: 35.0,
+                            child: Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
                                 children: <Widget>[
-                                   Padding(
-                                            child: userInfo.data.createProfileAvatar(
-                                            radius: 15.0, font: 18.0),
-                                            padding: EdgeInsets.all(5)
-                                        ),
-                                    GestureDetector(
-                                            onTap: () =>
-                                            {
-                                              Navigator.push(context, MaterialPageRoute(
-                                                  builder: (BuildContext context) =>
-                                                      ProfilePage(userInfo.data.email)))
-                                            },
-                                            child: Padding(
-                                                padding: EdgeInsets.all(5),
-                                                child: Text(userInfo.data.profileName,
-                                                    textAlign: TextAlign.left,
-                                                    style: TextStyle(
-                                                        color: Colors.black, fontSize: 16
+                                  Row(
+                                    children: <Widget>[
+                                       Padding(
+                                                child: userInfo.data.createProfileAvatar(
+                                                radius: 15.0, font: 18.0),
+                                                padding: EdgeInsets.all(5)
+                                            ),
+                                        GestureDetector(
+                                                onTap: () =>
+                                                {
+                                                  Navigator.push(context, MaterialPageRoute(
+                                                      builder: (BuildContext context) =>
+                                                          ProfilePage(userInfo.data.email)))
+                                                },
+                                                child: Padding(
+                                                    padding: EdgeInsets.all(5),
+                                                    child: Text(userInfo.data.profileName,
+                                                        textAlign: TextAlign.left,
+                                                        style: TextStyle(
+                                                            color: Colors.black, fontSize: 16
+                                                        )
                                                     )
                                                 )
-                                            )
-                                    ),
+                                        ),
+                                    ],
+                                  ),
+                                  Align(
+                                      alignment: Alignment.centerRight,
+                                      child: Icon(Icons.more_vert)
+                                  ),
                                 ],
-                              ),
-                              Align(
-                                  alignment: Alignment.centerRight,
-                                  child: Icon(Icons.more_vert)
+                          )
+                        ),
+                    postInfo.data[0],
+                    Container(
+                      alignment: Alignment(-1.0, 0.0),
+                      child: Column(
+                        children: <Widget>[
+                          Center(
+                            child: Row(
+                                mainAxisSize: MainAxisSize.max,
+                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                children: <Widget>[
+                                       new IconButton(
+                                          icon: Icon(Icons.share),
+                                          iconSize: 28,
+                                        ),
+                                      starSlider(postID),
+                                      new IconButton(
+                                            icon: Icon(Icons.add_shopping_cart),
+                                            iconSize: 28,
+                                          ),
+                                ]
                               )
-                            ],
-                    //mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      )
+                          ),
+                            Align(
+                              alignment: Alignment.centerLeft,
+                              child: Padding(
+                                  padding: EdgeInsets.fromLTRB(10.0,4.0,10.0,2.0),
+                                  child: Text(
+                                     currentUser.userName,
+                                     textAlign: TextAlign.left,
+                                     style: TextStyle(
+                                       fontWeight: FontWeight.bold,
+                                       fontSize: 15
+                                    ),
+                                ),
+                              )
+                            ),
+                            Align(
+                              alignment: Alignment.centerLeft,
+                              child: Padding(
+                                  padding: EdgeInsets.fromLTRB(10.0,1.0,10.0,2.0),
+                                  child: Text(
+                                    postInfo.data[1],
+                                    textAlign: TextAlign.left,
+                                    style: TextStyle(fontSize: 18,),
+                                    )
+                                )
+                              ),
+                          ]
+                        )
                     ),
-                postInfo.data[0],
-                Container(
-                alignment: Alignment(-1.0, 0.0),
-                child: Padding(
-                padding: EdgeInsets.all(5),
-                child: Text(postInfo.data[1],
-                textAlign: TextAlign.left))),
-                Center(child: Padding(padding: EdgeInsets.all(5), child:Text(postInfo.data[3], textAlign: TextAlign.left))),
-                Center(child: starSlider(postID)),
-                Container(
-                margin: const EdgeInsets.all(8),
-                color: Colors.grey,
-                width: double.infinity,
-                height: 1,
-                ),
-                ]);
+                           Align(
+                                  alignment: Alignment.centerLeft,
+                                  child:Padding(
+                                        padding: EdgeInsets.fromLTRB(10.0,1.0,10.0,2.0),
+                                        child:Text(
+                                            postInfo.data[3],
+                                            textAlign: TextAlign.left,
+                                            style: TextStyle(
+                                              fontSize: 15,
+                                              fontWeight: FontWeight.w500
+                                            ),
+                                        )
+                                  )
+                           )
+
+                      ]
+                  );
                 } else {
                 return Container();
                 }
@@ -326,7 +377,7 @@ class _HomepageScreenState extends State<HomepageScreen> {
                 // The height on this will need to be edited to match whatever height is set for the picture
                 return SizedBox(
                     width: double.infinity,
-                    height: 580,
+                    height: 620,
                     child: card(postIDs[index]));
               }),
         )
