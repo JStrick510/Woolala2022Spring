@@ -41,6 +41,7 @@ class _SearchPageState extends State<SearchPage> {
   Icon _searchIcon = new Icon(Icons.search);
   Widget _appBarTitle = new Text( 'Search' );
   List userList;
+  Future<List> _future;
 
   Future<List> getAllUsers() async{
      print("Getting all Users.");
@@ -61,8 +62,11 @@ class _SearchPageState extends State<SearchPage> {
         this._searchIcon = new Icon(Icons.close);
         this._appBarTitle = new TextField(
           controller: _filter,
+          autofocus: true,
+          cursorColor: Colors.white,
           decoration: new InputDecoration(
               prefixIcon: new Icon(Icons.search),
+              fillColor: Colors.white,
               hintText: 'Search...'
           ),
         );
@@ -101,7 +105,7 @@ class _SearchPageState extends State<SearchPage> {
       filteredResults = tempList;
     }
     return FutureBuilder(
-      future: getAllUsers(),
+      future: _future,
       builder: (context, snapshot){
         if(snapshot.hasData){
           return ListView.builder(
@@ -187,8 +191,10 @@ class _SearchPageState extends State<SearchPage> {
   @override
   void initState() {
     super.initState();
+    _future = getAllUsers();
+    _searchPressed();
     //_getNames();
-    getAllUsers();
+    //getAllUsers();
   }
 }
 
