@@ -283,15 +283,11 @@ class _LoginScreenState extends State<LoginScreen> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                new IconButton(
-                  key: ValueKey("GoToHome"),
-                  icon: Image.asset('./assets/logos/w_logo_test.png',
+                new Image.asset('./assets/logos/w_logo_test.png',
                       width: 300,
                       height: 150,
                       fit: BoxFit.contain,
                       semanticLabel: 'WooLaLa logo'),
-                  iconSize: 150,
-                ),
                 Text(
                   "Powered by: ",
                   style: TextStyle(color: Colors.white, fontSize: 16),
