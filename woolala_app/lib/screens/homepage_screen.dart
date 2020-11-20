@@ -15,8 +15,11 @@ import 'package:audioplayers/audio_cache.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'dart:collection';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
-
 import 'dart:io';
+import 'dart:convert';
+import 'dart:typed_data';
+import 'package:image_picker/image_picker.dart';
+import 'package:image/image.dart' as ui;
 import 'package:woolala_app/screens/login_screen.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:woolala_app/screens/post_screen.dart';
@@ -26,7 +29,11 @@ import 'package:woolala_app/widgets/bottom_nav.dart';
 import 'package:woolala_app/widgets/card.dart';
 import 'package:woolala_app/main.dart';
 import 'package:social_share_plugin/social_share_plugin.dart';
+import 'package:screenshot/screenshot.dart';
 import 'package:social_share/social_share.dart';
+import 'package:flutter/services.dart' show rootBundle;
+import 'package:path_provider/path_provider.dart';
+
 
 AudioPlayer advancedPlayer;
 
@@ -84,6 +91,22 @@ Future<http.Response> createPost(String postID, String image, String date,
   );
 }
 
+Future<http.Response> reportPost(String postID, String reportingUserID, String date,
+    String postUserID) {
+  return http.post(
+    domain + '/reportPost',
+    headers: <String, String>{
+      'Content-Type': 'application/json',
+    },
+    body: jsonEncode({
+      'postID': postID,
+      'reportingUserID': reportingUserID,
+      'date': date,
+      'postUserID': postUserID
+    }),
+  );
+}
+
 // Will be used to get info about the post
 Future<List> getPost(String id) async {
   http.Response res = await http.get(domain + '/getPostInfo/' + id);
@@ -133,12 +156,56 @@ class HomepageScreen extends StatefulWidget {
 }
 
 class _HomepageScreenState extends State<HomepageScreen> {
-  RefreshController _refreshController =
-      RefreshController(initialRefresh: false);
 
+  RefreshController _refreshController = RefreshController(initialRefresh: false);
+  //ScreenshotController screenshotController = ScreenshotController();
+  final _scaffoldGlobalKey = GlobalKey<ScaffoldState>();
+
+  Future<File> convertImageToFile(String imagePath) async {
+    final byteData = await rootBundle.load('assets/$imagePath');
+
+    final file = File('${(await getTemporaryDirectory()).path}/$imagePath');
+    await file.writeAsBytes(byteData.buffer.asUint8List(byteData.offsetInBytes, byteData.lengthInBytes));
+
+    return file;
+  }
+  //Image img = Image.asset('./assets/logos/w_logo_test.png');
+  //final bytes = Io.File('./assets/logos/w_logo_test.png').readAsBytesSync();
   List postIDs = [];
+  File file;
   int numToShow;
   int postsPerReload = 2;
+  File _originalImage;
+  File _watermarkImage;
+  File _watermarkedImage;
+
+  void watermarkImage(){
+    ui.Image originalImage = ui.decodeImage(_originalImage.readAsBytesSync());
+    //ui.Image watermarkImage = ui.decodeImage(_watermarkImage.readAsBytesSync());
+
+    // add watermark over originalImage
+    // initialize width and height of watermark image
+    ui.Image image = ui.Image(160, 50);
+    //ui.drawImage(image, watermarkImage);
+
+    // give position to watermark over image
+    // originalImage.width - 160 - 25 (width of originalImage - width of watermarkImage - extra margin you want to give)
+    // originalImage.height - 50 - 25 (height of originalImage - height of watermarkImage - extra margin you want to give)
+    ui.copyInto(originalImage,image, dstX: originalImage.width - 160 - 25, dstY: originalImage.height - 50 - 25);
+
+
+    // for adding text over image
+    // Draw some text using 24pt arial font
+    // 100 is position from x-axis, 120 is position from y-axis
+    ui.drawString(originalImage, ui.arial_24, 100, 120, 'WooLaLa');
+
+
+    // Store the watermarked image to a File
+    List<int> wmImage = ui.encodePng(originalImage);
+    setState(() {
+      _watermarkedImage = File.fromRawPath(Uint8List.fromList(wmImage));
+    });
+  }
 
   void sortPosts(list) {
     list.removeWhere((item) => item == "");
@@ -173,16 +240,37 @@ class _HomepageScreenState extends State<HomepageScreen> {
   initState() {
     super.initState();
     if (currentUser != null)
-      getFeed(currentUser.userID).then((list) {
-        postIDs = list;
-        if (postIDs.length < postsPerReload)
-          numToShow = postIDs.length;
-        else
-          numToShow = postsPerReload;
-        sortPosts(postIDs);
-        print(postIDs);
-        setState(() {});
+    getFeed(currentUser.userID).then((list) {
+      postIDs = list;
+      if (postIDs.length < postsPerReload)
+        numToShow = postIDs.length;
+      else
+        numToShow = postsPerReload;
+      sortPosts(postIDs);
+      print(postIDs);
+      setState(() {});
+    }
+    );
+
+
+  }
+
+  void showReportSuccess(bool value) {
+    if(value){
+      setState(() {
+        SnackBar successSB = SnackBar(content: Text("Post Reported Successfully"),);
+        _scaffoldGlobalKey.currentState.showSnackBar(successSB);
       });
+    }
+    else{
+      setState(() {
+        SnackBar failSB = SnackBar(content: Text("Failed to Report Post"),);
+        _scaffoldGlobalKey.currentState.showSnackBar(failSB);
+      });
+    }
+  }
+
+
   }
 
   @override
@@ -192,6 +280,7 @@ class _HomepageScreenState extends State<HomepageScreen> {
     bottomBar.currentIndex = 1;
 
     return Scaffold(
+      key: _scaffoldGlobalKey,
       appBar: AppBar(
         title: Text('WooLaLa', style: TextStyle(fontSize: 25)),
         centerTitle: true,
@@ -256,6 +345,3 @@ class _HomepageScreenState extends State<HomepageScreen> {
     }
   }
 }
-
-
-
