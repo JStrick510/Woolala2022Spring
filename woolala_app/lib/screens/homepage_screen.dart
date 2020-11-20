@@ -30,7 +30,6 @@ import 'package:social_share/social_share.dart';
 
 AudioPlayer advancedPlayer;
 
-
 Widget starSlider(String postID, num) =>
     RatingBar(
       initialRating: num,
@@ -41,11 +40,10 @@ Widget starSlider(String postID, num) =>
       unratedColor: Colors.black,
       itemSize: 30,
       itemPadding: EdgeInsets.symmetric(horizontal: 4.0),
-      itemBuilder: (context, _) =>
-          Icon(
-            Icons.star,
-            color: Colors.blue,
-          ),
+      itemBuilder: (context, _) => Icon(
+        Icons.star,
+        color: Colors.blue,
+      ),
       onRatingUpdate: (rating) {
         print(rating);
         //Changing rating here
@@ -53,15 +51,6 @@ Widget starSlider(String postID, num) =>
         //getFeed("cmpoaW5ja0BnbWFpbC5jb20=", "2020-10-28");
       },
     );
-
-Future loadMusic(String sound) async {
-  if (sound == "fuck") {
-    advancedPlayer = await AudioCache().play("Sounds/ashfuck.mp3");
-  }
-  if (sound == "woolala") {
-    advancedPlayer = await AudioCache().play("Sounds/woolalaAudio.mp3");
-  }
-}
 
 // Will be used anytime the post is rated
 Future<http.Response> ratePost(double rating, String id) {
@@ -100,7 +89,12 @@ Future<List> getPost(String id) async {
   http.Response res = await http.get(domain + '/getPostInfo/' + id);
   Map info = jsonDecode(res.body.toString());
   final decodedBytes = base64Decode(info["image"]);
-  var ret = [Image.memory(decodedBytes), info["caption"], info["userID"], info["date"]];
+  var ret = [
+    Image.memory(decodedBytes),
+    info["caption"],
+    info["userID"],
+    info["date"]
+  ];
   return ret;
 
   //DO THIS TO GET IMAGE
@@ -139,20 +133,17 @@ class HomepageScreen extends StatefulWidget {
 }
 
 class _HomepageScreenState extends State<HomepageScreen> {
-
-  RefreshController _refreshController = RefreshController(
-      initialRefresh: false);
-
+  RefreshController _refreshController =
+      RefreshController(initialRefresh: false);
 
   List postIDs = [];
   int numToShow;
   int postsPerReload = 2;
 
-
   void sortPosts(list) {
     list.removeWhere((item) => item == "");
     list.sort((a, b) =>
-    int.parse(b.substring(b.indexOf(':::') + 3)) -
+        int.parse(b.substring(b.indexOf(':::') + 3)) -
         int.parse(a.substring(a.indexOf(':::') + 3)));
   }
 
@@ -182,22 +173,17 @@ class _HomepageScreenState extends State<HomepageScreen> {
   initState() {
     super.initState();
     if (currentUser != null)
-    getFeed(currentUser.userID).then((list) {
-      postIDs = list;
-      if (postIDs.length < postsPerReload)
-        numToShow = postIDs.length;
-      else
-        numToShow = postsPerReload;
-      sortPosts(postIDs);
-      print(postIDs);
-      setState(() {});
-    }
-    );
-
-
+      getFeed(currentUser.userID).then((list) {
+        postIDs = list;
+        if (postIDs.length < postsPerReload)
+          numToShow = postIDs.length;
+        else
+          numToShow = postsPerReload;
+        sortPosts(postIDs);
+        print(postIDs);
+        setState(() {});
+      });
   }
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -206,10 +192,7 @@ class _HomepageScreenState extends State<HomepageScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-          'WooLaLa',
-          style: TextStyle(fontSize: 25)
-        ),
+        title: Text('WooLaLa', style: TextStyle(fontSize: 25)),
         centerTitle: true,
         key: ValueKey("homepage"),
         actions: <Widget>[
@@ -217,10 +200,8 @@ class _HomepageScreenState extends State<HomepageScreen> {
             icon: Icon(Icons.search),
             key: ValueKey("Search"),
             color: Colors.white,
-            onPressed: () =>
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => SearchPage())),
+            onPressed: () => Navigator.push(
+                context, MaterialPageRoute(builder: (context) => SearchPage())),
           ),
           IconButton(
             icon: Icon(Icons.exit_to_app),
@@ -229,7 +210,6 @@ class _HomepageScreenState extends State<HomepageScreen> {
         ],
       ),
       body: Center(
-
         child: postIDs.length > 0
             ? SmartRefresher(
           enablePullDown: true,
@@ -274,7 +254,6 @@ class _HomepageScreenState extends State<HomepageScreen> {
       Navigator.pushReplacementNamed(context, '/');
     }
   }
-
 }
 
 
