@@ -29,8 +29,7 @@ import 'package:social_share/social_share.dart';
 
 AudioPlayer advancedPlayer;
 
-Widget starSlider(String postID) =>
-    RatingBar(
+Widget starSlider(String postID) => RatingBar(
       initialRating: 2.5,
       minRating: 0,
       direction: Axis.horizontal,
@@ -39,11 +38,10 @@ Widget starSlider(String postID) =>
       unratedColor: Colors.black,
       itemSize: 30,
       itemPadding: EdgeInsets.symmetric(horizontal: 4.0),
-      itemBuilder: (context, _) =>
-          Icon(
-            Icons.star,
-            color: Colors.blue,
-          ),
+      itemBuilder: (context, _) => Icon(
+        Icons.star,
+        color: Colors.blue,
+      ),
       onRatingUpdate: (rating) {
         print(rating);
         //Changing rating here
@@ -51,15 +49,6 @@ Widget starSlider(String postID) =>
         //getFeed("cmpoaW5ja0BnbWFpbC5jb20=", "2020-10-28");
       },
     );
-
-Future loadMusic(String sound) async {
-  if (sound == "fuck") {
-    advancedPlayer = await AudioCache().play("Sounds/ashfuck.mp3");
-  }
-  if (sound == "woolala") {
-    advancedPlayer = await AudioCache().play("Sounds/woolalaAudio.mp3");
-  }
-}
 
 // Will be used anytime the post is rated
 Future<http.Response> ratePost(double rating, String id) {
@@ -98,7 +87,12 @@ Future<List> getPost(String id) async {
   http.Response res = await http.get(domain + '/getPostInfo/' + id);
   Map info = jsonDecode(res.body.toString());
   final decodedBytes = base64Decode(info["image"]);
-  var ret = [Image.memory(decodedBytes), info["caption"], info["userID"], info["date"]];
+  var ret = [
+    Image.memory(decodedBytes),
+    info["caption"],
+    info["userID"],
+    info["date"]
+  ];
   return ret;
 
   //DO THIS TO GET IMAGE
@@ -137,20 +131,17 @@ class HomepageScreen extends StatefulWidget {
 }
 
 class _HomepageScreenState extends State<HomepageScreen> {
-
-  RefreshController _refreshController = RefreshController(
-      initialRefresh: false);
-
+  RefreshController _refreshController =
+      RefreshController(initialRefresh: false);
 
   List postIDs = [];
   int numToShow;
   int postsPerReload = 2;
 
-
   void sortPosts(list) {
     list.removeWhere((item) => item == "");
     list.sort((a, b) =>
-    int.parse(b.substring(b.indexOf(':::') + 3)) -
+        int.parse(b.substring(b.indexOf(':::') + 3)) -
         int.parse(a.substring(a.indexOf(':::') + 3)));
   }
 
@@ -180,23 +171,19 @@ class _HomepageScreenState extends State<HomepageScreen> {
   initState() {
     super.initState();
     if (currentUser != null)
-    getFeed(currentUser.userID).then((list) {
-      postIDs = list;
-      if (postIDs.length < postsPerReload)
-        numToShow = postIDs.length;
-      else
-        numToShow = postsPerReload;
-      sortPosts(postIDs);
-      print(postIDs);
-      setState(() {});
-    }
-    );
-
-
+      getFeed(currentUser.userID).then((list) {
+        postIDs = list;
+        if (postIDs.length < postsPerReload)
+          numToShow = postIDs.length;
+        else
+          numToShow = postsPerReload;
+        sortPosts(postIDs);
+        print(postIDs);
+        setState(() {});
+      });
   }
 
   Widget card(String postID) {
-
     return FutureBuilder(
       future: getPost(postID),
       builder: (context, postInfo) {
@@ -205,118 +192,104 @@ class _HomepageScreenState extends State<HomepageScreen> {
               future: getUserFromDB(postInfo.data[2]),
               builder: (context, userInfo) {
                 if (userInfo.hasData) {
-                  return Column(
-                      children: <Widget>[
-                        Container(
-                            margin: const EdgeInsets.all(2),
-                            color: Colors.white,
-                            width: double.infinity,
-                            height: 35.0,
-                            child: Row(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: <Widget>[
-                                  Row(
-                                    children: <Widget>[
-                                       Padding(
-                                                child: userInfo.data.createProfileAvatar(
-                                                radius: 15.0, font: 18.0),
-                                                padding: EdgeInsets.all(5)
-                                            ),
-                                        GestureDetector(
-                                                onTap: () =>
-                                                {
-                                                  Navigator.push(context, MaterialPageRoute(
-                                                      builder: (BuildContext context) =>
-                                                          ProfilePage(userInfo.data.email)))
-                                                },
-                                                child: Padding(
-                                                    padding: EdgeInsets.all(5),
-                                                    child: Text(userInfo.data.profileName,
-                                                        textAlign: TextAlign.left,
-                                                        style: TextStyle(
-                                                            color: Colors.black, fontSize: 16
-                                                        )
-                                                    )
-                                                )
-                                        ),
-                                    ],
-                                  ),
-                                  Align(
-                                      alignment: Alignment.centerRight,
-                                      child: Icon(Icons.more_vert)
-                                  ),
-                                ],
-                          )
-                        ),
-                    postInfo.data[0],
+                  return Column(children: <Widget>[
                     Container(
-                      alignment: Alignment(-1.0, 0.0),
-                      child: Column(
-                        children: <Widget>[
-                          Center(
-                            child: Row(
-                                mainAxisSize: MainAxisSize.max,
-                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                children: <Widget>[
-                                       new IconButton(
-                                          icon: Icon(Icons.share),
-                                          iconSize: 28,
-                                        ),
-                                      starSlider(postID),
-                                      new IconButton(
-                                            icon: Icon(Icons.add_shopping_cart),
-                                            iconSize: 28,
-                                          ),
-                                ]
-                              )
-                          ),
-                            Align(
-                              alignment: Alignment.centerLeft,
-                              child: Padding(
-                                  padding: EdgeInsets.fromLTRB(10.0,4.0,10.0,2.0),
-                                  child: Text(
-                                     currentUser.userName,
-                                     textAlign: TextAlign.left,
-                                     style: TextStyle(
-                                       fontWeight: FontWeight.bold,
-                                       fontSize: 15
-                                    ),
-                                ),
-                              )
+                        margin: const EdgeInsets.all(2),
+                        color: Colors.white,
+                        width: double.infinity,
+                        height: 35.0,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: <Widget>[
+                            Row(
+                              children: <Widget>[
+                                Padding(
+                                    child: userInfo.data.createProfileAvatar(
+                                        radius: 15.0, font: 18.0),
+                                    padding: EdgeInsets.all(5)),
+                                GestureDetector(
+                                    onTap: () => {
+                                          Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder:
+                                                      (BuildContext context) =>
+                                                          ProfilePage(userInfo
+                                                              .data.email)))
+                                        },
+                                    child: Padding(
+                                        padding: EdgeInsets.all(5),
+                                        child: Text(userInfo.data.profileName,
+                                            textAlign: TextAlign.left,
+                                            style: TextStyle(
+                                                color: Colors.black,
+                                                fontSize: 16)))),
+                              ],
                             ),
                             Align(
+                                alignment: Alignment.centerRight,
+                                child: Icon(Icons.more_vert)),
+                          ],
+                        )),
+                    postInfo.data[0],
+                    Container(
+                        alignment: Alignment(-1.0, 0.0),
+                        child: Column(children: <Widget>[
+                          Center(
+                              child: Row(
+                                  mainAxisSize: MainAxisSize.max,
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceEvenly,
+                                  children: <Widget>[
+                                new IconButton(
+                                  icon: Icon(Icons.share),
+                                  iconSize: 28,
+                                ),
+                                starSlider(postID),
+                                new IconButton(
+                                  icon: Icon(Icons.add_shopping_cart),
+                                  iconSize: 28,
+                                ),
+                              ])),
+                          Align(
                               alignment: Alignment.centerLeft,
                               child: Padding(
-                                  padding: EdgeInsets.fromLTRB(10.0,1.0,10.0,2.0),
+                                padding:
+                                    EdgeInsets.fromLTRB(10.0, 4.0, 10.0, 2.0),
+                                child: Text(
+                                  currentUser.userName,
+                                  textAlign: TextAlign.left,
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 15),
+                                ),
+                              )),
+                          Align(
+                              alignment: Alignment.centerLeft,
+                              child: Padding(
+                                  padding:
+                                      EdgeInsets.fromLTRB(10.0, 1.0, 10.0, 2.0),
                                   child: Text(
                                     postInfo.data[1],
                                     textAlign: TextAlign.left,
-                                    style: TextStyle(fontSize: 18,),
-                                    )
-                                )
-                              ),
-                          ]
-                        )
-                    ),
-                           Align(
-                                  alignment: Alignment.centerLeft,
-                                  child:Padding(
-                                        padding: EdgeInsets.fromLTRB(10.0,1.0,10.0,2.0),
-                                        child:Text(
-                                            postInfo.data[3],
-                                            textAlign: TextAlign.left,
-                                            style: TextStyle(
-                                              fontSize: 15,
-                                              fontWeight: FontWeight.w500
-                                            ),
-                                        )
-                                  )
-                           )
-
-                      ]
-                  );
+                                    style: TextStyle(
+                                      fontSize: 18,
+                                    ),
+                                  ))),
+                        ])),
+                    Align(
+                        alignment: Alignment.centerLeft,
+                        child: Padding(
+                            padding: EdgeInsets.fromLTRB(10.0, 1.0, 10.0, 2.0),
+                            child: Text(
+                              postInfo.data[3],
+                              textAlign: TextAlign.left,
+                              style: TextStyle(
+                                  fontSize: 15, fontWeight: FontWeight.w500),
+                            )))
+                  ]);
                 } else {
-                return Container();
+                  return Container();
                 }
               });
         } else {
@@ -333,10 +306,7 @@ class _HomepageScreenState extends State<HomepageScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-          'WooLaLa',
-          style: TextStyle(fontSize: 25)
-        ),
+        title: Text('WooLaLa', style: TextStyle(fontSize: 25)),
         centerTitle: true,
         key: ValueKey("homepage"),
         actions: <Widget>[
@@ -344,10 +314,8 @@ class _HomepageScreenState extends State<HomepageScreen> {
             icon: Icon(Icons.search),
             key: ValueKey("Search"),
             color: Colors.white,
-            onPressed: () =>
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => SearchPage())),
+            onPressed: () => Navigator.push(
+                context, MaterialPageRoute(builder: (context) => SearchPage())),
           ),
           IconButton(
             icon: Icon(Icons.exit_to_app),
@@ -356,30 +324,35 @@ class _HomepageScreenState extends State<HomepageScreen> {
         ],
       ),
       body: Center(
-
         child: postIDs.length > 0
             ? SmartRefresher(
-          enablePullDown: true,
-          enablePullUp: true,
-          header: ClassicHeader(),
-          footer: ClassicFooter(),
-          controller: _refreshController,
-          onRefresh: _onRefresh,
-          onLoading: _onLoading,
-          child: ListView.builder(
-              padding: const EdgeInsets.all(0),
-              itemCount: numToShow,
-              addAutomaticKeepAlives: true,
-              physics: const AlwaysScrollableScrollPhysics(),
-              itemBuilder: (BuildContext context, int index) {
-                // The height on this will need to be edited to match whatever height is set for the picture
-                return SizedBox(
-                    width: double.infinity,
-                    height: 620,
-                    child: card(postIDs[index]));
-              }),
-        )
-            : Padding(padding: EdgeInsets.all(70.0), child: Text("Follow People to see their posts on your feed!", style: TextStyle(fontSize: 30, color: Colors.grey, fontFamily: 'Lucida'))),
+                enablePullDown: true,
+                enablePullUp: true,
+                header: ClassicHeader(),
+                footer: ClassicFooter(),
+                controller: _refreshController,
+                onRefresh: _onRefresh,
+                onLoading: _onLoading,
+                child: ListView.builder(
+                    padding: const EdgeInsets.all(0),
+                    itemCount: numToShow,
+                    addAutomaticKeepAlives: true,
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    itemBuilder: (BuildContext context, int index) {
+                      // The height on this will need to be edited to match whatever height is set for the picture
+                      return SizedBox(
+                          width: double.infinity,
+                          height: 620,
+                          child: card(postIDs[index]));
+                    }),
+              )
+            : Padding(
+                padding: EdgeInsets.all(70.0),
+                child: Text("Follow People to see their posts on your feed!",
+                    style: TextStyle(
+                        fontSize: 30,
+                        color: Colors.grey,
+                        fontFamily: 'Lucida'))),
       ),
       bottomNavigationBar: BottomNavigationBar(
         onTap: (int index) {
@@ -401,5 +374,4 @@ class _HomepageScreenState extends State<HomepageScreen> {
       Navigator.pushReplacementNamed(context, '/');
     }
   }
-
 }
