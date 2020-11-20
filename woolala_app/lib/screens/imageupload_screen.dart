@@ -3,9 +3,11 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:woolala_app/widgets/bottom_nav.dart';
 
 class ImageUploadScreen extends StatefulWidget {
   ImageUploadScreen();
+
   _ImageUploadScreenState createState() => _ImageUploadScreenState();
 }
 
@@ -63,15 +65,13 @@ class _ImageUploadScreenState extends State<ImageUploadScreen> {
 
   @override
   Widget build(BuildContext context) {
+    BottomNav bottomBar = BottomNav(context);
+    bottomBar.currentIndex = 0;
+
     return Scaffold(
         appBar: AppBar(
           toolbarHeight: 40,
-          leading: GestureDetector(
-            onTap: () => Navigator.pop(context),
-            child: Icon(
-              Icons.arrow_back, // add custom icons also
-            ),
-          ),
+          leading: Container(),
           actions: <Widget>[
             FlatButton(
               textColor: Colors.white,
@@ -126,6 +126,14 @@ class _ImageUploadScreenState extends State<ImageUploadScreen> {
                           heroTag: null,
                         )
                       ]),
-                ]))));
+                ]))),
+        bottomNavigationBar: BottomNavigationBar(
+          onTap: (int index) {
+            bottomBar.switchPage(index, context);
+          },
+          items: bottomBar.bottom_items,
+          backgroundColor: Colors.purple[600],
+        ),
+    );
   }
 }

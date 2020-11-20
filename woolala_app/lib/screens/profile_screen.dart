@@ -330,11 +330,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
     return Scaffold(
       appBar: AppBar(
-        leading: IconButton (
-          icon: Icon(Icons.arrow_back),
-          onPressed: () => Navigator.pop(context), //place holder
-          color: Colors.white,
-        ),
+        leading: Container(),
         title: Text('WooLaLa', style: TextStyle(fontSize: 25, fontFamily: 'Lucida'), textAlign: TextAlign.center,),
         centerTitle: true,
         key: ValueKey("homepage"),
@@ -357,7 +353,7 @@ class _ProfilePageState extends State<ProfilePage> {
           bottomBar.switchPage(index, context);
         },
         items: bottomBar.bottom_items,
-        backgroundColor: Colors.blueGrey[400],
+        backgroundColor: Colors.blue,
       ),
     );
   }

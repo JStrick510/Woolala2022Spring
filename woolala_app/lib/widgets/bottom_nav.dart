@@ -48,25 +48,43 @@ class BottomNav {
     switch (index) {
       case 0:
         {
-          if (!(ModalRoute.of(context).settings.name == '/imgup')) {
-            Navigator.pushNamed(context, '/imgup');
-
+          if (currentIndex != 0) {
+            if (currentIndex == 2) {
+              Navigator.pop(context);
+              Navigator.pushNamed(context, '/imgup');
+            }
+            else {
+              Navigator.pushNamed(context, '/imgup');
+            }
           }
         }
         break;
       case 1:
         {
           if (currentIndex != 1) {
-            Navigator.pushReplacementNamed(context, '/home');
+            if (currentIndex == 2 || currentIndex == 0) {
+              do {
+                Navigator.pop(context);
+              } while (Navigator.canPop(context));
+              Navigator.pushReplacementNamed(context, '/home');
+            }
           }
         }
         break;
       case 2:
         {
           if (currentIndex != 2) {
-            Navigator.push(context, MaterialPageRoute(
-                builder: (BuildContext context) =>
-                    ProfilePage(currentUser.email)));
+            if (currentIndex == 0) {
+              Navigator.pop(context);
+              Navigator.push(context, MaterialPageRoute(
+                  builder: (BuildContext context) =>
+                      ProfilePage(currentUser.email)));
+            }
+            else {
+              Navigator.push(context, MaterialPageRoute(
+                  builder: (BuildContext context) =>
+                      ProfilePage(currentUser.email)));
+            }
           }
         }
         break;
