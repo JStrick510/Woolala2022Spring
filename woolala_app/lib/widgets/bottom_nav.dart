@@ -50,8 +50,7 @@ class BottomNav {
         {
           if (currentIndex != 0) {
             if (currentIndex == 2) {
-              Navigator.pop(context);
-              Navigator.pushNamed(context, '/imgup');
+              Navigator.popAndPushNamed(context, '/imgup');
             }
             else {
               Navigator.pushNamed(context, '/imgup');

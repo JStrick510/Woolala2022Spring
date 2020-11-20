@@ -132,7 +132,7 @@ class _ImageUploadScreenState extends State<ImageUploadScreen> {
             bottomBar.switchPage(index, context);
           },
           items: bottomBar.bottom_items,
-          backgroundColor: Colors.purple[600],
+          backgroundColor: Colors.blue,
         ),
     );
   }
