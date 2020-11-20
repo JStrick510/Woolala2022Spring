@@ -25,16 +25,24 @@ import 'package:woolala_app/screens/homepage_screen.dart';
 import 'package:woolala_app/screens/search_screen.dart';
 import 'package:woolala_app/widgets/bottom_nav.dart';
 import 'package:woolala_app/main.dart';
+import 'package:screenshot/screenshot.dart';
+import 'package:social_share/social_share.dart';
+import 'package:flutter/services.dart' show rootBundle;
+import 'package:path_provider/path_provider.dart';
+import 'package:image/image.dart' as ui;
+import 'dart:convert';
 
 
 class FeedCard extends StatefulWidget {
 
-  FeedCard(String postID)
+  FeedCard(String postID, BuildContext con)
   {
+    this.context = con;
     this.postID = postID;
   }
 
   var postID;
+  var context;
 
   @override
   _FeedCardState createState() => _FeedCardState();
@@ -43,18 +51,76 @@ class FeedCard extends StatefulWidget {
 
 class _FeedCardState extends State<FeedCard>{
 //(String postID)
+  final _scaffoldGlobalKey = GlobalKey<ScaffoldState>();
+  var startPos;
+  var distance = 0.0;
+  var stars = 2.5;
 
-void initState() {
-  super.initState();
+  void initState() {
+    super.initState();
 
-}
+  }
 
-var startPos;
-var distance = 0.0;
-var stars = 2.5;
+  File _originalImage;
+  File _watermarkImage;
+  File _watermarkedImage;
+
+  Future<File> convertImageToFile(String imagePath) async {
+    final byteData = await rootBundle.load('assets/$imagePath');
+
+    final file = File('${(await getTemporaryDirectory()).path}/$imagePath');
+    await file.writeAsBytes(byteData.buffer.asUint8List(byteData.offsetInBytes, byteData.lengthInBytes));
+
+    return file;
+  }
+
+  void watermarkImage(){
+    ui.Image originalImage = ui.decodeImage(_originalImage.readAsBytesSync());
+    //ui.Image watermarkImage = ui.decodeImage(_watermarkImage.readAsBytesSync());
+
+    // add watermark over originalImage
+    // initialize width and height of watermark image
+    ui.Image image = ui.Image(160, 50);
+    //ui.drawImage(image, watermarkImage);
+
+    // give position to watermark over image
+    // originalImage.width - 160 - 25 (width of originalImage - width of watermarkImage - extra margin you want to give)
+    // originalImage.height - 50 - 25 (height of originalImage - height of watermarkImage - extra margin you want to give)
+    ui.copyInto(originalImage,image, dstX: originalImage.width - 160 - 25, dstY: originalImage.height - 50 - 25);
+
+
+    // for adding text over image
+    // Draw some text using 24pt arial font
+    // 100 is position from x-axis, 120 is position from y-axis
+    ui.drawString(originalImage, ui.arial_24, 100, 120, 'WooLaLa');
+
+
+    // Store the watermarked image to a File
+    List<int> wmImage = ui.encodePng(originalImage);
+    setState(() {
+      //_watermarkedImage = File.fromRawPath(Uint8List.fromList(wmImage));
+    });
+  }
+
+//final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
+  void showReportSuccess(bool value, BuildContext context) {
+    if(value){
+      setState(() {
+        SnackBar successSB = SnackBar(content: Text("Post Reported Successfully"),);
+        Scaffold.of(context).showSnackBar(successSB);
+      });
+    }
+    else{
+      setState(() {
+        SnackBar failSB = SnackBar(content: Text("Failed to Report Post"),);
+        Scaffold.of(context).showSnackBar(failSB);
+      });
+    }
+  }
 
 @override
 Widget build(BuildContext context) {
+  ScreenshotController sc = new ScreenshotController();
   print(widget.postID);
   return FutureBuilder(
     future: getPost(widget.postID),
@@ -64,7 +130,8 @@ Widget build(BuildContext context) {
             future: getUserFromDB(postInfo.data[2]),
             builder: (context, userInfo) {
               if (userInfo.hasData) {
-                return Column(children: <Widget>[
+                return Column(
+                    children: <Widget>[
                   Container(
                       margin: const EdgeInsets.all(2),
                       color: Colors.white,
@@ -98,15 +165,33 @@ Widget build(BuildContext context) {
                               ),
                             ],
                           ),
-                          Align(
-                              alignment: Alignment.centerRight,
-                              child: Icon(Icons.more_vert)
-                          )
+                          PopupMenuButton<String>(
+                            onSelected: (String result) async {
+                              switch (result)  {
+                                case 'Report Post':
+                                  http.Response res = await reportPost(widget.postID, currentUser.userID, postInfo.data[3], postInfo.data[2]);
+                                  showReportSuccess(res.body.isNotEmpty, context);
+                                  break;
+                              }
+                            },
+                            itemBuilder: (BuildContext context) {
+                              return {'Report Post'}.map((String choice) {
+                                return PopupMenuItem<String>(
+                                  value: choice,
+                                  child: Text(choice),
+                                );
+                              }).toList();
+                            },
+                          ),
                         ],
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       )
                   ),
-                  GestureDetector(child: postInfo.data[0],
+                  GestureDetector(
+                      child: Screenshot(
+                          controller: sc,
+                          child: postInfo.data[0]
+                      ),
                       onHorizontalDragStart: (
                           DragStartDetails dragStartDetails) {
                         startPos = dragStartDetails.globalPosition.dx;
@@ -154,11 +239,33 @@ Widget build(BuildContext context) {
                                       new IconButton(
                                         icon: Icon(Icons.share),
                                         iconSize: 28,
+                                        onPressed: () async {
+                                          await sc.capture().then((image) async {
+                                            _originalImage = image;
+                                            //_watermarkImage = await convertImageToFile('logos/w_logo_test.png');
+                                            watermarkImage();
+                                            //facebook appId is mandatory for android or else share won't work
+                                            Platform.isAndroid
+                                                ? SocialShare.shareFacebookStory(_originalImage.path,
+                                                "#ffffff", "#000000", "https://google.com",
+                                                appId: "829266574315982")
+                                                .then((data) {
+                                              print(data);
+                                            })
+                                                : SocialShare.shareFacebookStory(_originalImage.path,
+                                                "#ffffff", "#000000", "https://google.com")
+                                                .then((data) {
+                                              print(data);
+                                            });
+                                          });
+                                        },
+                                        //child: Text("Share Options"),
                                       ),
                                       starSlider(widget.postID, stars),
                                       new IconButton(
                                         icon: Icon(Icons.add_shopping_cart),
                                         iconSize: 28,
+                                        onPressed: () {},
                                       ),
                                     ]
                                 )
@@ -168,7 +275,7 @@ Widget build(BuildContext context) {
                                 child: Padding(
                                   padding: EdgeInsets.fromLTRB(10.0,4.0,10.0,2.0),
                                   child: Text(
-                                    currentUser.userName,
+                                    userInfo.data.profileName,
                                     textAlign: TextAlign.left,
                                     style: TextStyle(
                                         fontWeight: FontWeight.bold,

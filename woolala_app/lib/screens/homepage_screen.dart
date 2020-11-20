@@ -37,6 +37,8 @@ import 'package:path_provider/path_provider.dart';
 
 AudioPlayer advancedPlayer;
 
+
+
 Widget starSlider(String postID, num) =>
     RatingBar(
       initialRating: num,
@@ -145,8 +147,6 @@ Future<List> getFeed(String userID) async {
   return jsonDecode(res.body.toString())["postIDs"];
 }
 
-//final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
-
 class HomepageScreen extends StatefulWidget {
   final bool signedInWithGoogle;
 
@@ -159,53 +159,13 @@ class _HomepageScreenState extends State<HomepageScreen> {
 
   RefreshController _refreshController = RefreshController(initialRefresh: false);
   //ScreenshotController screenshotController = ScreenshotController();
-  final _scaffoldGlobalKey = GlobalKey<ScaffoldState>();
 
-  Future<File> convertImageToFile(String imagePath) async {
-    final byteData = await rootBundle.load('assets/$imagePath');
 
-    final file = File('${(await getTemporaryDirectory()).path}/$imagePath');
-    await file.writeAsBytes(byteData.buffer.asUint8List(byteData.offsetInBytes, byteData.lengthInBytes));
-
-    return file;
-  }
-  //Image img = Image.asset('./assets/logos/w_logo_test.png');
-  //final bytes = Io.File('./assets/logos/w_logo_test.png').readAsBytesSync();
   List postIDs = [];
   File file;
   int numToShow;
   int postsPerReload = 2;
-  File _originalImage;
-  File _watermarkImage;
-  File _watermarkedImage;
 
-  void watermarkImage(){
-    ui.Image originalImage = ui.decodeImage(_originalImage.readAsBytesSync());
-    //ui.Image watermarkImage = ui.decodeImage(_watermarkImage.readAsBytesSync());
-
-    // add watermark over originalImage
-    // initialize width and height of watermark image
-    ui.Image image = ui.Image(160, 50);
-    //ui.drawImage(image, watermarkImage);
-
-    // give position to watermark over image
-    // originalImage.width - 160 - 25 (width of originalImage - width of watermarkImage - extra margin you want to give)
-    // originalImage.height - 50 - 25 (height of originalImage - height of watermarkImage - extra margin you want to give)
-    ui.copyInto(originalImage,image, dstX: originalImage.width - 160 - 25, dstY: originalImage.height - 50 - 25);
-
-
-    // for adding text over image
-    // Draw some text using 24pt arial font
-    // 100 is position from x-axis, 120 is position from y-axis
-    ui.drawString(originalImage, ui.arial_24, 100, 120, 'WooLaLa');
-
-
-    // Store the watermarked image to a File
-    List<int> wmImage = ui.encodePng(originalImage);
-    setState(() {
-      _watermarkedImage = File.fromRawPath(Uint8List.fromList(wmImage));
-    });
-  }
 
   void sortPosts(list) {
     list.removeWhere((item) => item == "");
@@ -255,23 +215,8 @@ class _HomepageScreenState extends State<HomepageScreen> {
 
   }
 
-  void showReportSuccess(bool value) {
-    if(value){
-      setState(() {
-        SnackBar successSB = SnackBar(content: Text("Post Reported Successfully"),);
-        _scaffoldGlobalKey.currentState.showSnackBar(successSB);
-      });
-    }
-    else{
-      setState(() {
-        SnackBar failSB = SnackBar(content: Text("Failed to Report Post"),);
-        _scaffoldGlobalKey.currentState.showSnackBar(failSB);
-      });
-    }
-  }
 
 
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -280,7 +225,6 @@ class _HomepageScreenState extends State<HomepageScreen> {
     bottomBar.currentIndex = 1;
 
     return Scaffold(
-      key: _scaffoldGlobalKey,
       appBar: AppBar(
         title: Text('WooLaLa', style: TextStyle(fontSize: 25)),
         centerTitle: true,
@@ -319,7 +263,7 @@ class _HomepageScreenState extends State<HomepageScreen> {
                 return SizedBox(
                     width: double.infinity,
                     height: 620,
-                    child: FeedCard(postIDs[index]));
+                    child: FeedCard(postIDs[index],context),);
               }),
         )
             : Padding(padding: EdgeInsets.all(70.0), child: Text("Follow People to see their posts on your feed!", style: TextStyle(fontSize: 30, color: Colors.grey, fontFamily: 'Lucida'))),
