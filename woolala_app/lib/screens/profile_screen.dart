@@ -1,6 +1,6 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
-// import 'package:woolala_app/screens/homepage_screen.dart';
 import 'package:woolala_app/main.dart';
 import 'package:woolala_app/screens/login_screen.dart';
 import 'package:woolala_app/models/user.dart';
@@ -8,8 +8,6 @@ import 'package:woolala_app/screens/follower_list_screen.dart';
 import 'package:woolala_app/screens/following_list_screen.dart';
 import 'package:woolala_app/screens/search_screen.dart';
 import 'package:woolala_app/widgets/bottom_nav.dart';
-
-//import 'package:cached_network_image/cached_network_image.dart';
 import 'package:http/http.dart' as http;
 import 'package:woolala_app/widgets/profile_card.dart';
 
@@ -35,22 +33,25 @@ class _ProfilePageState extends State<ProfilePage> {
   RefreshController _refreshController =
       RefreshController(initialRefresh: false);
 
-  void initState() {
+  @override
+  initState() {
     super.initState();
     if (currentUser != null)
-      // getFeed(currentUser.userID).then((list) {
-        postIDs = currentUser.postIDs;
+      getOwnFeed().then((list) {
+        postIDs = list;
         if (postIDs.length < postsPerReload)
           numToShow = postIDs.length;
         else
           numToShow = postsPerReload;
-        //account for first "profile" card
-        // numToShow += 1;
         sortPosts(postIDs);
-        print(postIDs);
         setState(() {});
-      // }
-      // );
+      });
+  }
+
+  Future<List> getOwnFeed() async {
+    http.Response res =
+        await http.get(domain + '/getOwnFeed/' + currentUser.userID);
+    return jsonDecode(res.body.toString());
   }
 
   createProfileTop() {
@@ -67,105 +68,108 @@ class _ProfilePageState extends State<ProfilePage> {
               print('Result: ${dataSnapshot.data}');
         }
         profilePageOwner = dataSnapshot.data;
-        return Padding(
-          padding: EdgeInsets.all(20.0),
-          child: Column(
-            children: <Widget>[
-              profilePageOwner.createProfileAvatar(),
-              Container(
-                alignment: Alignment.center,
-                padding: EdgeInsets.only(top: 5.0),
-                child: Text(
-                  profilePageOwner.profileName,
-                  style: TextStyle(
-                      fontSize: 32.0,
-                      color: Colors.black,
-                      fontWeight: FontWeight.bold),
-                ),
-              ),
-              Container(
-                alignment: Alignment.center,
-                padding: EdgeInsets.only(top: 1.0),
-                child: Text(
-                  profilePageOwner.userName,
-                  style: TextStyle(fontSize: 16.0, color: Colors.black38),
-                ),
-              ),
-              Container(
-                alignment: Alignment.center,
-                padding: EdgeInsets.only(top: 3.0),
-                child: Text(
-                  profilePageOwner.bio,
-                  style: TextStyle(
-                      fontSize: 20.0,
-                      color: Colors.black54,
-                      fontWeight: FontWeight.w600),
-                ),
-              ),
-              Row(
+        return SizedBox(
+            height: 360,
+            child: Padding(
+              padding: EdgeInsets.all(20.0),
+              child: Column(
                 children: <Widget>[
-                  Expanded(
-                    flex: 1,
-                    child: Column(
-                      children: <Widget>[
-                        Padding(
-                          padding: EdgeInsets.only(top: 10.0),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.max,
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: <Widget>[
-                              createIntColumns(
-                                  "Posts", profilePageOwner.postIDs.length),
-                              GestureDetector(
-                                onTap: () {
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) =>
-                                              FollowerListScreen(
-                                                  widget.userProfileEmail)));
-                                },
-                                child: createIntColumns("Followers",
-                                    profilePageOwner.followers.length),
-                              ),
-                              GestureDetector(
-                                onTap: () {
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) =>
-                                              FollowingListScreen(
-                                                  widget.userProfileEmail)));
-                                },
-                                child: createIntColumns("Following",
-                                    profilePageOwner.following.length - 1),
-                              ),
-                              createAveragesColumn("Avg."),
-                            ],
-                          ),
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            Expanded(
-                              child: FutureBuilder(
-                                future: checkIfFollowing(),
-                                builder: (context, snapshot) {
-                                  return createButton();
-                                },
+                  profilePageOwner.createProfileAvatar(),
+                  Container(
+                    alignment: Alignment.center,
+                    padding: EdgeInsets.only(top: 5.0),
+                    child: Text(
+                      profilePageOwner.profileName,
+                      style: TextStyle(
+                          fontSize: 32.0,
+                          color: Colors.black,
+                          fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                  Container(
+                    alignment: Alignment.center,
+                    padding: EdgeInsets.only(top: 1.0),
+                    child: Text(
+                      profilePageOwner.userName,
+                      style: TextStyle(fontSize: 16.0, color: Colors.black38),
+                    ),
+                  ),
+                  Container(
+                    alignment: Alignment.center,
+                    padding: EdgeInsets.only(top: 3.0),
+                    child: Text(
+                      profilePageOwner.bio,
+                      style: TextStyle(
+                          fontSize: 20.0,
+                          color: Colors.black54,
+                          fontWeight: FontWeight.w600),
+                    ),
+                  ),
+                  Row(
+                    children: <Widget>[
+                      Expanded(
+                        flex: 1,
+                        child: Column(
+                          children: <Widget>[
+                            Padding(
+                              padding: EdgeInsets.only(top: 10.0),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.max,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceEvenly,
+                                children: <Widget>[
+                                  createIntColumns(
+                                      "Posts", profilePageOwner.postIDs.length),
+                                  GestureDetector(
+                                    onTap: () {
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  FollowerListScreen(widget
+                                                      .userProfileEmail)));
+                                    },
+                                    child: createIntColumns("Followers",
+                                        profilePageOwner.followers.length),
+                                  ),
+                                  GestureDetector(
+                                    onTap: () {
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  FollowingListScreen(widget
+                                                      .userProfileEmail)));
+                                    },
+                                    child: createIntColumns("Following",
+                                        profilePageOwner.following.length - 1),
+                                  ),
+                                  createAveragesColumn("Avg."),
+                                ],
                               ),
                             ),
-                            //createButton(),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: [
+                                Expanded(
+                                  child: FutureBuilder(
+                                    future: checkIfFollowing(),
+                                    builder: (context, snapshot) {
+                                      return createButton();
+                                    },
+                                  ),
+                                ),
+                                //createButton(),
+                              ],
+                            ),
                           ],
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
                 ],
               ),
-            ],
-          ),
-        );
+            ));
       },
     );
   }
@@ -178,9 +182,8 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   void _onRefresh() async {
-    postIDs = currentUser.postIDs;
+    postIDs = await getOwnFeed();
     sortPosts(postIDs);
-    print(postIDs);
     // if failed,use refreshFailed()
     if (mounted) setState(() {});
     _refreshController.refreshCompleted();
@@ -287,7 +290,6 @@ class _ProfilePageState extends State<ProfilePage> {
     viewingUser = await getDoesUserExists(widget.userProfileEmail);
     for (int i = 0; i < currentUser.following.length; i++) {
       if (currentUser.following[i] == viewingUser.userID) {
-        print("true!");
         checker = true;
       }
     }
@@ -456,18 +458,21 @@ class _ProfilePageState extends State<ProfilePage> {
                     addAutomaticKeepAlives: true,
                     physics: const AlwaysScrollableScrollPhysics(),
                     itemBuilder: (BuildContext context, int index) {
-                      if (index == -1) {
-                        return ListView(
-                          children: <Widget>[
-                            createProfileTop(),
-                          ],
-                        );
+                      if (index == 0) {
+                        return SizedBox(
+                            width: double.infinity,
+                            height: 360,
+                            child: ListView(
+                              children: <Widget>[
+                                createProfileTop(),
+                              ],
+                            ));
                       } else {
                         // The height on this will need to be edited to match whatever height is set for the picture
                         return SizedBox(
                             width: double.infinity,
                             height: 620,
-                            child: FeedCard(postIDs[index]));
+                            child: OwnFeedCard(postIDs[index - 1]));
                       }
                     }),
               )
@@ -477,13 +482,11 @@ class _ProfilePageState extends State<ProfilePage> {
                     style: TextStyle(
                         fontSize: 30,
                         color: Colors.grey,
-                        fontFamily: 'Lucida')
-                )
-        ),
+                        fontFamily: 'Lucida'))),
       ),
       bottomNavigationBar: BottomNavigationBar(
-        onTap: (int index) {
-          bottomBar.switchPage(index, context);
+        onTap: (int pageIndex) {
+          bottomBar.switchPage(pageIndex, context);
         },
         items: bottomBar.bottom_items,
         backgroundColor: Colors.blue,

@@ -27,9 +27,9 @@ import 'package:woolala_app/widgets/bottom_nav.dart';
 import 'package:woolala_app/main.dart';
 
 
-class FeedCard extends StatefulWidget {
+class OwnFeedCard extends StatefulWidget {
 
-  FeedCard(String postID)
+  OwnFeedCard(String postID)
   {
     this.postID = postID;
   }
@@ -37,11 +37,11 @@ class FeedCard extends StatefulWidget {
   var postID;
 
   @override
-  _FeedCardState createState() => _FeedCardState();
+  _OwnFeedCardState createState() => _OwnFeedCardState();
 }
 
 
-class _FeedCardState extends State<FeedCard>{
+class _OwnFeedCardState extends State<OwnFeedCard>{
 //(String postID)
 
   void initState() {
