@@ -100,6 +100,22 @@ Future<http.Response> createPost(String postID, String image, String date,
   );
 }
 
+Future<http.Response> reportPost(String postID, String reportingUserID, String date,
+    String postUserID) {
+  return http.post(
+    domain + '/reportPost',
+    headers: <String, String>{
+      'Content-Type': 'application/json',
+    },
+    body: jsonEncode({
+      'postID': postID,
+      'reportingUserID': reportingUserID,
+      'date': date,
+      'postUserID': postUserID
+    }),
+  );
+}
+
 // Will be used to get info about the post
 Future<List> getPost(String id) async {
   http.Response res = await http.get(domain + '/getPostInfo/' + id);
@@ -147,6 +163,7 @@ class _HomepageScreenState extends State<HomepageScreen> {
 
   RefreshController _refreshController = RefreshController(initialRefresh: false);
   //ScreenshotController screenshotController = ScreenshotController();
+  final _scaffoldGlobalKey = GlobalKey<ScaffoldState>();
 
   Future<File> convertImageToFile(String imagePath) async {
     final byteData = await rootBundle.load('assets/$imagePath');
@@ -242,7 +259,21 @@ class _HomepageScreenState extends State<HomepageScreen> {
 
   }
 
-  bool showStars = false;
+  void showReportSuccess(bool value) {
+    if(value){
+      setState(() {
+        SnackBar successSB = SnackBar(content: Text("Post Reported Successfully"),);
+        _scaffoldGlobalKey.currentState.showSnackBar(successSB);
+      });
+    }
+    else{
+      setState(() {
+        SnackBar failSB = SnackBar(content: Text("Failed to Report Post"),);
+        _scaffoldGlobalKey.currentState.showSnackBar(failSB);
+      });
+    }
+  }
+
 
   Widget card(String postID) {
   ScreenshotController sc = new ScreenshotController();
@@ -290,12 +321,23 @@ class _HomepageScreenState extends State<HomepageScreen> {
                                         ),
                                     ],
                                   ),
-                                  Align(
-                                      alignment: Alignment.centerRight,
-                                      child: IconButton(
-                                          icon: Icon(Icons.more_vert),
-                                        onPressed: (){},
-                                      )
+                                  PopupMenuButton<String>(
+                                    onSelected: (String result) async {
+                                      switch (result)  {
+                                        case 'Report Post':
+                                          http.Response res = await reportPost(postID, currentUser.userID, postInfo.data[3], postInfo.data[2]);
+                                          showReportSuccess(res.body.isNotEmpty);
+                                          break;
+                                      }
+                                    },
+                                    itemBuilder: (BuildContext context) {
+                                      return {'Report Post'}.map((String choice) {
+                                        return PopupMenuItem<String>(
+                                          value: choice,
+                                          child: Text(choice),
+                                        );
+                                      }).toList();
+                                    },
                                   ),
                                 ],
                           )
@@ -409,6 +451,7 @@ class _HomepageScreenState extends State<HomepageScreen> {
     bottomBar.currentIndex = 1;
 
     return Scaffold(
+      key: _scaffoldGlobalKey,
       appBar: AppBar(
         title: Text(
           'WooLaLa',
