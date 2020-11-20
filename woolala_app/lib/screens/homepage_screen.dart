@@ -23,14 +23,16 @@ import 'package:woolala_app/screens/post_screen.dart';
 import 'package:woolala_app/screens/profile_screen.dart';
 import 'package:woolala_app/screens/search_screen.dart';
 import 'package:woolala_app/widgets/bottom_nav.dart';
+import 'package:woolala_app/widgets/card.dart';
 import 'package:woolala_app/main.dart';
 import 'package:social_share_plugin/social_share_plugin.dart';
 import 'package:social_share/social_share.dart';
 
 AudioPlayer advancedPlayer;
 
-Widget starSlider(String postID) => RatingBar(
-      initialRating: 2.5,
+Widget starSlider(String postID, num) =>
+    RatingBar(
+      initialRating: num,
       minRating: 0,
       direction: Axis.horizontal,
       allowHalfRating: true,
@@ -183,122 +185,6 @@ class _HomepageScreenState extends State<HomepageScreen> {
       });
   }
 
-  Widget card(String postID) {
-    return FutureBuilder(
-      future: getPost(postID),
-      builder: (context, postInfo) {
-        if (postInfo.hasData) {
-          return FutureBuilder(
-              future: getUserFromDB(postInfo.data[2]),
-              builder: (context, userInfo) {
-                if (userInfo.hasData) {
-                  return Column(children: <Widget>[
-                    Container(
-                        margin: const EdgeInsets.all(2),
-                        color: Colors.white,
-                        width: double.infinity,
-                        height: 35.0,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: <Widget>[
-                            Row(
-                              children: <Widget>[
-                                Padding(
-                                    child: userInfo.data.createProfileAvatar(
-                                        radius: 15.0, font: 18.0),
-                                    padding: EdgeInsets.all(5)),
-                                GestureDetector(
-                                    onTap: () => {
-                                          Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                  builder:
-                                                      (BuildContext context) =>
-                                                          ProfilePage(userInfo
-                                                              .data.email)))
-                                        },
-                                    child: Padding(
-                                        padding: EdgeInsets.all(5),
-                                        child: Text(userInfo.data.profileName,
-                                            textAlign: TextAlign.left,
-                                            style: TextStyle(
-                                                color: Colors.black,
-                                                fontSize: 16)))),
-                              ],
-                            ),
-                            Align(
-                                alignment: Alignment.centerRight,
-                                child: Icon(Icons.more_vert)),
-                          ],
-                        )),
-                    postInfo.data[0],
-                    Container(
-                        alignment: Alignment(-1.0, 0.0),
-                        child: Column(children: <Widget>[
-                          Center(
-                              child: Row(
-                                  mainAxisSize: MainAxisSize.max,
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceEvenly,
-                                  children: <Widget>[
-                                new IconButton(
-                                  icon: Icon(Icons.share),
-                                  iconSize: 28,
-                                ),
-                                starSlider(postID),
-                                new IconButton(
-                                  icon: Icon(Icons.add_shopping_cart),
-                                  iconSize: 28,
-                                ),
-                              ])),
-                          Align(
-                              alignment: Alignment.centerLeft,
-                              child: Padding(
-                                padding:
-                                    EdgeInsets.fromLTRB(10.0, 4.0, 10.0, 2.0),
-                                child: Text(
-                                  currentUser.userName,
-                                  textAlign: TextAlign.left,
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 15),
-                                ),
-                              )),
-                          Align(
-                              alignment: Alignment.centerLeft,
-                              child: Padding(
-                                  padding:
-                                      EdgeInsets.fromLTRB(10.0, 1.0, 10.0, 2.0),
-                                  child: Text(
-                                    postInfo.data[1],
-                                    textAlign: TextAlign.left,
-                                    style: TextStyle(
-                                      fontSize: 18,
-                                    ),
-                                  ))),
-                        ])),
-                    Align(
-                        alignment: Alignment.centerLeft,
-                        child: Padding(
-                            padding: EdgeInsets.fromLTRB(10.0, 1.0, 10.0, 2.0),
-                            child: Text(
-                              postInfo.data[3],
-                              textAlign: TextAlign.left,
-                              style: TextStyle(
-                                  fontSize: 15, fontWeight: FontWeight.w500),
-                            )))
-                  ]);
-                } else {
-                  return Container();
-                }
-              });
-        } else {
-          return Container();
-        }
-      },
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     BottomNav bottomBar = BottomNav(context);
@@ -326,33 +212,27 @@ class _HomepageScreenState extends State<HomepageScreen> {
       body: Center(
         child: postIDs.length > 0
             ? SmartRefresher(
-                enablePullDown: true,
-                enablePullUp: true,
-                header: ClassicHeader(),
-                footer: ClassicFooter(),
-                controller: _refreshController,
-                onRefresh: _onRefresh,
-                onLoading: _onLoading,
-                child: ListView.builder(
-                    padding: const EdgeInsets.all(0),
-                    itemCount: numToShow,
-                    addAutomaticKeepAlives: true,
-                    physics: const AlwaysScrollableScrollPhysics(),
-                    itemBuilder: (BuildContext context, int index) {
-                      // The height on this will need to be edited to match whatever height is set for the picture
-                      return SizedBox(
-                          width: double.infinity,
-                          height: 620,
-                          child: card(postIDs[index]));
-                    }),
-              )
-            : Padding(
-                padding: EdgeInsets.all(70.0),
-                child: Text("Follow People to see their posts on your feed!",
-                    style: TextStyle(
-                        fontSize: 30,
-                        color: Colors.grey,
-                        fontFamily: 'Lucida'))),
+          enablePullDown: true,
+          enablePullUp: true,
+          header: ClassicHeader(),
+          footer: ClassicFooter(),
+          controller: _refreshController,
+          onRefresh: _onRefresh,
+          onLoading: _onLoading,
+          child: ListView.builder(
+              padding: const EdgeInsets.all(0),
+              itemCount: numToShow,
+              addAutomaticKeepAlives: true,
+              physics: const AlwaysScrollableScrollPhysics(),
+              itemBuilder: (BuildContext context, int index) {
+                // The height on this will need to be edited to match whatever height is set for the picture
+                return SizedBox(
+                    width: double.infinity,
+                    height: 620,
+                    child: FeedCard(postIDs[index]));
+              }),
+        )
+            : Padding(padding: EdgeInsets.all(70.0), child: Text("Follow People to see their posts on your feed!", style: TextStyle(fontSize: 30, color: Colors.grey, fontFamily: 'Lucida'))),
       ),
       bottomNavigationBar: BottomNavigationBar(
         onTap: (int index) {
@@ -375,3 +255,6 @@ class _HomepageScreenState extends State<HomepageScreen> {
     }
   }
 }
+
+
+

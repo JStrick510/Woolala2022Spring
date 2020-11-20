@@ -35,6 +35,12 @@ Future<String> getUserName(String userID) async {
   return User.fromJSON(userMap).userName;
 }
 
+Future<String> getUserID(String userID) async {
+  http.Response res = await http.get(domain + "/getUser/" + userID);
+  Map userMap = jsonDecode(res.body.toString());
+  return User.fromJSON(userMap).userID;
+}
+
 class _FollowingListScreenState extends State<FollowingListScreen> {
   //Lists to build the ListView
   User currentProfile;
@@ -42,6 +48,7 @@ class _FollowingListScreenState extends State<FollowingListScreen> {
   List followingEmailList = new List();
   List followingUserNameList = new List();
   List followingUserIDList = new List();
+
 
   //Build the list Asynchronously
   listbuilder() async {
@@ -52,12 +59,16 @@ class _FollowingListScreenState extends State<FollowingListScreen> {
 
     //Go through the Follower List of userIDs and grab their profileName, email, and userName
     for (int i = 0; i < tempFollowingList.length; i++) {
-      String tempProfileName = await getProfileName(tempFollowingList[i]);
-      String tempUserEmail = await getUserEmail(tempFollowingList[i]);
-      String tempUserName = await getUserName(tempFollowingList[i]);
-      followingList.add(tempProfileName);
-      followingEmailList.add(tempUserEmail);
-      followingUserNameList.add(tempUserName);
+      if(tempFollowingList[i] != currentProfile.userID){
+        String tempProfileName = await getProfileName(tempFollowingList[i]);
+        String tempUserEmail = await getUserEmail(tempFollowingList[i]);
+        String tempUserName = await getUserName(tempFollowingList[i]);
+        String tempUserID = await getUserID(tempFollowingList[i]);
+        followingList.add(tempProfileName);
+        followingEmailList.add(tempUserEmail);
+        followingUserNameList.add(tempUserName);
+        followingUserIDList.add(tempUserID);
+      }
     }
     return followingList;
   }
@@ -87,7 +98,7 @@ class _FollowingListScreenState extends State<FollowingListScreen> {
                       child: new IconButton(
                         icon: Icon(Icons.remove_circle_outline),
                         onPressed: () {
-                          unfollow(currentUser.userID, followingList[index]);
+                          unfollow(currentUser.userID, followingUserIDList[index]);
                           followingList.remove(followingList[index]);
                           _buildList();
                           Navigator.pushReplacement(
