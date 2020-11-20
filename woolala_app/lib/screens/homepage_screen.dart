@@ -187,6 +187,7 @@ class _HomepageScreenState extends State<HomepageScreen> {
 
   @override
   Widget build(BuildContext context) {
+    print(Navigator.of(context).toString());
     BottomNav bottomBar = BottomNav(context);
     bottomBar.currentIndex = 1;
 
@@ -239,7 +240,7 @@ class _HomepageScreenState extends State<HomepageScreen> {
           bottomBar.switchPage(index, context);
         },
         items: bottomBar.bottom_items,
-        backgroundColor: Colors.blueGrey[400],
+        backgroundColor: Colors.blue,
       ),
     );
   }
