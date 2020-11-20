@@ -64,7 +64,7 @@ app.post("/reportPost", (request, response) => {
     });
 });
 
-app.post("/ratePost/:id/:rating", (request, response) => {
+app.post("/ratePost/:id/:rating/:userID", (request, response) => {
   collection.findOne({"postID":request.params.id}, function(err, document) {
   var newNumRatings = 1 + document.numRatings;
   var newCumulativeRating = parseInt(request.params.rating) + document.cumulativeRating;
@@ -72,10 +72,15 @@ app.post("/ratePost/:id/:rating", (request, response) => {
   console.log(newCumulativeRating);
   var newvalues = { $set: {numRatings: newNumRatings, cumulativeRating: newCumulativeRating } };
   collection.updateOne({"postID":request.params.id}, newvalues, function(err, res) {
-
   console.log("1 document updated");
     });
   });
+
+  var updateRated = { $push: { ratedPosts: [request.params.id, request.params.rating] }};
+  userCollection.updateOne({"userID":request.params.userID}, updateRated, function(err, res) {
+    console.log("ratedPosts updated");
+  });
+  response.send({"it":"worked"});
 });
 
 
@@ -237,5 +242,12 @@ app.post("/deleteUser/:ID", (request, response) => {
 app.post("/deleteAllPosts/:ID", (request, response) => {
     collection.deleteMany({"userID": request.params.ID}, function(err, res) {
         console.log("Deleting all Posts by user: " + request.params.ID);
+    });
+});
+
+
+app.get("/getRatedPosts/:userID", (request, response) => {
+    userCollection.findOne({"userID":request.params.userID}, function(err, document) {
+        response.send(document.ratedPosts);
     });
 });
