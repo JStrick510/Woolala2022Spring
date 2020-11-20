@@ -15,8 +15,11 @@ import 'package:audioplayers/audio_cache.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'dart:collection';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
-
 import 'dart:io';
+import 'dart:convert';
+import 'dart:typed_data';
+import 'package:image_picker/image_picker.dart';
+import 'package:image/image.dart' as ui;
 import 'package:woolala_app/screens/login_screen.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:woolala_app/screens/post_screen.dart';
@@ -26,7 +29,11 @@ import 'package:woolala_app/widgets/bottom_nav.dart';
 import 'package:woolala_app/widgets/card.dart';
 import 'package:woolala_app/main.dart';
 import 'package:social_share_plugin/social_share_plugin.dart';
+import 'package:screenshot/screenshot.dart';
 import 'package:social_share/social_share.dart';
+import 'package:flutter/services.dart' show rootBundle;
+import 'package:path_provider/path_provider.dart';
+
 
 AudioPlayer advancedPlayer;
 
@@ -51,15 +58,6 @@ Widget starSlider(String postID, num, rated) =>
         ratePost(rating, postID);
       },
     );
-
-Future loadMusic(String sound) async {
-  if (sound == "fuck") {
-    advancedPlayer = await AudioCache().play("Sounds/ashfuck.mp3");
-  }
-  if (sound == "woolala") {
-    advancedPlayer = await AudioCache().play("Sounds/woolalaAudio.mp3");
-  }
-}
 
 // Will be used anytime the post is rated
 Future<http.Response> ratePost(double rating, String id) {
@@ -93,13 +91,34 @@ Future<http.Response> createPost(String postID, String image, String date,
   );
 }
 
+Future<http.Response> reportPost(String postID, String reportingUserID, String date,
+    String postUserID) {
+  return http.post(
+    domain + '/reportPost',
+    headers: <String, String>{
+      'Content-Type': 'application/json',
+    },
+    body: jsonEncode({
+      'postID': postID,
+      'reportingUserID': reportingUserID,
+      'date': date,
+      'postUserID': postUserID
+    }),
+  );
+}
+
 // Will be used to get info about the post
 Future<List> getPost(String id) async {
   http.Response res = await http.get(domain + '/getPostInfo/' + id);
   Map info = jsonDecode(res.body.toString());
   final decodedBytes = base64Decode(info["image"]);
   var avg = info["cumulativeRating"] / info["numRatings"];
-  var ret = [Image.memory(decodedBytes), info["caption"], info["userID"], info["date"], avg];
+  var ret = [
+    Image.memory(decodedBytes),
+    info["caption"],
+    info["userID"],
+    info["date"]
+  ];
   return ret;
 
   //DO THIS TO GET IMAGE
@@ -132,7 +151,6 @@ Future<List> getRatedPosts(String userID) async {
   return jsonDecode(res.body.toString());
 }
 
-//final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
 class HomepageScreen extends StatefulWidget {
   final bool signedInWithGoogle;
@@ -144,8 +162,8 @@ class HomepageScreen extends StatefulWidget {
 
 class _HomepageScreenState extends State<HomepageScreen> {
 
-  RefreshController _refreshController = RefreshController(
-      initialRefresh: false);
+  RefreshController _refreshController = RefreshController(initialRefresh: false);
+  //ScreenshotController screenshotController = ScreenshotController();
 
 
   List postIDs = [];
@@ -157,7 +175,7 @@ class _HomepageScreenState extends State<HomepageScreen> {
   void sortPosts(list) {
     list.removeWhere((item) => item == "");
     list.sort((a, b) =>
-    int.parse(b.substring(b.indexOf(':::') + 3)) -
+        int.parse(b.substring(b.indexOf(':::') + 3)) -
         int.parse(a.substring(a.indexOf(':::') + 3)));
   }
 
@@ -201,17 +219,16 @@ class _HomepageScreenState extends State<HomepageScreen> {
 
 
 
+
   @override
   Widget build(BuildContext context) {
+    print(Navigator.of(context).toString());
     BottomNav bottomBar = BottomNav(context);
     bottomBar.currentIndex = 1;
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-          'WooLaLa',
-          style: TextStyle(fontSize: 25)
-        ),
+        title: Text('WooLaLa', style: TextStyle(fontSize: 25)),
         centerTitle: true,
         key: ValueKey("homepage"),
         actions: <Widget>[
@@ -219,10 +236,8 @@ class _HomepageScreenState extends State<HomepageScreen> {
             icon: Icon(Icons.search),
             key: ValueKey("Search"),
             color: Colors.white,
-            onPressed: () =>
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => SearchPage())),
+            onPressed: () => Navigator.push(
+                context, MaterialPageRoute(builder: (context) => SearchPage())),
           ),
           IconButton(
             icon: Icon(Icons.exit_to_app),
@@ -231,7 +246,6 @@ class _HomepageScreenState extends State<HomepageScreen> {
         ],
       ),
       body: Center(
-
         child: postIDs.length > 0
             ? SmartRefresher(
           enablePullDown: true,
@@ -261,7 +275,7 @@ class _HomepageScreenState extends State<HomepageScreen> {
           bottomBar.switchPage(index, context);
         },
         items: bottomBar.bottom_items,
-        backgroundColor: Colors.blueGrey[400],
+        backgroundColor: Colors.blue,
       ),
     );
   }
@@ -276,8 +290,4 @@ class _HomepageScreenState extends State<HomepageScreen> {
       Navigator.pushReplacementNamed(context, '/');
     }
   }
-
 }
-
-
-

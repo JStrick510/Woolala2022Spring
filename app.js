@@ -23,6 +23,7 @@ app.listen(process.env.PORT || 5000, () => {
         database = client.db("Feed");
         collection = database.collection("Posts");
         userCollection = database.collection("Users");
+        reportCollection = database.collection("ReportedPosts");
         console.log("Connected to `" + DATABASE_NAME + "`!");
     });
 });
@@ -50,6 +51,16 @@ app.post("/insertUser", (request, response) => {
             return response.status(500).send(error);
         }
         response.send(result.result);
+    });
+});
+
+app.post("/reportPost", (request, response) => {
+    reportCollection.insertOne(request.body, (error, result) => {
+        if(error) {
+            return response.status(500).send(error);
+        }
+        response.send(result.result);
+        console.log(request.body);
     });
 });
 

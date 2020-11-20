@@ -65,7 +65,7 @@ class _PostScreenState extends State<PostScreen> {
           children: <Widget>[
             _image == null ? Text('No image selected.') : Image.file(_image),
             SizedBox(height: 20.0),
-            TextField(textInputAction: TextInputAction.go, keyboardType: TextInputType.multiline, maxLines: null, decoration: new InputDecoration(hintText: "Enter a caption!", contentPadding: const EdgeInsets.all(20.0)), controller: _c,),
+            TextField(maxLength: 69, maxLengthEnforced: true, textInputAction: TextInputAction.go, keyboardType: TextInputType.multiline, maxLines: null, decoration: new InputDecoration(hintText: "Enter a caption!", contentPadding: const EdgeInsets.all(20.0)), controller: _c,),
           ],
         ),
       ),
@@ -84,7 +84,7 @@ class _PostScreenState extends State<PostScreen> {
               }),
                 print(_text),
                 createPost(currentUser.userID + ":::" + getNewID() , img64, date, _text, currentUser.userID, currentUser.profileName),
-                Navigator.pushReplacementNamed(context, '/home')
+                Navigator.popUntil(context, ModalRoute.withName('/home'))
               },
             ),
             SizedBox(height: 100.0, width: 20),
