@@ -195,8 +195,6 @@ class _HomepageScreenState extends State<HomepageScreen> {
 
   }
 
-  bool showStars = false;
-
   Widget card(String postID) {
 
     return FutureBuilder(

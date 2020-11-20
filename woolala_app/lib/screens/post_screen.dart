@@ -65,7 +65,7 @@ class _PostScreenState extends State<PostScreen> {
           children: <Widget>[
             _image == null ? Text('No image selected.') : Image.file(_image),
             SizedBox(height: 20.0),
-            TextField(textInputAction: TextInputAction.go, keyboardType: TextInputType.multiline, maxLines: null, decoration: new InputDecoration(hintText: "Enter a caption!", contentPadding: const EdgeInsets.all(20.0)), controller: _c,),
+            TextField(maxLength: 69, maxLengthEnforced: true, textInputAction: TextInputAction.go, keyboardType: TextInputType.multiline, maxLines: null, decoration: new InputDecoration(hintText: "Enter a caption!", contentPadding: const EdgeInsets.all(20.0)), controller: _c,),
           ],
         ),
       ),

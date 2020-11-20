@@ -257,18 +257,6 @@ class _LoginScreenState extends State<LoginScreen> {
     } else {
       return Scaffold(
         key: _scaffoldKey,
-        appBar: AppBar(
-          title: Text('Login'),
-          key: ValueKey("logs"),
-          actions: <Widget>[
-            FlatButton(
-              textColor: Colors.white,
-              onPressed: () => {googleLogoutUser(), facebookLogoutUser()},
-              child: Text("Sign Out"),
-              shape: CircleBorder(side: BorderSide(color: Colors.transparent)),
-            )
-          ],
-        ),
         body: Center(
           child: Container(
             padding: EdgeInsets.symmetric(vertical: 25),
@@ -380,15 +368,20 @@ class _LoginScreenState extends State<LoginScreen> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: <Widget>[
-          _buildSocialBtn(
-            facebookLoginUser,
+          _buildSocialBtn((){
+            facebookLogoutUser();
+            googleLogoutUser();
+            facebookLoginUser();},
             AssetImage(
               'assets/logos/facebook_logo.png',
             ),
             "Facebook",
           ),
           _buildSocialBtn(
-            googleLoginUser,
+            (){
+              googleLogoutUser();
+              facebookLogoutUser();
+            googleLoginUser();},
             AssetImage(
               'assets/logos/google_logo.png',
             ),

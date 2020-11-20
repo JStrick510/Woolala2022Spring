@@ -6,13 +6,10 @@ import 'package:image_picker/image_picker.dart';
 
 class ImageUploadScreen extends StatefulWidget {
   ImageUploadScreen();
-
   _ImageUploadScreenState createState() => _ImageUploadScreenState();
 }
 
 Future<File> cropImage(imagePath) async {
-  print("testing cropImage function");
-  print(imagePath);
   File croppedImage = await ImageCropper.cropImage(
     sourcePath: imagePath,
     maxHeight: 1000,
@@ -22,14 +19,14 @@ Future<File> cropImage(imagePath) async {
       toolbarTitle: 'WooLaLa',
       activeControlsWidgetColor: Colors.green,
       toolbarColor: Colors.blue,
-      toolbarWidgetColor: Colors.grey,
+      toolbarWidgetColor: Colors.white,
     ),
   );
   return croppedImage;
 }
 
 class _ImageUploadScreenState extends State<ImageUploadScreen> {
-  File _image = null;
+  File _image;
   String img64;
   final picker = ImagePicker();
   bool selected = false;
@@ -38,11 +35,12 @@ class _ImageUploadScreenState extends State<ImageUploadScreen> {
     final pickedFile = await picker.getImage(source: ImageSource.gallery);
     if (pickedFile != null) {
       _image = await cropImage(pickedFile.path);
-      // _image = File(pickedFile.path);
-      final bytes = _image.readAsBytesSync();
-      img64 = base64Encode(bytes);
-      Navigator.pushReplacementNamed(context, '/makepost',
-          arguments: [_image, img64]);
+      if (_image != null) {
+        final bytes = _image.readAsBytesSync();
+        img64 = base64Encode(bytes);
+        Navigator.pushReplacementNamed(context, '/makepost',
+            arguments: [_image, img64]);
+      }
     } else {
       print('No image selected.');
     }
@@ -52,11 +50,12 @@ class _ImageUploadScreenState extends State<ImageUploadScreen> {
     final pickedFile = await picker.getImage(source: ImageSource.camera);
     if (pickedFile != null) {
       _image = await cropImage(pickedFile.path);
-      // _image = File(pickedFile.path);
-      final bytes = _image.readAsBytesSync();
-      img64 = base64Encode(bytes);
-      Navigator.pushReplacementNamed(context, '/makepost',
-          arguments: [_image, img64]);
+      if (_image != null) {
+        final bytes = _image.readAsBytesSync();
+        img64 = base64Encode(bytes);
+        Navigator.pushReplacementNamed(context, '/makepost',
+            arguments: [_image, img64]);
+      }
     } else {
       print('No image selected.');
     }
