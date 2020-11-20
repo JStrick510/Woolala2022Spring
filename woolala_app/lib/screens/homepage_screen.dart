@@ -15,8 +15,11 @@ import 'package:audioplayers/audio_cache.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'dart:collection';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
-
 import 'dart:io';
+import 'dart:convert';
+import 'dart:typed_data';
+import 'package:image_picker/image_picker.dart';
+import 'package:image/image.dart' as ui;
 import 'package:woolala_app/screens/login_screen.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:woolala_app/screens/post_screen.dart';
@@ -25,7 +28,11 @@ import 'package:woolala_app/screens/search_screen.dart';
 import 'package:woolala_app/widgets/bottom_nav.dart';
 import 'package:woolala_app/main.dart';
 import 'package:social_share_plugin/social_share_plugin.dart';
+import 'package:screenshot/screenshot.dart';
 import 'package:social_share/social_share.dart';
+import 'package:flutter/services.dart' show rootBundle;
+import 'package:path_provider/path_provider.dart';
+
 
 AudioPlayer advancedPlayer;
 
@@ -138,14 +145,54 @@ class HomepageScreen extends StatefulWidget {
 
 class _HomepageScreenState extends State<HomepageScreen> {
 
-  RefreshController _refreshController = RefreshController(
-      initialRefresh: false);
+  RefreshController _refreshController = RefreshController(initialRefresh: false);
+  //ScreenshotController screenshotController = ScreenshotController();
 
+  Future<File> convertImageToFile(String imagePath) async {
+    final byteData = await rootBundle.load('assets/$imagePath');
 
+    final file = File('${(await getTemporaryDirectory()).path}/$imagePath');
+    await file.writeAsBytes(byteData.buffer.asUint8List(byteData.offsetInBytes, byteData.lengthInBytes));
+
+    return file;
+  }
+  //Image img = Image.asset('./assets/logos/w_logo_test.png');
+  //final bytes = Io.File('./assets/logos/w_logo_test.png').readAsBytesSync();
   List postIDs = [];
+  File file;
   int numToShow;
   int postsPerReload = 2;
+  File _originalImage;
+  File _watermarkImage;
+  File _watermarkedImage;
 
+  void watermarkImage(){
+    ui.Image originalImage = ui.decodeImage(_originalImage.readAsBytesSync());
+    //ui.Image watermarkImage = ui.decodeImage(_watermarkImage.readAsBytesSync());
+
+    // add watermark over originalImage
+    // initialize width and height of watermark image
+    ui.Image image = ui.Image(160, 50);
+    //ui.drawImage(image, watermarkImage);
+
+    // give position to watermark over image
+    // originalImage.width - 160 - 25 (width of originalImage - width of watermarkImage - extra margin you want to give)
+    // originalImage.height - 50 - 25 (height of originalImage - height of watermarkImage - extra margin you want to give)
+    ui.copyInto(originalImage,image, dstX: originalImage.width - 160 - 25, dstY: originalImage.height - 50 - 25);
+
+
+    // for adding text over image
+    // Draw some text using 24pt arial font
+    // 100 is position from x-axis, 120 is position from y-axis
+    ui.drawString(originalImage, ui.arial_24, 100, 120, 'WooLaLa');
+
+
+    // Store the watermarked image to a File
+    List<int> wmImage = ui.encodePng(originalImage);
+    setState(() {
+      _watermarkedImage = File.fromRawPath(Uint8List.fromList(wmImage));
+    });
+  }
 
   void sortPosts(list) {
     list.removeWhere((item) => item == "");
@@ -198,7 +245,7 @@ class _HomepageScreenState extends State<HomepageScreen> {
   bool showStars = false;
 
   Widget card(String postID) {
-
+  ScreenshotController sc = new ScreenshotController();
     return FutureBuilder(
       future: getPost(postID),
       builder: (context, postInfo) {
@@ -215,7 +262,7 @@ class _HomepageScreenState extends State<HomepageScreen> {
                             width: double.infinity,
                             height: 35.0,
                             child: Row(
-                                mainAxisAlignment: MainAxisAlignment.start,
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: <Widget>[
                                   Row(
                                     children: <Widget>[
@@ -245,12 +292,18 @@ class _HomepageScreenState extends State<HomepageScreen> {
                                   ),
                                   Align(
                                       alignment: Alignment.centerRight,
-                                      child: Icon(Icons.more_vert)
+                                      child: IconButton(
+                                          icon: Icon(Icons.more_vert),
+                                        onPressed: (){},
+                                      )
                                   ),
                                 ],
                           )
                         ),
-                    postInfo.data[0],
+                    Screenshot(
+                    controller: sc,
+                    child: postInfo.data[0]
+                    ),
                     Container(
                       alignment: Alignment(-1.0, 0.0),
                       child: Column(
@@ -263,11 +316,33 @@ class _HomepageScreenState extends State<HomepageScreen> {
                                        new IconButton(
                                           icon: Icon(Icons.share),
                                           iconSize: 28,
+                                         onPressed: () async {
+                                           await sc.capture().then((image) async {
+                                             _originalImage = image;
+                                            //_watermarkImage = await convertImageToFile('logos/w_logo_test.png');
+                                             watermarkImage();
+                                             //facebook appId is mandatory for android or else share won't work
+                                             Platform.isAndroid
+                                                 ? SocialShare.shareFacebookStory(_originalImage.path,
+                                                 "#ffffff", "#000000", "https://google.com",
+                                                 appId: "829266574315982")
+                                                 .then((data) {
+                                               print(data);
+                                             })
+                                                 : SocialShare.shareFacebookStory(image.path,
+                                                 "#ffffff", "#000000", "https://google.com")
+                                                 .then((data) {
+                                               print(data);
+                                             });
+                                           });
+                                         },
+                                         //child: Text("Share Options"),
                                         ),
                                       starSlider(postID),
                                       new IconButton(
                                             icon: Icon(Icons.add_shopping_cart),
                                             iconSize: 28,
+                                          onPressed: () {},
                                           ),
                                 ]
                               )
@@ -277,7 +352,7 @@ class _HomepageScreenState extends State<HomepageScreen> {
                               child: Padding(
                                   padding: EdgeInsets.fromLTRB(10.0,4.0,10.0,2.0),
                                   child: Text(
-                                     currentUser.userName,
+                                    userInfo.data.profileName,
                                      textAlign: TextAlign.left,
                                      style: TextStyle(
                                        fontWeight: FontWeight.bold,
@@ -358,31 +433,31 @@ class _HomepageScreenState extends State<HomepageScreen> {
         ],
       ),
       body: Center(
-
-        child: postIDs.length > 0
-            ? SmartRefresher(
-          enablePullDown: true,
-          enablePullUp: true,
-          header: ClassicHeader(),
-          footer: ClassicFooter(),
-          controller: _refreshController,
-          onRefresh: _onRefresh,
-          onLoading: _onLoading,
-          child: ListView.builder(
-              padding: const EdgeInsets.all(0),
-              itemCount: numToShow,
-              addAutomaticKeepAlives: true,
-              physics: const AlwaysScrollableScrollPhysics(),
-              itemBuilder: (BuildContext context, int index) {
-                // The height on this will need to be edited to match whatever height is set for the picture
-                return SizedBox(
-                    width: double.infinity,
-                    height: 620,
-                    child: card(postIDs[index]));
-              }),
-        )
-            : Padding(padding: EdgeInsets.all(70.0), child: Text("Follow People to see their posts on your feed!", style: TextStyle(fontSize: 30, color: Colors.grey, fontFamily: 'Lucida'))),
-      ),
+              child: postIDs.length > 0
+                ? SmartRefresher(
+              enablePullDown: true,
+              enablePullUp: true,
+              header: ClassicHeader(),
+              footer: ClassicFooter(),
+              controller: _refreshController,
+              onRefresh: _onRefresh,
+              onLoading: _onLoading,
+              child: ListView.builder(
+                  padding: const EdgeInsets.all(0),
+                  itemCount: numToShow,
+                  addAutomaticKeepAlives: true,
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  itemBuilder: (BuildContext context, int index) {
+                    // The height on this will need to be edited to match whatever height is set for the picture
+                    return SizedBox(
+                        width: double.infinity,
+                        height: 620,
+                        child: card(postIDs[index])
+                    );
+                  }),
+                )
+                : Padding(padding: EdgeInsets.all(70.0), child: Text("Follow People to see their posts on your feed!", style: TextStyle(fontSize: 30, color: Colors.grey, fontFamily: 'Lucida'))),
+            ),
       bottomNavigationBar: BottomNavigationBar(
         onTap: (int index) {
           bottomBar.switchPage(index, context);
