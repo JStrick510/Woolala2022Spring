@@ -20,6 +20,7 @@ Widget starSlider(String postID, num, rated) =>
       minRating: 0,
       direction: Axis.horizontal,
       allowHalfRating: true,
+      ignoreGestures: rated,
       itemCount: 5,
       unratedColor: rated ? Colors.grey :Colors.black,
       itemSize: 30,
