@@ -84,7 +84,7 @@ class _PostScreenState extends State<PostScreen> {
               }),
                 print(_text),
                 createPost(currentUser.userID + ":::" + getNewID() , img64, date, _text, currentUser.userID, currentUser.profileName),
-                Navigator.popUntil(context, ModalRoute.withName('/home'))
+                Navigator.pushNamed(context, '/home')
               },
             ),
             SizedBox(height: 100.0, width: 20),
