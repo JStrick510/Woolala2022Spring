@@ -9,6 +9,7 @@ import 'dart:io';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 
+
 import '../main.dart';
 import 'following_list_screen.dart';
 
@@ -46,6 +47,7 @@ class _EditProfilePageState extends State<EditProfilePage>{
   File _image;
   PickedFile pickedFile;
   String img64;
+  List<Object> args;
 
   //Lists to delete the followers and following.
   List followingList = new List();
@@ -67,6 +69,22 @@ class _EditProfilePageState extends State<EditProfilePage>{
   void initState(){
     super.initState();
     displayUserInfo();
+  }
+
+  Future getImageGallery() async {
+    final pickedFile = await picker.getImage(source: ImageSource.gallery);
+    if (pickedFile != null) {
+        _image = File(pickedFile.path);
+        final bytes = _image.readAsBytesSync();
+        img64 = base64Encode(bytes);
+        http.Response res = await currentUser.setProfilePic(img64);
+        //print("Res: " + res.toString());
+        //Navigator.pop(context);
+        Navigator.pushReplacementNamed(context, '/editProfile');
+    } else {
+      http.Response res = await currentUser.setProfilePic('default');
+      Navigator.pushReplacementNamed(context, '/editProfile');
+    }
   }
 
   displayUserInfo() async{
@@ -108,6 +126,10 @@ class _EditProfilePageState extends State<EditProfilePage>{
 
   @override
   Widget build(BuildContext context){
+    //args = ModalRoute.of(context).settings.arguments;
+    //_image = args[0];
+   // img64 = args[1];
+    //print("PROFILE PIC: " + currentUser.profilePic);
     return Scaffold(
       key: _scaffoldGlobalKey,
       appBar: AppBar(
@@ -137,7 +159,9 @@ class _EditProfilePageState extends State<EditProfilePage>{
                   child: Column(
                     children: <Widget> [
                       GestureDetector(
-                        onTap: () => {print("Change profile Pic")},//pickImage(), setState((){})},
+                        onTap: () => {
+                          getImageGallery(),
+                        },
                         child: currentUser.createProfileAvatar(),
                       )
                     ]
