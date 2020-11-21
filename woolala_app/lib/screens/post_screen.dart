@@ -17,7 +17,6 @@ String getNewID()
 {
   final DateTime timeID = DateTime.now().toLocal();
   final DateFormat formatterID = DateFormat('yyyyMMddHHmmss');
-  print(formatterID.format(timeID));
   return formatterID.format(timeID);
 }
 
