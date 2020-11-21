@@ -23,6 +23,7 @@ class User{
   List postIDs;
   List following;
   bool private;
+  List ratedPosts;
 
   User({
     this.userID,
@@ -39,6 +40,7 @@ class User{
     this.following,
     this.private,
     this.followers,
+    this.ratedPosts,
   });
 
   User.fromJSON(Map<String, dynamic> json)
@@ -55,7 +57,8 @@ class User{
         numRated = json['numRated'],
         following = json['following'],
         postIDs = json['postIDs'],
-        private = json['private'];
+        private = json['private'],
+        ratedPosts = json['ratedPosts'];
 
   Map<String, dynamic> toJSON() =>
       {
@@ -72,7 +75,8 @@ class User{
           'numRated': numRated,
           'following' : following,
           'postIDs' : postIDs,
-          'private' : private
+          'private' : private,
+          'ratedPosts' : ratedPosts
       };
 
   Future<double> getAvgScore() async{

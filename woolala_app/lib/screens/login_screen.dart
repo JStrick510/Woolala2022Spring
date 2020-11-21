@@ -248,6 +248,7 @@ class _LoginScreenState extends State<LoginScreen> {
     if (_firstTimeLogin) {
       return CreateUserName();
     } else if (isSignedInWithGoogle || isSignedInWithFacebook) {
+
       return HomepageScreen(isSignedInWithGoogle);
     } else {
       return Scaffold(
