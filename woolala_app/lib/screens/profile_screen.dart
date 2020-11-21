@@ -422,6 +422,7 @@ class _ProfilePageState extends State<ProfilePage> {
   Widget build(BuildContext context) {
     BottomNav bottomBar = BottomNav(context);
     bottomBar.currentIndex = 2;
+    bottomBar.currEmail = currentUser.email;
 
     return Scaffold(
       appBar: AppBar(
