@@ -146,14 +146,21 @@ class User{
   Future<http.Response> setProfilePic(String pic)
   {
     profilePic = pic;
-    //print(profilePic);
-    String request = domain + '/updateUserProfilePic/' + userID + '/' + profilePic ;
-    return http.post(request, headers: <String, String>{'Content-Type': 'application/json',});
+    //print("HERE");
+    String request = domain + '/updateUserProfilePic/' + userID ;
+    //print(request);
+    return http.post(
+      request, headers: <String, String>{'Content-Type': 'application/json',},
+      body: jsonEncode(<String, String>{
+        'profilePic': profilePic,
+        }
+      ),
+    );
   }
 
       CircleAvatar createProfileAvatar({double radius = 60.0, double font = 64.0})
       {
-
+        //print("CREATE: "  + profilePic);
         if(profilePic=="default")
         {
           return CircleAvatar(
