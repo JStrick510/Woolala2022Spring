@@ -7,6 +7,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
+import 'package:woolala_app/screens/profile_screen.dart';
 import 'package:woolala_app/screens/search_screen.dart';
 import 'package:woolala_app/widgets/bottom_nav.dart';
 import 'package:woolala_app/widgets/card.dart';
@@ -207,6 +208,7 @@ class _HomepageScreenState extends State<HomepageScreen> {
     print(Navigator.of(context).toString());
     BottomNav bottomBar = BottomNav(context);
     bottomBar.currentIndex = 1;
+    bottomBar.currEmail = currentUser.email;
 
     return Scaffold(
       appBar: AppBar(
