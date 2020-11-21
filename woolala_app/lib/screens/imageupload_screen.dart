@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:woolala_app/widgets/bottom_nav.dart';
+import 'package:simple_animations/simple_animations.dart';
 
 class ImageUploadScreen extends StatefulWidget {
   ImageUploadScreen();
@@ -68,34 +69,30 @@ class _ImageUploadScreenState extends State<ImageUploadScreen> {
     BottomNav bottomBar = BottomNav(context);
     bottomBar.currentIndex = 0;
 
+    final tween = MultiTrackTween([
+      Track("color1").add(Duration(seconds: 3),
+          ColorTween(begin: Colors.purple[900], end: Colors.purple[500])),
+      Track("color2").add(Duration(seconds: 3),
+          ColorTween(begin: Colors.purple[300], end: Colors.purple[900])),
+      Track("color3").add(Duration(seconds: 3),
+          ColorTween(begin: Colors.purple[900], end: Colors.purple[500]))
+    ]);
+
     return Scaffold(
-        appBar: AppBar(
-          toolbarHeight: 40,
-          leading: Container(),
-          actions: <Widget>[
-            FlatButton(
-              textColor: Colors.white,
-              onPressed: () => {
-                if (_image != null)
-                  Navigator.pushReplacementNamed(context, '/makepost',
-                      arguments: [_image, img64])
-              },
-              child: Text("Next"),
-              shape: CircleBorder(side: BorderSide(color: Colors.transparent)),
-            )
-          ],
-        ),
-        body: Center(
-            child: Container(
+      body: Center(
+        child: ControlledAnimation(
+          playback: Playback.MIRROR,
+          tween: tween,
+          duration: tween.duration,
+          builder: (context, animation) {
+            return Container(
+                decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        colors: [animation["color1"], animation["color2"], animation["color3"]])),
                 padding: EdgeInsets.symmetric(vertical: 25),
                 width: double.infinity,
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(begin: Alignment.topCenter, colors: [
-                    Colors.purple[900],
-                    Colors.purple[800],
-                    Colors.purple[600]
-                  ]),
-                ),
                 child: Column(children: <Widget>[
                   SizedBox(
                     height: 150,
@@ -126,14 +123,17 @@ class _ImageUploadScreenState extends State<ImageUploadScreen> {
                           heroTag: null,
                         )
                       ]),
-                ]))),
-        bottomNavigationBar: BottomNavigationBar(
-          onTap: (int index) {
-            bottomBar.switchPage(index, context);
+                ]));
           },
-          items: bottomBar.bottom_items,
-          backgroundColor: Colors.blue,
         ),
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        onTap: (int index) {
+          bottomBar.switchPage(index, context);
+        },
+        items: bottomBar.bottom_items,
+        backgroundColor: Colors.blue,
+      ),
     );
   }
 }

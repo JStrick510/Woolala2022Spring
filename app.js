@@ -187,8 +187,16 @@ app.get("/getFeed/:userID", (request, response) => {
           });
         }
       });
-
 });
+
+app.get("/getOwnFeed/:userID", (request, response) => {
+      console.log('Feed requested for user ' + request.params.userID);
+      var postIDs = [];
+      userCollection.findOne({"userID":request.params.userID}, function(err, document) {
+      response.send(document.postIDs);
+      });
+});
+
 
 app.post("/follow/:you/:them", (request, response) => {
     var currentUserID = request.params.you;

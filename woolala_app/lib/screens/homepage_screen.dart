@@ -1,42 +1,16 @@
 import 'dart:ui';
-
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
-import 'package:flutter_facebook_login/flutter_facebook_login.dart';
 import 'package:woolala_app/screens/login_screen.dart';
 import 'package:woolala_app/models/user.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import 'package:mongo_dart/mongo_dart.dart' as mongo;
-import 'dart:io' as Io;
-import 'package:audioplayers/audio_cache.dart';
 import 'package:audioplayers/audioplayers.dart';
-import 'dart:collection';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
-import 'dart:io';
-import 'dart:convert';
-import 'dart:typed_data';
-import 'package:image_picker/image_picker.dart';
-import 'package:image/image.dart' as ui;
-import 'package:woolala_app/screens/login_screen.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:woolala_app/screens/post_screen.dart';
-import 'package:woolala_app/screens/profile_screen.dart';
 import 'package:woolala_app/screens/search_screen.dart';
 import 'package:woolala_app/widgets/bottom_nav.dart';
 import 'package:woolala_app/widgets/card.dart';
 import 'package:woolala_app/main.dart';
-import 'package:social_share_plugin/social_share_plugin.dart';
-import 'package:screenshot/screenshot.dart';
-import 'package:social_share/social_share.dart';
-import 'package:flutter/services.dart' show rootBundle;
-import 'package:path_provider/path_provider.dart';
-
-
-AudioPlayer advancedPlayer;
-
 
 
 Widget starSlider(String postID, num, rated) =>
