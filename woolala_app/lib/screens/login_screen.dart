@@ -180,7 +180,8 @@ class _LoginScreenState extends State<LoginScreen> {
           numRated: 0,
           postIDs: [],
           following: [base64.encode(latin1.encode(gAccount.email)).toString()],
-          private: false);
+          private: false,
+          ratedPosts: []);
       await insertUser(u);
       currentUser = u;
       _firstTimeLogin = true;
