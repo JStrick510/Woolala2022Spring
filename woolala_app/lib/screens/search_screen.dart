@@ -59,6 +59,9 @@ class _SearchPageState extends State<SearchPage> {
         this._searchIcon = new Icon(Icons.close);
         this._appBarTitle = new TextField(
           controller: _filter,
+          onChanged: (text) {
+            filteredResults = results;
+          },
           autofocus: true,
           cursorColor: Colors.white,
           decoration: new InputDecoration(
@@ -77,24 +80,29 @@ class _SearchPageState extends State<SearchPage> {
   //Listener for the changes in the filter
   @override
   _SearchPageState() {
-    _filter.addListener(() {
+    _filter.addListener(()  {
       if (_filter.text.isEmpty) {
         setState(() {
           _searchText = "";
           filteredResults = results;
         });
-      } else {
-        setState(() {
+      }
+      else if (_filter.text.length > 0){
+        setState((){
           _searchText = _filter.text;
         });
-      }
+      } //else{
+        //setState(() {
+          //_searchText = _filter.text;
+        //});
+      //}
     });
   }
 
   //Build the List using FutureBuilder
   Widget _buildList() {
     //filter the list
-    if (!(_searchText.isEmpty)) {
+    if ((_searchText.length > 0)) {
       List tempList = new List();
       for (int i = 0; i < filteredResults.length; i++) {
         if (filteredResults[i]['profileName'].toLowerCase().contains(_searchText.toLowerCase())) {
@@ -181,6 +189,7 @@ class _SearchPageState extends State<SearchPage> {
   void initState() {
     super.initState();
     _future = getAllUsers();
+    //_buildList();
     //Make the search pressed upon load
     _searchPressed();
   }
