@@ -20,7 +20,6 @@ String getNewID()
   return formatterID.format(timeID);
 }
 
-
 class PostScreen extends StatefulWidget {
   PostScreen();
 
@@ -84,7 +83,8 @@ class _PostScreenState extends State<PostScreen> {
               }),
                 print(_text),
                 createPost(currentUser.userID + ":::" + getNewID() , img64, date, _text, currentUser.userID, currentUser.profileName),
-                Navigator.pushNamed(context, '/home')
+                Navigator.pop(context),
+                Navigator.pushReplacementNamed(context, '/home'),
               },
             ),
             SizedBox(height: 100.0, width: 20),
