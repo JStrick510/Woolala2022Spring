@@ -155,7 +155,7 @@ class _OwnFeedCardState extends State<OwnFeedCard>{
                                           icon: Icon(Icons.share),
                                           iconSize: 28,
                                         ),
-                                        starSlider(widget.postID, stars),
+                                        starSlider(widget.postID, stars, true),
                                         new IconButton(
                                           icon: Icon(Icons.add_shopping_cart),
                                           iconSize: 28,

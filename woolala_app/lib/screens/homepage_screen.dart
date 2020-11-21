@@ -11,6 +11,7 @@ import 'package:woolala_app/screens/search_screen.dart';
 import 'package:woolala_app/widgets/bottom_nav.dart';
 import 'package:woolala_app/widgets/card.dart';
 import 'package:woolala_app/main.dart';
+import 'dart:io';
 
 
 Widget starSlider(String postID, num, rated) =>
