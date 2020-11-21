@@ -243,6 +243,17 @@ app.post("/deleteAllPosts/:ID", (request, response) => {
     });
 });
 
+app.post("/deleteOnePost/:postID/:userID", (request, response) => {
+  var update = { $pull: {"postIDs": request.params.postID} };
+  userCollection.updateOne({"userID":request.params.userID}, update, function(err, res){});
+
+    collection.deleteOne({"postID": request.params.postID}, function(err, res) {
+        console.log("Deleted Post: " + request.params.postID);
+        if(err) console.log(err);
+        response.send(res);
+    });
+});
+
 
 app.get("/getRatedPosts/:userID", (request, response) => {
     userCollection.findOne({"userID":request.params.userID}, function(err, document) {
