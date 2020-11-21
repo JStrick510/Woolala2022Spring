@@ -35,14 +35,12 @@ import 'dart:convert';
 
 class FeedCard extends StatefulWidget {
 
-  FeedCard(String postID, BuildContext con)
+  FeedCard(String postID)
   {
-    this.context = con;
     this.postID = postID;
   }
 
   var postID;
-  var context;
 
   @override
   _FeedCardState createState() => _FeedCardState();

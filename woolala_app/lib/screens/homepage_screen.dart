@@ -263,7 +263,7 @@ class _HomepageScreenState extends State<HomepageScreen> {
                 return SizedBox(
                     width: double.infinity,
                     height: 620,
-                    child: FeedCard(postIDs[index],context),);
+                    child: FeedCard(postIDs[index]));
               }),
         )
             : Padding(padding: EdgeInsets.all(70.0), child: Text("Follow People to see their posts on your feed!", style: TextStyle(fontSize: 30, color: Colors.grey, fontFamily: 'Lucida'))),
