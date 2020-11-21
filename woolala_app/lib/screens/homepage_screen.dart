@@ -39,19 +39,19 @@ AudioPlayer advancedPlayer;
 
 
 
-Widget starSlider(String postID, num) =>
+Widget starSlider(String postID, num, rated) =>
     RatingBar(
       initialRating: num,
       minRating: 0,
       direction: Axis.horizontal,
       allowHalfRating: true,
       itemCount: 5,
-      unratedColor: Colors.black,
+      unratedColor: rated ? Colors.grey :Colors.black,
       itemSize: 30,
       itemPadding: EdgeInsets.symmetric(horizontal: 4.0),
       itemBuilder: (context, _) => Icon(
         Icons.star,
-        color: Colors.blue,
+        color: rated ? Colors.amber : Colors.blue,
       ),
       onRatingUpdate: (rating) {
         print(rating);
@@ -64,7 +64,7 @@ Widget starSlider(String postID, num) =>
 // Will be used anytime the post is rated
 Future<http.Response> ratePost(double rating, String id) {
   return http.post(
-    domain + '/ratePost/' + id.toString() + '/' + rating.toString(),
+    domain + '/ratePost/' + id.toString() + '/' + rating.toString() + '/' + currentUser.userID,
     headers: <String, String>{
       'Content-Type': 'application/json',
     },
@@ -87,7 +87,7 @@ Future<http.Response> createPost(String postID, String image, String date,
       'image': image,
       'date': date,
       'caption': caption,
-      'cumulativeRating': 0,
+      'cumulativeRating': 0.0,
       'numRatings': 0
     }),
   );
@@ -114,11 +114,13 @@ Future<List> getPost(String id) async {
   http.Response res = await http.get(domain + '/getPostInfo/' + id);
   Map info = jsonDecode(res.body.toString());
   final decodedBytes = base64Decode(info["image"]);
+  var avg = info["cumulativeRating"] / info["numRatings"];
   var ret = [
     Image.memory(decodedBytes),
     info["caption"],
     info["userID"],
-    info["date"]
+    info["date"],
+    avg
   ];
   return ret;
 
@@ -134,6 +136,11 @@ Future<List> getPost(String id) async {
   //     }
   //   },
   // );
+}
+
+Future<List> getRatedPosts(String userID) async {
+  http.Response res = await http.get(domain + '/getRatedPosts/' + userID);
+  return jsonDecode(res.body.toString());
 }
 
 Future<User> getUserFromDB(String userID) async {
@@ -162,9 +169,10 @@ class _HomepageScreenState extends State<HomepageScreen> {
 
 
   List postIDs = [];
+  var ratedPosts = [];
   File file;
   int numToShow;
-  int postsPerReload = 2;
+  int postsPerReload = 4;
 
 
   void sortPosts(list) {
@@ -176,6 +184,7 @@ class _HomepageScreenState extends State<HomepageScreen> {
 
   void _onRefresh() async {
     postIDs = await getFeed(currentUser.userID);
+    ratedPosts = await getRatedPosts(currentUser.userID);
     sortPosts(postIDs);
     print(postIDs);
     // if failed,use refreshFailed()
@@ -212,7 +221,7 @@ class _HomepageScreenState extends State<HomepageScreen> {
     }
     );
 
-
+    getRatedPosts(currentUser.userID).then((list) {ratedPosts = list;});
   }
 
 
@@ -263,7 +272,7 @@ class _HomepageScreenState extends State<HomepageScreen> {
                 return SizedBox(
                     width: double.infinity,
                     height: 620,
-                    child: FeedCard(postIDs[index],context),);
+                    child: FeedCard(postIDs[index], ratedPosts),);
               }),
         )
             : Padding(padding: EdgeInsets.all(70.0), child: Text("Follow People to see their posts on your feed!", style: TextStyle(fontSize: 30, color: Colors.grey, fontFamily: 'Lucida'))),

@@ -35,14 +35,14 @@ import 'dart:convert';
 
 class FeedCard extends StatefulWidget {
 
-  FeedCard(String postID, BuildContext con)
-  {
-    this.context = con;
-    this.postID = postID;
-  }
+
+    FeedCard(String postID, List rated) {
+      this.postID = postID;
+      this.ratedPosts = rated;
+    }
 
   var postID;
-  var context;
+  var ratedPosts;
 
   @override
   _FeedCardState createState() => _FeedCardState();
@@ -55,10 +55,54 @@ class _FeedCardState extends State<FeedCard>{
   var startPos;
   var distance = 0.0;
   var stars = 2.5;
+  bool rated = false;
 
   void initState() {
     super.initState();
 
+  }
+
+  Widget score(postID) {
+    return rated
+        ? FutureBuilder(
+        future: getPost(widget.postID),
+        builder: (context, postInfo) {
+          if (postInfo.hasData) {
+            return Stack(children: [
+              Container(
+                  width: 60,
+                  decoration: new BoxDecoration(
+                      border: new Border.all(
+                          width: 20, color: Colors.transparent),
+                      borderRadius: const BorderRadius.all(
+                          const Radius.circular(20.0)),
+                      color: new Color.fromRGBO(100, 100, 100, 0.75))),
+              Positioned(
+                  bottom: 25,
+                  left: 21,
+                  child: Text(
+                    'Avg:',
+                    style: TextStyle(
+                      fontSize: 10,
+                      color: Colors.white,
+                    ),
+                  )),
+              Positioned(
+                  bottom: 5,
+                  left: 12,
+                  child: Text(
+                    postInfo.data[4].toStringAsFixed(2),
+                    style: TextStyle(
+                      fontSize: 18,
+                      color: Colors.white,
+                    ),
+                  ))
+            ]);
+          } else {
+            return CircularProgressIndicator();
+          }
+        })
+        : Container();
   }
 
   File _originalImage;
@@ -121,7 +165,13 @@ class _FeedCardState extends State<FeedCard>{
 @override
 Widget build(BuildContext context) {
   ScreenshotController sc = new ScreenshotController();
-  print(widget.postID);
+  for (int i = 0; i < widget.ratedPosts.length; i++) {
+    if (widget.ratedPosts[i][0] == widget.postID) {
+      rated = true;
+      stars = double.parse(widget.ratedPosts[i][1]);
+      break;
+    }
+  }
   return FutureBuilder(
     future: getPost(widget.postID),
     builder: (context, postInfo) {
@@ -187,46 +237,58 @@ Widget build(BuildContext context) {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       )
                   ),
-                  GestureDetector(
-                      child: Screenshot(
-                          controller: sc,
-                          child: postInfo.data[0]
-                      ),
-                      onHorizontalDragStart: (
-                          DragStartDetails dragStartDetails) {
-                        startPos = dragStartDetails.globalPosition.dx;
-                      },
-                      onHorizontalDragUpdate: (
-                          DragUpdateDetails dragUpdateDetails) {
-                        distance =
-                            dragUpdateDetails.globalPosition.dx - startPos;
-                        if (distance < -150)
-                          stars = 0.0;
-                        else if (distance > -150 && distance < -120)
-                          stars = 0.5;
-                        else if (distance > -120 && distance < -90)
-                          stars = 1.0;
-                        else if (distance > -90 && distance < -60)
-                          stars = 1.5;
-                        else if (distance > -60 && distance < -30)
-                          stars = 2.0;
-                        if (distance > -30 && distance < 30)
-                          stars = 2.5;
-                        else if (distance > 30 && distance < 60)
-                          stars = 3.0;
-                        else if (distance > 60 && distance < 90)
-                          stars = 3.5;
-                        else if (distance > 90 && distance < 120)
-                          stars = 4.0;
-                        else if (distance > 120 && distance < 150)
-                          stars = 4.5;
-                        else if (distance > 150)
-                          stars = 5.0;
-                        setState(() {});
-                      },
-                      onHorizontalDragEnd: (DragEndDetails dragEndDetails) {
-                        ratePost(stars, widget.postID);
-                      }),
+                      GestureDetector(
+                          child: Screenshot(
+                              controller: sc, child: Stack(children: [
+                            postInfo.data[0],
+                            Positioned(
+                                bottom: 10, left: 10, child: score(widget.postID))
+                          ])),
+                          onHorizontalDragStart:
+                              (DragStartDetails dragStartDetails) {
+                            if (!rated) {
+                              startPos = dragStartDetails.globalPosition.dx;
+                            }
+                          },
+                          onHorizontalDragUpdate:
+                              (DragUpdateDetails dragUpdateDetails) {
+                            if (!rated) {
+                              distance =
+                                  dragUpdateDetails.globalPosition.dx - startPos;
+
+                              if (distance < -150)
+                                stars = 0.0;
+                              else if (distance > -150 && distance < -120)
+                                stars = 0.5;
+                              else if (distance > -120 && distance < -90)
+                                stars = 1.0;
+                              else if (distance > -90 && distance < -60)
+                                stars = 1.5;
+                              else if (distance > -60 && distance < -30)
+                                stars = 2.0;
+                              if (distance > -30 && distance < 30)
+                                stars = 2.5;
+                              else if (distance > 30 && distance < 60)
+                                stars = 3.0;
+                              else if (distance > 60 && distance < 90)
+                                stars = 3.5;
+                              else if (distance > 90 && distance < 120)
+                                stars = 4.0;
+                              else if (distance > 120 && distance < 150)
+                                stars = 4.5;
+                              else if (distance > 150) stars = 5.0;
+                              setState(() {});
+                            }
+                          },
+                          onHorizontalDragEnd: (DragEndDetails dragEndDetails) {
+                            if (!rated) {
+                              ratePost(stars, widget.postID);
+                              widget.ratedPosts
+                                  .add([widget.postID, stars.toString()]);
+                              rated = true;
+                              setState(() {});
+                            }
+                          }),
                   Container(
                       alignment: Alignment(-1.0, 0.0),
                       child: Column(
@@ -261,7 +323,7 @@ Widget build(BuildContext context) {
                                         },
                                         //child: Text("Share Options"),
                                       ),
-                                      starSlider(widget.postID, stars),
+                                      starSlider(widget.postID, stars, rated),
                                       new IconButton(
                                         icon: Icon(Icons.add_shopping_cart),
                                         iconSize: 28,
