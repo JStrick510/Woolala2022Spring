@@ -16,7 +16,8 @@ import 'package:intl/intl.dart';
 String getNewID()
 {
   final DateTime timeID = DateTime.now().toLocal();
-  final DateFormat formatterID = DateFormat('yyyyMMddHHmm');
+  final DateFormat formatterID = DateFormat('yyyyMMddHHmmss');
+  print(formatterID.format(timeID));
   return formatterID.format(timeID);
 }
 
