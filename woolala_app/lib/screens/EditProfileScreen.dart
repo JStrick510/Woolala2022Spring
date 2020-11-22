@@ -130,6 +130,7 @@ class _EditProfilePageState extends State<EditProfilePage>{
     //_image = args[0];
    // img64 = args[1];
     //print("PROFILE PIC: " + currentUser.profilePic);
+
     return Scaffold(
       key: _scaffoldGlobalKey,
       appBar: AppBar(
@@ -174,15 +175,26 @@ class _EditProfilePageState extends State<EditProfilePage>{
                       createProfileNameTextFormField(),
                       createBioTextFormField(),
                       createPrivacySwitch(),
-                      createDeleteButton(),
                     ],
                   ),
                 ),
               ],
             ),
-          )
+          ),
         ],
-      )
+      ),
+      bottomNavigationBar: BottomAppBar(
+        elevation: 0,
+        color: Colors.white,
+        child: new Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+           createDeleteButton(),
+          ]
+
+        )
+          //alignment: FractionalOffset.bottomCenter,
+      ),
     );
   }
 
@@ -214,29 +226,15 @@ class _EditProfilePageState extends State<EditProfilePage>{
     );
   }
 
-  Row createDeleteButton(){
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: <Widget>[
-        Padding(
-          padding: EdgeInsets.only(top: 15.0),
-          child: Text(
-            "Delete Account",
-            style: TextStyle(color: Colors.black, fontSize: 16.0),
-          ),
-        ),
-        Padding(
-          padding: EdgeInsets.only(top: 15.0),
-          child: RaisedButton(
-            child: Text('delete'),
-            color: Colors.red,
-            padding: EdgeInsets.all(5.0),
-            onPressed: () {
-              showDeleteConfirmation(context);
-            },
-          ),
-        ),
-      ],
+  Widget createDeleteButton(){
+    return RaisedButton(
+      child: Text('Delete Account'),
+      color: Colors.red,
+      elevation: 5,
+      padding: EdgeInsets.fromLTRB(80.0,0,80,0),
+      onPressed: () {
+        showDeleteConfirmation(context);
+      },
     );
   }
 
