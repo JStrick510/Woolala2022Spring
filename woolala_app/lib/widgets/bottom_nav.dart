@@ -7,6 +7,7 @@ class BottomNav {
   BuildContext context;
 
   int currentIndex = 1;
+  String currEmail;
 
    List bottom_items = <BottomNavigationBarItem>[
      BottomNavigationBarItem(
@@ -84,6 +85,12 @@ class BottomNav {
                   builder: (BuildContext context) =>
                       ProfilePage(currentUser.email)));
             }
+          }
+          else if (currEmail == currentUser.email) {
+            Navigator.pop(context);
+            Navigator.push(context, MaterialPageRoute(
+                builder: (BuildContext context) =>
+                    ProfilePage(currentUser.email)));
           }
         }
         break;

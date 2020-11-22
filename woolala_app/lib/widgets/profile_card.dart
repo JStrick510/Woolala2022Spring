@@ -26,6 +26,16 @@ import 'package:woolala_app/screens/search_screen.dart';
 import 'package:woolala_app/widgets/bottom_nav.dart';
 import 'package:woolala_app/main.dart';
 
+Future<http.Response> deletePost(String postID, String userID) {
+  return http.post(
+    domain + '/deleteOnePost/' + postID + '/' + userID,
+    headers: <String, String>{
+      'Content-Type': 'application/json',
+    },
+    body: jsonEncode({}),
+  );
+}
+
 
 class OwnFeedCard extends StatefulWidget {
 
@@ -47,6 +57,21 @@ class _OwnFeedCardState extends State<OwnFeedCard>{
   void initState() {
     super.initState();
 
+  }
+
+  void showReportSuccess(bool value, BuildContext context) {
+    if(value){
+      setState(() {
+        SnackBar successSB = SnackBar(content: Text("Post Deleted Successfully"),);
+        Scaffold.of(context).showSnackBar(successSB);
+      });
+    }
+    else{
+      setState(() {
+        SnackBar failSB = SnackBar(content: Text("Failed to Delete Post"),);
+        Scaffold.of(context).showSnackBar(failSB);
+      });
+    }
   }
 
   var startPos;
@@ -98,9 +123,23 @@ class _OwnFeedCardState extends State<OwnFeedCard>{
                                 ),
                               ],
                             ),
-                            Align(
-                                alignment: Alignment.centerRight,
-                                child: Icon(Icons.more_vert)
+                            PopupMenuButton<String>(
+                              onSelected: (String result) async {
+                                switch (result)  {
+                                  case 'Delete Post':
+                                    http.Response res = await deletePost(widget.postID, currentUser.userID);
+                                    showReportSuccess(res.body.isNotEmpty, context);
+                                    break;
+                                }
+                              },
+                              itemBuilder: (BuildContext context) {
+                                return {'Delete Post'}.map((String choice) {
+                                  return PopupMenuItem<String>(
+                                    value: choice,
+                                    child: Text(choice),
+                                  );
+                                }).toList();
+                              },
                             )
                           ],
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,

@@ -111,10 +111,10 @@ app.post("/updateUserPrivacy/:id/:private", (request, response) => {
   });
 });
 
-app.post("/updateUserProfilePic/:id/:image64str", (request, response) => {
-  console.log(request.params.image64str);
-  var newPic = { $set: {"profilePic": request.params.image64str} };
- console.log(newPic);
+app.post("/updateUserProfilePic/:id", (request, response) => {
+  //console.log(request.params.image64str);
+  var newPic = { $set: request.body};
+ //console.log(newPic);
   userCollection.updateOne({"userID":request.params.id}, newPic, function(err, res){
     if (err) throw err;
     console.log("Profie Picture changed!");
@@ -240,6 +240,17 @@ app.post("/deleteUser/:ID", (request, response) => {
 app.post("/deleteAllPosts/:ID", (request, response) => {
     collection.deleteMany({"userID": request.params.ID}, function(err, res) {
         console.log("Deleting all Posts by user: " + request.params.ID);
+    });
+});
+
+app.post("/deleteOnePost/:postID/:userID", (request, response) => {
+  var update = { $pull: {"postIDs": request.params.postID} };
+  userCollection.updateOne({"userID":request.params.userID}, update, function(err, res){});
+
+    collection.deleteOne({"postID": request.params.postID}, function(err, res) {
+        console.log("Deleted Post: " + request.params.postID);
+        if(err) console.log(err);
+        response.send(res);
     });
 });
 
