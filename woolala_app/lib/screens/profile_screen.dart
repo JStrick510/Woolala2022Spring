@@ -28,29 +28,23 @@ class _ProfilePageState extends State<ProfilePage> {
   bool checker = false;
   User viewingUser;
   List postIDs = [];
-  int numToShow;
+  int numToShow = 1;
   int postsPerReload = 2;
   RefreshController _refreshController =
       RefreshController(initialRefresh: false);
 
+
   @override
   initState() {
     super.initState();
-    if (currentUser != null)
-      getOwnFeed().then((list) {
-        postIDs = list;
-        if (postIDs.length < postsPerReload)
-          numToShow = postIDs.length;
-        else
-          numToShow = postsPerReload;
-        sortPosts(postIDs);
-        setState(() {});
-      });
+    getStartingFeed();
   }
 
   Future<List> getOwnFeed() async {
+    print("USERID");
+    print(profilePageOwner.userID);
     http.Response res =
-        await http.get(domain + '/getOwnFeed/' + currentUser.userID);
+        await http.get(domain + '/getOwnFeed/' + profilePageOwner.userID);
     return jsonDecode(res.body.toString());
   }
 
@@ -181,6 +175,20 @@ class _ProfilePageState extends State<ProfilePage> {
         int.parse(a.substring(a.indexOf(':::') + 3)));
   }
 
+  void getStartingFeed() async {
+    profilePageOwner = await getDoesUserExists(widget.userProfileEmail);
+    if (currentUser != null)
+      getOwnFeed().then((list) {
+        postIDs = list;
+        if (postIDs.length == 0)
+          numToShow = 1;
+        else
+          numToShow = postsPerReload;
+        sortPosts(postIDs);
+        setState(() {});
+      });
+  }
+
   void _onRefresh() async {
     postIDs = await getOwnFeed();
     sortPosts(postIDs);
@@ -192,7 +200,7 @@ class _ProfilePageState extends State<ProfilePage> {
   void _onLoading() async {
     await Future.delayed(Duration(milliseconds: 1000));
     if (numToShow + postsPerReload > postIDs.length) {
-      numToShow = postIDs.length;
+      numToShow = postIDs.length + 1;
     } else {
       numToShow += postsPerReload;
     }
@@ -443,7 +451,7 @@ class _ProfilePageState extends State<ProfilePage> {
         ],
       ),
       body: Center(
-        child: postIDs.length > 0
+        child: numToShow > 0
             ? SmartRefresher(
                 enablePullDown: true,
                 enablePullUp: true,
