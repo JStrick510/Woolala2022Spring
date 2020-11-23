@@ -56,7 +56,7 @@ class _FeedCardState extends State<FeedCard> {
 
   void initState() {
     super.initState();
-    print(checkWouldBuy(currentUser.userID, widget.postID));
+    checkWouldBuy(currentUser.userID, widget.postID);
   }
 
   Widget score(postID) {
@@ -144,19 +144,11 @@ class _FeedCardState extends State<FeedCard> {
     );
   }
 
-  Future<http.Response> checkWouldBuy(String userID, String postID) {
-    return http.post(
-      domain +
-          '/checkWouldBuy/' +
-          postID.toString() +
-          '/' +
-          userID.toString() +
-          '/',
-      headers: <String, String>{
-        'Content-Type': 'application/json',
-      },
-      body: jsonEncode({}),
-    );
+  Future<bool> checkWouldBuy(String userID, String postID) async{
+    http.Response res = await http.get(domain +
+        '/checkWouldBuy/' + postID.toString());
+    Map info = jsonDecode(res.body.toString());
+    print(info);
   }
 
   void watermarkImage() {
