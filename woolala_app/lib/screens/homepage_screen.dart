@@ -92,7 +92,13 @@ Future<List> getPost(String id) async {
   http.Response res = await http.get(domain + '/getPostInfo/' + id);
   Map info = jsonDecode(res.body.toString());
   final decodedBytes = base64Decode(info["image"]);
-  var avg = info["cumulativeRating"] / info["numRatings"];
+  var avg;
+  if(info["numRatings"]>0) {
+    avg = info["cumulativeRating"] / info["numRatings"];
+  }
+  else{
+    avg = 0.0;
+  }
   var ret = [
     Image.memory(decodedBytes),
     info["caption"],
