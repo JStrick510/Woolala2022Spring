@@ -1,0 +1,140 @@
+Using device sdk gphone x86.
+Starting application: test_driver/app.dart
+Running Gradle task 'assembleDebug'...                              6.5s
+✓ Built build/app/outputs/flutter-apk/app-debug.apk.
+Installing build/app/outputs/flutter-apk/app.apk...                967ms
+Starting Flutter app under test 'test_driver/app.dart', this might take a few moments
+[33;10mRunning scenario: User checks their followers # ./test_driver/features/following_test.feature:2[33;0m
+[33;32m   √ Given I am on "my" profile page # ./test_driver/features/following_test.feature:3 took 6164ms[33;0m
+[33;32m   √ When I tap the Followers column # ./test_driver/features/following_test.feature:4 took 0ms[33;0m
+[33;32m   √ Then I should see my "Followers" # ./test_driver/features/following_test.feature:5 took 1ms[33;0m
+[33;32mPASSED: Scenario User checks their followers # ./test_driver/features/following_test.feature:2[33;0m
+Restarting Flutter app under test
+
+
+
+[33;10mRunning scenario: User checks their following # ./test_driver/features/following_test.feature:7[33;0m
+[33;32m   √ Given I am on "my" profile page # ./test_driver/features/following_test.feature:8 took 2896ms[33;0m
+[33;32m   √ When I tap the Following column # ./test_driver/features/following_test.feature:9 took 0ms[33;0m
+[33;32m   √ Then I should see my "Following" # ./test_driver/features/following_test.feature:10 took 0ms[33;0m
+[33;32mPASSED: Scenario User checks their following # ./test_driver/features/following_test.feature:7[33;0m
+Restarting Flutter app under test
+
+
+
+[33;10mRunning scenario: User checks others profile # ./test_driver/features/following_test.feature:12[33;0m
+[33;32m   √ Given I am on "others" profile page # ./test_driver/features/following_test.feature:13 took 0ms[33;0m
+[33;32m   √ When I have already followed them # ./test_driver/features/following_test.feature:14 took 0ms[33;0m
+[33;32m   √ Then I should see "Following" on my screen # ./test_driver/features/following_test.feature:15 took 1279ms[33;0m
+[33;32mPASSED: Scenario User checks others profile # ./test_driver/features/following_test.feature:12[33;0m
+Restarting Flutter app under test
+
+
+
+[33;10mRunning scenario: User checks others profile # ./test_driver/features/following_test.feature:17[33;0m
+[33;32m   √ Given I am on "others" profile page # ./test_driver/features/following_test.feature:18 took 0ms[33;0m
+[33;32m   √ When I have not already followed them # ./test_driver/features/following_test.feature:19 took 0ms[33;0m
+[33;32m   √ Then I should see "Follow" on my screen # ./test_driver/features/following_test.feature:20 took 1161ms[33;0m
+[33;32m   √ When I tap the "Follow" button # ./test_driver/features/following_test.feature:21 took 0ms[33;0m
+[33;32m   √ Then I should see "Following" on my screen # ./test_driver/features/following_test.feature:22 took 1043ms[33;0m
+[33;32mPASSED: Scenario User checks others profile # ./test_driver/features/following_test.feature:17[33;0m
+Restarting Flutter app under test
+
+
+
+[33;10mRunning scenario: User posts images from their gallery # ./test_driver/features/post_test.feature:2[33;0m
+[33;32m   √ Given I am already logged in # ./test_driver/features/post_test.feature:3 took 374ms[33;0m
+[33;32m   √ When I tap the "Make Post" button # ./test_driver/features/post_test.feature:4 took 2195ms[33;0m
+[33;32m   √ Then I should see "Camera" and "Gallery" on my screen # ./test_driver/features/post_test.feature:5 took 1061ms[33;0m
+[33;32m   √ When I tap the "Gallery" button # ./test_driver/features/post_test.feature:6 took 335ms[33;0m
+[33;32m   √ Then I should be able to choose an image to upload # ./test_driver/features/post_test.feature:7 took 0ms[33;0m
+[33;32mPASSED: Scenario User posts images from their gallery # ./test_driver/features/post_test.feature:2[33;0m
+Restarting Flutter app under test
+
+
+
+[33;10mRunning scenario: User uploads images by camera # ./test_driver/features/post_test.feature:9[33;0m
+[33;32m   √ Given I am already logged in # ./test_driver/features/post_test.feature:10 took 714ms[33;0m
+[33;32m   √ When I tap the "Make Post" button # ./test_driver/features/post_test.feature:11 took 2401ms[33;0m
+[33;32m   √ Then I should see "Camera" and "Gallery" on my screen # ./test_driver/features/post_test.feature:12 took 1050ms[33;0m
+[33;32m   √ When I tap the "Camera" button # ./test_driver/features/post_test.feature:13 took 298ms[33;0m
+[33;32m   √ Then I should be able to choose an image to upload # ./test_driver/features/post_test.feature:14 took 0ms[33;0m
+[33;32mPASSED: Scenario User uploads images by camera # ./test_driver/features/post_test.feature:9[33;0m
+Restarting Flutter app under test
+
+
+
+[33;10mRunning scenario: User updates profile # ./test_driver/features/profile_test.feature:2[33;0m
+[33;32m   √ Given I am already logged in # ./test_driver/features/profile_test.feature:3 took 744ms[33;0m
+[33;32m   √ When I tap the "Profile" button # ./test_driver/features/profile_test.feature:4 took 2686ms[33;0m
+[33;32m   √ Then I should see "Profile" on my screen # ./test_driver/features/profile_test.feature:5 took 1050ms[33;0m
+[33;32m   √ Given I am on the "Profile" screen # ./test_driver/features/profile_test.feature:6 took 0ms[33;0m
+[33;32m   √ When I tap the "Edit Profile" button # ./test_driver/features/profile_test.feature:7 took 564ms[33;0m
+[33;32m   √ Then I should see "Edit Profile" on my screen # ./test_driver/features/profile_test.feature:8 took 1018ms[33;0m
+[33;32m   √ Given I am on the "Edit Profile" screen # ./test_driver/features/profile_test.feature:9 took 0ms[33;0m
+[33;32m   √ When "Profile Name" is edited # ./test_driver/features/profile_test.feature:10 took 0ms[33;0m
+[33;32m   √ When I tap the "Check" button # ./test_driver/features/profile_test.feature:11 took 406ms[33;0m
+[33;32m   √ Then I should see "Profile" on my screen # ./test_driver/features/profile_test.feature:12 took 1022ms[33;0m
+[33;32m   √ And "Profile Name" is updated # ./test_driver/features/profile_test.feature:13 took 1ms[33;0m
+[33;32m   √ Given I am on the "Profile" screen # ./test_driver/features/profile_test.feature:15 took 0ms[33;0m
+[33;32m   √ When I tap the "Edit Profile" button # ./test_driver/features/profile_test.feature:16 took 361ms[33;0m
+[33;32m   √ Then I should see "Edit Profile" on my screen # ./test_driver/features/profile_test.feature:17 took 1015ms[33;0m
+[33;32m   √ Given I am on the "Edit Profile" screen # ./test_driver/features/profile_test.feature:18 took 0ms[33;0m
+[33;32m   √ When "Bio" is edited # ./test_driver/features/profile_test.feature:19 took 0ms[33;0m
+[33;32m   √ When I tap the "Check" button # ./test_driver/features/profile_test.feature:20 took 353ms[33;0m
+[33;32m   √ Then I should see "Profile" on my screen # ./test_driver/features/profile_test.feature:21 took 1026ms[33;0m
+[33;32m   √ And "Bio" is updated # ./test_driver/features/profile_test.feature:22 took 0ms[33;0m
+[33;32mPASSED: Scenario User updates profile # ./test_driver/features/profile_test.feature:2[33;0m
+Restarting Flutter app under test
+
+
+
+[33;10mRunning scenario: User searches profile # ./test_driver/features/search_test.feature:2[33;0m
+[33;32m   √ Given I am already logged in # ./test_driver/features/search_test.feature:3 took 367ms[33;0m
+[33;32m   √ When I tap the "Search" button # ./test_driver/features/search_test.feature:4 took 5087ms[33;0m
+[33;32m   √ When I tap the "Search Icon" button # ./test_driver/features/search_test.feature:5 took 615ms[33;0m
+[33;32m   √ Then I should see "ListView" on my screen # ./test_driver/features/search_test.feature:6 took 26ms[33;0m
+[33;32mPASSED: Scenario User searches profile # ./test_driver/features/search_test.feature:2[33;0m
+Restarting Flutter app under test
+
+
+
+[33;10mRunning scenario: User launches the app # ./test_driver/features/login_test.feature:2[33;0m
+[33;32mPASSED: Scenario User launches the app # ./test_driver/features/login_test.feature:2[33;0m
+Restarting Flutter app under test
+
+
+
+[33;10mRunning scenario: Google Login # ./test_driver/features/login_test.feature:5[33;0m
+[33;32m   √ Given I am on the "Login" screen # ./test_driver/features/login_test.feature:6 took 0ms[33;0m
+[33;32m   √ Then I should see "Google" on my screen # ./test_driver/features/login_test.feature:7 took 120ms[33;0m
+[33;32m   √ When I tap the "Google" button # ./test_driver/features/login_test.feature:8 took 228ms[33;0m
+[33;32m   √ Then I should see "homepage" on my screen # ./test_driver/features/login_test.feature:9 took 1070ms[33;0m
+[33;32mPASSED: Scenario Google Login # ./test_driver/features/login_test.feature:5[33;0m
+Restarting Flutter app under test
+
+
+
+[33;10mRunning scenario: Facebook Login # ./test_driver/features/login_test.feature:11[33;0m
+[33;32m   √ Given I am on the "Login" screen # ./test_driver/features/login_test.feature:12 took 0ms[33;0m
+[33;32m   √ Then I should see "Facebook" on my screen # ./test_driver/features/login_test.feature:13 took 128ms[33;0m
+[33;32m   √ When I tap the "Facebook" button # ./test_driver/features/login_test.feature:14 took 3358ms[33;0m
+[33;32m   √ Then I should see "homepage" on my screen # ./test_driver/features/login_test.feature:15 took 12ms[33;0m
+[33;32mPASSED: Scenario Facebook Login # ./test_driver/features/login_test.feature:11[33;0m
+Restarting Flutter app under test
+
+
+
+[33;10mRunning scenario: Sign out of an account # ./test_driver/features/login_test.feature:17[33;0m
+[33;32m   √ Given I am on the "Login" screen # ./test_driver/features/login_test.feature:18 took 0ms[33;0m
+[33;32m   √ When I tap the "Google" button # ./test_driver/features/login_test.feature:19 took 491ms[33;0m
+[33;32m   √ Then I should see "Homepage" on my screen # ./test_driver/features/login_test.feature:20 took 1265ms[33;0m
+[33;32m   √ When I tap the "SignOut" button # ./test_driver/features/login_test.feature:21 took 1692ms[33;0m
+[33;32m   √ Then I should see "Login With:" on my screen # ./test_driver/features/login_test.feature:22 took 1014ms[33;0m
+[33;32mPASSED: Scenario Sign out of an account # ./test_driver/features/login_test.feature:17[33;0m
+Restarting Flutter app under test
+
+
+
+Terminating Flutter app under test
+Stopping application instance.
