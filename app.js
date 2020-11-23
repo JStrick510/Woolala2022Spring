@@ -296,3 +296,10 @@ app.post("/removeWouldBuy/:postID/:userID", (request, response) => {
 
     response.send({});
 });
+
+app.get("/checkWouldBuy/:postID", (request, response) => {
+    var postID = request.params.postID;
+    collection.findOne({"postID":postID}, function(err, document) {
+    response.send(document.wouldBuy);
+    });
+});
