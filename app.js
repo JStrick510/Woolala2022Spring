@@ -270,3 +270,36 @@ app.post("/reportPost", (request, response) => {
         console.log(request.body);
     });
 });
+
+
+app.post("/wouldBuy/:postID/:userID", (request, response) => {
+    var userID = request.params.userID;
+    var postID = request.params.postID;
+    var updateCurrent = { $push: { wouldBuy: userID }};
+
+    collection.updateOne({"postID":postID}, updateCurrent, function(err, res) {
+      console.log(postID + " now has " + userID + " in their wouldBuy array");
+    });
+
+    response.send({});
+});
+
+
+app.post("/removeWouldBuy/:postID/:userID", (request, response) => {
+    var userID = request.params.userID;
+    var postID = request.params.postID;
+    var updateCurrent = { $pull: { wouldBuy: userID }};
+
+    collection.updateOne({"postID":postID}, updateCurrent, function(err, res) {
+      console.log(postID + " now has " + userID + " in their wouldBuy array");
+    });
+
+    response.send({});
+});
+
+app.get("/checkWouldBuy/:postID", (request, response) => {
+    var postID = request.params.postID;
+    collection.findOne({"postID":postID}, function(err, document) {
+    response.send(document.wouldBuy);
+    });
+});
