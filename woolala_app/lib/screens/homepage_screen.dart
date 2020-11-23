@@ -98,7 +98,8 @@ Future<List> getPost(String id) async {
     info["caption"],
     info["userID"],
     info["date"],
-    avg
+    avg,
+    info["numRatings"]
   ];
   return ret;
 

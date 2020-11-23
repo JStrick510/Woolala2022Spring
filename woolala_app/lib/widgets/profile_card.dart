@@ -25,6 +25,8 @@ import 'package:woolala_app/screens/homepage_screen.dart';
 import 'package:woolala_app/screens/search_screen.dart';
 import 'package:woolala_app/widgets/bottom_nav.dart';
 import 'package:woolala_app/main.dart';
+import 'package:screenshot/screenshot.dart';
+import 'package:social_share/social_share.dart';
 
 Future<http.Response> deletePost(String postID, String userID) {
   return http.post(
@@ -42,9 +44,12 @@ class OwnFeedCard extends StatefulWidget {
   OwnFeedCard(String postID)
   {
     this.postID = postID;
+    //this.ratedPosts = rated;
   }
 
   var postID;
+  var ratedPosts;
+
 
   @override
   _OwnFeedCardState createState() => _OwnFeedCardState();
@@ -59,7 +64,7 @@ class _OwnFeedCardState extends State<OwnFeedCard>{
     checkWouldBuy(currentUser.userID, widget.postID);
 
   }
-
+  bool rated = false;
   void showReportSuccess(bool value, BuildContext context) {
     if(value){
       setState(() {
@@ -75,10 +80,57 @@ class _OwnFeedCardState extends State<OwnFeedCard>{
     }
   }
 
+  Widget score(postID) {
+    return rated
+        ? FutureBuilder(
+        future: getPost(widget.postID),
+        builder: (context, postInfo) {
+          if (postInfo.hasData) {
+            return Stack(children: [
+              Container(
+                alignment: Alignment.center,
+                child: Image.asset(
+                  './assets/logos/w_logo_test.png',
+                  height: 60,
+                  width: 60,
+                  fit: BoxFit.cover,
+                ),
+              ),
+              Positioned(
+                  bottom: 21,
+                  left: 4,
+                  child: Container(
+                      width: 50,
+                      height: 20,
+                      decoration: new BoxDecoration(
+                          border: new Border.all(
+                              width: 20, color: Colors.transparent),
+                          borderRadius: const BorderRadius.all(
+                              const Radius.circular(20.0)),
+                          color: new Color.fromRGBO(100, 100, 100, 0.75)))),
+              Positioned(
+                  bottom: 20,
+                  left: 9,
+                  child: Text(
+                    postInfo.data[4].toStringAsFixed(2),
+                    style: TextStyle(
+                      fontSize: 20,
+                      color: Colors.white,
+                      fontWeight: FontWeight.w400,
+                    ),
+                  ))
+            ]);
+          } else {
+            return CircularProgressIndicator();
+          }
+        })
+        : Container();
+  }
   var startPos;
   var distance = 0.0;
   var stars = 2.5;
   String wouldBuyList = "";
+  File _originalImage;
 
   void checkWouldBuy(String userID, String postID) async{
     http.Response res = await http.get(domain +
@@ -99,9 +151,11 @@ class _OwnFeedCardState extends State<OwnFeedCard>{
 
   }
 
+
   @override
   Widget build(BuildContext context) {
     print(widget.postID);
+    ScreenshotController sc = new ScreenshotController();
     return FutureBuilder(
       future: getPost(widget.postID),
       builder: (context, postInfo) {
@@ -166,7 +220,16 @@ class _OwnFeedCardState extends State<OwnFeedCard>{
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         )
                     ),
-                    GestureDetector(child: postInfo.data[0],
+                    GestureDetector(child: Screenshot(
+                    controller: sc,
+                      child:  Stack(
+                        children:[
+                          postInfo.data[0],
+                          Positioned(
+                              bottom: 10,
+                              left: 10,
+                              child: score(widget.postID))
+                        ])),
                         onHorizontalDragStart: (
                             DragStartDetails dragStartDetails) {
                           startPos = dragStartDetails.globalPosition.dx;
@@ -209,17 +272,48 @@ class _OwnFeedCardState extends State<OwnFeedCard>{
                               Center(
                                   child: Row(
                                       mainAxisSize: MainAxisSize.max,
-                                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+
                                       children: <Widget>[
                                         new IconButton(
                                           icon: Icon(Icons.share),
                                           iconSize: 28,
+                                          onPressed: () async {
+                                            await sc.capture().then((image) async {
+                                              _originalImage = image;
+                                              //facebook appId is mandatory for android or else share won't work
+                                              Platform.isAndroid
+                                                  ? SocialShare.shareFacebookStory(
+                                                  _originalImage.path,
+                                                  "#ffffff",
+                                                  "#000000",
+                                                  "https://google.com",
+                                                  appId: "829266574315982")
+                                                  .then((data) {
+                                                print(data);
+                                              })
+                                                  : SocialShare.shareFacebookStory(
+                                                  _originalImage.path,
+                                                  "#ffffff",
+                                                  "#000000",
+                                                  "https://google.com")
+                                                  .then((data) {
+                                                print(data);
+                                              });
+                                            });
+                                          },
                                         ),
-                                        starSlider(widget.postID, stars, true),
-                                        new IconButton(
-                                          icon: Icon(Icons.add_shopping_cart),
-                                          iconSize: 28,
-                                        ),
+                                            Text(
+                                            "Interactions: " + postInfo.data[5].toString(),
+                                            style: TextStyle(
+                                              fontSize: 20.0,
+                                              fontWeight: FontWeight.w500,
+                                            ),
+                                          ),
+                                        //new IconButton(
+                                         // icon: Icon(Icons.add_shopping_cart),
+                                         // iconSize: 28,
+                                        //),
                                         PopupMenuButton<String>(
                                           onSelected: (String result) async {
 
@@ -241,7 +335,7 @@ class _OwnFeedCardState extends State<OwnFeedCard>{
                                   child: Padding(
                                     padding: EdgeInsets.fromLTRB(10.0,4.0,10.0,2.0),
                                     child: Text(
-                                      currentUser.userName,
+                                      userInfo.data.profileName,
                                       textAlign: TextAlign.left,
                                       style: TextStyle(
                                           fontWeight: FontWeight.bold,

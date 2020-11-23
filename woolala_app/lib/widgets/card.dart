@@ -107,8 +107,7 @@ class _FeedCardState extends State<FeedCard> {
   }
 
   File _originalImage;
-  File _watermarkImage;
-  File _watermarkedImage;
+
 
   Future<File> convertImageToFile(String imagePath) async {
     final byteData = await rootBundle.load('assets/$imagePath');
@@ -154,33 +153,7 @@ class _FeedCardState extends State<FeedCard> {
       wouldBuy = Icon(Icons.add_shopping_cart);
   }
 
-  void watermarkImage() {
-    ui.Image originalImage = ui.decodeImage(_originalImage.readAsBytesSync());
-    //ui.Image watermarkImage = ui.decodeImage(_watermarkImage.readAsBytesSync());
 
-    // add watermark over originalImage
-    // initialize width and height of watermark image
-    ui.Image image = ui.Image(160, 50);
-    //ui.drawImage(image, watermarkImage);
-
-    // give position to watermark over image
-    // originalImage.width - 160 - 25 (width of originalImage - width of watermarkImage - extra margin you want to give)
-    // originalImage.height - 50 - 25 (height of originalImage - height of watermarkImage - extra margin you want to give)
-    ui.copyInto(originalImage, image,
-        dstX: originalImage.width - 160 - 25,
-        dstY: originalImage.height - 50 - 25);
-
-    // for adding text over image
-    // Draw some text using 24pt arial font
-    // 100 is position from x-axis, 120 is position from y-axis
-    ui.drawString(originalImage, ui.arial_24, 100, 120, 'WooLaLa');
-
-    // Store the watermarked image to a File
-    List<int> wmImage = ui.encodePng(originalImage);
-    setState(() {
-      //_watermarkedImage = File.fromRawPath(Uint8List.fromList(wmImage));
-    });
-  }
 
 //final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   void showReportSuccess(bool value, BuildContext context) {
@@ -348,8 +321,6 @@ class _FeedCardState extends State<FeedCard> {
                                   onPressed: () async {
                                     await sc.capture().then((image) async {
                                       _originalImage = image;
-                                      //_watermarkImage = await convertImageToFile('logos/w_logo_test.png');
-                                      watermarkImage();
                                       //facebook appId is mandatory for android or else share won't work
                                       Platform.isAndroid
                                           ? SocialShare.shareFacebookStory(
