@@ -10,6 +10,7 @@ import 'package:woolala_app/screens/search_screen.dart';
 import 'package:woolala_app/widgets/bottom_nav.dart';
 import 'package:http/http.dart' as http;
 import 'package:woolala_app/widgets/profile_card.dart';
+import 'package:woolala_app/widgets/card.dart';
 
 class ProfilePage extends StatefulWidget {
   //the id of this profile
@@ -30,14 +31,22 @@ class _ProfilePageState extends State<ProfilePage> {
   List postIDs = [];
   int numToShow = 1;
   int postsPerReload = 2;
+  var ratedPosts = [];
   RefreshController _refreshController =
       RefreshController(initialRefresh: false);
 
-
   @override
   initState() {
-    super.initState();
     getStartingFeed();
+    super.initState();
+    getRatedPosts(currentUser.userID).then((list) {
+      ratedPosts = list;
+    });
+  }
+
+  Future<List> getRatedPosts(String userID) async {
+    http.Response res = await http.get(domain + '/getRatedPosts/' + userID);
+    return jsonDecode(res.body.toString());
   }
 
   Future<List> getOwnFeed() async {
@@ -52,15 +61,15 @@ class _ProfilePageState extends State<ProfilePage> {
     return FutureBuilder(
       future: getDoesUserExists(widget.userProfileEmail),
       builder: (context, dataSnapshot) {
-        // switch (dataSnapshot.connectionState) {
-        //   case ConnectionState.waiting:
-        //     return CircularProgressIndicator();
-        //   default:
-        //     if (dataSnapshot.hasError)
-        //       return Text('Error: ${dataSnapshot.error}');
-        //     else
-        //       print('Result: ${dataSnapshot.data}');
-        // }
+        switch (dataSnapshot.connectionState) {
+          case ConnectionState.waiting:
+            return CircularProgressIndicator();
+          default:
+            if (dataSnapshot.hasError)
+              return Text('Error: ${dataSnapshot.error}');
+            else
+              print('Result: ${dataSnapshot.data}');
+        }
         profilePageOwner = dataSnapshot.data;
         return SizedBox(
             height: 360,
@@ -163,8 +172,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   ),
                 ],
               ),
-            )
-        );
+            ));
       },
     );
   }
@@ -470,16 +478,23 @@ class _ProfilePageState extends State<ProfilePage> {
                     itemBuilder: (BuildContext context, int index) {
                       if (index == 0) {
                         return SizedBox(
-                            width: double.infinity,
-                            height: 360,
-                            child: createProfileTop(),
-                            );
+                          width: double.infinity,
+                          height: 360,
+                          child: createProfileTop(),
+                        );
                       } else {
                         // The height on this will need to be edited to match whatever height is set for the picture
-                        return SizedBox(
-                            width: double.infinity,
-                            height: 620,
-                            child: OwnFeedCard(postIDs[index - 1]));
+                        if (profilePageOwner.userID == currentUser.userID) {
+                          return SizedBox(
+                              width: double.infinity,
+                              height: 620,
+                              child: OwnFeedCard(postIDs[index - 1]));
+                        } else {
+                          return SizedBox(
+                              width: double.infinity,
+                              height: 620,
+                              child: FeedCard(postIDs[index - 1], ratedPosts));
+                        }
                       }
                     }),
               )
