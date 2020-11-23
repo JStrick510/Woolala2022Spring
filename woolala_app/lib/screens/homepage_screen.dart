@@ -65,7 +65,8 @@ Future<http.Response> createPost(String postID, String image, String date,
       'date': date,
       'caption': caption,
       'cumulativeRating': 0.0,
-      'numRatings': 0
+      'numRatings': 0,
+      'wouldBuy': []
     }),
   );
 }
