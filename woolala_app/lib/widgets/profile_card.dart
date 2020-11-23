@@ -23,6 +23,7 @@ import 'package:woolala_app/screens/post_screen.dart';
 import 'package:woolala_app/screens/profile_screen.dart';
 import 'package:woolala_app/screens/homepage_screen.dart';
 import 'package:woolala_app/screens/search_screen.dart';
+import 'package:woolala_app/screens/wouldbuy_list_screen.dart';
 import 'package:woolala_app/widgets/bottom_nav.dart';
 import 'package:woolala_app/main.dart';
 import 'package:screenshot/screenshot.dart';
@@ -317,10 +318,21 @@ class _OwnFeedCardState extends State<OwnFeedCard>{
                                             fontWeight: FontWeight.w500,
                                           ),
                                         ),
-                                        //new IconButton(
-                                         // icon: Icon(Icons.add_shopping_cart),
-                                         // iconSize: 28,
-                                        //),
+                                        new IconButton(
+                                          icon: Icon(Icons.supervisor_account),
+                                          iconSize: 28,
+                                          onPressed: () {
+                                              Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          WouldBuyListScreen(
+                                                              widget.postID
+                                                          )
+                                                  )
+                                              );
+                                            }
+                                        ),
                                         PopupMenuButton<String>(
                                           onSelected: (String result) async {
 
