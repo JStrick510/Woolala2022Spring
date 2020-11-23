@@ -304,12 +304,19 @@ class _OwnFeedCardState extends State<OwnFeedCard>{
                                           },
                                         ),
                                             Text(
-                                            "Interactions: " + postInfo.data[5].toString(),
+                                            "Scores: " + postInfo.data[5].toString(),
                                             style: TextStyle(
                                               fontSize: 20.0,
                                               fontWeight: FontWeight.w500,
                                             ),
                                           ),
+                                        Text(
+                                          "Avg: " + postInfo.data[4].toStringAsFixed(2),
+                                          style: TextStyle(
+                                            fontSize: 20.0,
+                                            fontWeight: FontWeight.w500,
+                                          ),
+                                        ),
                                         //new IconButton(
                                          // icon: Icon(Icons.add_shopping_cart),
                                          // iconSize: 28,
