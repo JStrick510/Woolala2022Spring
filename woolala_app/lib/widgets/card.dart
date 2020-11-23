@@ -55,8 +55,8 @@ class _FeedCardState extends State<FeedCard> {
   Icon wouldBuy = Icon(Icons.add_shopping_cart);
 
   void initState() {
-    super.initState();
     checkWouldBuy(currentUser.userID, widget.postID);
+    super.initState();
   }
 
   Widget score(postID) {
@@ -144,11 +144,14 @@ class _FeedCardState extends State<FeedCard> {
     );
   }
 
-  Future<bool> checkWouldBuy(String userID, String postID) async{
+  void checkWouldBuy(String userID, String postID) async{
     http.Response res = await http.get(domain +
         '/checkWouldBuy/' + postID.toString());
-    Map info = jsonDecode(res.body.toString());
-    print(info);
+    String wouldBuyList = res.body.toString();
+    if(wouldBuyList.contains(userID))
+      wouldBuy = Icon(Icons.remove_shopping_cart);
+    else
+      wouldBuy = Icon(Icons.add_shopping_cart);
   }
 
   void watermarkImage() {

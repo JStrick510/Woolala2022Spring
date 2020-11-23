@@ -56,6 +56,7 @@ class _OwnFeedCardState extends State<OwnFeedCard>{
 
   void initState() {
     super.initState();
+    checkWouldBuy(currentUser.userID, widget.postID);
 
   }
 
@@ -77,6 +78,26 @@ class _OwnFeedCardState extends State<OwnFeedCard>{
   var startPos;
   var distance = 0.0;
   var stars = 2.5;
+  String wouldBuyList = "";
+
+  void checkWouldBuy(String userID, String postID) async{
+    http.Response res = await http.get(domain +
+        '/checkWouldBuy/' + postID.toString());
+    wouldBuyList = res.body.toString();
+    print("WOULD BUY LIST:");
+    print(wouldBuyList);
+    if(wouldBuyList.length > 0)
+      {
+        var temp = json.decode(wouldBuyList);
+        http.Response res = await http.get(domain +
+            '/getUser/' + temp.toString());
+        var user = res.body.toString();
+        print("user!");
+        print(user);
+      }
+
+
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -199,6 +220,19 @@ class _OwnFeedCardState extends State<OwnFeedCard>{
                                           icon: Icon(Icons.add_shopping_cart),
                                           iconSize: 28,
                                         ),
+                                        PopupMenuButton<String>(
+                                          onSelected: (String result) async {
+
+                                          },
+                                          itemBuilder: (BuildContext context) {
+                                            return {'Delete Post'}.map((String choice) {
+                                              return PopupMenuItem<String>(
+                                                value: choice,
+                                                child: Text(wouldBuyList),
+                                              );
+                                            }).toList();
+                                          },
+                                        )
                                       ]
                                   )
                               ),
