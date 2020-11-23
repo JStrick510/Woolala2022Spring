@@ -52,15 +52,15 @@ class _ProfilePageState extends State<ProfilePage> {
     return FutureBuilder(
       future: getDoesUserExists(widget.userProfileEmail),
       builder: (context, dataSnapshot) {
-        switch (dataSnapshot.connectionState) {
-          case ConnectionState.waiting:
-            return CircularProgressIndicator();
-          default:
-            if (dataSnapshot.hasError)
-              return Text('Error: ${dataSnapshot.error}');
-            else
-              print('Result: ${dataSnapshot.data}');
-        }
+        // switch (dataSnapshot.connectionState) {
+        //   case ConnectionState.waiting:
+        //     return CircularProgressIndicator();
+        //   default:
+        //     if (dataSnapshot.hasError)
+        //       return Text('Error: ${dataSnapshot.error}');
+        //     else
+        //       print('Result: ${dataSnapshot.data}');
+        // }
         profilePageOwner = dataSnapshot.data;
         return SizedBox(
             height: 360,
@@ -163,7 +163,8 @@ class _ProfilePageState extends State<ProfilePage> {
                   ),
                 ],
               ),
-            ));
+            )
+        );
       },
     );
   }
@@ -471,11 +472,8 @@ class _ProfilePageState extends State<ProfilePage> {
                         return SizedBox(
                             width: double.infinity,
                             height: 360,
-                            child: ListView(
-                              children: <Widget>[
-                                createProfileTop(),
-                              ],
-                            ));
+                            child: createProfileTop(),
+                            );
                       } else {
                         // The height on this will need to be edited to match whatever height is set for the picture
                         return SizedBox(
