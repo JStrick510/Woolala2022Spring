@@ -56,6 +56,7 @@ class _FeedCardState extends State<FeedCard>{
   var distance = 0.0;
   var stars = 2.5;
   bool rated = false;
+  Icon wouldBuy = Icon(Icons.add_shopping_cart);
 
   void initState() {
     super.initState();
@@ -325,9 +326,14 @@ Widget build(BuildContext context) {
                                       ),
                                       starSlider(widget.postID, stars, rated),
                                       new IconButton(
-                                        icon: Icon(Icons.add_shopping_cart),
+                                        icon: wouldBuy,
                                         iconSize: 28,
-                                        onPressed: () {},
+                                        onPressed: () {setState(() {
+                                          if(wouldBuy.icon == Icons.remove_shopping_cart)
+                                            wouldBuy = Icon(Icons.add_shopping_cart);
+                                          else
+                                            wouldBuy = Icon(Icons.remove_shopping_cart);
+                                        });},
                                       ),
                                     ]
                                 )

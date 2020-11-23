@@ -62,7 +62,16 @@ class _PostScreenState extends State<PostScreen> {
       body: SingleChildScrollView(
         child: Column(
           children: <Widget>[
-            _image == null ? Text('No image selected.') : Image.file(_image),
+            Container(
+              width: MediaQuery.of(context).size.width,
+              height: MediaQuery.of(context).size.width,
+              decoration: BoxDecoration(
+                image: DecorationImage(
+                  fit: BoxFit.fill,
+                  image: new FileImage(_image),
+                ),
+              ),
+            ),
             SizedBox(height: 20.0),
             TextField(maxLength: 69, maxLengthEnforced: true, textInputAction: TextInputAction.go, keyboardType: TextInputType.multiline, maxLines: null, decoration: new InputDecoration(hintText: "Enter a caption!", contentPadding: const EdgeInsets.all(20.0)), controller: _c,),
           ],
@@ -72,7 +81,6 @@ class _PostScreenState extends State<PostScreen> {
           mainAxisSize: MainAxisSize.max,
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
-
             SizedBox(height: 100.0),
             FloatingActionButton(
               child: Icon(Icons.check),
