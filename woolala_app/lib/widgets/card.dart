@@ -130,6 +130,17 @@ class _FeedCardState extends State<FeedCard>{
     return file;
   }
 
+  Future<http.Response> addWouldBuy(String userID, String postID) {
+    return http.post(
+      domain + '/wouldBuy/' + postID.toString() + '/' + userID.toString() + '/',
+      headers: <String, String>{
+        'Content-Type': 'application/json',
+      },
+      body: jsonEncode({}),
+    );
+  }
+
+
   void watermarkImage(){
     ui.Image originalImage = ui.decodeImage(_originalImage.readAsBytesSync());
     //ui.Image watermarkImage = ui.decodeImage(_watermarkImage.readAsBytesSync());
@@ -344,6 +355,10 @@ Widget build(BuildContext context) {
                                             wouldBuy = Icon(Icons.add_shopping_cart);
                                           else
                                             wouldBuy = Icon(Icons.remove_shopping_cart);
+
+                                          //api call for adding current user to post's "wouldbuy" arra
+                                          addWouldBuy(currentUser.userID, widget.postID);
+
                                         });},
                                       ),
                                     ]

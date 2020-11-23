@@ -283,3 +283,16 @@ app.post("/wouldBuy/:postID/:userID", (request, response) => {
 
     response.send({});
 });
+
+
+app.post("/removeWouldBuy/:postID/:userID", (request, response) => {
+    var userID = request.params.userID;
+    var postID = request.params.postID;
+    var updateCurrent = { $pull: { wouldBuy: userID }};
+
+    collection.updateOne({"postID":postID}, updateCurrent, function(err, res) {
+      console.log(postID + " now has " + userID + " in their wouldBuy array");
+    });
+
+    response.send({});
+});
