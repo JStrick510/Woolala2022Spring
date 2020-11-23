@@ -11,7 +11,9 @@ import 'package:woolala_app/screens/following_list_screen.dart';
 //Create Stateful Widget
 class WouldBuyListScreen extends StatefulWidget {
   final String postID;
-  WouldBuyListScreen(this.postID);
+  final List wouldBuyNameList;
+  final List wouldBuyEmailList;
+  WouldBuyListScreen(this.postID, this.wouldBuyNameList, this.wouldBuyEmailList);
   @override
   _WouldBuyListScreen createState() => _WouldBuyListScreen();
 }
@@ -24,65 +26,45 @@ class _WouldBuyListScreen extends State<WouldBuyListScreen> {
   List followerEmailList = new List();
   List followerUserNameList = new List();
 
-  //Build the list Asynchronously
-  listbuilder() async {
-    //Make sure the user Exists
-    //currentProfile = await getDoesUserExists(widget.userEmail);
 
-    //Follower list of the user
-    List tempFollowerList = new List();
-    tempFollowerList = currentProfile.followers;
-
-    //Go through the Follower List of userIDs and grab their profileName, email, and userName
-    for (int i = 0; i < tempFollowerList.length; i++) {
-      String tempProfileName = await getProfileName(tempFollowerList[i]);
-      String tempUserEmail = await getUserEmail(tempFollowerList[i]);
-      String tempUserName = await getUserName(tempFollowerList[i]);
-      //Add each to their respective Lists
-      followerList.add(tempProfileName);
-      followerEmailList.add(tempUserEmail);
-      followerUserNameList.add(tempUserName);
-    }
-    return followerList;
-  }
   //Build the list using a Futurebuilder for Async
-  Widget _buildList() {
-    return FutureBuilder(
-      future: listbuilder(),
-      builder: (context, snapshot) {
-        //Make sure the snapshot is valid without errors
-        if (snapshot.hasData) {
-          return ListView.builder(
-            key: ValueKey("ListView"),
-            scrollDirection: Axis.vertical,
-            shrinkWrap: true,
-            itemCount: followerList.length,
-            itemBuilder: (BuildContext context, int index) {
-              return new ListTile(
-                //Create the circular avatar for the user
-                leading: CircleAvatar(
-                  child: Text(followerList[index][0]),
-                ),
-                title: Text(followerList[index]),
-                subtitle: Text(followerUserNameList[index]),
-                onTap: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (BuildContext context) =>
-                              ProfilePage(followerEmailList[index])));
-                },
-              );
-            },
-          );
-        } else if (snapshot.hasError) {
-          return Center(child: Text("No Results"));
-        } else {
-          return Center(child: CircularProgressIndicator());
-        }
-      },
-    );
-  }
+  // Widget _buildList() {
+  //   return FutureBuilder(
+  //     future: listbuilder(),
+  //     builder: (context, snapshot) {
+  //       //Make sure the snapshot is valid without errors
+  //       if (snapshot.hasData) {
+  //         return ListView.builder(
+  //           key: ValueKey("ListView"),
+  //           scrollDirection: Axis.vertical,
+  //           shrinkWrap: true,
+  //           itemCount: followerList.length,
+  //           itemBuilder: (BuildContext context, int index) {
+  //             return new ListTile(
+  //               //Create the circular avatar for the user
+  //               leading: CircleAvatar(
+  //                 child: Text(followerList[index][0]),
+  //               ),
+  //               title: Text(followerList[index]),
+  //               subtitle: Text(followerUserNameList[index]),
+  //               onTap: () {
+  //                 Navigator.push(
+  //                     context,
+  //                     MaterialPageRoute(
+  //                         builder: (BuildContext context) =>
+  //                             ProfilePage(followerEmailList[index])));
+  //               },
+  //             );
+  //           },
+  //         );
+  //       } else if (snapshot.hasError) {
+  //         return Center(child: Text("No Results"));
+  //       } else {
+  //         return Center(child: CircularProgressIndicator());
+  //       }
+  //     },
+  //   );
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -96,9 +78,14 @@ class _WouldBuyListScreen extends State<WouldBuyListScreen> {
               (Navigator.pop(context))),
           title: Text("Users Interested in This Post"),
           actions: <Widget>[]),
-      body: ListView(padding: const EdgeInsets.all(8), children: <Widget>[
-        _buildList(),
-      ]),
+      body: ListView.builder(
+        itemCount: widget.wouldBuyNameList.length,
+        itemBuilder: (context, index) {
+          return ListTile(
+            title: Text('${widget.wouldBuyNameList[index]}  --  ${widget.wouldBuyEmailList[index]}'),
+          );
+        },
+      ),
       bottomNavigationBar: BottomNavigationBar(
         onTap: (int index) {
           bottomBar.switchPage(index, context);

@@ -130,26 +130,27 @@ class _OwnFeedCardState extends State<OwnFeedCard>{
   var startPos;
   var distance = 0.0;
   var stars = 2.5;
-  String wouldBuyList = "";
+  var tempWouldBuyList = [];
+  var wouldBuyNameList = [];
+  var wouldBuyEmailList = [];
   File _originalImage;
 
   void checkWouldBuy(String userID, String postID) async{
     http.Response res = await http.get(domain +
         '/checkWouldBuy/' + postID.toString());
-    wouldBuyList = res.body.toString();
-    print("WOULD BUY LIST:");
-    print(wouldBuyList);
-    if(wouldBuyList.length > 0)
+    tempWouldBuyList = json.decode(res.body.toString());
+
+    if(tempWouldBuyList.length > 0)
       {
-        var temp = json.decode(wouldBuyList);
-        http.Response res = await http.get(domain +
-            '/getUser/' + temp.toString());
-        var user = res.body.toString();
-        print("user!");
-        print(user);
+        for(int i = 0; i < tempWouldBuyList.length; i++)
+          {
+            http.Response res = await http.get(domain +
+                '/getUser/' + tempWouldBuyList[i].toString());
+            var user = json.decode(res.body.toString());
+            wouldBuyNameList.add(user['profileName']);
+            wouldBuyEmailList.add(user['email']);
+          }
       }
-
-
   }
 
 
@@ -327,25 +328,12 @@ class _OwnFeedCardState extends State<OwnFeedCard>{
                                                   MaterialPageRoute(
                                                       builder: (context) =>
                                                           WouldBuyListScreen(
-                                                              widget.postID
+                                                              widget.postID, wouldBuyNameList, wouldBuyEmailList
                                                           )
                                                   )
                                               );
                                             }
                                         ),
-                                        PopupMenuButton<String>(
-                                          onSelected: (String result) async {
-
-                                          },
-                                          itemBuilder: (BuildContext context) {
-                                            return {'Delete Post'}.map((String choice) {
-                                              return PopupMenuItem<String>(
-                                                value: choice,
-                                                child: Text(wouldBuyList),
-                                              );
-                                            }).toList();
-                                          },
-                                        )
                                       ]
                                   )
                               ),
