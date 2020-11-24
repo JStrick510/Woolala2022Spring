@@ -279,9 +279,10 @@ app.post("/wouldBuy/:postID/:userID", (request, response) => {
 
     collection.updateOne({"postID":postID}, updateCurrent, function(err, res) {
       console.log(postID + " now has " + userID + " in their wouldBuy array");
+      response.send(res);
     });
 
-    response.send({});
+    //response.send({});
 });
 
 
@@ -292,9 +293,10 @@ app.post("/removeWouldBuy/:postID/:userID", (request, response) => {
 
     collection.updateOne({"postID":postID}, updateCurrent, function(err, res) {
       console.log(postID + " now has " + userID + " in their wouldBuy array");
+      response.send(res);
     });
 
-    response.send({});
+    //response.send({});
 });
 
 app.get("/checkWouldBuy/:postID", (request, response) => {

@@ -10,7 +10,7 @@ import 'package:woolala_app/screens/profile_screen.dart';
 import 'package:woolala_app/screens/search_screen.dart';
 import 'package:woolala_app/screens/post_screen.dart';
 
-bool localDev = false;
+bool localDev = true;
 String domain;
 
 void main() {

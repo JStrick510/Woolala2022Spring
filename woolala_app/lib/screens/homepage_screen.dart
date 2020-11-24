@@ -238,7 +238,7 @@ class _HomepageScreenState extends State<HomepageScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('WooLaLa', style: TextStyle(fontSize: 25)),
+        title: Text('ChooseNXT', style: TextStyle(fontSize: 25)),
         centerTitle: true,
         key: ValueKey("homepage"),
         actions: <Widget>[
