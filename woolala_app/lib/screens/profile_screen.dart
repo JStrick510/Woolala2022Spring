@@ -274,7 +274,14 @@ class _ProfilePageState extends State<ProfilePage> {
                 print('Result: ${snapshot.data}');
           }
 
-          double avg = snapshot.data;
+          double avg;
+          if(snapshot.data == null)
+            {
+              avg = 0.0;
+            }
+          else{
+            avg = snapshot.data;
+          }
           return createDoubleColumns(title, avg);
         });
   }

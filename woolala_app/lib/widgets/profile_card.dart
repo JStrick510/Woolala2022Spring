@@ -136,6 +136,7 @@ class _OwnFeedCardState extends State<OwnFeedCard>{
   File _originalImage;
 
   void checkWouldBuy(String userID, String postID) async{
+    print("Post ID:"  + postID);
     http.Response res = await http.get(domain +
         '/checkWouldBuy/' + postID.toString());
     tempWouldBuyList = json.decode(res.body.toString());
