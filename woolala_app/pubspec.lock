@@ -640,13 +640,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.0.5"
-  social_share_plugin:
-    dependency: "direct main"
-    description:
-      name: social_share_plugin
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.3.1+1"
   source_map_stack_trace:
     dependency: transitive
     description:
