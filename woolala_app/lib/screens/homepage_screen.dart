@@ -126,6 +126,7 @@ Future<List> getPost(String id) async {
 Future<List> getRatedPosts(String userID) async {
   http.Response res = await http.get(domain + '/getRatedPosts/' + userID);
   return jsonDecode(res.body.toString());
+
 }
 
 Future<User> getUserFromDB(String userID) async {
