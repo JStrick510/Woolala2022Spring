@@ -2,9 +2,10 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:woolala_app/screens/profile_screen.dart';
 import 'package:http/http.dart' as http;
-import 'homepage_screen.dart';
-import 'login_screen.dart';
+import 'package:woolala_app/widgets/bottom_nav.dart';
+import 'package:woolala_app/main.dart';
 
+//Database call for Following people
 Future<http.Response> follow(String currentAccountID, String otherAccountID) {
   return http.post(
     domain + '/follow/' + currentAccountID + '/' + otherAccountID,
@@ -14,9 +15,17 @@ Future<http.Response> follow(String currentAccountID, String otherAccountID) {
     body: jsonEncode({}),
   );
 }
-
-
-
+//Database call for Unfollowing people
+Future<http.Response> unfollow(String currentAccountID, String otherAccountID) {
+  return http.post(
+    domain + '/unfollow/' + currentAccountID + '/' + otherAccountID,
+    headers: <String, String>{
+      'Content-Type': 'application/json',
+    },
+    body: jsonEncode({}),
+  );
+}
+//Create Stateful Widget
 class SearchPage extends StatefulWidget{
   @override
   _SearchPageState createState() => _SearchPageState();
@@ -29,10 +38,12 @@ class _SearchPageState extends State<SearchPage> {
   List filteredResults = new List(); // names filtered by search text
   Icon _searchIcon = new Icon(Icons.search);
   Widget _appBarTitle = new Text( 'Search' );
-  List userList;
 
+  //Declare a Future List to call the getAllUsers function once
+  Future<List> _future;
+
+  //Asynchronously gets all users from the database
   Future<List> getAllUsers() async{
-     print("Getting all Users.");
      http.Response res = await http.get(domain + "/getAllUsers");
      if (res.body.isNotEmpty) {
        results = jsonDecode(res.body.toString());
@@ -41,12 +52,18 @@ class _SearchPageState extends State<SearchPage> {
      setState((){});
      return results;
   }
+  //When the Search Icon has been pressed, change the app bar to a TextField and change focus
   void _searchPressed() {
     setState(() {
       if (this._searchIcon.icon == Icons.search) {
         this._searchIcon = new Icon(Icons.close);
         this._appBarTitle = new TextField(
           controller: _filter,
+          onChanged: (text) {
+            filteredResults = results;
+          },
+          autofocus: true,
+          cursorColor: Colors.white,
           decoration: new InputDecoration(
               prefixIcon: new Icon(Icons.search),
               hintText: 'Search...'
@@ -60,24 +77,32 @@ class _SearchPageState extends State<SearchPage> {
       }
     });
   }
+  //Listener for the changes in the filter
   @override
   _SearchPageState() {
-    _filter.addListener(() {
+    _filter.addListener(()  {
       if (_filter.text.isEmpty) {
         setState(() {
           _searchText = "";
           filteredResults = results;
         });
-      } else {
-        setState(() {
+      }
+      else if (_filter.text.length > 0){
+        setState((){
           _searchText = _filter.text;
         });
-      }
+      } //else{
+        //setState(() {
+          //_searchText = _filter.text;
+        //});
+      //}
     });
   }
 
+  //Build the List using FutureBuilder
   Widget _buildList() {
-    if (!(_searchText.isEmpty)) {
+    //filter the list
+    if ((_searchText.length > 0)) {
       List tempList = new List();
       for (int i = 0; i < filteredResults.length; i++) {
         if (filteredResults[i]['profileName'].toLowerCase().contains(_searchText.toLowerCase())) {
@@ -86,14 +111,15 @@ class _SearchPageState extends State<SearchPage> {
       }
       filteredResults = tempList;
     }
+    //Build the List
     return FutureBuilder(
-      future: getAllUsers(),
+      future: _future,
       builder: (context, snapshot){
         if(snapshot.hasData){
           return ListView.builder(
             key: ValueKey("ListView"),
+            physics: NeverScrollableScrollPhysics(),
             scrollDirection: Axis.vertical,
-            physics: const AlwaysScrollableScrollPhysics(),
             shrinkWrap: true,
             itemCount: results == null ? 0 : filteredResults.length,
             itemBuilder: (BuildContext context, int index) {
@@ -103,17 +129,6 @@ class _SearchPageState extends State<SearchPage> {
                 ),
                 title: Text(filteredResults[index]['profileName']),
                 subtitle: Text(filteredResults[index]['userName']),
-                trailing: Wrap(
-                  spacing: 12,
-                  children: <Widget>[
-                    new Container(
-                      child: new IconButton(
-                        icon: Icon(Icons.add),
-                        onPressed: () {follow(currentUser.userID, filteredResults[index]['userID']);},
-                      ),
-                    ),
-                  ],
-                ),
                 onTap: () => Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => ProfilePage(filteredResults[index]['email']))),
               );
             },
@@ -131,14 +146,16 @@ class _SearchPageState extends State<SearchPage> {
   }
 
 
-
   @override
   Widget build(BuildContext context) {
+    BottomNav bottomBar = BottomNav(context);
+    bottomBar.currentIndex = 10;
+
     return Scaffold(
         appBar: AppBar(
             leading: BackButton(
                 color: Colors.white,
-                onPressed: () => (Navigator.pop(context))
+                onPressed: () => ( Navigator.pop(context))
             ),
             title: _appBarTitle,
             actions: <Widget>[
@@ -150,7 +167,8 @@ class _SearchPageState extends State<SearchPage> {
             ]
         ),
         body: ListView(
-            padding: const EdgeInsets.all(8),
+            //padding: const EdgeInsets.all(8),
+            scrollDirection: Axis.vertical,
             children: <Widget>[
               _buildList(),
 
@@ -158,47 +176,22 @@ class _SearchPageState extends State<SearchPage> {
         ),
       bottomNavigationBar: BottomNavigationBar(
           onTap: (int index) {
-            switchPage(index, context);
+            bottomBar.switchPage(index, context);
           },
-          items: [
-            BottomNavigationBarItem(
-              icon: Icon(Icons.home, color: Colors.black),
-              title: Text('Home', style: TextStyle(color: Colors.black)),
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.add_circle_outline, color: Colors.black),
-              title: Text("New", style: TextStyle(color: Colors.black)),
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.person, color: Theme.of(context).primaryColor),
-              title: Text("Profile", style: TextStyle(color: Theme.of(context).primaryColor)),
-            ),
-          ]
+          items: bottomBar.bottom_items,
+          backgroundColor: Colors.blueGrey[400],
       ),
     );
 
   }
+  //Runs when the page first loads
   @override
   void initState() {
     super.initState();
-    //_getNames();
-    getAllUsers();
-  }
-
-  void switchPage(int index, BuildContext context) {
-    switch(index) {
-      case 0: {
-        Navigator.pushReplacementNamed(context, '/home');}
-      break;
-      case 1: {
-        Navigator.pushReplacementNamed(context, '/imgup');}
-      break;
-      case 2:
-        {
-          Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => ProfilePage(currentUser.email)));
-        }
-        break;
-    }
+    _future = getAllUsers();
+    //_buildList();
+    //Make the search pressed upon load
+    _searchPressed();
   }
 }
 

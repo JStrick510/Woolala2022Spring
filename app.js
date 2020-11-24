@@ -15,7 +15,7 @@ app.use(BodyParser.urlencoded({ extended: true }));
 
 var database, collection;
 
-app.listen(5000, () => {
+app.listen(process.env.PORT || 5000, () => {
     MongoClient.connect(CONNECTION_URL, { useNewUrlParser: true, useUnifiedTopology: true }, (error, client) => {
         if(error) {
             throw error;
@@ -23,6 +23,7 @@ app.listen(5000, () => {
         database = client.db("Feed");
         collection = database.collection("Posts");
         userCollection = database.collection("Users");
+        reportCollection = database.collection("ReportedPosts");
         console.log("Connected to `" + DATABASE_NAME + "`!");
     });
 });
@@ -53,7 +54,7 @@ app.post("/insertUser", (request, response) => {
     });
 });
 
-app.post("/ratePost/:id/:rating", (request, response) => {
+app.post("/ratePost/:id/:rating/:userID", (request, response) => {
   collection.findOne({"postID":request.params.id}, function(err, document) {
   var newNumRatings = 1 + document.numRatings;
   var newCumulativeRating = parseInt(request.params.rating) + document.cumulativeRating;
@@ -61,10 +62,15 @@ app.post("/ratePost/:id/:rating", (request, response) => {
   console.log(newCumulativeRating);
   var newvalues = { $set: {numRatings: newNumRatings, cumulativeRating: newCumulativeRating } };
   collection.updateOne({"postID":request.params.id}, newvalues, function(err, res) {
-
   console.log("1 document updated");
     });
   });
+
+  var updateRated = { $push: { ratedPosts: [request.params.id, request.params.rating] }};
+  userCollection.updateOne({"userID":request.params.userID}, updateRated, function(err, res) {
+    console.log("ratedPosts updated");
+  });
+  response.send({"it":"worked"});
 });
 
 
@@ -105,10 +111,10 @@ app.post("/updateUserPrivacy/:id/:private", (request, response) => {
   });
 });
 
-app.post("/updateUserProfilePic/:id/:image64str", (request, response) => {
-  console.log(request.params.image64str);
-  var newPic = { $set: {"profilePic": request.params.image64str} };
- console.log(newPic);
+app.post("/updateUserProfilePic/:id", (request, response) => {
+  //console.log(request.params.image64str);
+  var newPic = { $set: request.body};
+ //console.log(newPic);
   userCollection.updateOne({"userID":request.params.id}, newPic, function(err, res){
     if (err) throw err;
     console.log("Profie Picture changed!");
@@ -155,9 +161,9 @@ app.get("/getUserByUserName/:userName", (request, response) => {
 app.get("/getAllUsers", (request, response) => {
     userCollection.find({}).toArray(function(err, documents) {
         if(documents)
-            console.log("Retrieved all Users");
+            //console.log("Retrieved all Users");
             response.send(documents);
-            console.log(documents);
+            //console.log(documents);
     });
 });
 
@@ -181,8 +187,16 @@ app.get("/getFeed/:userID", (request, response) => {
           });
         }
       });
-
 });
+
+app.get("/getOwnFeed/:userID", (request, response) => {
+      console.log('Feed requested for user ' + request.params.userID);
+      var postIDs = [];
+      userCollection.findOne({"userID":request.params.userID}, function(err, document) {
+      response.send(document.postIDs);
+      });
+});
+
 
 app.post("/follow/:you/:them", (request, response) => {
     var currentUserID = request.params.you;
@@ -198,4 +212,94 @@ app.post("/follow/:you/:them", (request, response) => {
       console.log(followUserID + " now has " + currentUserID + " in their followers array");
     });
     response.send({});
+});
+
+app.post("/unfollow/:you/:them", (request, response) => {
+    var currentUserID = request.params.you;
+    var unfollowUserID = request.params.them;
+    var updateCurrent = { $pull: {following: unfollowUserID}};
+    var updateOther = { $pull: {followers: currentUserID}};
+
+    userCollection.updateOne({"userID":currentUserID}, updateCurrent, function(err, res) {
+      console.log(currentUserID + " now does not have " + unfollowUserID + " in their following array");
+    });
+
+    userCollection.updateOne({"userID":unfollowUserID}, updateOther, function(err, res) {
+      console.log(unfollowUserID + " now does not have " + currentUserID + " in their followers array");
+    });
+    response.send({});
+});
+
+app.post("/deleteUser/:ID", (request, response) => {
+    userCollection.deleteOne({"userID": request.params.ID}, function(err, res) {
+        console.log("Deleted User: " + request.params.ID);
+        if(err) console.log(err);
+    });
+});
+
+app.post("/deleteAllPosts/:ID", (request, response) => {
+    collection.deleteMany({"userID": request.params.ID}, function(err, res) {
+        console.log("Deleting all Posts by user: " + request.params.ID);
+    });
+});
+
+app.post("/deleteOnePost/:postID/:userID", (request, response) => {
+  var update = { $pull: {"postIDs": request.params.postID} };
+  userCollection.updateOne({"userID":request.params.userID}, update, function(err, res){});
+
+    collection.deleteOne({"postID": request.params.postID}, function(err, res) {
+        console.log("Deleted Post: " + request.params.postID);
+        if(err) console.log(err);
+        response.send(res);
+    });
+});
+
+
+app.get("/getRatedPosts/:userID", (request, response) => {
+    userCollection.findOne({"userID":request.params.userID}, function(err, document) {
+        response.send(document.ratedPosts);
+    });
+});
+
+app.post("/reportPost", (request, response) => {
+    reportCollection.insertOne(request.body, (error, result) => {
+        if(error) {
+            return response.status(500).send(error);
+        }
+        response.send(result.result);
+        console.log(request.body);
+    });
+});
+
+
+app.post("/wouldBuy/:postID/:userID", (request, response) => {
+    var userID = request.params.userID;
+    var postID = request.params.postID;
+    var updateCurrent = { $push: { wouldBuy: userID }};
+
+    collection.updateOne({"postID":postID}, updateCurrent, function(err, res) {
+      console.log(postID + " now has " + userID + " in their wouldBuy array");
+    });
+
+    response.send({});
+});
+
+
+app.post("/removeWouldBuy/:postID/:userID", (request, response) => {
+    var userID = request.params.userID;
+    var postID = request.params.postID;
+    var updateCurrent = { $pull: { wouldBuy: userID }};
+
+    collection.updateOne({"postID":postID}, updateCurrent, function(err, res) {
+      console.log(postID + " now has " + userID + " in their wouldBuy array");
+    });
+
+    response.send({});
+});
+
+app.get("/checkWouldBuy/:postID", (request, response) => {
+    var postID = request.params.postID;
+    collection.findOne({"postID":postID}, function(err, document) {
+    response.send(document.wouldBuy);
+    });
 });

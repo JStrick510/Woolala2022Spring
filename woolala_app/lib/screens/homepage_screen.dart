@@ -1,48 +1,35 @@
 import 'dart:ui';
-
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
-import 'package:flutter_facebook_login/flutter_facebook_login.dart';
 import 'package:woolala_app/screens/login_screen.dart';
 import 'package:woolala_app/models/user.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import 'package:mongo_dart/mongo_dart.dart' as mongo;
-import 'dart:io' as Io;
-import 'package:audioplayers/audio_cache.dart';
 import 'package:audioplayers/audioplayers.dart';
-import 'dart:collection';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
-
-import 'dart:io';
-import 'package:woolala_app/screens/login_screen.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:woolala_app/screens/post_screen.dart';
 import 'package:woolala_app/screens/profile_screen.dart';
 import 'package:woolala_app/screens/search_screen.dart';
 import 'package:woolala_app/widgets/bottom_nav.dart';
+import 'package:woolala_app/widgets/card.dart';
+import 'package:woolala_app/main.dart';
+import 'dart:io';
 
-AudioPlayer advancedPlayer;
 
-String domain = "http://10.0.2.2:5000";
-
-Widget starSlider(String postID) =>
+Widget starSlider(String postID, num, rated) =>
     RatingBar(
-      initialRating: 2.5,
+      initialRating: num,
       minRating: 0,
       direction: Axis.horizontal,
       allowHalfRating: true,
+      ignoreGestures: rated,
       itemCount: 5,
-      unratedColor: Colors.black,
+      unratedColor: rated ? Colors.grey :Colors.black,
       itemSize: 30,
       itemPadding: EdgeInsets.symmetric(horizontal: 4.0),
-      itemBuilder: (context, _) =>
-          Icon(
-            Icons.star,
-            color: Colors.blue,
-          ),
+      itemBuilder: (context, _) => Icon(
+        Icons.star,
+        color: rated ? Colors.amber : Colors.blue,
+      ),
       onRatingUpdate: (rating) {
         print(rating);
         //Changing rating here
@@ -51,19 +38,10 @@ Widget starSlider(String postID) =>
       },
     );
 
-Future loadMusic(String sound) async {
-  if (sound == "fuck") {
-    advancedPlayer = await AudioCache().play("Sounds/ashfuck.mp3");
-  }
-  if (sound == "woolala") {
-    advancedPlayer = await AudioCache().play("Sounds/woolalaAudio.mp3");
-  }
-}
-
 // Will be used anytime the post is rated
 Future<http.Response> ratePost(double rating, String id) {
   return http.post(
-    domain + '/ratePost/' + id.toString() + '/' + rating.toString(),
+    domain + '/ratePost/' + id.toString() + '/' + rating.toString() + '/' + currentUser.userID,
     headers: <String, String>{
       'Content-Type': 'application/json',
     },
@@ -86,8 +64,25 @@ Future<http.Response> createPost(String postID, String image, String date,
       'image': image,
       'date': date,
       'caption': caption,
-      'cumulativeRating': 0,
-      'numRatings': 0
+      'cumulativeRating': 0.0,
+      'numRatings': 0,
+      'wouldBuy': []
+    }),
+  );
+}
+
+Future<http.Response> reportPost(String postID, String reportingUserID, String date,
+    String postUserID) {
+  return http.post(
+    domain + '/reportPost',
+    headers: <String, String>{
+      'Content-Type': 'application/json',
+    },
+    body: jsonEncode({
+      'postID': postID,
+      'reportingUserID': reportingUserID,
+      'date': date,
+      'postUserID': postUserID
     }),
   );
 }
@@ -97,7 +92,21 @@ Future<List> getPost(String id) async {
   http.Response res = await http.get(domain + '/getPostInfo/' + id);
   Map info = jsonDecode(res.body.toString());
   final decodedBytes = base64Decode(info["image"]);
-  var ret = [Image.memory(decodedBytes), info["caption"], info["userID"]];
+  var avg;
+  if(info["numRatings"]>0) {
+    avg = info["cumulativeRating"] / info["numRatings"];
+  }
+  else{
+    avg = 0.0;
+  }
+  var ret = [
+    Image.memory(decodedBytes),
+    info["caption"],
+    info["userID"],
+    info["date"],
+    avg,
+    info["numRatings"]
+  ];
   return ret;
 
   //DO THIS TO GET IMAGE
@@ -114,6 +123,11 @@ Future<List> getPost(String id) async {
   // );
 }
 
+Future<List> getRatedPosts(String userID) async {
+  http.Response res = await http.get(domain + '/getRatedPosts/' + userID);
+  return jsonDecode(res.body.toString());
+}
+
 Future<User> getUserFromDB(String userID) async {
   http.Response res = await http.get(domain + '/getUser/' + userID);
   Map userMap = jsonDecode(res.body.toString());
@@ -125,8 +139,6 @@ Future<List> getFeed(String userID) async {
   return jsonDecode(res.body.toString())["postIDs"];
 }
 
-//final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
-
 class HomepageScreen extends StatefulWidget {
   final bool signedInWithGoogle;
 
@@ -136,27 +148,16 @@ class HomepageScreen extends StatefulWidget {
 }
 
 class _HomepageScreenState extends State<HomepageScreen> {
-  RefreshController _refreshController =
-  RefreshController(initialRefresh: false);
-  var rating = 0.0;
-  var postID = 0.0;
-  List postList = new List();
 
-  List<String> testList = [
-    'assets/logos/w_logo_test.png',
-    'assets/logos/w_logo_test.png',
-    'assets/logos/w_logo_test.png',
-    'assets/logos/w_logo_test.png',
-    'assets/logos/w_logo_test.png',
-    'assets/logos/w_logo_test.png',
-    'assets/logos/w_logo_test.png',
-    'assets/logos/w_logo_test.png',
-    'assets/logos/w_logo_test.png',
-  ];
+  RefreshController _refreshController = RefreshController(initialRefresh: false);
+  //ScreenshotController screenshotController = ScreenshotController();
+
 
   List postIDs = [];
-  int numToShow = 2;
-  int postsPerReload = 2;
+  var ratedPosts = [];
+  File file;
+  int numToShow;
+  int postsPerReload = 4;
 
   void _getPosts() async {
     mongo.Db db = new mongo.Db.pool([
@@ -178,12 +179,13 @@ class _HomepageScreenState extends State<HomepageScreen> {
   void sortPosts(list) {
     list.removeWhere((item) => item == "");
     list.sort((a, b) =>
-    int.parse(b.substring(b.indexOf(':::') + 3)) -
+        int.parse(b.substring(b.indexOf(':::') + 3)) -
         int.parse(a.substring(a.indexOf(':::') + 3)));
   }
 
   void _onRefresh() async {
     postIDs = await getFeed(currentUser.userID);
+    ratedPosts = await getRatedPosts(currentUser.userID);
     sortPosts(postIDs);
     print(postIDs);
     // if failed,use refreshFailed()
@@ -208,119 +210,46 @@ class _HomepageScreenState extends State<HomepageScreen> {
   initState() {
     super.initState();
     if (currentUser != null)
-      getFeed(currentUser.userID).then((list) {
-        postIDs = list;
-        sortPosts(postIDs);
-        print(postIDs);
-        setState(() {});
-      });
-  }
-
-  bool showStars = false;
-
-  Widget card(String postID) {
-    return FutureBuilder(
-      future: getPost(postID),
-      builder: (context, postInfo) {
-        if (postInfo.hasData) {
-          return FutureBuilder(
-              future: getUserFromDB(postInfo.data[2]),
-              builder: (context, userInfo) {
-                if (userInfo.hasData) {
-                  return Column(children: <Widget>[
-                    Container(
-                        margin: const EdgeInsets.all(0),
-                        color: Colors.white,
-                        width: double.infinity,
-                        height: 35.0,
-                        child: Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: <Widget>[
-                              Row(
-                                children: <Widget>[
-                                   Padding(
-                                            child: userInfo.data.createProfileAvatar(
-                                            radius: 15.0, font: 18.0),
-                                            padding: EdgeInsets.all(5)
-                                        ),
-                                    GestureDetector(
-                                            onTap: () =>
-                                            {
-                                              Navigator.push(context, MaterialPageRoute(
-                                                  builder: (BuildContext context) =>
-                                                      ProfilePage(userInfo.data.email)))
-                                            },
-                                            child: Padding(
-                                                padding: EdgeInsets.all(5),
-                                                child: Text(userInfo.data.profileName,
-                                                    textAlign: TextAlign.left,
-                                                    style: TextStyle(
-                                                        color: Colors.black, fontSize: 16
-                                                    )
-                                                )
-                                            )
-                                    ),
-                                ],
-                              ),
-                              Align(
-                                  alignment: Alignment.centerRight,
-                                  child: Icon(Icons.more_vert)
-                              )
-                            ],
-                    //mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      )
-                    ),
-                postInfo.data[0],
-                Container(
-                alignment: Alignment(-1.0, 0.0),
-                child: Padding(
-                padding: EdgeInsets.all(5),
-                child: Text(postInfo.data[1],
-                textAlign: TextAlign.left))),
-                Center(child: starSlider(postID)),
-                Container(
-                margin: const EdgeInsets.all(8),
-                color: Colors.grey,
-                width: double.infinity,
-                height: 1,
-                ),
-                ]);
-                } else {
-                return CircularProgressIndicator();
-                }
-              });
-        } else {
-          return CircularProgressIndicator();
-        }
-      },
+    getFeed(currentUser.userID).then((list) {
+      postIDs = list;
+      if (postIDs.length < postsPerReload)
+        numToShow = postIDs.length;
+      else
+        numToShow = postsPerReload;
+      sortPosts(postIDs);
+      print(postIDs);
+      setState(() {});
+    }
     );
+
+    getRatedPosts(currentUser.userID).then((list) {ratedPosts = list;});
   }
+
+
+
 
   @override
   Widget build(BuildContext context) {
+    print(Navigator.of(context).toString());
     BottomNav bottomBar = BottomNav(context);
-    bottomBar.currentIndex = 0;
+    bottomBar.currentIndex = 1;
+    bottomBar.currEmail = currentUser.email;
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-          'WooLaLa',
-          style: TextStyle(fontSize: 25),
-          textAlign: TextAlign.center,
-        ),
+        title: Text('WooLaLa', style: TextStyle(fontSize: 25)),
+        centerTitle: true,
         key: ValueKey("homepage"),
         actions: <Widget>[
           IconButton(
             icon: Icon(Icons.search),
             key: ValueKey("Search"),
             color: Colors.white,
-            onPressed: () =>
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => SearchPage())),
+            onPressed: () => Navigator.push(
+                context, MaterialPageRoute(builder: (context) => SearchPage())),
           ),
           IconButton(
-            icon: Icon(Icons.clear),
+            icon: Icon(Icons.exit_to_app),
             onPressed: () => startSignOut(context),
           )
         ],
@@ -344,18 +273,18 @@ class _HomepageScreenState extends State<HomepageScreen> {
                 // The height on this will need to be edited to match whatever height is set for the picture
                 return SizedBox(
                     width: double.infinity,
-                    height: 800,
-                    child: card(postIDs[index]));
+                    height: 620,
+                    child: FeedCard(postIDs[index], ratedPosts),);
               }),
         )
-            : CircularProgressIndicator(),
+            : Padding(padding: EdgeInsets.all(70.0), child: Text("Follow People to see their posts on your feed!", style: TextStyle(fontSize: 30, color: Colors.grey, fontFamily: 'Lucida'))),
       ),
       bottomNavigationBar: BottomNavigationBar(
         onTap: (int index) {
           bottomBar.switchPage(index, context);
         },
         items: bottomBar.bottom_items,
-        backgroundColor: Colors.blueGrey[400],
+        backgroundColor: Colors.blue,
       ),
     );
   }
@@ -369,20 +298,6 @@ class _HomepageScreenState extends State<HomepageScreen> {
       facebookLogoutUser();
       Navigator.pushReplacementNamed(context, '/');
     }
-  }
-
-  Widget _buildPostsList() {
-    _getPosts();
-    print(postList);
-    return ListView.builder(
-      scrollDirection: Axis.vertical,
-      itemCount: testList.length, //postList later
-      itemBuilder: (BuildContext context, int index) {
-        return new Image(
-          image: AssetImage(testList[index]),
-        );
-      },
-    );
   }
 }
 

@@ -1,18 +1,10 @@
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:google_sign_in/google_sign_in.dart';
-import 'package:flutter_rating_bar/flutter_rating_bar.dart';
-import 'package:flutter_facebook_login/flutter_facebook_login.dart';
-import 'package:woolala_app/screens/login_screen.dart';
-import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'dart:io';
-import 'package:woolala_app/screens/login_screen.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:woolala_app/screens/post_screen.dart';
-import 'dart:io' as Io;
-import 'package:intl/intl.dart';
+import 'package:flutter/material.dart';
 import 'package:image_cropper/image_cropper.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:woolala_app/widgets/bottom_nav.dart';
+import 'package:simple_animations/simple_animations.dart';
 
 class ImageUploadScreen extends StatefulWidget {
   ImageUploadScreen();
@@ -21,25 +13,23 @@ class ImageUploadScreen extends StatefulWidget {
 }
 
 Future<File> cropImage(imagePath) async {
-  print("testing cropImage function");
-  print(imagePath);
   File croppedImage = await ImageCropper.cropImage(
     sourcePath: imagePath,
     maxHeight: 1000,
     maxWidth: 1000,
     aspectRatio: CropAspectRatio(ratioX: 1, ratioY: 1),
     androidUiSettings: AndroidUiSettings(
-        toolbarTitle: 'WooLaLa',
-        activeControlsWidgetColor : Colors.green,
-        toolbarColor: Colors.blue,
-        toolbarWidgetColor: Colors.grey,
-        ),
+      toolbarTitle: 'WooLaLa',
+      activeControlsWidgetColor: Colors.green,
+      toolbarColor: Colors.blue,
+      toolbarWidgetColor: Colors.white,
+    ),
   );
   return croppedImage;
 }
 
 class _ImageUploadScreenState extends State<ImageUploadScreen> {
-  File _image = null;
+  File _image;
   String img64;
   final picker = ImagePicker();
   bool selected = false;
@@ -48,11 +38,12 @@ class _ImageUploadScreenState extends State<ImageUploadScreen> {
     final pickedFile = await picker.getImage(source: ImageSource.gallery);
     if (pickedFile != null) {
       _image = await cropImage(pickedFile.path);
-      // _image = File(pickedFile.path);
-      final bytes = _image.readAsBytesSync();
-      img64 = base64Encode(bytes);
-      Navigator.pushReplacementNamed(context, '/makepost',
-          arguments: [_image, img64]);
+      if (_image != null) {
+        final bytes = _image.readAsBytesSync();
+        img64 = base64Encode(bytes);
+        Navigator.pushReplacementNamed(context, '/makepost',
+            arguments: [_image, img64]);
+      }
     } else {
       print('No image selected.');
     }
@@ -62,11 +53,12 @@ class _ImageUploadScreenState extends State<ImageUploadScreen> {
     final pickedFile = await picker.getImage(source: ImageSource.camera);
     if (pickedFile != null) {
       _image = await cropImage(pickedFile.path);
-      // _image = File(pickedFile.path);
-      final bytes = _image.readAsBytesSync();
-      img64 = base64Encode(bytes);
-      Navigator.pushReplacementNamed(context, '/makepost',
-          arguments: [_image, img64]);
+      if (_image != null) {
+        final bytes = _image.readAsBytesSync();
+        img64 = base64Encode(bytes);
+        Navigator.pushReplacementNamed(context, '/makepost',
+            arguments: [_image, img64]);
+      }
     } else {
       print('No image selected.');
     }
@@ -74,54 +66,74 @@ class _ImageUploadScreenState extends State<ImageUploadScreen> {
 
   @override
   Widget build(BuildContext context) {
+    BottomNav bottomBar = BottomNav(context);
+    bottomBar.currentIndex = 0;
+
+    final tween = MultiTrackTween([
+      Track("color1").add(Duration(seconds: 3),
+          ColorTween(begin: Colors.purple[900], end: Colors.purple[500])),
+      Track("color2").add(Duration(seconds: 3),
+          ColorTween(begin: Colors.purple[300], end: Colors.purple[900])),
+      Track("color3").add(Duration(seconds: 3),
+          ColorTween(begin: Colors.purple[900], end: Colors.purple[500]))
+    ]);
+
     return Scaffold(
-      backgroundColor: Colors.grey[800],
-      appBar: AppBar(
-        leading: GestureDetector(
-          onTap: () => Navigator.pop(context),
-          child: Icon(
-            Icons.arrow_back, // add custom icons also
-          ),
+      body: Center(
+        child: ControlledAnimation(
+          playback: Playback.MIRROR,
+          tween: tween,
+          duration: tween.duration,
+          builder: (context, animation) {
+            return Container(
+                decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        colors: [animation["color1"], animation["color2"], animation["color3"]])),
+                padding: EdgeInsets.symmetric(vertical: 25),
+                width: double.infinity,
+                child: Column(children: <Widget>[
+                  SizedBox(
+                    height: 150,
+                  ),
+                  new Image.asset('./assets/logos/w_logo_test.png',
+                      width: 300,
+                      height: 150,
+                      fit: BoxFit.contain,
+                      semanticLabel: 'WooLaLa logo'),
+                  SizedBox(
+                    height: 100,
+                  ),
+                  Row(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      mainAxisSize: MainAxisSize.max,
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        FloatingActionButton(
+                          child: Icon(Icons.camera_enhance),
+                          key: ValueKey("Camera"),
+                          onPressed: () => getImageCamera(),
+                          heroTag: null,
+                        ),
+                        FloatingActionButton(
+                          child: Icon(Icons.collections),
+                          key: ValueKey("Gallery"),
+                          onPressed: () => getImageGallery(),
+                          heroTag: null,
+                        )
+                      ]),
+                ]));
+          },
         ),
-        actions: <Widget>[
-          FlatButton(
-            textColor: Colors.white,
-            onPressed: () => {
-              if (_image != null)
-                Navigator.pushReplacementNamed(context, '/makepost',
-                    arguments: [_image, img64])
-            },
-            child: Text("Next"),
-            shape: CircleBorder(side: BorderSide(color: Colors.transparent)),
-          )
-        ],
       ),
-      body: Column(children: [
-        _image == null ? Text('') : Image.file(_image),
-      ]),
-      bottomNavigationBar: Row(
-          mainAxisSize: MainAxisSize.max,
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            FloatingActionButton(
-              child: Icon(Icons.camera_enhance),
-              key: ValueKey("Camera"),
-              onPressed: () => getImageCamera(),
-              heroTag: null,
-            ),
-            SizedBox(height: 100.0),
-            // FloatingActionButton(
-            //   child: Icon(Icons.check),
-            //   onPressed: () => null,
-            //   heroTag: null,
-            // ),
-            FloatingActionButton(
-              child: Icon(Icons.collections),
-              key: ValueKey("Gallery"),
-              onPressed: () => getImageGallery(),
-              heroTag: null,
-            )
-          ]),
+      bottomNavigationBar: BottomNavigationBar(
+        onTap: (int index) {
+          bottomBar.switchPage(index, context);
+        },
+        items: bottomBar.bottom_items,
+        backgroundColor: Colors.blue,
+      ),
     );
   }
 }

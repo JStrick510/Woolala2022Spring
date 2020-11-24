@@ -10,7 +10,19 @@ import 'package:woolala_app/screens/profile_screen.dart';
 import 'package:woolala_app/screens/search_screen.dart';
 import 'package:woolala_app/screens/post_screen.dart';
 
+bool localDev = true;
+String domain;
+
 void main() {
+  if (localDev)
+  {
+    domain = "http://10.0.2.2:5000";
+  }
+  else
+  {
+    domain = "https://hidden-caverns-85596.herokuapp.com";
+  }
+
   runApp(WooLaLa());
 }
 

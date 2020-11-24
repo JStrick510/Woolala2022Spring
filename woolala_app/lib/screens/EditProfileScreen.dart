@@ -1,10 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:woolala_app/models/user.dart';
+import 'package:woolala_app/screens/search_screen.dart';
 import 'package:woolala_app/screens/login_screen.dart';
+import 'package:woolala_app/screens/profile_screen.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+
+
+import '../main.dart';
+import 'following_list_screen.dart';
 
 class EditProfilePage extends StatefulWidget{
   final String currentOnlineUserId;
@@ -14,6 +21,19 @@ class EditProfilePage extends StatefulWidget{
 
   @override
   _EditProfilePageState createState() => _EditProfilePageState();
+}
+
+Future<void> unFollow(String currentAccountID, String otherAccountID) async{
+  http.Response res = await http.post(domain + '/unfollow/' + currentAccountID + '/' + otherAccountID);
+}
+
+Future<void> deleteUser(String currentAccountID) async{
+  http.Response res = await http.post(domain + '/deleteUser/' + currentAccountID);
+  print(res);
+}
+
+Future<void> deletePosts(String currentAccountID) async{
+  http.Response res = await http.post(domain + '/deleteAllPosts/' + currentAccountID);
 }
 
 class _EditProfilePageState extends State<EditProfilePage>{
@@ -27,10 +47,44 @@ class _EditProfilePageState extends State<EditProfilePage>{
   File _image;
   PickedFile pickedFile;
   String img64;
+  List<Object> args;
+
+  //Lists to delete the followers and following.
+  List followingList = new List();
+  List followerList = new List();
+
+  unFollowAll()  async{
+    followingList = currentUser.following;
+    followerList = currentUser.followers;
+    for(int i = 0; i < followingList.length; i++){
+      await unFollow(currentUser.userID, followingList[i]);
+    }
+    for(int i = 0; i < followerList.length; i++){
+      await unfollow(followerList[i], currentUser.userID);
+    }
+    await deletePosts(currentUser.userID);
+    //await deleteUser(currentUser.userID);
+  }
 
   void initState(){
     super.initState();
     displayUserInfo();
+  }
+
+  Future getImageGallery() async {
+    final pickedFile = await picker.getImage(source: ImageSource.gallery);
+    if (pickedFile != null) {
+        _image = File(pickedFile.path);
+        final bytes = _image.readAsBytesSync();
+        img64 = base64Encode(bytes);
+        http.Response res = await currentUser.setProfilePic(img64);
+        //print("Res: " + res.toString());
+        //Navigator.pop(context);
+        Navigator.pushReplacementNamed(context, '/editProfile');
+    } else {
+      http.Response res = await currentUser.setProfilePic('default');
+      Navigator.pushReplacementNamed(context, '/editProfile');
+    }
   }
 
   displayUserInfo() async{
@@ -72,6 +126,11 @@ class _EditProfilePageState extends State<EditProfilePage>{
 
   @override
   Widget build(BuildContext context){
+    //args = ModalRoute.of(context).settings.arguments;
+    //_image = args[0];
+   // img64 = args[1];
+    //print("PROFILE PIC: " + currentUser.profilePic);
+
     return Scaffold(
       key: _scaffoldGlobalKey,
       appBar: AppBar(
@@ -79,6 +138,7 @@ class _EditProfilePageState extends State<EditProfilePage>{
             color: Colors.white,
             onPressed: () => {Navigator.pushReplacementNamed(context, '/profile')},
         ),
+
         iconTheme: IconThemeData(color: Colors.blue),
         title: Text('Edit Profile', style: TextStyle(color: Colors.white),),
         actions: <Widget>[
@@ -100,7 +160,9 @@ class _EditProfilePageState extends State<EditProfilePage>{
                   child: Column(
                     children: <Widget> [
                       GestureDetector(
-                        onTap: () => {print("Change profile Pic")},//pickImage(), setState((){})},
+                        onTap: () => {
+                          getImageGallery(),
+                        },
                         child: currentUser.createProfileAvatar(),
                       )
                     ]
@@ -118,9 +180,21 @@ class _EditProfilePageState extends State<EditProfilePage>{
                 ),
               ],
             ),
-          )
+          ),
         ],
-      )
+      ),
+      bottomNavigationBar: BottomAppBar(
+        elevation: 0,
+        color: Colors.white,
+        child: new Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+           createDeleteButton(),
+          ]
+
+        )
+          //alignment: FractionalOffset.bottomCenter,
+      ),
     );
   }
 
@@ -151,6 +225,53 @@ class _EditProfilePageState extends State<EditProfilePage>{
       ],
     );
   }
+
+  Widget createDeleteButton(){
+    return RaisedButton(
+      child: Text('Delete Account'),
+      color: Colors.red,
+      elevation: 5,
+      padding: EdgeInsets.fromLTRB(80.0,0,80,0),
+      onPressed: () {
+        showDeleteConfirmation(context);
+      },
+    );
+  }
+
+  showDeleteConfirmation(BuildContext context){
+    Widget cancelButton = FlatButton(
+      child: Text("Cancel"),
+      onPressed: () {Navigator.of(context).pop();},
+    );
+
+    Widget continueButton = FlatButton(
+      child: Text("Continue"),
+      onPressed: () async {
+        unFollowAll();
+        deleteUser(currentUser.userID);
+        Navigator.popUntil(context, ModalRoute.withName('/'));
+        googleLogoutUser();
+        Navigator.pushNamed(context, '/');
+      },
+    );
+
+    AlertDialog deleteConfirmation = AlertDialog(
+      title: Text('Delete Account'),
+      content: Text("Are you sure you want to delete your Woolala Account?"),
+      actions: [
+        cancelButton,
+        continueButton,
+      ],
+    );
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return deleteConfirmation;
+      },
+    );
+  }
+
+
 
   Column createProfileNameTextFormField(){
     return Column(
