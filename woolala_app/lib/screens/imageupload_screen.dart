@@ -97,7 +97,7 @@ class _ImageUploadScreenState extends State<ImageUploadScreen> {
                   SizedBox(
                     height: 150,
                   ),
-                  new Image.asset('./assets/logos/w_logo_test.png',
+                  new Image.asset('./assets/logos/NXT.png',
                       width: 300,
                       height: 150,
                       fit: BoxFit.contain,
