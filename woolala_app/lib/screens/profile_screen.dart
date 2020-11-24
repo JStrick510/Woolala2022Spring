@@ -11,6 +11,7 @@ import 'package:woolala_app/widgets/bottom_nav.dart';
 import 'package:http/http.dart' as http;
 import 'package:woolala_app/widgets/profile_card.dart';
 import 'package:woolala_app/widgets/card.dart';
+import 'dart:math';
 
 class ProfilePage extends StatefulWidget {
   //the id of this profile
@@ -82,9 +83,9 @@ class _ProfilePageState extends State<ProfilePage> {
                     alignment: Alignment.center,
                     padding: EdgeInsets.only(top: 5.0),
                     child: Text(
-                      profilePageOwner.profileName,
+                      profilePageOwner.profileName.substring(0,min(22,profilePageOwner.profileName.length)),
                       style: TextStyle(
-                          fontSize: 32.0,
+                          fontSize: 30.0,
                           color: Colors.black,
                           fontWeight: FontWeight.bold),
                     ),

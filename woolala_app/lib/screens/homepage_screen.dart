@@ -159,7 +159,7 @@ class _HomepageScreenState extends State<HomepageScreen> {
   int numToShow;
   int postsPerReload = 4;
 
-  void _getPosts() async {
+  /*void _getPosts() async {
     mongo.Db db = new mongo.Db.pool([
       "mongodb://Developer_1:Developer_1@woolalacluster-shard-00-00.o4vv6.mongodb.net:27017/Feed?ssl=true&replicaSet=project-shard-0&authSource=admin&retryWrites=true&w=majority",
       "mongodb://Developer_1:Developer_1@woolalacluster-shard-00-01.o4vv6.mongodb.net:27017/Feed?ssl=true&replicaSet=project-shard-0&authSource=admin&retryWrites=true&w=majority",
@@ -174,7 +174,7 @@ class _HomepageScreenState extends State<HomepageScreen> {
     setState(() {
       postList = tempList;
     });
-  }
+ // } */
 
   void sortPosts(list) {
     list.removeWhere((item) => item == "");
