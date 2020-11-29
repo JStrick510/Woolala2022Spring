@@ -10,6 +10,7 @@ import 'package:woolala_app/screens/profile_screen.dart';
 import 'package:woolala_app/screens/search_screen.dart';
 import 'package:woolala_app/screens/post_screen.dart';
 
+// Set to true if running app.js locally and want to connect to it instead
 bool localDev = false;
 String domain;
 

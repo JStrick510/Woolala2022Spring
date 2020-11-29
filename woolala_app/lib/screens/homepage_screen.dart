@@ -15,6 +15,7 @@ import 'package:woolala_app/main.dart';
 import 'dart:io';
 
 
+// Star widget on the home page
 Widget starSlider(String postID, num, rated) =>
     RatingBar(
       initialRating: num,
@@ -71,6 +72,7 @@ Future<http.Response> createPost(String postID, String image, String date,
   );
 }
 
+// Will add a post to the reported section of the DB
 Future<http.Response> reportPost(String postID, String reportingUserID, String date,
     String postUserID) {
   return http.post(
@@ -108,33 +110,23 @@ Future<List> getPost(String id) async {
     info["numRatings"]
   ];
   return ret;
-
-  //DO THIS TO GET IMAGE
-
-  // FutureBuilder(
-  //   future: getPost(POSTID),
-  //   builder: (context, snapshot) {
-  //     if (snapshot.hasData) {
-  //       return snapshot.data;
-  //     } else {
-  //       return CircularProgressIndicator();
-  //     }
-  //   },
-  // );
 }
 
+// Returns a list of all the posts the provided user has rated
 Future<List> getRatedPosts(String userID) async {
   http.Response res = await http.get(domain + '/getRatedPosts/' + userID);
   return jsonDecode(res.body.toString());
 
 }
 
+// Will retrieve the entire user document from the DB with the provided user ID
 Future<User> getUserFromDB(String userID) async {
   http.Response res = await http.get(domain + '/getUser/' + userID);
   Map userMap = jsonDecode(res.body.toString());
   return User.fromJSON(userMap);
 }
 
+// Will return a list of posts from all the users the provided user is following
 Future<List> getFeed(String userID) async {
   http.Response res = await http.get(domain + '/getFeed/' + userID);
   return jsonDecode(res.body.toString())["postIDs"];
@@ -158,25 +150,11 @@ class _HomepageScreenState extends State<HomepageScreen> {
   var ratedPosts = [];
   File file;
   int numToShow;
+  // Change this to load more posts per refresh
   int postsPerReload = 4;
 
-  /*void _getPosts() async {
-    mongo.Db db = new mongo.Db.pool([
-      "mongodb://Developer_1:Developer_1@woolalacluster-shard-00-00.o4vv6.mongodb.net:27017/Feed?ssl=true&replicaSet=project-shard-0&authSource=admin&retryWrites=true&w=majority",
-      "mongodb://Developer_1:Developer_1@woolalacluster-shard-00-01.o4vv6.mongodb.net:27017/Feed?ssl=true&replicaSet=project-shard-0&authSource=admin&retryWrites=true&w=majority",
-      "mongodb://Developer_1:Developer_1@woolalacluster-shard-00-02.o4vv6.mongodb.net:27017/Feed?ssl=true&replicaSet=project-shard-0&authSource=admin&retryWrites=true&w=majority"
-    ]);
-    await db.open();
-    var posts = db.collection('Posts');
-    List tempList = new List();
-    tempList = await posts.find(mongo.where.sortBy('date')).toList();
-    db.close();
 
-    setState(() {
-      postList = tempList;
-    });
- // } */
-
+  // Puts posts sorted order by date
   void sortPosts(list) {
     list.removeWhere((item) => item == "");
     list.sort((a, b) =>
@@ -184,6 +162,7 @@ class _HomepageScreenState extends State<HomepageScreen> {
         int.parse(a.substring(a.indexOf(':::') + 3)));
   }
 
+  // is called when the user pulls up on home screen
   void _onRefresh() async {
     postIDs = await getFeed(currentUser.userID);
     ratedPosts = await getRatedPosts(currentUser.userID);
@@ -194,6 +173,7 @@ class _HomepageScreenState extends State<HomepageScreen> {
     _refreshController.refreshCompleted();
   }
 
+  // is called when the user pulls down on the home screen
   void _onLoading() async {
     await Future.delayed(Duration(milliseconds: 1000));
     if (numToShow + postsPerReload > postIDs.length) {
@@ -302,9 +282,3 @@ class _HomepageScreenState extends State<HomepageScreen> {
   }
 }
 
-// ListView.builder(
-// padding: const EdgeInsets.all(0),
-// itemCount: snapshot.data.length,
-// itemBuilder: (BuildContext context, int index) {
-// return card(snapshot.data[index]);
-// });

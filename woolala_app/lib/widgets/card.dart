@@ -32,6 +32,8 @@ import 'package:path_provider/path_provider.dart';
 import 'package:image/image.dart' as ui;
 import 'dart:convert';
 
+// This entire class is the widget that will populate the feed on the homepage
+
 class FeedCard extends StatefulWidget {
   FeedCard(String postID, List rated) {
     this.postID = postID;
@@ -59,6 +61,7 @@ class _FeedCardState extends State<FeedCard> {
     super.initState();
   }
 
+  // This widget is what appears with the average score after a post is rated
   Widget score(postID) {
     return rated
         ? FutureBuilder(

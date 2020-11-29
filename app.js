@@ -54,6 +54,7 @@ app.post("/insertUser", (request, response) => {
     });
 });
 
+// handles everything that needs to happen when a post is rated
 app.post("/ratePost/:id/:rating/:userID", (request, response) => {
   collection.findOne({"postID":request.params.id}, function(err, document) {
   var newNumRatings = 1 + document.numRatings;
@@ -122,6 +123,7 @@ app.post("/updateUserProfilePic/:id", (request, response) => {
   });
 });
 
+//returns the entire post
 app.get("/getPostInfo/:id", (request, response) => {
     collection.findOne({"postID":request.params.id}, function(err, document) {
     response.send(document);
@@ -142,6 +144,7 @@ app.get("/doesUserExist/:email", (request, response) => {
     });
 });
 
+// gets a user by userID
 app.get("/getUser/:userID", (request, response) => {
     userCollection.findOne({"userID":request.params.userID}, function(err, document) {
       if(document)
@@ -168,6 +171,7 @@ app.get("/getAllUsers", (request, response) => {
 });
 
 
+// gets a list of postID's from all the users that the provided user is following
 app.get("/getFeed/:userID", (request, response) => {
       console.log('Feed requested for user ' + request.params.userID);
 
@@ -198,6 +202,7 @@ app.get("/getOwnFeed/:userID", (request, response) => {
 });
 
 
+// handles following a user
 app.post("/follow/:you/:them", (request, response) => {
     var currentUserID = request.params.you;
     var followUserID = request.params.them;
@@ -214,6 +219,7 @@ app.post("/follow/:you/:them", (request, response) => {
     response.send({});
 });
 
+// handles unfollowing a user
 app.post("/unfollow/:you/:them", (request, response) => {
     var currentUserID = request.params.you;
     var unfollowUserID = request.params.them;
@@ -243,6 +249,7 @@ app.post("/deleteAllPosts/:ID", (request, response) => {
     });
 });
 
+// deleted the post with the provided postID
 app.post("/deleteOnePost/:postID/:userID", (request, response) => {
   var update = { $pull: {"postIDs": request.params.postID} };
   userCollection.updateOne({"userID":request.params.userID}, update, function(err, res){});
