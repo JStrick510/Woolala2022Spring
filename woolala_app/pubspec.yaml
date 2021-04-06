@@ -45,6 +45,7 @@ dependencies:
   screenshot: ^0.2.0
   image: ^2.1.14
   path_provider: ^1.6.24
+  build_runner: any
 
 flutter_icons:
   android: true
