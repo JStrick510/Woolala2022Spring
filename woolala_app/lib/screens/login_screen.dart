@@ -80,6 +80,7 @@ class _LoginScreenState extends State<LoginScreen> {
     gSignIn.signIn();
   }
 
+
   void facebookLoginUser() async {
     var facebookLoginResult = await facebookLogin.logIn(['email']);
     switch (facebookLoginResult.status) {
