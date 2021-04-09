@@ -324,7 +324,7 @@ class _FeedCardState extends State<FeedCard> {
                                   onPressed: () async {
                                     await sc.capture().then((image) async {
                                       _originalImage = image;
-                                      SocialShare.shareOptions("Woolala",imagePath: _originalImage.path);
+                                      SocialShare.shareOptions("Shared from Woolala App",imagePath: _originalImage.path).then((data) {print(data);});
 
                                       //facebook appId is mandatory for android or else share won't work
                                       // Platform.isAndroid
