@@ -324,25 +324,27 @@ class _FeedCardState extends State<FeedCard> {
                                   onPressed: () async {
                                     await sc.capture().then((image) async {
                                       _originalImage = image;
+                                      SocialShare.shareOptions("Woolala",imagePath: _originalImage.path);
+
                                       //facebook appId is mandatory for android or else share won't work
-                                      Platform.isAndroid
-                                          ? SocialShare.shareFacebookStory(
-                                                  _originalImage.path,
-                                                  "#ffffff",
-                                                  "#000000",
-                                                  "https://google.com",
-                                                  appId: "829266574315982")
-                                              .then((data) {
-                                              print(data);
-                                            })
-                                          : SocialShare.shareFacebookStory(
-                                                  _originalImage.path,
-                                                  "#ffffff",
-                                                  "#000000",
-                                                  "https://google.com")
-                                              .then((data) {
-                                              print(data);
-                                            });
+                                      // Platform.isAndroid
+                                      //     ? SocialShare.shareFacebookStory(
+                                      //             _originalImage.path,
+                                      //             "#ffffff",
+                                      //             "#000000",
+                                      //     "https://deep-link-url",
+                                      //     appId: "457421962253693")
+                                      //         .then((data) {
+                                      //         print(data);
+                                      //       })
+                                      //     : SocialShare.shareFacebookStory(
+                                      //             _originalImage.path,
+                                      //             "#ffffff",
+                                      //             "#000000",
+                                      //     "https://deep-link-url")
+                                      //         .then((data) {
+                                      //         print(data);
+                                      //       });
                                     });
                                   },
                                   //child: Text("Share Options"),
