@@ -41,8 +41,8 @@ Widget starSlider(String postID, num, rated) =>
 
 // Will be used anytime the post is rated
 Future<http.Response> ratePost(double rating, String id) {
-  return http.post(
-    domain + '/ratePost/' + id.toString() + '/' + rating.toString() + '/' + currentUser.userID,
+  return http.post(Uri.parse(
+    domain + '/ratePost/' + id.toString() + '/' + rating.toString() + '/' + currentUser.userID),
     headers: <String, String>{
       'Content-Type': 'application/json',
     },
@@ -53,8 +53,8 @@ Future<http.Response> ratePost(double rating, String id) {
 // Will be used to make the post for the first time.
 Future<http.Response> createPost(String postID, String image, String date,
     String caption, String userID, String userName) {
-  return http.post(
-    domain + '/insertPost',
+  return http.post(Uri.parse(
+    domain + '/insertPost'),
     headers: <String, String>{
       'Content-Type': 'application/json',
     },
@@ -75,8 +75,8 @@ Future<http.Response> createPost(String postID, String image, String date,
 // Will add a post to the reported section of the DB
 Future<http.Response> reportPost(String postID, String reportingUserID, String date,
     String postUserID) {
-  return http.post(
-    domain + '/reportPost',
+  return http.post(Uri.parse(
+    domain + '/reportPost'),
     headers: <String, String>{
       'Content-Type': 'application/json',
     },
@@ -91,7 +91,7 @@ Future<http.Response> reportPost(String postID, String reportingUserID, String d
 
 // Will be used to get info about the post
 Future<List> getPost(String id) async {
-  http.Response res = await http.get(domain + '/getPostInfo/' + id);
+  http.Response res = await http.get(Uri.parse(domain + '/getPostInfo/' + id));
   Map info = jsonDecode(res.body.toString());
   final decodedBytes = base64Decode(info["image"]);
   var avg;
@@ -114,21 +114,21 @@ Future<List> getPost(String id) async {
 
 // Returns a list of all the posts the provided user has rated
 Future<List> getRatedPosts(String userID) async {
-  http.Response res = await http.get(domain + '/getRatedPosts/' + userID);
+  http.Response res = await http.get(Uri.parse(domain + '/getRatedPosts/' + userID));
   return jsonDecode(res.body.toString());
 
 }
 
 // Will retrieve the entire user document from the DB with the provided user ID
 Future<User> getUserFromDB(String userID) async {
-  http.Response res = await http.get(domain + '/getUser/' + userID);
+  http.Response res = await http.get(Uri.parse(domain + '/getUser/' + userID));
   Map userMap = jsonDecode(res.body.toString());
   return User.fromJSON(userMap);
 }
 
 // Will return a list of posts from all the users the provided user is following
 Future<List> getFeed(String userID) async {
-  http.Response res = await http.get(domain + '/getFeed/' + userID);
+  http.Response res = await http.get(Uri.parse(domain + '/getFeed/' + userID));
   return jsonDecode(res.body.toString())["postIDs"];
 }
 

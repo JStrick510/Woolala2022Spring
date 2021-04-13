@@ -4,12 +4,6 @@
 <dict>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(EXECUTABLE_NAME)</string>
-	<key>NSPhotoLibraryUsageDescription</key>
-	<string>$(EXECUTABLE_NAME)</string>
-	<key>NSCameraUsageDescription</key>
-	<string>$(EXECUTABLE_NAME)</string>
-	<key>NSMicrophoneUsageDescription</key>
-	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -24,10 +18,62 @@
 	<string>$(FLUTTER_BUILD_NAME)</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>fb457421962253693</string>
+			</array>
+		</dict>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>com.googleusercontent.apps.992623634786-vjrr0eun14b55ivja749nhoscove3vcb</string>
+			</array>
+		</dict>
+	</array>
 	<key>CFBundleVersion</key>
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
+	<key>FacebookAppID</key>
+	<string>457421962253693</string>
+	<key>FacebookDisplayName</key>
+	<string>WooLaLa</string>
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+		<string>fbapi</string>
+        <string>fbapi20130214</string>
+        <string>fbapi20130410</string>
+        <string>fbapi20130702</string>
+        <string>fbapi20131010</string>
+        <string>fbapi20131219</string>
+        <string>fbapi20140410</string>
+        <string>fbapi20140116</string>
+        <string>fbapi20150313</string>
+        <string>fbapi20150629</string>
+        <string>fbapi20160328</string>
+        <string>fbauth</string>
+        <string>fb-messenger-share-api</string>
+        <string>fbauth2</string>
+        <string>fbshareextension</string>
+		<string>instagram-stories</string>
+		<string>facebook-stories</string>
+		<string>facebook</string>
+		<string>instagram</string>
+		<string>twitter</string>
+		<string>whatsapp</string>
+		<string>tg</string>
+	</array>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>NSCameraUsageDescription</key>
+	<string>$(EXECUTABLE_NAME)</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>$(DEVELOPMENT_LANGUAGE)</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>$(EXECUTABLE_NAME)</string>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>
@@ -47,48 +93,7 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
-	<key>CFBundleURLTypes</key>
-    <array>
-        <!--
-        <dict>
-        ... Some other CFBundleURLTypes definition.
-        </dict>
-        -->
-        <dict>
-            <key>CFBundleURLSchemes</key>
-            <array>
-                <!--
-                  Replace "829266574315982" with your Facebook App ID here.
-                  **NOTE**: The scheme needs to start with `fb` and then your ID.
-                -->
-                <string>fb829266574315982</string>
-            </array>
-        </dict>
-    </array>
 
-    <key>FacebookAppID</key>
-
-    <!-- Replace "829266574315982" with your Facebook App ID here. -->
-    <string>829266574315982</string>
-    <key>FacebookDisplayName</key>
-
-    <!-- Replace "YOUR_APP_NAME" with your Facebook App name. -->
-    <string>WooLaLa</string>
-
-    <key>LSApplicationQueriesSchemes</key>
-    <array>
-        <string>fbapi</string>
-        <string>fb-messenger-share-api</string>
-        <string>fbauth2</string>
-        <string>fbshareextension</string>
-        <string>instagram-stories</string>
-        <string>facebook-stories</string>
-        <string>facebook</string>
-        <string>instagram</string>
-        <string>twitter</string>
-        <string>whatsapp</string>
-        <string>tg</string>
-    </array>
 
 </dict>
 </plist>

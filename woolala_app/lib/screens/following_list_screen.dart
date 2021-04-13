@@ -18,25 +18,25 @@ class FollowingListScreen extends StatefulWidget {
 
 //Gets the profileName of the user
 Future<String> getProfileName(String userID) async {
-  http.Response res = await http.get(domain + "/getUser/" + userID);
+  http.Response res = await http.get(Uri.parse(domain + "/getUser/" + userID));
   Map userMap = jsonDecode(res.body.toString());
   return User.fromJSON(userMap).profileName;
 }
 //Gets the email of the user
 Future<String> getUserEmail(String userID) async {
-  http.Response res = await http.get(domain + "/getUser/" + userID);
+  http.Response res = await http.get(Uri.parse(domain + "/getUser/" + userID));
   Map userMap = jsonDecode(res.body.toString());
   return User.fromJSON(userMap).email;
 }
 //Gets the userName of the user
 Future<String> getUserName(String userID) async {
-  http.Response res = await http.get(domain + "/getUser/" + userID);
+  http.Response res = await http.get(Uri.parse(domain + "/getUser/" + userID));
   Map userMap = jsonDecode(res.body.toString());
   return User.fromJSON(userMap).userName;
 }
 
 Future<String> getUserID(String userID) async {
-  http.Response res = await http.get(domain + "/getUser/" + userID);
+  http.Response res = await http.get(Uri.parse(domain + "/getUser/" + userID));
   Map userMap = jsonDecode(res.body.toString());
   return User.fromJSON(userMap).userID;
 }

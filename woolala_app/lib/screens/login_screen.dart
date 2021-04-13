@@ -28,7 +28,7 @@ void facebookLogoutUser() {
 
 // called by save user to server methods
 Future<User> getDoesUserExists(String email) async {
-  http.Response res = await http.get(domain + "/doesUserExist/" + email);
+  http.Response res = await http.get(Uri.parse(domain + "/doesUserExist/" + email));
   if (res.body.isNotEmpty) {
     Map userMap = jsonDecode(res.body.toString());
     return User.fromJSON(userMap);
@@ -40,7 +40,7 @@ Future<User> getDoesUserExists(String email) async {
 // called by save user to server methods
 Future<http.Response> insertUser(User u) {
   print("Inserting new user to the db.");
-  return http.post(domain + '/insertUser',
+  return http.post(Uri.parse(domain + '/insertUser'),
     headers: <String, String>{
       'Content-Type': 'application/json',
     },
@@ -86,6 +86,7 @@ class _LoginScreenState extends State<LoginScreen> {
     switch (facebookLoginResult.status) {
       case FacebookLoginStatus.error:
         print("Facebook login error.");
+        print("Error from Facebook '${facebookLoginResult.errorMessage}'");
         break;
       case FacebookLoginStatus.cancelledByUser:
         print("Facebook login cancelled by user.");
@@ -194,7 +195,7 @@ class _LoginScreenState extends State<LoginScreen> {
     var tempToken = (await facebookLogin.currentAccessToken);
     var token = tempToken.token;
     final graphResponse = await http.get(
-        'https://graph.facebook.com/v2.12/me?fields=name,first_name,last_name,picture.type(large),email&access_token=${token}');
+        Uri.parse('https://graph.facebook.com/v2.12/me?fields=name,first_name,last_name,picture.type(large),email&access_token=${token}'));
     final profile = json.decode(graphResponse.body);
     User tempUser = await getDoesUserExists(profile['email']);
     switch (tempUser) {

@@ -24,16 +24,16 @@ class EditProfilePage extends StatefulWidget{
 }
 
 Future<void> unFollow(String currentAccountID, String otherAccountID) async{
-  http.Response res = await http.post(domain + '/unfollow/' + currentAccountID + '/' + otherAccountID);
+  http.Response res = await http.post(Uri.parse(domain + '/unfollow/' + currentAccountID + '/' + otherAccountID));
 }
 
 Future<void> deleteUser(String currentAccountID) async{
-  http.Response res = await http.post(domain + '/deleteUser/' + currentAccountID);
+  http.Response res = await http.post(Uri.parse(domain + '/deleteUser/' + currentAccountID));
   print(res);
 }
 
 Future<void> deletePosts(String currentAccountID) async{
-  http.Response res = await http.post(domain + '/deleteAllPosts/' + currentAccountID);
+  http.Response res = await http.post(Uri.parse(domain + '/deleteAllPosts/' + currentAccountID));
 }
 
 class _EditProfilePageState extends State<EditProfilePage>{

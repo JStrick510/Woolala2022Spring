@@ -17,7 +17,8 @@ String domain;
 void main() {
   if (localDev)
   {
-    domain = "http://10.0.2.2:5000";
+    // domain = "http://10.0.2.2:5000";
+    domain = "http://0.0.0.0:5000";
   }
   else
   {

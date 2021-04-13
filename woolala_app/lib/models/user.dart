@@ -86,7 +86,7 @@ class User{
         if(postIDs[i]!= '')
           {
             String req = domain + '/getPostInfo/' + postIDs[i];
-            http.Response res = await http.get(req);
+            http.Response res = await http.get(Uri.parse(req));
             Map postDetails = jsonDecode(res.body.toString());
             if(postDetails['numRatings'].toDouble() < 1)
               {
@@ -107,21 +107,21 @@ class User{
   {
     profileName = p;
     String request = domain + '/updateUserProfileName/' + userID + '/' + profileName ;
-    return http.post(request, headers: <String, String>{'Content-Type': 'application/json',});
+    return http.post(Uri.parse(request), headers: <String, String>{'Content-Type': 'application/json',});
   }
 
   Future<http.Response> setPrivacy(bool p)
   {
     private = p;
     String request = domain + '/updateUserPrivacy/' + userID + '/' + private.toString() ;
-    return http.post(request, headers: <String, String>{'Content-Type': 'application/json',});
+    return http.post(Uri.parse(request), headers: <String, String>{'Content-Type': 'application/json',});
   }
 
     Future<http.Response> setUserBio(String b)
     {
       bio = b;
       String request = domain + '/updateUserBio/' + userID + '/' + bio ;
-      return http.post(request, headers: <String, String>{'Content-Type': 'application/json',});
+      return http.post(Uri.parse(request), headers: <String, String>{'Content-Type': 'application/json',});
     }
 
   Future<http.Response> setUserName(String u) async
@@ -133,7 +133,7 @@ class User{
       userName = uName;
       String request = domain + '/updateUserName/' + userID + '/' +
           userName;
-      return http.post(request,
+      return http.post(Uri.parse(request),
           headers: <String, String>{'Content-Type': 'application/json',});
   }
 
@@ -144,7 +144,7 @@ class User{
         uName = '@' + n;
       }
       String request = domain + '/getUserByUserName/' + uName;
-      return http.get(request, headers: <String, String>{'Content-Type': 'application/json',});
+      return http.get(Uri.parse(request), headers: <String, String>{'Content-Type': 'application/json',});
   }
 
   Future<http.Response> setProfilePic(String pic)
@@ -154,7 +154,7 @@ class User{
     String request = domain + '/updateUserProfilePic/' + userID ;
     //print(request);
     return http.post(
-      request, headers: <String, String>{'Content-Type': 'application/json',},
+      Uri.parse(request), headers: <String, String>{'Content-Type': 'application/json',},
       body: jsonEncode(<String, String>{
         'profilePic': profilePic,
         }

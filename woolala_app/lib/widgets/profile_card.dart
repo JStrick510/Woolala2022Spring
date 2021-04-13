@@ -17,6 +17,7 @@ import 'dart:collection';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 import 'dart:io';
+import 'dart:typed_data';
 import 'package:woolala_app/screens/login_screen.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:woolala_app/screens/post_screen.dart';
@@ -31,7 +32,7 @@ import 'package:social_share/social_share.dart';
 
 Future<http.Response> deletePost(String postID, String userID) {
   return http.post(
-    domain + '/deleteOnePost/' + postID + '/' + userID,
+    Uri.parse(domain + '/deleteOnePost/' + postID + '/' + userID),
     headers: <String, String>{
       'Content-Type': 'application/json',
     },
@@ -133,20 +134,20 @@ class _OwnFeedCardState extends State<OwnFeedCard>{
   var tempWouldBuyList = [];
   var wouldBuyNameList = [];
   var wouldBuyEmailList = [];
-  File _originalImage;
+  Uint8List _originalImage;
 
   void checkWouldBuy(String userID, String postID) async{
     print("Post ID:"  + postID);
-    http.Response res = await http.get(domain +
-        '/checkWouldBuy/' + postID.toString());
+    http.Response res = await http.get(Uri.parse(domain +
+        '/checkWouldBuy/' + postID.toString()));
     tempWouldBuyList = json.decode(res.body.toString());
 
     if(tempWouldBuyList.length > 0)
       {
         for(int i = 0; i < tempWouldBuyList.length; i++)
           {
-            http.Response res = await http.get(domain +
-                '/getUser/' + tempWouldBuyList[i].toString());
+            http.Response res = await http.get(Uri.parse(domain +
+                '/getUser/' + tempWouldBuyList[i].toString()));
             var user = json.decode(res.body.toString());
             wouldBuyNameList.add(user['profileName']);
             wouldBuyEmailList.add(user['email']);
@@ -287,7 +288,8 @@ class _OwnFeedCardState extends State<OwnFeedCard>{
                                               //facebook appId is mandatory for android or else share won't work
                                               Platform.isAndroid
                                                   ? SocialShare.shareFacebookStory(
-                                                  _originalImage.path,
+                                                  // _originalImage.path,
+                                                  File.fromRawPath(_originalImage).path,
                                                   "#ffffff",
                                                   "#000000",
                                                   "https://google.com",
@@ -296,7 +298,8 @@ class _OwnFeedCardState extends State<OwnFeedCard>{
                                                 print(data);
                                               })
                                                   : SocialShare.shareFacebookStory(
-                                                  _originalImage.path,
+                                                  // _originalImage.path,
+                                                  File.fromRawPath(_originalImage).path,
                                                   "#ffffff",
                                                   "#000000",
                                                   "https://google.com")
