@@ -107,7 +107,11 @@ class _LoginScreenState extends State<LoginScreen> {
 
   void googleLoginUser() {
     print("Google signing in!");
-    gSignIn.signIn();
+    try {
+      gSignIn.signIn();
+    } catch (error) {
+      print(error);
+    }
   }
 
   void facebookLoginUser() async {
@@ -116,9 +120,11 @@ class _LoginScreenState extends State<LoginScreen> {
       case FacebookLoginStatus.error:
         print("Facebook login error.");
         print("Error from Facebook '${facebookLoginResult.errorMessage}'");
+        Navigator.pop(context);
         break;
       case FacebookLoginStatus.cancelledByUser:
         print("Facebook login cancelled by user.");
+        Navigator.pop(context);
         break;
       case FacebookLoginStatus.loggedIn:
         signInProcess();
@@ -156,8 +162,10 @@ class _LoginScreenState extends State<LoginScreen> {
       if (SignInWithAppleAuthorizationException.code ==
           AuthorizationErrorCode.canceled) {
         print('Apple Sign In Cancelled by User');
+        Navigator.pop(context);
       } else {
         print('Apple Sign In error');
+        Navigator.pop(context);
       }
       if (!_disposed) {
         setState(() {
@@ -258,12 +266,15 @@ class _LoginScreenState extends State<LoginScreen> {
 
 // called in controlGoogleSignIn
   saveGoogleUserInfoToServer() async {
+    showAlertDialog(context);
     final GoogleSignInAccount gAccount = gSignIn.currentUser;
     User tempUser = await getDoesUserExists(gAccount.email);
     if (tempUser != null && tempUser.userID != "") //account exists
     {
       print("User account found with Google email.");
       currentUser = tempUser;
+      Navigator.pop(context);
+      Navigator.pushReplacementNamed(context, '/home');
     } else {
       print("Making an account with Google.");
       User u = User(
@@ -284,6 +295,8 @@ class _LoginScreenState extends State<LoginScreen> {
       await insertUser(u);
       currentUser = u;
       _firstTimeLogin = true;
+      Navigator.pop(context);
+      Navigator.pushReplacementNamed(context, '/createAccount');
     }
   }
 
@@ -317,10 +330,14 @@ class _LoginScreenState extends State<LoginScreen> {
         await insertUser(u);
         currentUser = u;
         _firstTimeLogin = true;
+        Navigator.pop(context);
+        Navigator.pushReplacementNamed(context, '/createUser');
         break;
       default:
         print("User account found with Facebook email.");
         currentUser = tempUser;
+        Navigator.pop(context);
+        Navigator.pushReplacementNamed(context, '/home');
         break;
     }
   }
@@ -331,6 +348,8 @@ class _LoginScreenState extends State<LoginScreen> {
     {
       print("User account found with Apple ID email.");
       currentUser = tempUser;
+      Navigator.pop(context);
+      Navigator.pushReplacementNamed(context, '/home');
     } else {
       print("Making an account with Apple.");
       User u = User(
@@ -349,6 +368,8 @@ class _LoginScreenState extends State<LoginScreen> {
       await insertUser(u);
       currentUser = u;
       _firstTimeLogin = true;
+      Navigator.pop(context);
+      Navigator.pushReplacementNamed(context, '/createUser');
     }
   }
 
@@ -372,104 +393,103 @@ class _LoginScreenState extends State<LoginScreen> {
           ColorTween(begin: Colors.purple[900], end: Colors.purple[500]))
     ]);
 
-    if (_firstTimeLogin) {
-      return CreateUserName();
-    } else if (isSignedInWithGoogle ||
-        isSignedInWithFacebook ||
-        isSignedInWithApple) {
-      return HomepageScreen(
-          isSignedInWithGoogle, isSignedInWithFacebook, isSignedInWithApple);
-    } else {
-      return Scaffold(
-          key: _scaffoldKey,
-          body: Center(
-              child: ControlledAnimation(
-                  playback: Playback.MIRROR,
-                  tween: tween,
-                  duration: tween.duration,
-                  builder: (context, animation) {
-                    return Container(
-                      child: Container(
-                        padding: EdgeInsets.symmetric(vertical: 25),
-                        width: double.infinity,
-                        decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                                begin: Alignment.topCenter,
-                                end: Alignment.bottomCenter,
-                                colors: [
-                              animation["color1"],
-                              animation["color2"],
-                              animation["color3"]
-                            ])),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: <Widget>[
-                            new Image.asset('./assets/logos/ChooseNXT logo.png',
-                                width: 300,
-                                height: 150,
-                                fit: BoxFit.contain,
-                                semanticLabel: 'WooLaLa logo'),
-                            Text(
-                              "Powered by: ",
-                              style:
-                                  TextStyle(color: Colors.white, fontSize: 16),
+    // if (_firstTimeLogin) {
+    //   return CreateUserName();
+    // } else if (isSignedInWithGoogle ||
+    //     isSignedInWithFacebook ||
+    //     isSignedInWithApple) {
+    //   return HomepageScreen(
+    //       isSignedInWithGoogle, isSignedInWithFacebook, isSignedInWithApple);
+    // } else {
+    return Scaffold(
+        key: _scaffoldKey,
+        body: Center(
+            child: ControlledAnimation(
+                playback: Playback.MIRROR,
+                tween: tween,
+                duration: tween.duration,
+                builder: (context, animation) {
+                  return Container(
+                    child: Container(
+                      padding: EdgeInsets.symmetric(vertical: 25),
+                      width: double.infinity,
+                      decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                              begin: Alignment.topCenter,
+                              end: Alignment.bottomCenter,
+                              colors: [
+                            animation["color1"],
+                            animation["color2"],
+                            animation["color3"]
+                          ])),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          new Image.asset('./assets/logos/ChooseNXT logo.png',
+                              width: 300,
+                              height: 150,
+                              fit: BoxFit.contain,
+                              semanticLabel: 'WooLaLa logo'),
+                          Text(
+                            "Powered by: ",
+                            style: TextStyle(color: Colors.white, fontSize: 16),
+                          ),
+                          Image.asset('assets/logos/fashionNXT_logo.png',
+                              width: 150,
+                              height: 30,
+                              fit: BoxFit.contain,
+                              semanticLabel: 'FashioNXT logo'),
+                          SizedBox(
+                            height: 25,
+                          ),
+                          CarouselSlider(
+                            options: CarouselOptions(
+                              height: 160.0,
+                              initialPage: 0,
+                              enlargeCenterPage: true,
+                              autoPlay: true,
+                              reverse: false,
+                              enableInfiniteScroll: true,
+                              autoPlayInterval: Duration(seconds: 4),
+                              autoPlayAnimationDuration:
+                                  Duration(milliseconds: 2000),
+                              scrollDirection: Axis.horizontal,
                             ),
-                            Image.asset('assets/logos/fashionNXT_logo.png',
-                                width: 150,
-                                height: 30,
-                                fit: BoxFit.contain,
-                                semanticLabel: 'FashioNXT logo'),
-                            SizedBox(
-                              height: 25,
-                            ),
-                            CarouselSlider(
-                              options: CarouselOptions(
-                                height: 160.0,
-                                initialPage: 0,
-                                enlargeCenterPage: true,
-                                autoPlay: true,
-                                reverse: false,
-                                enableInfiniteScroll: true,
-                                autoPlayInterval: Duration(seconds: 4),
-                                autoPlayAnimationDuration:
-                                    Duration(milliseconds: 2000),
-                                scrollDirection: Axis.horizontal,
-                              ),
-                              items: images.map((imgUrl) {
-                                return Builder(
-                                  builder: (BuildContext context) {
-                                    return Container(
-                                      width: MediaQuery.of(context).size.width,
-                                      margin: EdgeInsets.symmetric(
-                                          horizontal: 10.0),
-                                      decoration: BoxDecoration(
-                                        color: Colors.black,
-                                      ),
-                                      child: Image.network(
-                                        imgUrl,
-                                        fit: BoxFit.fill,
-                                      ),
-                                    );
-                                  },
-                                );
-                              }).toList(),
-                            ),
-                            SizedBox(
-                              height: 25,
-                            ),
-                            Text(
-                              "Login With:",
-                              style:
-                                  TextStyle(color: Colors.white, fontSize: 24),
-                            ),
-                            _buildSocialButtonRow()
-                          ],
-                        ),
+                            items: images.map((imgUrl) {
+                              return Builder(
+                                builder: (BuildContext context) {
+                                  return Container(
+                                    width: MediaQuery.of(context).size.width,
+                                    margin:
+                                        EdgeInsets.symmetric(horizontal: 10.0),
+                                    decoration: BoxDecoration(
+                                      color: Colors.black,
+                                    ),
+                                    child: Image.network(
+                                      imgUrl,
+                                      fit: BoxFit.fill,
+                                    ),
+                                  );
+                                },
+                              );
+                            }).toList(),
+                          ),
+                          SizedBox(
+                            height: 25,
+                          ),
+                          Text(
+                            "Login With:",
+                            style: TextStyle(color: Colors.white, fontSize: 24),
+                          ),
+                          _buildSocialButtonRow()
+                        ],
                       ),
-                    );
-                  })));
-    }
+                    ),
+                  );
+                })));
   }
+
+  // }
 
   Widget _buildSocialBtn(Function onTap, AssetImage logo, String keyText) {
     return GestureDetector(
@@ -509,6 +529,7 @@ class _LoginScreenState extends State<LoginScreen> {
             () {
               facebookLogoutUser();
               googleLogoutUser();
+              showAlertDialog(context);
               facebookLoginUser();
             },
             AssetImage(
@@ -532,6 +553,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   () {
                     googleLogoutUser();
                     facebookLogoutUser();
+                    showAlertDialog(context);
                     signInWithApple();
                   },
                   AssetImage('assets/logos/logo_apple.png'),
@@ -542,4 +564,35 @@ class _LoginScreenState extends State<LoginScreen> {
       ),
     );
   }
+}
+
+//progress indicator
+showAlertDialog(BuildContext context) {
+  AlertDialog alert = AlertDialog(
+    content: Container(
+      child: Row(
+        children: <Widget>[
+          SizedBox(
+            width: 200,
+            height: 200,
+            child: CircularProgressIndicator(
+              backgroundColor: Colors.transparent,
+              strokeWidth: 8,
+            ),
+          ),
+        ],
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+      ),
+    ),
+    backgroundColor: Colors.white.withOpacity(0.7),
+    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16))
+  );
+  showDialog(
+    barrierDismissible: false,
+    context: context,
+    builder: (BuildContext context) {
+      return alert;
+    },
+  );
 }

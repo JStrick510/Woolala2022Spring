@@ -290,6 +290,8 @@ class _HomepageScreenState extends State<HomepageScreen> {
       facebookLogoutUser();
       Navigator.pushReplacementNamed(context, '/');
     } else {
+      googleLogoutUser();
+      facebookLogoutUser();
       Navigator.pushReplacementNamed(context, '/');
     }
   }
