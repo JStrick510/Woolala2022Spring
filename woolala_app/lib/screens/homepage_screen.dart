@@ -14,17 +14,15 @@ import 'package:woolala_app/widgets/card.dart';
 import 'package:woolala_app/main.dart';
 import 'dart:io';
 
-
 // Star widget on the home page
-Widget starSlider(String postID, num, rated) =>
-    RatingBar(
+Widget starSlider(String postID, num, rated) => RatingBar(
       initialRating: num,
       minRating: 0,
       direction: Axis.horizontal,
       allowHalfRating: true,
       ignoreGestures: rated,
       itemCount: 5,
-      unratedColor: rated ? Colors.grey :Colors.black,
+      unratedColor: rated ? Colors.grey : Colors.black,
       itemSize: 30,
       itemPadding: EdgeInsets.symmetric(horizontal: 4.0),
       itemBuilder: (context, _) => Icon(
@@ -41,8 +39,14 @@ Widget starSlider(String postID, num, rated) =>
 
 // Will be used anytime the post is rated
 Future<http.Response> ratePost(double rating, String id) {
-  return http.post(Uri.parse(
-    domain + '/ratePost/' + id.toString() + '/' + rating.toString() + '/' + currentUser.userID),
+  return http.post(
+    Uri.parse(domain +
+        '/ratePost/' +
+        id.toString() +
+        '/' +
+        rating.toString() +
+        '/' +
+        currentUser.userID),
     headers: <String, String>{
       'Content-Type': 'application/json',
     },
@@ -53,8 +57,8 @@ Future<http.Response> ratePost(double rating, String id) {
 // Will be used to make the post for the first time.
 Future<http.Response> createPost(String postID, String image, String date,
     String caption, String userID, String userName) {
-  return http.post(Uri.parse(
-    domain + '/insertPost'),
+  return http.post(
+    Uri.parse(domain + '/insertPost'),
     headers: <String, String>{
       'Content-Type': 'application/json',
     },
@@ -73,10 +77,10 @@ Future<http.Response> createPost(String postID, String image, String date,
 }
 
 // Will add a post to the reported section of the DB
-Future<http.Response> reportPost(String postID, String reportingUserID, String date,
-    String postUserID) {
-  return http.post(Uri.parse(
-    domain + '/reportPost'),
+Future<http.Response> reportPost(
+    String postID, String reportingUserID, String date, String postUserID) {
+  return http.post(
+    Uri.parse(domain + '/reportPost'),
     headers: <String, String>{
       'Content-Type': 'application/json',
     },
@@ -95,10 +99,9 @@ Future<List> getPost(String id) async {
   Map info = jsonDecode(res.body.toString());
   final decodedBytes = base64Decode(info["image"]);
   var avg;
-  if(info["numRatings"]>0) {
+  if (info["numRatings"] > 0) {
     avg = info["cumulativeRating"] / info["numRatings"];
-  }
-  else{
+  } else {
     avg = 0.0;
   }
   var ret = [
@@ -114,9 +117,9 @@ Future<List> getPost(String id) async {
 
 // Returns a list of all the posts the provided user has rated
 Future<List> getRatedPosts(String userID) async {
-  http.Response res = await http.get(Uri.parse(domain + '/getRatedPosts/' + userID));
+  http.Response res =
+      await http.get(Uri.parse(domain + '/getRatedPosts/' + userID));
   return jsonDecode(res.body.toString());
-
 }
 
 // Will retrieve the entire user document from the DB with the provided user ID
@@ -134,25 +137,28 @@ Future<List> getFeed(String userID) async {
 
 class HomepageScreen extends StatefulWidget {
   final bool signedInWithGoogle;
+  final bool signedInWithFacebook;
+  final bool signedInWithApple;
 
-  HomepageScreen(this.signedInWithGoogle);
+  HomepageScreen(this.signedInWithGoogle, this.signedInWithFacebook,
+      this.signedInWithApple);
 
   _HomepageScreenState createState() => _HomepageScreenState();
 }
 
 class _HomepageScreenState extends State<HomepageScreen> {
+  RefreshController _refreshController =
+      RefreshController(initialRefresh: false);
 
-  RefreshController _refreshController = RefreshController(initialRefresh: false);
   //ScreenshotController screenshotController = ScreenshotController();
-
 
   List postIDs = [];
   var ratedPosts = [];
   File file;
   int numToShow;
+
   // Change this to load more posts per refresh
   int postsPerReload = 4;
-
 
   // Puts posts sorted order by date
   void sortPosts(list) {
@@ -191,23 +197,21 @@ class _HomepageScreenState extends State<HomepageScreen> {
   initState() {
     super.initState();
     if (currentUser != null)
-    getFeed(currentUser.userID).then((list) {
-      postIDs = list;
-      if (postIDs.length < postsPerReload)
-        numToShow = postIDs.length;
-      else
-        numToShow = postsPerReload;
-      sortPosts(postIDs);
-      print(postIDs);
-      setState(() {});
-    }
-    );
+      getFeed(currentUser.userID).then((list) {
+        postIDs = list;
+        if (postIDs.length < postsPerReload)
+          numToShow = postIDs.length;
+        else
+          numToShow = postsPerReload;
+        sortPosts(postIDs);
+        print(postIDs);
+        setState(() {});
+      });
 
-    getRatedPosts(currentUser.userID).then((list) {ratedPosts = list;});
+    getRatedPosts(currentUser.userID).then((list) {
+      ratedPosts = list;
+    });
   }
-
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -238,27 +242,34 @@ class _HomepageScreenState extends State<HomepageScreen> {
       body: Center(
         child: postIDs.length > 0
             ? SmartRefresher(
-          enablePullDown: true,
-          enablePullUp: true,
-          header: ClassicHeader(),
-          footer: ClassicFooter(),
-          controller: _refreshController,
-          onRefresh: _onRefresh,
-          onLoading: _onLoading,
-          child: ListView.builder(
-              padding: const EdgeInsets.all(0),
-              itemCount: numToShow,
-              addAutomaticKeepAlives: true,
-              physics: const AlwaysScrollableScrollPhysics(),
-              itemBuilder: (BuildContext context, int index) {
-                // The height on this will need to be edited to match whatever height is set for the picture
-                return SizedBox(
-                    width: double.infinity,
-                    height: 620,
-                    child: FeedCard(postIDs[index], ratedPosts),);
-              }),
-        )
-            : Padding(padding: EdgeInsets.all(70.0), child: Text("Follow People to see their posts on your feed!", style: TextStyle(fontSize: 30, color: Colors.grey, fontFamily: 'Lucida'))),
+                enablePullDown: true,
+                enablePullUp: true,
+                header: ClassicHeader(),
+                footer: ClassicFooter(),
+                controller: _refreshController,
+                onRefresh: _onRefresh,
+                onLoading: _onLoading,
+                child: ListView.builder(
+                    padding: const EdgeInsets.all(0),
+                    itemCount: numToShow,
+                    addAutomaticKeepAlives: true,
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    itemBuilder: (BuildContext context, int index) {
+                      // The height on this will need to be edited to match whatever height is set for the picture
+                      return SizedBox(
+                        width: double.infinity,
+                        height: 620,
+                        child: FeedCard(postIDs[index], ratedPosts),
+                      );
+                    }),
+              )
+            : Padding(
+                padding: EdgeInsets.all(70.0),
+                child: Text("Follow People to see their posts on your feed!",
+                    style: TextStyle(
+                        fontSize: 30,
+                        color: Colors.grey,
+                        fontFamily: 'Lucida'))),
       ),
       bottomNavigationBar: BottomNavigationBar(
         onTap: (int index) {
@@ -275,10 +286,11 @@ class _HomepageScreenState extends State<HomepageScreen> {
     if (widget.signedInWithGoogle) {
       googleLogoutUser();
       Navigator.pushReplacementNamed(context, '/');
-    } else {
+    } else if (widget.signedInWithFacebook) {
       facebookLogoutUser();
+      Navigator.pushReplacementNamed(context, '/');
+    } else {
       Navigator.pushReplacementNamed(context, '/');
     }
   }
 }
-

@@ -1,3 +1,8 @@
+import 'dart:math';
+import 'dart:io';
+
+// import 'package:apple_sign_in/apple_sign_in.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:simple_animations/simple_animations.dart';
 import 'homepage_screen.dart';
@@ -11,10 +16,32 @@ import 'dart:convert';
 import 'package:woolala_app/screens/createUserName.dart';
 import 'package:woolala_app/main.dart';
 
+import 'package:sign_in_with_apple/sign_in_with_apple.dart';
+import 'package:firebase_auth/firebase_auth.dart' as fireB;
+import 'package:crypto/crypto.dart';
+// import 'package:flutter/services.dart';
+
 final GoogleSignIn gSignIn = GoogleSignIn();
 final facebookLogin = FacebookLogin();
 final DateTime timestamp = DateTime.now();
 User currentUser;
+
+/// Generates a cryptographically secure random nonce, to be included in a
+/// credential request.
+String generateNonce([int length = 32]) {
+  final charset =
+      '0123456789ABCDEFGHIJKLMNOPQRSTUVXYZabcdefghijklmnopqrstuvwxyz-._';
+  final random = Random.secure();
+  return List.generate(length, (_) => charset[random.nextInt(charset.length)])
+      .join();
+}
+
+/// Returns the sha256 hash of [input] in hex notation.
+String sha256ofString(String input) {
+  final bytes = utf8.encode(input);
+  final digest = sha256.convert(bytes);
+  return digest.toString();
+}
 
 void googleLogoutUser() {
   print("Google signed out!");
@@ -28,7 +55,8 @@ void facebookLogoutUser() {
 
 // called by save user to server methods
 Future<User> getDoesUserExists(String email) async {
-  http.Response res = await http.get(Uri.parse(domain + "/doesUserExist/" + email));
+  http.Response res =
+      await http.get(Uri.parse(domain + "/doesUserExist/" + email));
   if (res.body.isNotEmpty) {
     Map userMap = jsonDecode(res.body.toString());
     return User.fromJSON(userMap);
@@ -40,7 +68,8 @@ Future<User> getDoesUserExists(String email) async {
 // called by save user to server methods
 Future<http.Response> insertUser(User u) {
   print("Inserting new user to the db.");
-  return http.post(Uri.parse(domain + '/insertUser'),
+  return http.post(
+    Uri.parse(domain + '/insertUser'),
     headers: <String, String>{
       'Content-Type': 'application/json',
     },
@@ -65,6 +94,7 @@ class _LoginScreenState extends State<LoginScreen> {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   bool isSignedInWithGoogle = false;
   bool isSignedInWithFacebook = false;
+  bool isSignedInWithApple = false;
   bool _disposed = false;
   bool _firstTimeLogin = false;
 
@@ -80,7 +110,6 @@ class _LoginScreenState extends State<LoginScreen> {
     gSignIn.signIn();
   }
 
-
   void facebookLoginUser() async {
     var facebookLoginResult = await facebookLogin.logIn(['email']);
     switch (facebookLoginResult.status) {
@@ -94,6 +123,74 @@ class _LoginScreenState extends State<LoginScreen> {
       case FacebookLoginStatus.loggedIn:
         signInProcess();
         break;
+    }
+  }
+
+  void signInWithApple() async {
+    bool _appleNewUser;
+    // To prevent replay attacks with the credential returned from Apple, we
+    // include a nonce in the credential request. When signing in in with
+    // Firebase, the nonce in the id token returned by Apple, is expected to
+    // match the sha256 hash of `rawNonce`.
+    final rawNonce = generateNonce();
+    final nonce = sha256ofString(rawNonce);
+    AuthorizationCredentialAppleID appleCredential;
+
+    // Request credential for the currently signed in Apple account.
+    try {
+      appleCredential = await SignInWithApple.getAppleIDCredential(
+        scopes: [
+          AppleIDAuthorizationScopes.email,
+          AppleIDAuthorizationScopes.fullName,
+        ],
+        nonce: nonce,
+      );
+
+      //can only get full name once
+      if (appleCredential.email == null) {
+        _appleNewUser = false;
+      } else {
+        _appleNewUser = true;
+      }
+    } catch (SignInWithAppleAuthorizationException) {
+      if (SignInWithAppleAuthorizationException.code ==
+          AuthorizationErrorCode.canceled) {
+        print('Apple Sign In Cancelled by User');
+      } else {
+        print('Apple Sign In error');
+      }
+      if (!_disposed) {
+        setState(() {
+          isSignedInWithGoogle = false;
+        });
+      }
+      return;
+    }
+
+    // Create an `OAuthCredential` from the credential returned by Apple.
+    final oauthCredential = fireB.OAuthProvider("apple.com").credential(
+      idToken: appleCredential.identityToken,
+      rawNonce: rawNonce,
+    );
+    // print(oauthCredential);
+
+    // Sign in the user with Firebase. If the nonce we generated earlier does
+    // not match the nonce in `appleCredential.identityToken`, sign in will fail.
+    final result =
+        await fireB.FirebaseAuth.instance.signInWithCredential(oauthCredential);
+    // print(result);
+
+    if (_appleNewUser) {
+      await saveAppleUserInfoToServer(_appleNewUser, result.user.email,
+          appleCredential.givenName + appleCredential.familyName);
+    } else {
+      await saveAppleUserInfoToServer(_appleNewUser, result.user.email, "");
+    }
+
+    if (!_disposed) {
+      setState(() {
+        isSignedInWithApple = true;
+      });
     }
   }
 
@@ -194,8 +291,8 @@ class _LoginScreenState extends State<LoginScreen> {
   saveFacebookUserInfoToServer() async {
     var tempToken = (await facebookLogin.currentAccessToken);
     var token = tempToken.token;
-    final graphResponse = await http.get(
-        Uri.parse('https://graph.facebook.com/v2.12/me?fields=name,first_name,last_name,picture.type(large),email&access_token=${token}'));
+    final graphResponse = await http.get(Uri.parse(
+        'https://graph.facebook.com/v2.12/me?fields=name,first_name,last_name,picture.type(large),email&access_token=${token}'));
     final profile = json.decode(graphResponse.body);
     User tempUser = await getDoesUserExists(profile['email']);
     switch (tempUser) {
@@ -228,6 +325,33 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
+  saveAppleUserInfoToServer(firstTime, email, fullName) async {
+    User tempUser = await getDoesUserExists(email);
+    if (tempUser != null && tempUser.userID != "") //account exists
+    {
+      print("User account found with Apple ID email.");
+      currentUser = tempUser;
+    } else {
+      print("Making an account with Apple.");
+      User u = User(
+          email: email,
+          userName: '@' + base64.encode(latin1.encode(email)).toString(),
+          profileName: fullName,
+          profilePic: 'default',
+          bio: "This is my new Woolala Account!",
+          userID: base64.encode(latin1.encode(email)).toString(),
+          followers: [],
+          numRated: 0,
+          postIDs: [],
+          following: [base64.encode(latin1.encode(email)).toString()],
+          private: false,
+          ratedPosts: []);
+      await insertUser(u);
+      currentUser = u;
+      _firstTimeLogin = true;
+    }
+  }
+
 // used in the CarouselSlider
   List<T> map<T>(List list, Function handler) {
     List<T> result = [];
@@ -250,9 +374,11 @@ class _LoginScreenState extends State<LoginScreen> {
 
     if (_firstTimeLogin) {
       return CreateUserName();
-    } else if (isSignedInWithGoogle || isSignedInWithFacebook) {
-
-      return HomepageScreen(isSignedInWithGoogle);
+    } else if (isSignedInWithGoogle ||
+        isSignedInWithFacebook ||
+        isSignedInWithApple) {
+      return HomepageScreen(
+          isSignedInWithGoogle, isSignedInWithFacebook, isSignedInWithApple);
     } else {
       return Scaffold(
           key: _scaffoldKey,
@@ -401,6 +527,17 @@ class _LoginScreenState extends State<LoginScreen> {
             ),
             "Google",
           ),
+          Platform.isIOS
+              ? _buildSocialBtn(
+                  () {
+                    googleLogoutUser();
+                    facebookLogoutUser();
+                    signInWithApple();
+                  },
+                  AssetImage('assets/logos/logo_apple.png'),
+                  'Apple',
+                )
+              : null,
         ],
       ),
     );

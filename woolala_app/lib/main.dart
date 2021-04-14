@@ -1,3 +1,4 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:woolala_app/screens/EditProfileScreen.dart';
 import 'package:woolala_app/screens/createUserName.dart';
@@ -14,7 +15,7 @@ import 'package:woolala_app/screens/post_screen.dart';
 bool localDev = false;
 String domain;
 
-void main() {
+void main() async {
   if (localDev)
   {
     // domain = "http://10.0.2.2:5000";
@@ -24,7 +25,8 @@ void main() {
   {
     domain = "https://hidden-caverns-85596.herokuapp.com";
   }
-
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
   runApp(WooLaLa());
 }
 
@@ -42,7 +44,7 @@ class WooLaLa extends StatelessWidget {
       initialRoute: '/',
       routes: { // easier use for multiple page navigation
         '/' : (_) => LoginScreen(), //login screen
-        '/home' : (_) => HomepageScreen(true), //home page
+        '/home' : (_) => HomepageScreen(false, false, false), //home page
         '/profile': (_) => ProfilePage(currentUser.email),
         '/editProfile': (_) => EditProfilePage(),
         '/search': (_) => SearchPage(),
