@@ -117,9 +117,13 @@ Future<List> getPost(String id) async {
 
 // Returns a list of all the posts the provided user has rated
 Future<List> getRatedPosts(String userID) async {
+  // print('Getting rated posts');
   http.Response res =
       await http.get(Uri.parse(domain + '/getRatedPosts/' + userID));
-  return jsonDecode(res.body.toString());
+  if (res.body.isNotEmpty) {
+    return jsonDecode(res.body.toString());
+  }
+  return [];
 }
 
 // Will retrieve the entire user document from the DB with the provided user ID
@@ -174,6 +178,7 @@ class _HomepageScreenState extends State<HomepageScreen> {
     ratedPosts = await getRatedPosts(currentUser.userID);
     sortPosts(postIDs);
     print(postIDs);
+    print(ratedPosts);
     // if failed,use refreshFailed()
     if (mounted) setState(() {});
     _refreshController.refreshCompleted();

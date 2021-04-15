@@ -43,14 +43,14 @@ String sha256ofString(String input) {
   return digest.toString();
 }
 
-void googleLogoutUser() {
+void googleLogoutUser() async {
   print("Google signed out!");
-  gSignIn.signOut();
+  await gSignIn.signOut();
 }
 
-void facebookLogoutUser() {
+void facebookLogoutUser() async {
   print("Facebook signed out!");
-  facebookLogin.logOut();
+  await facebookLogin.logOut();
 }
 
 // called by save user to server methods
@@ -102,7 +102,9 @@ class _LoginScreenState extends State<LoginScreen> {
   void initState() {
     print("Calling initState");
     super.initState();
-    signInProcess();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      signInProcess();
+    });
   }
 
   void googleLoginUser() {
@@ -120,11 +122,9 @@ class _LoginScreenState extends State<LoginScreen> {
       case FacebookLoginStatus.error:
         print("Facebook login error.");
         print("Error from Facebook '${facebookLoginResult.errorMessage}'");
-        Navigator.pop(context);
         break;
       case FacebookLoginStatus.cancelledByUser:
         print("Facebook login cancelled by user.");
-        Navigator.pop(context);
         break;
       case FacebookLoginStatus.loggedIn:
         signInProcess();
@@ -142,6 +142,7 @@ class _LoginScreenState extends State<LoginScreen> {
     final nonce = sha256ofString(rawNonce);
     AuthorizationCredentialAppleID appleCredential;
 
+    showAlertDialog(context);
     // Request credential for the currently signed in Apple account.
     try {
       appleCredential = await SignInWithApple.getAppleIDCredential(
@@ -151,7 +152,6 @@ class _LoginScreenState extends State<LoginScreen> {
         ],
         nonce: nonce,
       );
-
       //can only get full name once
       if (appleCredential.email == null) {
         _appleNewUser = false;
@@ -245,9 +245,11 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void controlFacebookSignIn() async {
+    showAlertDialog(context);
     var tempToken = (await facebookLogin.currentAccessToken);
     if (tempToken == null) {
       print("Facebook - no account found.");
+      Navigator.pop(context);
       if (!_disposed) {
         setState(() {
           isSignedInWithFacebook = false;
@@ -274,7 +276,16 @@ class _LoginScreenState extends State<LoginScreen> {
       print("User account found with Google email.");
       currentUser = tempUser;
       Navigator.pop(context);
-      Navigator.pushReplacementNamed(context, '/home');
+      isSignedInWithGoogle = true;
+      Navigator.pushReplacementNamed(
+        context,
+        '/home',
+        arguments: [
+          isSignedInWithGoogle,
+          isSignedInWithFacebook,
+          isSignedInWithApple,
+        ],
+      );
     } else {
       print("Making an account with Google.");
       User u = User(
@@ -296,6 +307,7 @@ class _LoginScreenState extends State<LoginScreen> {
       currentUser = u;
       _firstTimeLogin = true;
       Navigator.pop(context);
+      isSignedInWithGoogle = true;
       Navigator.pushReplacementNamed(context, '/createAccount');
     }
   }
@@ -326,18 +338,29 @@ class _LoginScreenState extends State<LoginScreen> {
               base64.encode(latin1.encode(profile['email'])).toString()
             ],
             followers: [],
+            ratedPosts: [],
             private: false);
         await insertUser(u);
         currentUser = u;
         _firstTimeLogin = true;
         Navigator.pop(context);
-        Navigator.pushReplacementNamed(context, '/createUser');
+        isSignedInWithFacebook = true;
+        Navigator.pushReplacementNamed(context, '/createAccount');
         break;
       default:
         print("User account found with Facebook email.");
         currentUser = tempUser;
         Navigator.pop(context);
-        Navigator.pushReplacementNamed(context, '/home');
+        isSignedInWithFacebook = true;
+        Navigator.pushReplacementNamed(
+          context,
+          '/home',
+          arguments: [
+            isSignedInWithGoogle,
+            isSignedInWithFacebook,
+            isSignedInWithApple,
+          ],
+        );
         break;
     }
   }
@@ -349,7 +372,16 @@ class _LoginScreenState extends State<LoginScreen> {
       print("User account found with Apple ID email.");
       currentUser = tempUser;
       Navigator.pop(context);
-      Navigator.pushReplacementNamed(context, '/home');
+      isSignedInWithApple = true;
+      Navigator.pushReplacementNamed(
+        context,
+        '/home',
+        arguments: [
+          isSignedInWithGoogle,
+          isSignedInWithFacebook,
+          isSignedInWithApple,
+        ],
+      );
     } else {
       print("Making an account with Apple.");
       User u = User(
@@ -369,6 +401,7 @@ class _LoginScreenState extends State<LoginScreen> {
       currentUser = u;
       _firstTimeLogin = true;
       Navigator.pop(context);
+      isSignedInWithApple = true;
       Navigator.pushReplacementNamed(context, '/createUser');
     }
   }
@@ -529,7 +562,6 @@ class _LoginScreenState extends State<LoginScreen> {
             () {
               facebookLogoutUser();
               googleLogoutUser();
-              showAlertDialog(context);
               facebookLoginUser();
             },
             AssetImage(
@@ -553,7 +585,6 @@ class _LoginScreenState extends State<LoginScreen> {
                   () {
                     googleLogoutUser();
                     facebookLogoutUser();
-                    showAlertDialog(context);
                     signInWithApple();
                   },
                   AssetImage('assets/logos/logo_apple.png'),
@@ -569,25 +600,24 @@ class _LoginScreenState extends State<LoginScreen> {
 //progress indicator
 showAlertDialog(BuildContext context) {
   AlertDialog alert = AlertDialog(
-    content: Container(
-      child: Row(
-        children: <Widget>[
-          SizedBox(
-            width: 200,
-            height: 200,
-            child: CircularProgressIndicator(
-              backgroundColor: Colors.transparent,
-              strokeWidth: 8,
+      content: Container(
+        child: Row(
+          children: <Widget>[
+            SizedBox(
+              width: 200,
+              height: 200,
+              child: CircularProgressIndicator(
+                backgroundColor: Colors.transparent,
+                strokeWidth: 8,
+              ),
             ),
-          ),
-        ],
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
+          ],
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+        ),
       ),
-    ),
-    backgroundColor: Colors.white.withOpacity(0.7),
-    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16))
-  );
+      backgroundColor: Colors.white.withOpacity(0.7),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)));
   showDialog(
     barrierDismissible: false,
     context: context,

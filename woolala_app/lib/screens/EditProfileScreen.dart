@@ -251,6 +251,7 @@ class _EditProfilePageState extends State<EditProfilePage>{
         deleteUser(currentUser.userID);
         Navigator.popUntil(context, ModalRoute.withName('/'));
         googleLogoutUser();
+        facebookLogoutUser();
         Navigator.pushNamed(context, '/');
       },
     );

@@ -322,7 +322,7 @@ class _FeedCardState extends State<FeedCard> {
                                 new IconButton(
                                   icon: Icon(Icons.share),
                                   iconSize: 28,
-                                  onPressed: () async {
+                                  onPressed: (!Platform.isIOS)?() async {
                                     await sc.capture().then((image) async {
                                       _originalImage = image;
                                       SocialShare.shareOptions("Shared from Woolala App",imagePath: File.fromRawPath(_originalImage).path).then((data) {print(data);});
@@ -346,9 +346,10 @@ class _FeedCardState extends State<FeedCard> {
                                       //         .then((data) {
                                       //         print(data);
                                       //       });
+
                                     });
-                                  },
-                                  //child: Text("Share Options"),
+                                  }:null,
+                                  // child: Text("Share Options"),
                                 ),
                                 starSlider(widget.postID, stars, rated),
                                 new IconButton(
