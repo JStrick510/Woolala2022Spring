@@ -40,7 +40,8 @@ Future<User> getDoesUserExists(String email) async {
 // called by save user to server methods
 Future<http.Response> insertUser(User u) {
   print("Inserting new user to the db.");
-  return http.post(domain + '/insertUser',
+  return http.post(
+    domain + '/insertUser',
     headers: <String, String>{
       'Content-Type': 'application/json',
     },
@@ -79,7 +80,6 @@ class _LoginScreenState extends State<LoginScreen> {
     print("Google signing in!");
     gSignIn.signIn();
   }
-
 
   void facebookLoginUser() async {
     var facebookLoginResult = await facebookLogin.logIn(['email']);
@@ -215,6 +215,7 @@ class _LoginScreenState extends State<LoginScreen> {
               base64.encode(latin1.encode(profile['email'])).toString()
             ],
             followers: [],
+            ratedPosts: [],
             private: false);
         await insertUser(u);
         currentUser = u;
@@ -250,7 +251,6 @@ class _LoginScreenState extends State<LoginScreen> {
     if (_firstTimeLogin) {
       return CreateUserName();
     } else if (isSignedInWithGoogle || isSignedInWithFacebook) {
-
       return HomepageScreen(isSignedInWithGoogle);
     } else {
       return Scaffold(
