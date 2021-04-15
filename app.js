@@ -263,8 +263,10 @@ app.post("/deleteOnePost/:postID/:userID", (request, response) => {
 
 
 app.get("/getRatedPosts/:userID", (request, response) => {
+  console.log('Rated posts requested for user ' + request.params.userID);
     userCollection.findOne({"userID":request.params.userID}, function(err, document) {
-        response.send(document.ratedPosts);
+      console.log(document);
+      response.send(document.ratedPosts);
     });
 });
 
