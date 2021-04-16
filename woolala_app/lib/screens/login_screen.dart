@@ -557,31 +557,31 @@ class _LoginScreenState extends State<LoginScreen> {
       padding: EdgeInsets.symmetric(vertical: 10.0),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: <Widget>[
-          _buildSocialBtn(
-            () {
-              facebookLogoutUser();
-              googleLogoutUser();
-              facebookLoginUser();
-            },
-            AssetImage(
-              'assets/logos/facebook_logo.png',
-            ),
-            "Facebook",
-          ),
-          _buildSocialBtn(
-            () {
-              googleLogoutUser();
-              facebookLogoutUser();
-              googleLoginUser();
-            },
-            AssetImage(
-              'assets/logos/google_logo.png',
-            ),
-            "Google",
-          ),
-          Platform.isIOS
-              ? _buildSocialBtn(
+        children: Platform.isIOS
+            ? <Widget>[
+                _buildSocialBtn(
+                  () {
+                    facebookLogoutUser();
+                    googleLogoutUser();
+                    facebookLoginUser();
+                  },
+                  AssetImage(
+                    'assets/logos/facebook_logo.png',
+                  ),
+                  "Facebook",
+                ),
+                _buildSocialBtn(
+                  () {
+                    googleLogoutUser();
+                    facebookLogoutUser();
+                    googleLoginUser();
+                  },
+                  AssetImage(
+                    'assets/logos/google_logo.png',
+                  ),
+                  "Google",
+                ),
+                _buildSocialBtn(
                   () {
                     googleLogoutUser();
                     facebookLogoutUser();
@@ -590,8 +590,31 @@ class _LoginScreenState extends State<LoginScreen> {
                   AssetImage('assets/logos/logo_apple.png'),
                   'Apple',
                 )
-              : null,
-        ],
+              ]
+            : <Widget>[
+                _buildSocialBtn(
+                  () {
+                    facebookLogoutUser();
+                    googleLogoutUser();
+                    facebookLoginUser();
+                  },
+                  AssetImage(
+                    'assets/logos/facebook_logo.png',
+                  ),
+                  "Facebook",
+                ),
+                _buildSocialBtn(
+                  () {
+                    googleLogoutUser();
+                    facebookLogoutUser();
+                    googleLoginUser();
+                  },
+                  AssetImage(
+                    'assets/logos/google_logo.png',
+                  ),
+                  "Google",
+                ),
+              ],
       ),
     );
   }
