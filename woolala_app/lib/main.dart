@@ -32,7 +32,7 @@ class WooLaLa extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'WooLaLa',
+      title: 'ChooseNXT',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         primarySwatch: Colors.blue,
