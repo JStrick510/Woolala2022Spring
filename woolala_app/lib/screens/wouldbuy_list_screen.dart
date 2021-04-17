@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mailto/mailto.dart';
 import 'package:woolala_app/screens/login_screen.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -7,6 +8,9 @@ import 'package:woolala_app/screens/profile_screen.dart';
 import 'package:woolala_app/widgets/bottom_nav.dart';
 import 'package:woolala_app/main.dart';
 import 'package:woolala_app/screens/following_list_screen.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:url_launcher/url_launcher.dart';
+
 
 //Create Stateful Widget
 class WouldBuyListScreen extends StatefulWidget {
@@ -78,15 +82,36 @@ class _WouldBuyListScreen extends State<WouldBuyListScreen> {
               (Navigator.pop(context))),
           title: Text("Users Interested in This Post"),
           actions: <Widget>[]),
-      body: ListView.builder(
+      body: ListView.separated(
+        separatorBuilder: (context, index) => Divider(
+          color: Colors.black,
+        ),
         itemCount: widget.wouldBuyNameList.length,
         itemBuilder: (context, index) {
           return ListTile(
             title: Text('${widget.wouldBuyNameList[index]}  --  ${widget.wouldBuyEmailList[index]}'),
+            onLongPress: () {
+              launchMailtoSingle(index);
+            },
+            onTap: (){
+              showToast("Hold on a item to send email");
+            },
           );
         },
+
       ),
+
+      //show floating action button with mail icon
+      /*floatingActionButton: FloatingActionButton(
+          elevation: 20.0,
+          child: Icon(Icons.email),
+          onPressed: (){
+            launchMailtoAll();
+          }
+      ),*/
+
       bottomNavigationBar: BottomNavigationBar(
+        backgroundColor: Colors.blue,
         onTap: (int index) {
           bottomBar.switchPage(index, context);
         },
@@ -98,5 +123,50 @@ class _WouldBuyListScreen extends State<WouldBuyListScreen> {
   @override
   void initState() {
     super.initState();
+  }
+
+  //prompts to the default mailing app to email only individual.
+  launchMailtoSingle(index) async {
+    String greeting = "Hi " + '${widget.wouldBuyNameList[index]}' + ",\n\n";
+    final mailtoLink = Mailto(
+      to: ['${widget.wouldBuyEmailList[index]}'],
+      cc: [],
+      subject: 'Hello from ChooseNXT',
+      body: greeting,
+    );
+    await launch('$mailtoLink');
+  }
+
+  //prompts to the default mailing app to email all
+  launchMailtoAll() async {
+    List allMails = new List();
+    List allNames = new List();
+
+    for(int i=0; i< widget.wouldBuyEmailList.length; i++){
+      allMails.add('${widget.wouldBuyEmailList[i]}');
+      allNames.add('${widget.wouldBuyNameList[i]}');
+
+    }
+    String greeting = "Hi there," + "\n\n";
+    final mailtoLink = Mailto(
+      to: allMails,
+      cc: allMails,
+      subject: 'Hello from ChooseNXT',
+      body: greeting,
+    );
+    await launch('$mailtoLink');
+  }
+
+
+  showToast(message){
+    Fluttertoast.showToast(
+        msg: message,
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM,
+        timeInSecForIosWeb: 1,
+        backgroundColor: Colors.white,
+        textColor: Colors.black,
+        fontSize: 16.0
+    );
   }
 }
