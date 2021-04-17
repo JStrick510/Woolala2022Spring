@@ -258,7 +258,7 @@ class _EditProfilePageState extends State<EditProfilePage>{
 
     AlertDialog deleteConfirmation = AlertDialog(
       title: Text('Delete Account'),
-      content: Text("Are you sure you want to delete your Woolala Account?"),
+      content: Text("Are you sure you want to delete your ChooseNXT Account?"),
       actions: [
         cancelButton,
         continueButton,

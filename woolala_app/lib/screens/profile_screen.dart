@@ -453,7 +453,7 @@ class _ProfilePageState extends State<ProfilePage> {
       appBar: AppBar(
         leading: Container(),
         title: Text(
-          'WooLaLa',
+          'ChooseNXT',
           style: TextStyle(fontSize: 25, fontFamily: 'Lucida'),
           textAlign: TextAlign.center,
         ),
