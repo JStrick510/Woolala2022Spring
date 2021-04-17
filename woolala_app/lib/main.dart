@@ -1,3 +1,4 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:woolala_app/screens/EditProfileScreen.dart';
 import 'package:woolala_app/screens/createUserName.dart';
@@ -14,16 +15,16 @@ import 'package:woolala_app/screens/post_screen.dart';
 bool localDev = false;
 String domain;
 
-void main() {
-  if (localDev)
-  {
-    domain = "http://10.0.2.2:5000";
-  }
-  else
-  {
+void main() async {
+  if (localDev) {
+    // domain = "http://10.0.2.2:5000";
+    // domain = "http://0.0.0.0:5000"; //when running Mac
+    domain = "http://Bryants-MacBook-Pro.local:5000";
+  } else {
     domain = "https://hidden-caverns-85596.herokuapp.com";
   }
-
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
   runApp(WooLaLa());
 }
 
@@ -39,17 +40,37 @@ class WooLaLa extends StatelessWidget {
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
       initialRoute: '/',
-      routes: { // easier use for multiple page navigation
-        '/' : (_) => LoginScreen(), //login screen
-        '/home' : (_) => HomepageScreen(true), //home page
+      routes: {
+        // easier use for multiple page navigation
+        '/': (_) => LoginScreen(), //login screen
+        // '/home' : (_) => HomepageScreen(false, false, false), //home page
         '/profile': (_) => ProfilePage(currentUser.email),
         '/editProfile': (_) => EditProfilePage(),
         '/search': (_) => SearchPage(),
         '/makepost': (_) => PostScreen(),
         '/imgup': (_) => ImageUploadScreen(),
-        '/followerlist' : (_) => FollowerListScreen(currentUser.email),
-        '/followinglist' : (_) => FollowingListScreen(currentUser.email),
-        '/createAccount' : (_) => CreateUserName(),
+        '/followerlist': (_) => FollowerListScreen(currentUser.email),
+        '/followinglist': (_) => FollowingListScreen(currentUser.email),
+        '/createAccount': (_) => CreateUserName(),
+      },
+      onGenerateRoute: (settings) {
+        if (settings.name == "/home") {
+          final List<bool> args = settings.arguments as List<bool>;
+
+          if (args == null) {
+            return MaterialPageRoute(
+              builder: (context) {
+                return HomepageScreen(false, false, false);
+              },
+            );
+          }
+
+          return MaterialPageRoute(builder: (context) {
+            return HomepageScreen(args[0], args[1], args[2]);
+          });
+        }
+        assert(false, 'Need to implement ${settings.name}');
+        return null;
       },
     );
   }

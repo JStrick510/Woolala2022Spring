@@ -1,3 +1,4 @@
+import 'dart:typed_data';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
@@ -109,7 +110,7 @@ class _FeedCardState extends State<FeedCard> {
         : Container();
   }
 
-  File _originalImage;
+  Uint8List _originalImage;
 
 
   Future<File> convertImageToFile(String imagePath) async {
@@ -124,7 +125,7 @@ class _FeedCardState extends State<FeedCard> {
 
   Future<http.Response> addWouldBuy(String userID, String postID) {
     return http.post(
-      domain + '/wouldBuy/' + postID.toString() + '/' + userID.toString() + '/',
+      Uri.parse(domain + '/wouldBuy/' + postID.toString() + '/' + userID.toString() + '/'),
       headers: <String, String>{
         'Content-Type': 'application/json',
       },
@@ -134,11 +135,11 @@ class _FeedCardState extends State<FeedCard> {
 
   Future<http.Response> removeWouldBuy(String userID, String postID) {
     return http.post(
-      domain + '/removeWouldBuy/' +
+      Uri.parse(domain + '/removeWouldBuy/' +
           postID.toString() +
           '/' +
           userID.toString() +
-          '/',
+          '/'),
       headers: <String, String>{
         'Content-Type': 'application/json',
       },
@@ -147,8 +148,8 @@ class _FeedCardState extends State<FeedCard> {
   }
 
   void checkWouldBuy(String userID, String postID) async{
-    http.Response res = await http.get(domain +
-        '/checkWouldBuy/' + postID.toString());
+    http.Response res = await http.get(Uri.parse(domain +
+        '/checkWouldBuy/' + postID.toString()));
     String wouldBuyList = res.body.toString();
     if(wouldBuyList.contains(userID))
       wouldBuy = Icon(Icons.remove_shopping_cart);
@@ -321,10 +322,10 @@ class _FeedCardState extends State<FeedCard> {
                                 new IconButton(
                                   icon: Icon(Icons.share),
                                   iconSize: 28,
-                                  onPressed: () async {
+                                  onPressed: (!Platform.isIOS)?() async {
                                     await sc.capture().then((image) async {
                                       _originalImage = image;
-                                      SocialShare.shareOptions("Shared from Woolala App",imagePath: _originalImage.path).then((data) {print(data);});
+                                      SocialShare.shareOptions("Shared from Woolala App",imagePath: File.fromRawPath(_originalImage).path).then((data) {print(data);});
 
                                       //facebook appId is mandatory for android or else share won't work
                                       // Platform.isAndroid
@@ -345,9 +346,10 @@ class _FeedCardState extends State<FeedCard> {
                                       //         .then((data) {
                                       //         print(data);
                                       //       });
+
                                     });
-                                  },
-                                  //child: Text("Share Options"),
+                                  }:null,
+                                  // child: Text("Share Options"),
                                 ),
                                 starSlider(widget.postID, stars, rated),
                                 new IconButton(

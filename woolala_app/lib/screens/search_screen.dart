@@ -8,7 +8,7 @@ import 'package:woolala_app/main.dart';
 //Database call for Following people
 Future<http.Response> follow(String currentAccountID, String otherAccountID) {
   return http.post(
-    domain + '/follow/' + currentAccountID + '/' + otherAccountID,
+    Uri.parse(domain + '/follow/' + currentAccountID + '/' + otherAccountID),
     headers: <String, String>{
       'Content-Type': 'application/json',
     },
@@ -18,7 +18,7 @@ Future<http.Response> follow(String currentAccountID, String otherAccountID) {
 //Database call for Unfollowing people
 Future<http.Response> unfollow(String currentAccountID, String otherAccountID) {
   return http.post(
-    domain + '/unfollow/' + currentAccountID + '/' + otherAccountID,
+    Uri.parse(domain + '/unfollow/' + currentAccountID + '/' + otherAccountID),
     headers: <String, String>{
       'Content-Type': 'application/json',
     },
@@ -44,7 +44,7 @@ class _SearchPageState extends State<SearchPage> {
 
   //Asynchronously gets all users from the database
   Future<List> getAllUsers() async{
-     http.Response res = await http.get(domain + "/getAllUsers");
+     http.Response res = await http.get(Uri.parse(domain + "/getAllUsers"));
      if (res.body.isNotEmpty) {
        results = jsonDecode(res.body.toString());
        filteredResults = results;

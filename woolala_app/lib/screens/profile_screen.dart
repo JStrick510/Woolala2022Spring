@@ -46,7 +46,7 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   Future<List> getRatedPosts(String userID) async {
-    http.Response res = await http.get(domain + '/getRatedPosts/' + userID);
+    http.Response res = await http.get(Uri.parse(domain + '/getRatedPosts/' + userID));
     return jsonDecode(res.body.toString());
   }
 
@@ -54,7 +54,7 @@ class _ProfilePageState extends State<ProfilePage> {
     print("USERID");
     print(profilePageOwner.userID);
     http.Response res =
-        await http.get(domain + '/getOwnFeed/' + profilePageOwner.userID);
+        await http.get(Uri.parse(domain + '/getOwnFeed/' + profilePageOwner.userID));
     return jsonDecode(res.body.toString());
   }
 
