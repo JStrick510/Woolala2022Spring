@@ -18,8 +18,7 @@ class _EulaPageState extends State<EulaPage> {
         title: const Text('End-User License Agreement'),
       ),
       body: WebView(
-        initialUrl:
-            'https://www.eulatemplate.com/live.php?token=QwvcywLiMux7bMjkLZaOODwHt8wmu6rj',
+        initialUrl: "http://Bryants-MacBook-Pro.local:5000/eula",
         onWebViewCreated: (WebViewController webViewController) {
           _controller.complete(webViewController);
         },
