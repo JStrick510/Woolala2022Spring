@@ -288,6 +288,13 @@ class _LoginScreenState extends State<LoginScreen> {
       );
     } else {
       print("Making an account with Google.");
+      //insert eula here
+      var result = await Navigator.pushNamed(context, '/eula');
+      if (result == null || result == false) {
+        googleLogoutUser();
+        Navigator.pop(context);
+        return;
+      }
       User u = User(
           googleID: gAccount.id,
           email: gAccount.email,
@@ -323,6 +330,13 @@ class _LoginScreenState extends State<LoginScreen> {
     switch (tempUser) {
       case null:
         print("Making an account with Facebook.");
+        //insert eula here
+        var result = await Navigator.pushNamed(context, '/eula');
+        if (result == null || result == false) {
+          facebookLogoutUser();
+          Navigator.pop(context);
+          return;
+        }
         User u = User(
             facebookID: profile['id'],
             email: profile['email'],
@@ -384,6 +398,12 @@ class _LoginScreenState extends State<LoginScreen> {
       );
     } else {
       print("Making an account with Apple.");
+      //insert eula here
+      var result = await Navigator.pushNamed(context, '/eula');
+      if (result == null || result == false) {
+        Navigator.pop(context);
+        return;
+      }
       User u = User(
           email: email,
           userName: '@' + base64.encode(latin1.encode(email)).toString(),

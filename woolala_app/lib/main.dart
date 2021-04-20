@@ -10,6 +10,7 @@ import 'package:woolala_app/screens/login_screen.dart';
 import 'package:woolala_app/screens/profile_screen.dart';
 import 'package:woolala_app/screens/search_screen.dart';
 import 'package:woolala_app/screens/post_screen.dart';
+import 'package:woolala_app/screens/eulaScreen.dart';
 
 // Set to true if running app.js locally and want to connect to it instead
 bool localDev = false;
@@ -52,6 +53,7 @@ class WooLaLa extends StatelessWidget {
         '/followerlist': (_) => FollowerListScreen(currentUser.email),
         '/followinglist': (_) => FollowingListScreen(currentUser.email),
         '/createAccount': (_) => CreateUserName(),
+        '/eula': (_) => EulaPage(),
       },
       onGenerateRoute: (settings) {
         if (settings.name == "/home") {
