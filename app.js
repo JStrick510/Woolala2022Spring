@@ -6,6 +6,8 @@ const CONNECTION_URL = "mongodb+srv://Developer_1:Developer_1@woolalacluster.o4v
 //const CONNECTION_URL = "mongodb+srv://Lead_Devloper:poQLxqdUb4c2RfvJ@woolalacluster.o4vv6.mongodb.net/Feed?retryWrites=true&w=majority";
 const DATABASE_NAME = "Feed";
 
+const path = require("path")
+
 
 var app = Express();
 app.use(Express.json({limit: '50mb'}));
@@ -28,6 +30,10 @@ app.listen(process.env.PORT || 5000, () => {
     });
 });
 
+app.use(Express.static(path.join(__dirname+'/assets/')));
+app.get('/eula', (request, response) => {
+  response.sendFile(path.join(__dirname+'/assets/EULA.html'));
+});
 
 app.post("/insertPost", (request, response) => {
     collection.insertOne(request.body, (error, result) => {
