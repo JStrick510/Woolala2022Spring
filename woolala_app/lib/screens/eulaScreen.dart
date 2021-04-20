@@ -18,7 +18,7 @@ class _EulaPageState extends State<EulaPage> {
         title: const Text('End-User License Agreement'),
       ),
       body: WebView(
-        initialUrl: "http://Bryants-MacBook-Pro.local:5000/eula",
+        initialUrl: "https://hidden-caverns-85596.herokuapp.com/eula",
         onWebViewCreated: (WebViewController webViewController) {
           _controller.complete(webViewController);
         },
