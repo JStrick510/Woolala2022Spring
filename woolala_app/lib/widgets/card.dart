@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:flutter_facebook_login/flutter_facebook_login.dart';
+import 'package:share/share.dart';
 import 'package:woolala_app/screens/login_screen.dart';
 import 'package:woolala_app/models/user.dart';
 import 'package:http/http.dart' as http;
@@ -112,7 +113,6 @@ class _FeedCardState extends State<FeedCard> {
 
   Uint8List _originalImage;
 
-
   Future<File> convertImageToFile(String imagePath) async {
     final byteData = await rootBundle.load('assets/$imagePath');
 
@@ -125,17 +125,8 @@ class _FeedCardState extends State<FeedCard> {
 
   Future<http.Response> addWouldBuy(String userID, String postID) {
     return http.post(
-      Uri.parse(domain + '/wouldBuy/' + postID.toString() + '/' + userID.toString() + '/'),
-      headers: <String, String>{
-        'Content-Type': 'application/json',
-      },
-      body: jsonEncode({}),
-    );
-  }
-
-  Future<http.Response> removeWouldBuy(String userID, String postID) {
-    return http.post(
-      Uri.parse(domain + '/removeWouldBuy/' +
+      Uri.parse(domain +
+          '/wouldBuy/' +
           postID.toString() +
           '/' +
           userID.toString() +
@@ -147,17 +138,30 @@ class _FeedCardState extends State<FeedCard> {
     );
   }
 
-  void checkWouldBuy(String userID, String postID) async{
-    http.Response res = await http.get(Uri.parse(domain +
-        '/checkWouldBuy/' + postID.toString()));
+  Future<http.Response> removeWouldBuy(String userID, String postID) {
+    return http.post(
+      Uri.parse(domain +
+          '/removeWouldBuy/' +
+          postID.toString() +
+          '/' +
+          userID.toString() +
+          '/'),
+      headers: <String, String>{
+        'Content-Type': 'application/json',
+      },
+      body: jsonEncode({}),
+    );
+  }
+
+  void checkWouldBuy(String userID, String postID) async {
+    http.Response res = await http
+        .get(Uri.parse(domain + '/checkWouldBuy/' + postID.toString()));
     String wouldBuyList = res.body.toString();
-    if(wouldBuyList.contains(userID))
+    if (wouldBuyList.contains(userID))
       wouldBuy = Icon(Icons.remove_shopping_cart);
     else
       wouldBuy = Icon(Icons.add_shopping_cart);
   }
-
-
 
 //final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   void showReportSuccess(bool value, BuildContext context) {
@@ -322,10 +326,19 @@ class _FeedCardState extends State<FeedCard> {
                                 new IconButton(
                                   icon: Icon(Icons.share),
                                   iconSize: 28,
-                                  onPressed: (!Platform.isIOS)?() async {
+                                  onPressed: () async {
                                     await sc.capture().then((image) async {
-                                      _originalImage = image;
-                                      SocialShare.shareOptions("Shared from Woolala App",imagePath: File.fromRawPath(_originalImage).path).then((data) {print(data);});
+                                      Directory tempDir =
+                                          await getTemporaryDirectory();
+                                      String filePath =
+                                          '${tempDir.path}/tmp_img.jpg';
+                                      await File(filePath).writeAsBytes(image);
+                                      await SocialShare.shareOptions(
+                                        "Shared from ChooseNXT App",
+                                        imagePath: filePath,
+                                      ).then((data) {
+                                        print(data);
+                                      });
 
                                       //facebook appId is mandatory for android or else share won't work
                                       // Platform.isAndroid
@@ -346,9 +359,8 @@ class _FeedCardState extends State<FeedCard> {
                                       //         .then((data) {
                                       //         print(data);
                                       //       });
-
                                     });
-                                  }:null,
+                                  },
                                   // child: Text("Share Options"),
                                 ),
                                 starSlider(widget.postID, stars, rated),
@@ -414,8 +426,13 @@ class _FeedCardState extends State<FeedCard> {
                   return Container();
                 }
               });
-        } else {
+        } else if (postInfo.hasError) {
           return Container();
+        } else {
+          return SizedBox(
+            child: Center(child: CircularProgressIndicator()),
+          );
+          // return Container();
         }
       },
     );

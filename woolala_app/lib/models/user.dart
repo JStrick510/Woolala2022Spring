@@ -6,7 +6,7 @@ import 'package:image_picker/image_picker.dart';
 import 'dart:math';
 import 'package:woolala_app/main.dart';
 
-class User{
+class User {
   final String userID;
   final picker = ImagePicker();
   File _image;
@@ -60,128 +60,132 @@ class User{
         private = json['private'],
         ratedPosts = json['ratedPosts'];
 
-  Map<String, dynamic> toJSON() =>
-      {
-          'userID': userID,
-          'profileName': profileName,
-          'url': url,
-          'googleID': googleID,
-          'facebookID': facebookID,
-          'bio': bio,
-          'userName': userName,
-          'profilePic': profilePic,
-          'email': email,
-          'followers' : followers,
-          'numRated': numRated,
-          'following' : following,
-          'postIDs' : postIDs,
-          'private' : private,
-          'ratedPosts' : ratedPosts
+  Map<String, dynamic> toJSON() => {
+        'userID': userID,
+        'profileName': profileName,
+        'url': url,
+        'googleID': googleID,
+        'facebookID': facebookID,
+        'bio': bio,
+        'userName': userName,
+        'profilePic': profilePic,
+        'email': email,
+        'followers': followers,
+        'numRated': numRated,
+        'following': following,
+        'postIDs': postIDs,
+        'private': private,
+        'ratedPosts': ratedPosts
       };
 
-  Future<double> getAvgScore() async{
+  Future<double> getAvgScore() async {
     double average = 0.0;
-    for(int i =0; i<postIDs.length;i++)
-      {
-        if(postIDs[i]!= '')
-          {
-            String req = domain + '/getPostInfo/' + postIDs[i];
-            http.Response res = await http.get(Uri.parse(req));
-            Map postDetails = jsonDecode(res.body.toString());
-            if(postDetails['numRatings'].toDouble() < 1)
-              {
-                average += 0;
-              }
-            else{
-                  average = average + (postDetails['cumulativeRating'].toDouble() / postDetails['numRatings'].toDouble());
-                }
-          }
+    for (int i = 0; i < postIDs.length; i++) {
+      if (postIDs[i] != '') {
+        String req = domain + '/getPostInfo/' + postIDs[i];
+        http.Response res = await http.get(Uri.parse(req));
+        Map postDetails = jsonDecode(res.body.toString());
+        if (postDetails['numRatings'].toDouble() < 1) {
+          average += 0;
+        } else {
+          average = average +
+              (postDetails['cumulativeRating'].toDouble() /
+                  postDetails['numRatings'].toDouble());
+        }
       }
-    if(postIDs.length > 0) {
-      average = average / postIDs.length;
-      }
-      return average;
-  }
-
-  Future<http.Response> setProfileName(String p)
-  {
-    profileName = p;
-    String request = domain + '/updateUserProfileName/' + userID + '/' + profileName ;
-    return http.post(Uri.parse(request), headers: <String, String>{'Content-Type': 'application/json',});
-  }
-
-  Future<http.Response> setPrivacy(bool p)
-  {
-    private = p;
-    String request = domain + '/updateUserPrivacy/' + userID + '/' + private.toString() ;
-    return http.post(Uri.parse(request), headers: <String, String>{'Content-Type': 'application/json',});
-  }
-
-    Future<http.Response> setUserBio(String b)
-    {
-      bio = b;
-      String request = domain + '/updateUserBio/' + userID + '/' + bio ;
-      return http.post(Uri.parse(request), headers: <String, String>{'Content-Type': 'application/json',});
     }
-
-  Future<http.Response> setUserName(String u) async
-  {
-      String uName = u;
-      if (u[0] != '@') {
-        uName = '@' + u;
-      }
-      userName = uName;
-      String request = domain + '/updateUserName/' + userID + '/' +
-          userName;
-      return http.post(Uri.parse(request),
-          headers: <String, String>{'Content-Type': 'application/json',});
+    if (postIDs.length > 0) {
+      average = average / postIDs.length;
+    }
+    return average;
   }
 
-  Future<http.Response> isUserNameTaken(String n)
-  {
+  Future<http.Response> setProfileName(String p) {
+    profileName = p;
+    String request =
+        domain + '/updateUserProfileName/' + userID + '/' + profileName;
+    return http.post(Uri.parse(request), headers: <String, String>{
+      'Content-Type': 'application/json',
+    });
+  }
+
+  Future<http.Response> setPrivacy(bool p) {
+    private = p;
+    String request =
+        domain + '/updateUserPrivacy/' + userID + '/' + private.toString();
+    return http.post(Uri.parse(request), headers: <String, String>{
+      'Content-Type': 'application/json',
+    });
+  }
+
+  Future<http.Response> setUserBio(String b) {
+    bio = b;
+    String request = domain + '/updateUserBio/' + userID + '/' + bio;
+    return http.post(Uri.parse(request), headers: <String, String>{
+      'Content-Type': 'application/json',
+    });
+  }
+
+  Future<http.Response> setUserName(String u) async {
+    String uName = u;
+    if (u[0] != '@') {
+      uName = '@' + u;
+    }
+    userName = uName;
+    String request = domain + '/updateUserName/' + userID + '/' + userName;
+    return http.post(Uri.parse(request), headers: <String, String>{
+      'Content-Type': 'application/json',
+    });
+  }
+
+  Future<http.Response> isUserNameTaken(String n) {
     String uName = n;
     if (uName.isNotEmpty && uName[0] != '@') {
-        uName = '@' + n;
-      }
-      String request = domain + '/getUserByUserName/' + uName;
-      return http.get(Uri.parse(request), headers: <String, String>{'Content-Type': 'application/json',});
+      uName = '@' + n;
+    }
+    String request = domain + '/getUserByUserName/' + uName;
+    return http.get(Uri.parse(request), headers: <String, String>{
+      'Content-Type': 'application/json',
+    });
   }
 
-  Future<http.Response> setProfilePic(String pic)
-  {
+  Future<http.Response> setProfilePic(String pic) {
     profilePic = pic;
     //print("HERE");
-    String request = domain + '/updateUserProfilePic/' + userID ;
+    String request = domain + '/updateUserProfilePic/' + userID;
     //print(request);
     return http.post(
-      Uri.parse(request), headers: <String, String>{'Content-Type': 'application/json',},
+      Uri.parse(request),
+      headers: <String, String>{
+        'Content-Type': 'application/json',
+      },
       body: jsonEncode(<String, String>{
         'profilePic': profilePic,
-        }
-      ),
+      }),
     );
   }
 
-      CircleAvatar createProfileAvatar({double radius = 60.0, double font = 64.0})
-      {
-        //print("CREATE: "  + profilePic);
-        if(profilePic=="default")
-        {
-          return CircleAvatar(
-            radius: radius,
-            backgroundColor: Colors.red.shade800,
-            child: Text(profileName[0], style: TextStyle(fontSize: font, color: Colors.white),),
-          );
-        }
-        else{
-          return CircleAvatar(
-              radius: radius,
-              backgroundImage: MemoryImage(base64Decode(profilePic)),
-          );
-        }
-      }
-
-
-
-
+  CircleAvatar createProfileAvatar({double radius = 60.0, double font = 64.0}) {
+    //print("CREATE: "  + profilePic);
+    if (profilePic == "default") {
+      return CircleAvatar(
+        radius: radius,
+        backgroundColor: Colors.red.shade800,
+        child: (profileName.length > 1)
+            ? Text(
+                profileName[0],
+                style: TextStyle(fontSize: font, color: Colors.white),
+              )
+            : Text(
+                "",
+                style: TextStyle(fontSize: font, color: Colors.white),
+              ),
+      );
+    } else {
+      return CircleAvatar(
+        radius: radius,
+        backgroundImage: MemoryImage(base64Decode(profilePic)),
+      );
+    }
+  }
 }

@@ -46,15 +46,16 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   Future<List> getRatedPosts(String userID) async {
-    http.Response res = await http.get(Uri.parse(domain + '/getRatedPosts/' + userID));
+    http.Response res =
+        await http.get(Uri.parse(domain + '/getRatedPosts/' + userID));
     return jsonDecode(res.body.toString());
   }
 
   Future<List> getOwnFeed() async {
     print("USERID");
     print(profilePageOwner.userID);
-    http.Response res =
-        await http.get(Uri.parse(domain + '/getOwnFeed/' + profilePageOwner.userID));
+    http.Response res = await http
+        .get(Uri.parse(domain + '/getOwnFeed/' + profilePageOwner.userID));
     return jsonDecode(res.body.toString());
   }
 
@@ -64,7 +65,15 @@ class _ProfilePageState extends State<ProfilePage> {
       builder: (context, dataSnapshot) {
         switch (dataSnapshot.connectionState) {
           case ConnectionState.waiting:
-            return CircularProgressIndicator();
+            return Center(
+              child: SizedBox(
+                width: 150,
+                height: 150,
+                child: CircularProgressIndicator(
+                  strokeWidth: 8,
+                ),
+              ),
+            );
           default:
             if (dataSnapshot.hasError)
               return Text('Error: ${dataSnapshot.error}');
@@ -83,7 +92,8 @@ class _ProfilePageState extends State<ProfilePage> {
                     alignment: Alignment.center,
                     padding: EdgeInsets.only(top: 5.0),
                     child: Text(
-                      profilePageOwner.profileName.substring(0,min(22,profilePageOwner.profileName.length)),
+                      profilePageOwner.profileName.substring(
+                          0, min(22, profilePageOwner.profileName.length)),
                       style: TextStyle(
                           fontSize: 30.0,
                           color: Colors.black,
@@ -275,11 +285,9 @@ class _ProfilePageState extends State<ProfilePage> {
           }
 
           double avg;
-          if(snapshot.data == null)
-            {
-              avg = 0.0;
-            }
-          else{
+          if (snapshot.data == null) {
+            avg = 0.0;
+          } else {
             avg = snapshot.data;
           }
           return createDoubleColumns(title, avg);
