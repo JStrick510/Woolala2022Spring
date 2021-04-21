@@ -69,11 +69,11 @@
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSCameraUsageDescription</key>
-	<string>$(EXECUTABLE_NAME)</string>
+	<string>Enable ChooseNXT to access your camera to upload photos to post.</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>$(EXECUTABLE_NAME)</string>
+	<string>Enable ChooseNXT to access your camera roll to upload your photos and save ones you&apos;ve taken with the app.</string>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>
