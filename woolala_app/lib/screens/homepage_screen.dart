@@ -93,6 +93,23 @@ Future<http.Response> reportPost(
   );
 }
 
+Future<http.Response> getReports(String postID, String postUserID) async {
+  http.Response res = await http.get(Uri.parse(domain + '/getReports/' + postID));
+  Map ret = jsonDecode(res.body.toString());
+  if (ret["numReports"] >= 3) {
+    print("About to http to delete");
+    return http.post(
+      Uri.parse(domain + '/deleteOnePost/' + postID + '/' + postUserID),
+      headers: <String, String> {
+        'Content-Type': 'application/json',
+      },
+      body: jsonEncode({}),
+    );
+  } else {
+    return http.Response("failed", 400);
+  }
+}
+
 // Will be used to get info about the post
 Future<List> getPost(String id) async {
   http.Response res = await http.get(Uri.parse(domain + '/getPostInfo/' + id));

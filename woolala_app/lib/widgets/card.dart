@@ -178,6 +178,17 @@ class _FeedCardState extends State<FeedCard> {
     }
   }
 
+  void showDeletionSuccess(bool value, BuildContext context) {
+    if (value) {
+      setState(() {
+        SnackBar successSB = SnackBar(
+          content: Text("Post Deleted Successfully"),
+        );
+        Scaffold.of(context).showSnackBar(successSB);
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     ScreenshotController sc = new ScreenshotController();
@@ -240,6 +251,12 @@ class _FeedCardState extends State<FeedCard> {
                                         postInfo.data[2]);
                                     showReportSuccess(
                                         res.body.isNotEmpty, context);
+                                    http.Response reportCheck = await getReports(
+                                        widget.postID,
+                                        postInfo.data[2]
+                                    );
+                                    showDeletionSuccess(
+                                        (reportCheck.body.isNotEmpty && reportCheck.statusCode != 400), context);
                                     break;
                                 }
                               },
