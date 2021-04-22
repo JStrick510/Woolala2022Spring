@@ -70,29 +70,31 @@ class _FeedCardState extends State<FeedCard> {
             future: getPost(widget.postID),
             builder: (context, postInfo) {
               if (postInfo.hasData) {
-                return Stack(children: [
-                  Container(
-                    alignment: Alignment.center,
-                    child: Image.asset(
-                      './assets/logos/w_logo_test.png',
-                      height: 60,
-                      width: 60,
-                      fit: BoxFit.cover,
+                return Stack(
+                  children: [
+                    Container(
+                      alignment: Alignment.center,
+                      child: Image.asset(
+                        './assets/logos/w_logo_test.png',
+                        height: 60,
+                        width: 60,
+                        fit: BoxFit.cover,
+                      ),
                     ),
-                  ),
-                  Positioned(
-                      bottom: 21,
-                      left: 4,
-                      child: Container(
-                          width: 50,
-                          height: 20,
-                          decoration: new BoxDecoration(
-                              border: new Border.all(
-                                  width: 20, color: Colors.transparent),
-                              borderRadius: const BorderRadius.all(
-                                  const Radius.circular(20.0)),
-                              color: new Color.fromRGBO(100, 100, 100, 0.75)))),
-                  Positioned(
+                    Positioned(
+                        bottom: 21,
+                        left: 4,
+                        child: Container(
+                            width: 50,
+                            height: 20,
+                            decoration: new BoxDecoration(
+                                border: new Border.all(
+                                    width: 20, color: Colors.transparent),
+                                borderRadius: const BorderRadius.all(
+                                    const Radius.circular(20.0)),
+                                color:
+                                    new Color.fromRGBO(100, 100, 100, 0.75)))),
+                    Positioned(
                       bottom: 20,
                       left: 9,
                       child: Text(
@@ -102,8 +104,10 @@ class _FeedCardState extends State<FeedCard> {
                           color: Colors.white,
                           fontWeight: FontWeight.w400,
                         ),
-                      ))
-                ]);
+                      ),
+                    )
+                  ],
+                );
               } else {
                 return CircularProgressIndicator();
               }
