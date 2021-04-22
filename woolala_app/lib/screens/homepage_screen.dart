@@ -106,7 +106,7 @@ Future<http.Response> getReports(String postID, String postUserID) async {
       body: jsonEncode({}),
     );
   } else {
-    return http.Response("failed", 400);
+    return http.Response("NoDeletion", 400);
   }
 }
 
