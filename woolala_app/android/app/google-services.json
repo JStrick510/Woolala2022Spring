@@ -8,6 +8,50 @@
   "client": [
     {
       "client_info": {
+        "mobilesdk_app_id": "1:992623634786:android:71d84f4aa930f1c14a243b",
+        "android_client_info": {
+          "package_name": "com.fashionxt.choosenxt"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "992623634786-n2ihhkuald1hu4aqch5m39tglvol1c09.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.fashionxt.choosenxt",
+            "certificate_hash": "674c751c8c3cde986b7e3edc85a5293b935c9b8a"
+          }
+        },
+        {
+          "client_id": "992623634786-mi2sllctd9edi51rcgsv8cr7hlnedki0.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAmKEto0-Mo_0ghuQsQsZpCz8b0j-6HI7c"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "992623634786-mi2sllctd9edi51rcgsv8cr7hlnedki0.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "992623634786-vjrr0eun14b55ivja749nhoscove3vcb.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.fashionxt.woolalaApp"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
         "mobilesdk_app_id": "1:992623634786:android:8a1c350bffc439cb",
         "android_client_info": {
           "package_name": "com.fashionxt.woolala"
@@ -31,6 +75,14 @@
           }
         },
         {
+          "client_id": "992623634786-rfvuvjhg33qfac8rtf8bl7o5ju52jq9i.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.fashionxt.woolala",
+            "certificate_hash": "9fa1262ba0e17b7e5bcf76911f09f193f6555dc3"
+          }
+        },
+        {
           "client_id": "992623634786-mi2sllctd9edi51rcgsv8cr7hlnedki0.apps.googleusercontent.com",
           "client_type": 3
         }
@@ -46,6 +98,13 @@
             {
               "client_id": "992623634786-mi2sllctd9edi51rcgsv8cr7hlnedki0.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "992623634786-vjrr0eun14b55ivja749nhoscove3vcb.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.fashionxt.woolalaApp"
+              }
             }
           ]
         }
@@ -59,6 +118,30 @@
         }
       },
       "oauth_client": [
+        {
+          "client_id": "992623634786-3ifidnu4unit477m0b5k0a1pnhkbdicr.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.fashionxt.woolala_app",
+            "certificate_hash": "bda90082c170d20c88a75b62cc1d63354f591e79"
+          }
+        },
+        {
+          "client_id": "992623634786-ba1o6uivfcpo4jl96uuipt34ab4mp6e5.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.fashionxt.woolala_app",
+            "certificate_hash": "ec709a050fbba8ff561cd9c7c8932d367aec19b5"
+          }
+        },
+        {
+          "client_id": "992623634786-od0ha4t88gancnv1r5ginp0lk5egdk35.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.fashionxt.woolala_app",
+            "certificate_hash": "9fa1262ba0e17b7e5bcf76911f09f193f6555dc3"
+          }
+        },
         {
           "client_id": "992623634786-us4vgirh7ftbl48bifjk4up3ldnr3bgf.apps.googleusercontent.com",
           "client_type": 1,
@@ -83,6 +166,13 @@
             {
               "client_id": "992623634786-mi2sllctd9edi51rcgsv8cr7hlnedki0.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "992623634786-vjrr0eun14b55ivja749nhoscove3vcb.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.fashionxt.woolalaApp"
+              }
             }
           ]
         }
