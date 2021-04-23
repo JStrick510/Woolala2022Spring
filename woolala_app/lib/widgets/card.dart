@@ -1,3 +1,4 @@
+import 'dart:typed_data';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
@@ -5,6 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:flutter_facebook_login/flutter_facebook_login.dart';
+import 'package:share/share.dart';
 import 'package:woolala_app/screens/login_screen.dart';
 import 'package:woolala_app/models/user.dart';
 import 'package:http/http.dart' as http;
@@ -68,29 +70,31 @@ class _FeedCardState extends State<FeedCard> {
             future: getPost(widget.postID),
             builder: (context, postInfo) {
               if (postInfo.hasData) {
-                return Stack(children: [
-                  Container(
-                    alignment: Alignment.center,
-                    child: Image.asset(
-                      './assets/logos/w_logo_test.png',
-                      height: 60,
-                      width: 60,
-                      fit: BoxFit.cover,
+                return Stack(
+                  children: [
+                    Container(
+                      alignment: Alignment.center,
+                      child: Image.asset(
+                        './assets/logos/w_logo_test.png',
+                        height: 60,
+                        width: 60,
+                        fit: BoxFit.cover,
+                      ),
                     ),
-                  ),
-                  Positioned(
-                      bottom: 21,
-                      left: 4,
-                      child: Container(
-                          width: 50,
-                          height: 20,
-                          decoration: new BoxDecoration(
-                              border: new Border.all(
-                                  width: 20, color: Colors.transparent),
-                              borderRadius: const BorderRadius.all(
-                                  const Radius.circular(20.0)),
-                              color: new Color.fromRGBO(100, 100, 100, 0.75)))),
-                  Positioned(
+                    Positioned(
+                        bottom: 21,
+                        left: 4,
+                        child: Container(
+                            width: 50,
+                            height: 20,
+                            decoration: new BoxDecoration(
+                                border: new Border.all(
+                                    width: 20, color: Colors.transparent),
+                                borderRadius: const BorderRadius.all(
+                                    const Radius.circular(20.0)),
+                                color:
+                                    new Color.fromRGBO(100, 100, 100, 0.75)))),
+                    Positioned(
                       bottom: 20,
                       left: 9,
                       child: Text(
@@ -100,8 +104,10 @@ class _FeedCardState extends State<FeedCard> {
                           color: Colors.white,
                           fontWeight: FontWeight.w400,
                         ),
-                      ))
-                ]);
+                      ),
+                    )
+                  ],
+                );
               } else {
                 return CircularProgressIndicator();
               }
@@ -109,8 +115,7 @@ class _FeedCardState extends State<FeedCard> {
         : Container();
   }
 
-  File _originalImage;
-
+  Uint8List _originalImage;
 
   Future<File> convertImageToFile(String imagePath) async {
     final byteData = await rootBundle.load('assets/$imagePath');
@@ -124,7 +129,12 @@ class _FeedCardState extends State<FeedCard> {
 
   Future<http.Response> addWouldBuy(String userID, String postID) {
     return http.post(
-      domain + '/wouldBuy/' + postID.toString() + '/' + userID.toString() + '/',
+      Uri.parse(domain +
+          '/wouldBuy/' +
+          postID.toString() +
+          '/' +
+          userID.toString() +
+          '/'),
       headers: <String, String>{
         'Content-Type': 'application/json',
       },
@@ -134,11 +144,12 @@ class _FeedCardState extends State<FeedCard> {
 
   Future<http.Response> removeWouldBuy(String userID, String postID) {
     return http.post(
-      domain + '/removeWouldBuy/' +
+      Uri.parse(domain +
+          '/removeWouldBuy/' +
           postID.toString() +
           '/' +
           userID.toString() +
-          '/',
+          '/'),
       headers: <String, String>{
         'Content-Type': 'application/json',
       },
@@ -146,17 +157,15 @@ class _FeedCardState extends State<FeedCard> {
     );
   }
 
-  void checkWouldBuy(String userID, String postID) async{
-    http.Response res = await http.get(domain +
-        '/checkWouldBuy/' + postID.toString());
+  void checkWouldBuy(String userID, String postID) async {
+    http.Response res = await http
+        .get(Uri.parse(domain + '/checkWouldBuy/' + postID.toString()));
     String wouldBuyList = res.body.toString();
-    if(wouldBuyList.contains(userID))
+    if (wouldBuyList.contains(userID))
       wouldBuy = Icon(Icons.remove_shopping_cart);
     else
       wouldBuy = Icon(Icons.add_shopping_cart);
   }
-
-
 
 //final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   void showReportSuccess(bool value, BuildContext context) {
@@ -173,6 +182,17 @@ class _FeedCardState extends State<FeedCard> {
           content: Text("Failed to Report Post"),
         );
         Scaffold.of(context).showSnackBar(failSB);
+      });
+    }
+  }
+
+  void showDeletionSuccess(bool value, BuildContext context) {
+    if (value) {
+      setState(() {
+        SnackBar successSB = SnackBar(
+          content: Text("Post Deleted Successfully"),
+        );
+        Scaffold.of(context).showSnackBar(successSB);
       });
     }
   }
@@ -195,8 +215,9 @@ class _FeedCardState extends State<FeedCard> {
               future: getUserFromDB(postInfo.data[2]),
               builder: (context, userInfo) {
                 if (userInfo.hasData) {
-                  return Column(children: <Widget>[
-                    Container(
+                  return Column(
+                    children: <Widget>[
+                      Container(
                         margin: const EdgeInsets.all(2),
                         color: Colors.white,
                         width: double.infinity,
@@ -239,6 +260,13 @@ class _FeedCardState extends State<FeedCard> {
                                         postInfo.data[2]);
                                     showReportSuccess(
                                         res.body.isNotEmpty, context);
+                                    http.Response reportCheck =
+                                        await getReports(
+                                            widget.postID, postInfo.data[2]);
+                                    showDeletionSuccess(
+                                        (reportCheck.body.isNotEmpty &&
+                                            reportCheck.statusCode != 400),
+                                        context);
                                     break;
                                 }
                               },
@@ -253,125 +281,142 @@ class _FeedCardState extends State<FeedCard> {
                             ),
                           ],
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        )),
-                    GestureDetector(
-                        child: Screenshot(
+                        ),
+                      ),
+                      GestureDetector(
+                          child: Screenshot(
                             controller: sc,
-                            child: Stack(children: [
-                              postInfo.data[0],
-                              Positioned(
-                                  bottom: 10,
-                                  left: 10,
-                                  child: score(widget.postID))
-                            ])),
-                        onHorizontalDragStart:
-                            (DragStartDetails dragStartDetails) {
-                          if (!rated) {
-                            startPos = dragStartDetails.globalPosition.dx;
-                          }
-                        },
-                        onHorizontalDragUpdate:
-                            (DragUpdateDetails dragUpdateDetails) {
-                          if (!rated) {
-                            distance =
-                                dragUpdateDetails.globalPosition.dx - startPos;
+                            child: Stack(
+                              children: [
+                                postInfo.data[0],
+                                Positioned(
+                                    bottom: 10,
+                                    left: 10,
+                                    child: score(widget.postID))
+                              ],
+                            ),
+                          ),
+                          onHorizontalDragStart:
+                              (DragStartDetails dragStartDetails) {
+                            if (!rated) {
+                              startPos = dragStartDetails.globalPosition.dx;
+                            }
+                          },
+                          onHorizontalDragUpdate:
+                              (DragUpdateDetails dragUpdateDetails) {
+                            if (!rated) {
+                              distance = dragUpdateDetails.globalPosition.dx -
+                                  startPos;
 
-                            if (distance < -150)
-                              stars = 0.0;
-                            else if (distance > -150 && distance < -120)
-                              stars = 0.5;
-                            else if (distance > -120 && distance < -90)
-                              stars = 1.0;
-                            else if (distance > -90 && distance < -60)
-                              stars = 1.5;
-                            else if (distance > -60 && distance < -30)
-                              stars = 2.0;
-                            if (distance > -30 && distance < 30)
-                              stars = 2.5;
-                            else if (distance > 30 && distance < 60)
-                              stars = 3.0;
-                            else if (distance > 60 && distance < 90)
-                              stars = 3.5;
-                            else if (distance > 90 && distance < 120)
-                              stars = 4.0;
-                            else if (distance > 120 && distance < 150)
-                              stars = 4.5;
-                            else if (distance > 150) stars = 5.0;
-                            setState(() {});
-                          }
-                        },
-                        onHorizontalDragEnd: (DragEndDetails dragEndDetails) {
-                          if (!rated) {
-                            ratePost(stars, widget.postID);
-                            widget.ratedPosts
-                                .add([widget.postID, stars.toString()]);
-                            rated = true;
-                            setState(() {});
-                          }
-                        }),
-                    Container(
+                              if (distance < -150)
+                                stars = 0.0;
+                              else if (distance > -150 && distance < -120)
+                                stars = 0.5;
+                              else if (distance > -120 && distance < -90)
+                                stars = 1.0;
+                              else if (distance > -90 && distance < -60)
+                                stars = 1.5;
+                              else if (distance > -60 && distance < -30)
+                                stars = 2.0;
+                              if (distance > -30 && distance < 30)
+                                stars = 2.5;
+                              else if (distance > 30 && distance < 60)
+                                stars = 3.0;
+                              else if (distance > 60 && distance < 90)
+                                stars = 3.5;
+                              else if (distance > 90 && distance < 120)
+                                stars = 4.0;
+                              else if (distance > 120 && distance < 150)
+                                stars = 4.5;
+                              else if (distance > 150) stars = 5.0;
+                              setState(() {});
+                            }
+                          },
+                          onHorizontalDragEnd: (DragEndDetails dragEndDetails) {
+                            if (!rated) {
+                              ratePost(stars, widget.postID);
+                              widget.ratedPosts
+                                  .add([widget.postID, stars.toString()]);
+                              rated = true;
+                              setState(() {});
+                            }
+                          }),
+                      Container(
                         alignment: Alignment(-1.0, 0.0),
-                        child: Column(children: <Widget>[
-                          Center(
+                        child: Column(
+                          children: <Widget>[
+                            Center(
                               child: Row(
-                                  mainAxisSize: MainAxisSize.max,
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceEvenly,
-                                  children: <Widget>[
-                                new IconButton(
-                                  icon: Icon(Icons.share),
-                                  iconSize: 28,
-                                  onPressed: () async {
-                                    await sc.capture().then((image) async {
-                                      _originalImage = image;
-                                      SocialShare.shareOptions("Shared from Woolala App",imagePath: _originalImage.path).then((data) {print(data);});
+                                mainAxisSize: MainAxisSize.max,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceEvenly,
+                                children: <Widget>[
+                                  new IconButton(
+                                    icon: Icon(Icons.share),
+                                    iconSize: 28,
+                                    onPressed: () async {
+                                      await sc.capture().then((image) async {
+                                        Directory tempDir =
+                                            await getTemporaryDirectory();
+                                        String filePath =
+                                            '${tempDir.path}/tmp_img.jpg';
+                                        await File(filePath)
+                                            .writeAsBytes(image);
+                                        await SocialShare.shareOptions(
+                                          "Shared from ChooseNXT App",
+                                          imagePath: filePath,
+                                        ).then((data) {
+                                          print(data);
+                                        });
 
-                                      //facebook appId is mandatory for android or else share won't work
-                                      // Platform.isAndroid
-                                      //     ? SocialShare.shareFacebookStory(
-                                      //             _originalImage.path,
-                                      //             "#ffffff",
-                                      //             "#000000",
-                                      //     "https://deep-link-url",
-                                      //     appId: "457421962253693")
-                                      //         .then((data) {
-                                      //         print(data);
-                                      //       })
-                                      //     : SocialShare.shareFacebookStory(
-                                      //             _originalImage.path,
-                                      //             "#ffffff",
-                                      //             "#000000",
-                                      //     "https://deep-link-url")
-                                      //         .then((data) {
-                                      //         print(data);
-                                      //       });
-                                    });
-                                  },
-                                  //child: Text("Share Options"),
-                                ),
-                                starSlider(widget.postID, stars, rated),
-                                new IconButton(
-                                  icon: wouldBuy,
-                                  iconSize: 28,
-                                  onPressed: () {
-                                    setState(() {
-                                      if (wouldBuy.icon ==
-                                          Icons.remove_shopping_cart) {
-                                        wouldBuy =
-                                            Icon(Icons.add_shopping_cart);
-                                        removeWouldBuy(
-                                            currentUser.userID, widget.postID);
-                                      } else {
-                                        wouldBuy =
-                                            Icon(Icons.remove_shopping_cart);
-                                        addWouldBuy(
-                                            currentUser.userID, widget.postID);
-                                      }
-                                    });
-                                  },
-                                ),
-                              ])),
-                          Align(
+                                        //facebook appId is mandatory for android or else share won't work
+                                        // Platform.isAndroid
+                                        //     ? SocialShare.shareFacebookStory(
+                                        //             _originalImage.path,
+                                        //             "#ffffff",
+                                        //             "#000000",
+                                        //     "https://deep-link-url",
+                                        //     appId: "457421962253693")
+                                        //         .then((data) {
+                                        //         print(data);
+                                        //       })
+                                        //     : SocialShare.shareFacebookStory(
+                                        //             _originalImage.path,
+                                        //             "#ffffff",
+                                        //             "#000000",
+                                        //     "https://deep-link-url")
+                                        //         .then((data) {
+                                        //         print(data);
+                                        //       });
+                                      });
+                                    },
+                                    // child: Text("Share Options"),
+                                  ),
+                                  starSlider(widget.postID, stars, rated),
+                                  new IconButton(
+                                    icon: wouldBuy,
+                                    iconSize: 28,
+                                    onPressed: () {
+                                      setState(() {
+                                        if (wouldBuy.icon ==
+                                            Icons.remove_shopping_cart) {
+                                          wouldBuy =
+                                              Icon(Icons.add_shopping_cart);
+                                          removeWouldBuy(currentUser.userID,
+                                              widget.postID);
+                                        } else {
+                                          wouldBuy =
+                                              Icon(Icons.remove_shopping_cart);
+                                          addWouldBuy(currentUser.userID,
+                                              widget.postID);
+                                        }
+                                      });
+                                    },
+                                  ),
+                                ],
+                              ),
+                            ),
+                            Align(
                               alignment: Alignment.centerLeft,
                               child: Padding(
                                 padding:
@@ -383,37 +428,50 @@ class _FeedCardState extends State<FeedCard> {
                                       fontWeight: FontWeight.bold,
                                       fontSize: 15),
                                 ),
-                              )),
-                          Align(
+                              ),
+                            ),
+                            Align(
                               alignment: Alignment.centerLeft,
                               child: Padding(
-                                  padding:
-                                      EdgeInsets.fromLTRB(10.0, 1.0, 10.0, 2.0),
-                                  child: Text(
-                                    postInfo.data[1],
-                                    textAlign: TextAlign.left,
-                                    style: TextStyle(
-                                      fontSize: 18,
-                                    ),
-                                  ))),
-                        ])),
-                    Align(
+                                padding:
+                                    EdgeInsets.fromLTRB(10.0, 1.0, 10.0, 2.0),
+                                child: Text(
+                                  postInfo.data[1],
+                                  textAlign: TextAlign.left,
+                                  style: TextStyle(
+                                    fontSize: 18,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Align(
                         alignment: Alignment.centerLeft,
                         child: Padding(
-                            padding: EdgeInsets.fromLTRB(10.0, 1.0, 10.0, 2.0),
-                            child: Text(
-                              postInfo.data[3],
-                              textAlign: TextAlign.left,
-                              style: TextStyle(
-                                  fontSize: 15, fontWeight: FontWeight.w500),
-                            ))),
-                  ]);
+                          padding: EdgeInsets.fromLTRB(10.0, 1.0, 10.0, 2.0),
+                          child: Text(
+                            postInfo.data[3],
+                            textAlign: TextAlign.left,
+                            style: TextStyle(
+                                fontSize: 15, fontWeight: FontWeight.w500),
+                          ),
+                        ),
+                      ),
+                    ],
+                  );
                 } else {
                   return Container();
                 }
               });
-        } else {
+        } else if (postInfo.hasError) {
           return Container();
+        } else {
+          return SizedBox(
+            child: Center(child: CircularProgressIndicator()),
+          );
+          // return Container();
         }
       },
     );

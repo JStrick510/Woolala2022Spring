@@ -6,6 +6,8 @@ const CONNECTION_URL = "mongodb+srv://Developer_1:Developer_1@woolalacluster.o4v
 //const CONNECTION_URL = "mongodb+srv://Lead_Devloper:poQLxqdUb4c2RfvJ@woolalacluster.o4vv6.mongodb.net/Feed?retryWrites=true&w=majority";
 const DATABASE_NAME = "Feed";
 
+const path = require("path")
+
 
 var app = Express();
 app.use(Express.json({limit: '50mb'}));
@@ -28,6 +30,10 @@ app.listen(process.env.PORT || 5000, () => {
     });
 });
 
+app.use(Express.static(path.join(__dirname+'/assets/')));
+app.get('/eula', (request, response) => {
+  response.sendFile(path.join(__dirname+'/assets/EULA.html'));
+});
 
 app.post("/insertPost", (request, response) => {
     collection.insertOne(request.body, (error, result) => {
@@ -263,8 +269,10 @@ app.post("/deleteOnePost/:postID/:userID", (request, response) => {
 
 
 app.get("/getRatedPosts/:userID", (request, response) => {
+  console.log('Rated posts requested for user ' + request.params.userID);
     userCollection.findOne({"userID":request.params.userID}, function(err, document) {
-        response.send(document.ratedPosts);
+      console.log(document);
+      response.send(document.ratedPosts);
     });
 });
 
@@ -278,6 +286,30 @@ app.post("/reportPost", (request, response) => {
     });
 });
 
+//currently gets post ID and sends back how many reports from different users a post has
+//scalability steps: modify to send back reports/userIDs (for review), remember user reported for future deactivation
+app.get("/getReports/:postID", (request,response) => {
+    console.log("Getting reports for PostID: " + + request.params.postID + "...");
+    var userIDs = [];
+    reportCollection.find({"postID":request.params.postID}).toArray(function(err, reports) {
+        if (reports) {
+            for (var i = 0; i < reports.length; ++i) {
+                var existingUser = false;
+                for (var j = 0; j < userIDs.length; ++j) {
+                    if (reports[i].reportingUserID === userIDs[j]) {
+                        existingUser = true;
+                    }
+                }
+                if (existingUser === false) {
+                    userIDs.push(reports[i].reportingUserID);
+                }
+            }
+            console.log("Reporting users: ");
+            console.log(userIDs);
+            response.send({"numReports": userIDs.length});
+        }
+    });
+});
 
 app.post("/wouldBuy/:postID/:userID", (request, response) => {
     var userID = request.params.userID;

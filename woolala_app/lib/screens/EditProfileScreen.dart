@@ -24,16 +24,16 @@ class EditProfilePage extends StatefulWidget{
 }
 
 Future<void> unFollow(String currentAccountID, String otherAccountID) async{
-  http.Response res = await http.post(domain + '/unfollow/' + currentAccountID + '/' + otherAccountID);
+  http.Response res = await http.post(Uri.parse(domain + '/unfollow/' + currentAccountID + '/' + otherAccountID));
 }
 
 Future<void> deleteUser(String currentAccountID) async{
-  http.Response res = await http.post(domain + '/deleteUser/' + currentAccountID);
+  http.Response res = await http.post(Uri.parse(domain + '/deleteUser/' + currentAccountID));
   print(res);
 }
 
 Future<void> deletePosts(String currentAccountID) async{
-  http.Response res = await http.post(domain + '/deleteAllPosts/' + currentAccountID);
+  http.Response res = await http.post(Uri.parse(domain + '/deleteAllPosts/' + currentAccountID));
 }
 
 class _EditProfilePageState extends State<EditProfilePage>{
@@ -251,13 +251,14 @@ class _EditProfilePageState extends State<EditProfilePage>{
         deleteUser(currentUser.userID);
         Navigator.popUntil(context, ModalRoute.withName('/'));
         googleLogoutUser();
+        facebookLogoutUser();
         Navigator.pushNamed(context, '/');
       },
     );
 
     AlertDialog deleteConfirmation = AlertDialog(
       title: Text('Delete Account'),
-      content: Text("Are you sure you want to delete your Woolala Account?"),
+      content: Text("Are you sure you want to delete your ChooseNXT Account?"),
       actions: [
         cancelButton,
         continueButton,
