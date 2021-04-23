@@ -416,25 +416,25 @@ class _FeedCardState extends State<FeedCard> {
                                 ],
                               ),
                             ),
+                            // Align(   //remove username from posts
+                            //   alignment: Alignment.centerLeft,
+                            //   child: Padding(
+                            //     padding:
+                            //         EdgeInsets.fromLTRB(10.0, 4.0, 10.0, 2.0),
+                            //     child: Text(
+                            //       userInfo.data.profileName,
+                            //       textAlign: TextAlign.left,
+                            //       style: TextStyle(
+                            //           fontWeight: FontWeight.bold,
+                            //           fontSize: 15),
+                            //     ),
+                            //   ),
+                            // ),
                             Align(
                               alignment: Alignment.centerLeft,
                               child: Padding(
                                 padding:
-                                    EdgeInsets.fromLTRB(10.0, 4.0, 10.0, 2.0),
-                                child: Text(
-                                  userInfo.data.profileName,
-                                  textAlign: TextAlign.left,
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 15),
-                                ),
-                              ),
-                            ),
-                            Align(
-                              alignment: Alignment.centerLeft,
-                              child: Padding(
-                                padding:
-                                    EdgeInsets.fromLTRB(10.0, 1.0, 10.0, 2.0),
+                                    EdgeInsets.fromLTRB(10.0, 1.0, 10.0, 20.0),
                                 child: Text(
                                   postInfo.data[1],
                                   textAlign: TextAlign.left,
@@ -447,18 +447,18 @@ class _FeedCardState extends State<FeedCard> {
                           ],
                         ),
                       ),
-                      Align(
-                        alignment: Alignment.centerLeft,
-                        child: Padding(
-                          padding: EdgeInsets.fromLTRB(10.0, 1.0, 10.0, 2.0),
-                          child: Text(
-                            postInfo.data[3],
-                            textAlign: TextAlign.left,
-                            style: TextStyle(
-                                fontSize: 15, fontWeight: FontWeight.w500),
-                          ),
-                        ),
-                      ),
+                      // Align(   //remove date from posts
+                      //   alignment: Alignment.centerLeft,
+                      //   child: Padding(
+                      //     padding: EdgeInsets.fromLTRB(10.0, 1.0, 10.0, 2.0),
+                      //     child: Text(
+                      //       postInfo.data[3],
+                      //       textAlign: TextAlign.left,
+                      //       style: TextStyle(
+                      //           fontSize: 15, fontWeight: FontWeight.w500),
+                      //     ),
+                      //   ),
+                      // ),
                     ],
                   );
                 } else {
