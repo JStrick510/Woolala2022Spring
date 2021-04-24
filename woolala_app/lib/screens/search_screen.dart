@@ -159,7 +159,9 @@ class _SearchPageState extends State<SearchPage> {
     return Scaffold(
       appBar: AppBar(
           leading: BackButton(
-              color: Colors.white, onPressed: () => (Navigator.pop(context))),
+            // color: Colors.white,
+            onPressed: () => (Navigator.pop(context)),
+          ),
           title: _appBarTitle,
           actions: <Widget>[
             IconButton(
