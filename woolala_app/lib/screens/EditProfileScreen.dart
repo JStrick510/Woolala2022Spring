@@ -95,6 +95,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
     //access the user's info from the database and set the default text to be the current text
     profileNameController.text = currentUser.profileName;
     bioController.text = currentUser.bio;
+    urlController.text = currentUser.url;
 
     setState(() {
       loading = false;
