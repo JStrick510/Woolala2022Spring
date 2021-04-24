@@ -170,7 +170,8 @@ class User {
     if (profilePic == "default") {
       return CircleAvatar(
         radius: radius,
-        backgroundColor: Colors.red.shade800,
+        // backgroundColor: Colors.red.shade800,
+        backgroundColor: Colors.grey,
         child: (profileName.length > 1)
             ? Text(
                 profileName[0],

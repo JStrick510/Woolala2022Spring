@@ -71,11 +71,11 @@ class _ImageUploadScreenState extends State<ImageUploadScreen> {
 
     final tween = MultiTrackTween([
       Track("color1").add(Duration(seconds: 3),
-          ColorTween(begin: Colors.purple[900], end: Colors.purple[500])),
+          ColorTween(begin: Colors.white, end: Colors.white)),
       Track("color2").add(Duration(seconds: 3),
-          ColorTween(begin: Colors.purple[300], end: Colors.purple[900])),
+          ColorTween(begin: Colors.white24, end: Colors.white54)),
       Track("color3").add(Duration(seconds: 3),
-          ColorTween(begin: Colors.purple[900], end: Colors.purple[500]))
+          ColorTween(begin: Colors.black87, end: Colors.black))
     ]);
 
     return Scaffold(
@@ -90,7 +90,11 @@ class _ImageUploadScreenState extends State<ImageUploadScreen> {
                     gradient: LinearGradient(
                         begin: Alignment.topCenter,
                         end: Alignment.bottomCenter,
-                        colors: [animation["color1"], animation["color2"], animation["color3"]])),
+                        colors: [
+                      animation["color1"],
+                      animation["color2"],
+                      animation["color3"]
+                    ])),
                 padding: EdgeInsets.symmetric(vertical: 25),
                 width: double.infinity,
                 child: Column(children: <Widget>[
@@ -132,7 +136,7 @@ class _ImageUploadScreenState extends State<ImageUploadScreen> {
           bottomBar.switchPage(index, context);
         },
         items: bottomBar.bottom_items,
-        backgroundColor: Colors.blue,
+        backgroundColor: Colors.white,
       ),
     );
   }

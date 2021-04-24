@@ -439,11 +439,11 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     final tween = MultiTrackTween([
       Track("color1").add(Duration(seconds: 3),
-          ColorTween(begin: Colors.purple[900], end: Colors.purple[500])),
+          ColorTween(begin: Colors.white, end: Colors.white)),
       Track("color2").add(Duration(seconds: 3),
-          ColorTween(begin: Colors.purple[300], end: Colors.purple[900])),
+          ColorTween(begin: Colors.white24, end: Colors.white54)),
       Track("color3").add(Duration(seconds: 3),
-          ColorTween(begin: Colors.purple[900], end: Colors.purple[500]))
+          ColorTween(begin: Colors.black87, end: Colors.black))
     ]);
 
     // if (_firstTimeLogin) {

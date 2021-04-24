@@ -9,41 +9,39 @@ class BottomNav {
   int currentIndex = 1;
   String currEmail;
 
-   List bottom_items = <BottomNavigationBarItem>[
-     BottomNavigationBarItem(
-       icon: Icon(
-         Icons.add_circle,
-         key: ValueKey("Make Post"),
-         color: Colors.white),
-       title: Text(
-         "New",
-         style: TextStyle(color: Colors.white),
-       ),
-     ),
-     BottomNavigationBarItem(
-        icon: Icon(Icons.home, color: Colors.white),
-        activeIcon: Icon(Icons.home, color: Colors.white),
-        title: Text(
-          'Home',
-          style: TextStyle(color: Colors.white),
-        ),
+  List bottom_items = <BottomNavigationBarItem>[
+    BottomNavigationBarItem(
+      icon: Icon(Icons.add_circle,
+          key: ValueKey("Make Post"), color: Colors.black),
+      title: Text(
+        "New",
+        style: TextStyle(color: Colors.black),
       ),
-      BottomNavigationBarItem(
-        icon: Icon(
-          Icons.person,
-          key: ValueKey("Profile"),
-          color: Colors.white,
-        ),
-        activeIcon: Icon(
-          Icons.person,
-          color: Colors.white,
-        ),
-        title: Text(
-          "Profile",
-          style: TextStyle(color: Colors.white),
-        ),
+    ),
+    BottomNavigationBarItem(
+      icon: Icon(Icons.home, color: Colors.black),
+      activeIcon: Icon(Icons.home, color: Colors.black),
+      title: Text(
+        'Home',
+        style: TextStyle(color: Colors.black),
       ),
-    ];
+    ),
+    BottomNavigationBarItem(
+      icon: Icon(
+        Icons.person,
+        key: ValueKey("Profile"),
+        color: Colors.black,
+      ),
+      activeIcon: Icon(
+        Icons.person,
+        color: Colors.black,
+      ),
+      title: Text(
+        "Profile",
+        style: TextStyle(color: Colors.black),
+      ),
+    ),
+  ];
 
   void switchPage(int index, BuildContext context) {
     switch (index) {
@@ -52,8 +50,7 @@ class BottomNav {
           if (currentIndex != 0) {
             if (currentIndex == 2) {
               Navigator.popAndPushNamed(context, '/imgup');
-            }
-            else {
+            } else {
               Navigator.pushNamed(context, '/imgup');
             }
           }
@@ -76,25 +73,28 @@ class BottomNav {
           if (currentIndex != 2) {
             if (currentIndex == 0) {
               Navigator.pop(context);
-              Navigator.push(context, MaterialPageRoute(
-                  builder: (BuildContext context) =>
-                      ProfilePage(currentUser.email)));
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (BuildContext context) =>
+                          ProfilePage(currentUser.email)));
+            } else {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (BuildContext context) =>
+                          ProfilePage(currentUser.email)));
             }
-            else {
-              Navigator.push(context, MaterialPageRoute(
-                  builder: (BuildContext context) =>
-                      ProfilePage(currentUser.email)));
-            }
-          }
-          else if (currEmail == currentUser.email) {
+          } else if (currEmail == currentUser.email) {
             Navigator.pop(context);
-            Navigator.push(context, MaterialPageRoute(
-                builder: (BuildContext context) =>
-                    ProfilePage(currentUser.email)));
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (BuildContext context) =>
+                        ProfilePage(currentUser.email)));
           }
         }
         break;
     }
   }
-
 }

@@ -252,7 +252,7 @@ class _HomepageScreenState extends State<HomepageScreen> {
           IconButton(
             icon: Icon(Icons.search),
             key: ValueKey("Search"),
-            color: Colors.white,
+            // color: Colors.white,
             onPressed: () => Navigator.push(
                 context, MaterialPageRoute(builder: (context) => SearchPage())),
           ),
@@ -299,7 +299,7 @@ class _HomepageScreenState extends State<HomepageScreen> {
           bottomBar.switchPage(index, context);
         },
         items: bottomBar.bottom_items,
-        backgroundColor: Colors.blue,
+        backgroundColor: Colors.white,
       ),
     );
   }

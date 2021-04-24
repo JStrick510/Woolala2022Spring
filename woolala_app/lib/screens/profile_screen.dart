@@ -527,7 +527,7 @@ class _ProfilePageState extends State<ProfilePage> {
           bottomBar.switchPage(pageIndex, context);
         },
         items: bottomBar.bottom_items,
-        backgroundColor: Colors.blue,
+        backgroundColor: Colors.white,
       ),
     );
   }
