@@ -13,14 +13,14 @@ import 'package:woolala_app/screens/post_screen.dart';
 import 'package:woolala_app/screens/eulaScreen.dart';
 
 // Set to true if running app.js locally and want to connect to it instead
-bool localDev = true;
+bool localDev = false;
 String domain;
 
 void main() async {
   if (localDev) {
-    // domain = "http://10.0.2.2:5000";
+    domain = "http://10.0.2.2:5000";
     // domain = "http://0.0.0.0:5000"; //when running Mac
-    domain = "http://Bryants-MacBook-Pro.local:5000";
+    // domain = "http://Bryants-MacBook-Pro.local:5000";
   } else {
     domain = "https://hidden-caverns-85596.herokuapp.com";
   }
