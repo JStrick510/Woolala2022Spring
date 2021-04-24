@@ -28,6 +28,7 @@ class _ProfilePageState extends State<ProfilePage> {
   final String currentOnlineUserEmail = currentUser.email;
   User profilePageOwner;
   bool checker = false;
+  bool isBlocked = false;
   User viewingUser;
   List postIDs = [];
   int numToShow = 1;
@@ -182,24 +183,37 @@ class _ProfilePageState extends State<ProfilePage> {
                             ),
                           ),
                           Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: [
                               Expanded(
                                 child: FutureBuilder(
-                                  future: checkIfFollowing(),
-                                  builder: (context, snapshot) {
+                                  future: checkBlockandFollowing(),
+                                  builder: (BuildContext context,
+                                      AsyncSnapshot<bool> snapshot) {
                                     if (snapshot.hasData)
-                                      return createButton();
-                                    else
+                                      return Row(
+                                        children: <Widget>[
+                                          createButton(),
+                                          Expanded(
+                                            child: currentOnlineUserEmail !=
+                                                    widget.userProfileEmail
+                                                ? createBlockButton()
+                                                : SizedBox(width: 0),
+                                          ),
+                                        ],
+                                      );
+                                    else {
+                                      print(snapshot);
                                       return createButtonTitleAndFunction(
-                                        title: '',
+                                        title: 'Loading...',
                                         futureFunctionName: "",
                                         color: Colors.white,
+                                        width: 280,
                                       );
+                                    }
                                   },
                                 ),
                               ),
-                              //createButton(),
                             ],
                           ),
                         ],
@@ -358,15 +372,56 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   Future<bool> checkIfFollowing() async {
+    print('checking if following user');
     User currentUser = await getDoesUserExists(currentOnlineUserEmail);
     viewingUser = await getDoesUserExists(widget.userProfileEmail);
     for (int i = 0; i < currentUser.following.length; i++) {
       if (currentUser.following[i] == viewingUser.userID) {
+        print('Current user is following this user');
         checker = true;
         return true;
       }
     }
+    print('Current user is not following this user');
     return false;
+  }
+
+  Future<bool> checkIfBlocked() async {
+    print('checking blocked users');
+    User currentUser = await getDoesUserExists(currentOnlineUserEmail);
+    viewingUser = await getDoesUserExists(widget.userProfileEmail);
+    for (int i = 0; i < currentUser.blockedUsers.length; i++) {
+      if (currentUser.blockedUsers[i] == viewingUser.userID) {
+        isBlocked = true;
+        print('user is blocked');
+        return true;
+      }
+    }
+    print('user is not blocked');
+    return false;
+  }
+
+  Future<bool> checkBlockandFollowing() async {
+    print('Checking if blocked and following is true');
+    User currentUser = await getDoesUserExists(currentOnlineUserEmail);
+    viewingUser = await getDoesUserExists(widget.userProfileEmail);
+    print(currentUser.blockedUsers);
+    for (int i = 0; i < currentUser.following.length; i++) {
+      if (currentUser.following[i] == viewingUser.userID) {
+        checker = true;
+        print('Current user is following this user');
+      }
+    }
+    for (int i = 0; i < currentUser.blockedUsers.length; i++) {
+      if (currentUser.blockedUsers[i] == viewingUser.userID) {
+        isBlocked = true;
+        print('user is blocked');
+      }
+    }
+    isBlocked = false;
+    checker = false;
+    print('checkBlockandFollowing function finished');
+    return true;
   }
 
   createButton() {
@@ -376,27 +431,53 @@ class _ProfilePageState extends State<ProfilePage> {
         title: 'Edit Profile',
         performFunction: editUserProfile,
         color: Colors.white,
+        width: 280,
       );
     } else if (checker) {
       return createButtonTitleAndFunction(
         title: 'Unfollow',
         futureFunctionName: "unfollowUser",
         color: Colors.red[400],
+        width: 220,
       );
     } else {
       return createButtonTitleAndFunction(
         title: 'Follow',
         futureFunctionName: "followUser",
         color: Colors.blue,
+        width: 220,
       );
     }
   }
 
-  Widget createButtonTitleAndFunction(
-      {String title,
-      Function performFunction,
-      String futureFunctionName,
-      Color color}) {
+  createBlockButton() {
+    bool ownProfile = currentOnlineUserEmail == widget.userProfileEmail;
+    if (ownProfile) {
+      return Container();
+    } else if (isBlocked) {
+      return createButtonTitleAndFunction(
+        title: 'Unblock',
+        futureFunctionName: "unblockUser",
+        color: Colors.white,
+        width: 100,
+      );
+    } else {
+      return createButtonTitleAndFunction(
+        title: 'Block',
+        futureFunctionName: "blockUser",
+        color: Colors.red[400],
+        width: 100,
+      );
+    }
+  }
+
+  Widget createButtonTitleAndFunction({
+    String title,
+    Function performFunction,
+    String futureFunctionName,
+    Color color,
+    double width,
+  }) {
     if (futureFunctionName == "followUser") {
       return Container(
         padding: EdgeInsets.only(top: 3.0),
@@ -415,7 +496,7 @@ class _ProfilePageState extends State<ProfilePage> {
           },
           key: ValueKey(title),
           child: Container(
-            width: 280.0,
+            width: width,
             height: 35.0,
             child: Text(
               title,
@@ -449,7 +530,75 @@ class _ProfilePageState extends State<ProfilePage> {
           },
           key: ValueKey(title),
           child: Container(
-            width: 280.0,
+            width: width,
+            height: 35.0,
+            child: Text(
+              title,
+              style:
+                  TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+            ),
+            alignment: Alignment.center,
+            decoration: BoxDecoration(
+              color: color,
+              border: Border.all(color: Colors.black, width: 2.0),
+              borderRadius: BorderRadius.circular(6.0),
+            ),
+          ),
+        ),
+      );
+    } else if (futureFunctionName == "blockUser") {
+      return Container(
+        padding: EdgeInsets.only(top: 3.0),
+        child: FlatButton(
+          onPressed: () {
+            FutureBuilder(
+                future: blockUser(currentUser.userID, viewingUser.userID),
+                builder: (context, snapshot) {});
+            Navigator.pushReplacement(
+                context,
+                PageRouteBuilder(
+                  pageBuilder: (context, animation1, animation2) =>
+                      ProfilePage(viewingUser.email),
+                  transitionDuration: Duration(seconds: 0),
+                ));
+          },
+          key: ValueKey(title),
+          child: Container(
+            width: width,
+            height: 35.0,
+            child: Text(
+              title,
+              style:
+                  TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+            ),
+            alignment: Alignment.center,
+            decoration: BoxDecoration(
+              color: color,
+              border: Border.all(color: Colors.black, width: 2.0),
+              borderRadius: BorderRadius.circular(6.0),
+            ),
+          ),
+        ),
+      );
+    } else if (futureFunctionName == "unblockUser") {
+      return Container(
+        padding: EdgeInsets.only(top: 3.0),
+        child: FlatButton(
+          onPressed: () {
+            FutureBuilder(
+                future: unblockUser(currentUser.userID, viewingUser.userID),
+                builder: (context, snapshot) {});
+            Navigator.pushReplacement(
+                context,
+                PageRouteBuilder(
+                  pageBuilder: (context, animation1, animation2) =>
+                      ProfilePage(viewingUser.email),
+                  transitionDuration: Duration(seconds: 0),
+                ));
+          },
+          key: ValueKey(title),
+          child: Container(
+            width: width,
             height: 35.0,
             child: Text(
               title,
@@ -472,7 +621,7 @@ class _ProfilePageState extends State<ProfilePage> {
           onPressed: performFunction,
           key: ValueKey(title),
           child: Container(
-            width: 280.0,
+            width: width,
             height: 35.0,
             child: Text(
               title,
