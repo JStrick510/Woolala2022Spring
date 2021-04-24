@@ -94,13 +94,14 @@ Future<http.Response> reportPost(
 }
 
 Future<http.Response> getReports(String postID, String postUserID) async {
-  http.Response res = await http.get(Uri.parse(domain + '/getReports/' + postID));
+  http.Response res =
+      await http.get(Uri.parse(domain + '/getReports/' + postID));
   Map ret = jsonDecode(res.body.toString());
   if (ret["numReports"] >= 3) {
     print("About to http to delete");
     return http.post(
       Uri.parse(domain + '/deleteOnePost/' + postID + '/' + postUserID),
-      headers: <String, String> {
+      headers: <String, String>{
         'Content-Type': 'application/json',
       },
       body: jsonEncode({}),
@@ -251,7 +252,7 @@ class _HomepageScreenState extends State<HomepageScreen> {
           IconButton(
             icon: Icon(Icons.search),
             key: ValueKey("Search"),
-            color: Colors.white,
+            // color: Colors.white,
             onPressed: () => Navigator.push(
                 context, MaterialPageRoute(builder: (context) => SearchPage())),
           ),
@@ -280,7 +281,7 @@ class _HomepageScreenState extends State<HomepageScreen> {
                       // The height on this will need to be edited to match whatever height is set for the picture
                       return SizedBox(
                         width: double.infinity,
-                        height: 620,
+                        height: 550,
                         child: FeedCard(postIDs[index], ratedPosts),
                       );
                     }),
@@ -298,7 +299,7 @@ class _HomepageScreenState extends State<HomepageScreen> {
           bottomBar.switchPage(index, context);
         },
         items: bottomBar.bottom_items,
-        backgroundColor: Colors.blue,
+        backgroundColor: Colors.white,
       ),
     );
   }

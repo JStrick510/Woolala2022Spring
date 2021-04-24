@@ -296,20 +296,21 @@ class _LoginScreenState extends State<LoginScreen> {
         return;
       }
       User u = User(
-          googleID: gAccount.id,
-          email: gAccount.email,
-          userName:
-              '@' + base64.encode(latin1.encode(gAccount.email)).toString(),
-          profileName: gAccount.displayName,
-          profilePic: 'default',
-          bio: "This is my new ChooseNXT Account!",
-          userID: base64.encode(latin1.encode(gAccount.email)).toString(),
-          followers: [],
-          numRated: 0,
-          postIDs: [],
-          following: [base64.encode(latin1.encode(gAccount.email)).toString()],
-          private: false,
-          ratedPosts: []);
+        googleID: gAccount.id,
+        email: gAccount.email,
+        userName: '@' + base64.encode(latin1.encode(gAccount.email)).toString(),
+        profileName: gAccount.displayName,
+        profilePic: 'default',
+        bio: "This is my new ChooseNXT Account!",
+        userID: base64.encode(latin1.encode(gAccount.email)).toString(),
+        followers: [],
+        numRated: 0,
+        postIDs: [],
+        following: [base64.encode(latin1.encode(gAccount.email)).toString()],
+        private: false,
+        ratedPosts: [],
+        url: "",
+      );
       await insertUser(u);
       currentUser = u;
       _firstTimeLogin = true;
@@ -338,22 +339,24 @@ class _LoginScreenState extends State<LoginScreen> {
           return;
         }
         User u = User(
-            facebookID: profile['id'],
-            email: profile['email'],
-            profileName: profile['name'],
-            profilePic: "default",
-            bio: "This is my new ChooseNXT Account!",
-            userID: base64.encode(latin1.encode(profile['email'])).toString(),
-            userName:
-                '@' + base64.encode(latin1.encode(profile['email'])).toString(),
-            numRated: 0,
-            postIDs: [],
-            following: [
-              base64.encode(latin1.encode(profile['email'])).toString()
-            ],
-            followers: [],
-            ratedPosts: [],
-            private: false);
+          facebookID: profile['id'],
+          email: profile['email'],
+          profileName: profile['name'],
+          profilePic: "default",
+          bio: "This is my new ChooseNXT Account!",
+          userID: base64.encode(latin1.encode(profile['email'])).toString(),
+          userName:
+              '@' + base64.encode(latin1.encode(profile['email'])).toString(),
+          numRated: 0,
+          postIDs: [],
+          following: [
+            base64.encode(latin1.encode(profile['email'])).toString()
+          ],
+          followers: [],
+          ratedPosts: [],
+          private: false,
+          url: "",
+        );
         await insertUser(u);
         currentUser = u;
         _firstTimeLogin = true;
@@ -405,18 +408,20 @@ class _LoginScreenState extends State<LoginScreen> {
         return;
       }
       User u = User(
-          email: email,
-          userName: '@' + base64.encode(latin1.encode(email)).toString(),
-          profileName: fullName,
-          profilePic: 'default',
-          bio: "This is my new ChooseNXT Account!",
-          userID: base64.encode(latin1.encode(email)).toString(),
-          followers: [],
-          numRated: 0,
-          postIDs: [],
-          following: [base64.encode(latin1.encode(email)).toString()],
-          private: false,
-          ratedPosts: []);
+        email: email,
+        userName: '@' + base64.encode(latin1.encode(email)).toString(),
+        profileName: fullName,
+        profilePic: 'default',
+        bio: "This is my new ChooseNXT Account!",
+        userID: base64.encode(latin1.encode(email)).toString(),
+        followers: [],
+        numRated: 0,
+        postIDs: [],
+        following: [base64.encode(latin1.encode(email)).toString()],
+        private: false,
+        ratedPosts: [],
+        url: "",
+      );
       await insertUser(u);
       currentUser = u;
       _firstTimeLogin = true;
@@ -439,11 +444,11 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     final tween = MultiTrackTween([
       Track("color1").add(Duration(seconds: 3),
-          ColorTween(begin: Colors.purple[900], end: Colors.purple[500])),
+          ColorTween(begin: Colors.white, end: Colors.white70)),
       Track("color2").add(Duration(seconds: 3),
-          ColorTween(begin: Colors.purple[300], end: Colors.purple[900])),
+          ColorTween(begin: Colors.black, end: Colors.black)),
       Track("color3").add(Duration(seconds: 3),
-          ColorTween(begin: Colors.purple[900], end: Colors.purple[500]))
+          ColorTween(begin: Colors.white, end: Colors.white70))
     ]);
 
     // if (_firstTimeLogin) {

@@ -11,7 +11,7 @@ class User {
   final picker = ImagePicker();
   File _image;
   String profileName;
-  final String url;
+  String url;
   final String googleID;
   final String facebookID;
   String bio;
@@ -109,6 +109,14 @@ class User {
     });
   }
 
+  Future<http.Response> setURL(String p) {
+    url = p;
+    String request = domain + '/updateURL/' + userID + '/' + url;
+    return http.post(Uri.parse(request), headers: <String, String>{
+      'Content-Type': 'application/json',
+    });
+  }
+
   Future<http.Response> setPrivacy(bool p) {
     private = p;
     String request =
@@ -170,7 +178,8 @@ class User {
     if (profilePic == "default") {
       return CircleAvatar(
         radius: radius,
-        backgroundColor: Colors.red.shade800,
+        // backgroundColor: Colors.red.shade800,
+        backgroundColor: Colors.grey,
         child: (profileName.length > 1)
             ? Text(
                 profileName[0],

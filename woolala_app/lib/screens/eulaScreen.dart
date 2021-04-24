@@ -10,6 +10,7 @@ class EulaPage extends StatefulWidget {
 
 class _EulaPageState extends State<EulaPage> {
   Completer<WebViewController> _controller = Completer<WebViewController>();
+  bool isLoading = true;
 
   @override
   Widget build(BuildContext context) {
@@ -17,11 +18,26 @@ class _EulaPageState extends State<EulaPage> {
       appBar: AppBar(
         title: const Text('End-User License Agreement'),
       ),
-      body: WebView(
-        initialUrl: "https://hidden-caverns-85596.herokuapp.com/eula",
-        onWebViewCreated: (WebViewController webViewController) {
-          _controller.complete(webViewController);
-        },
+      body: Stack(
+        children: <Widget>[
+          WebView(
+            initialUrl: "https://hidden-caverns-85596.herokuapp.com/eula",
+            javascriptMode: JavascriptMode.unrestricted,
+            onWebViewCreated: (WebViewController webViewController) {
+              _controller.complete(webViewController);
+            },
+            onPageFinished: (finish) {
+              setState(() {
+                isLoading = false;
+              });
+            },
+          ),
+          isLoading
+              ? Center(
+                  child: CircularProgressIndicator(),
+                )
+              : Stack()
+        ],
       ),
       bottomNavigationBar: Padding(
         padding: const EdgeInsets.only(bottom: 24.0),
