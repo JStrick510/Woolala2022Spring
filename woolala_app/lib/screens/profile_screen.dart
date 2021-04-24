@@ -126,6 +126,19 @@ class _ProfilePageState extends State<ProfilePage> {
                         fontWeight: FontWeight.w600),
                   ),
                 ),
+                profilePageOwner.url != null && profilePageOwner.url != ""
+                    ? Container(
+                        alignment: Alignment.center,
+                        padding: EdgeInsets.only(top: 3.0),
+                        child: Text(
+                          profilePageOwner.url,
+                          style: TextStyle(
+                              fontSize: 16.0,
+                              color: Colors.black54,
+                              fontWeight: FontWeight.w600),
+                        ),
+                      )
+                    : Container(),
                 Row(
                   children: <Widget>[
                     Expanded(
@@ -293,7 +306,16 @@ class _ProfilePageState extends State<ProfilePage> {
         builder: (context, snapshot) {
           switch (snapshot.connectionState) {
             case ConnectionState.waiting:
-              return CircularProgressIndicator();
+              // return CircularProgressIndicator();
+              return Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Container(
+                    width: 40,
+                  ),
+                ],
+              );
             default:
               if (snapshot.hasError)
                 print('Error: ${snapshot.error}');

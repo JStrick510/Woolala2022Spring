@@ -129,6 +129,15 @@ app.post("/updateUserProfilePic/:id", (request, response) => {
   });
 });
 
+app.post("/updateURL/:id/:url", (request, response) => {
+  var newUrl = { $set: { "url": request.params.url } };
+  userCollection.updateOne({ "userID": request.params.id }, newUrl, function (err, res) {
+    if (err) throw err;
+    console.log("New URL: " + request.params.url);
+    response.send(res);
+  });
+})
+
 //returns the entire post
 app.get("/getPostInfo/:id", (request, response) => {
     collection.findOne({"postID":request.params.id}, function(err, document) {
@@ -271,7 +280,7 @@ app.post("/deleteOnePost/:postID/:userID", (request, response) => {
 app.get("/getRatedPosts/:userID", (request, response) => {
   console.log('Rated posts requested for user ' + request.params.userID);
     userCollection.findOne({"userID":request.params.userID}, function(err, document) {
-      console.log(document);
+      // console.log(document);
       response.send(document.ratedPosts);
     });
 });
