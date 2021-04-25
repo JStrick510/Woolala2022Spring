@@ -28,8 +28,9 @@ class _ProfilePageState extends State<ProfilePage> {
   final String currentOnlineUserEmail = currentUser.email;
   User profilePageOwner;
   bool checker = false;
-  bool isBlocked = false;
+  bool isBlocked = true;
   User viewingUser;
+  User tempUser;
   List postIDs = [];
   int numToShow = 1;
   int postsPerReload = 2;
@@ -190,20 +191,22 @@ class _ProfilePageState extends State<ProfilePage> {
                                   future: checkBlockandFollowing(),
                                   builder: (BuildContext context,
                                       AsyncSnapshot<bool> snapshot) {
-                                    if (snapshot.hasData)
-                                      return Row(
-                                        children: <Widget>[
-                                          createButton(),
-                                          Expanded(
-                                            child: currentOnlineUserEmail !=
-                                                    widget.userProfileEmail
-                                                ? createBlockButton()
-                                                : SizedBox(width: 0),
-                                          ),
-                                        ],
-                                      );
-                                    else {
-                                      print(snapshot);
+                                    if (snapshot.hasData) {
+                                      if (currentOnlineUserEmail !=
+                                          widget.userProfileEmail)
+                                        return Row(
+                                          children: <Widget>[
+                                            createButton(),
+                                            Expanded(
+                                              child: createBlockButton(),
+                                            ),
+                                          ],
+                                        );
+                                      else {
+                                        return createButton();
+                                      }
+                                    } else {
+                                      // print(snapshot);
                                       return createButtonTitleAndFunction(
                                         title: 'Loading...',
                                         futureFunctionName: "",
@@ -239,13 +242,15 @@ class _ProfilePageState extends State<ProfilePage> {
   void getStartingFeed() async {
     feedLoading = true;
     profilePageOwner = await getDoesUserExists(widget.userProfileEmail);
+    tempUser = await getDoesUserExists(currentOnlineUserEmail);
     if (currentUser != null)
       getOwnFeed().then((list) {
         postIDs = list;
-        if (postIDs.length == 0)
-          numToShow = 1;
-        else
-          numToShow = postsPerReload;
+        // if (postIDs.length == 0)
+        //   numToShow = 1;
+        // else
+        //   numToShow = postsPerReload;
+        numToShow = 1;
         sortPosts(postIDs);
         setState(() {
           feedLoading = false;
@@ -262,13 +267,19 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   void _onLoading() async {
+    print('isBlocked: $isBlocked');
+    print('isFollowing: $checker');
     await Future.delayed(Duration(milliseconds: 1000));
+
     if (numToShow + postsPerReload > postIDs.length) {
       numToShow = postIDs.length + 1;
     } else {
       numToShow += postsPerReload;
     }
 
+    if (isBlocked) {
+      numToShow = 1;
+    }
     // if failed,use loadFailed(),if no data return,use LoadNodata()
     if (mounted) setState(() {});
     _refreshController.loadComplete();
@@ -403,25 +414,39 @@ class _ProfilePageState extends State<ProfilePage> {
 
   Future<bool> checkBlockandFollowing() async {
     print('Checking if blocked and following is true');
-    User currentUser = await getDoesUserExists(currentOnlineUserEmail);
-    viewingUser = await getDoesUserExists(widget.userProfileEmail);
-    print(currentUser.blockedUsers);
+    // User currentUser = await getDoesUserExists(currentOnlineUserEmail);
+    // viewingUser = await getDoesUserExists(widget.userProfileEmail);
+    User currentUser = tempUser; //grabbed from initState()
+    viewingUser = profilePageOwner;
+    // print(currentUser.blockedUsers);
     for (int i = 0; i < currentUser.following.length; i++) {
       if (currentUser.following[i] == viewingUser.userID) {
         checker = true;
         print('Current user is following this user');
       }
     }
+    bool tempBlock = false; //to keep atomicity
     for (int i = 0; i < currentUser.blockedUsers.length; i++) {
       if (currentUser.blockedUsers[i] == viewingUser.userID) {
-        isBlocked = true;
+        tempBlock = true;
         print('user is blocked');
       }
     }
+    isBlocked = tempBlock;
+    print('checkBlockandFollowing function finished');
+    //prevent loading posts from blocked users
+    if (isBlocked && checker) {
+      return true;
+    } else if (isBlocked) {
+      checker = false;
+      return true;
+    } else if (checker) {
+      isBlocked = false;
+      return true;
+    }
     isBlocked = false;
     checker = false;
-    print('checkBlockandFollowing function finished');
-    return true;
+    return false;
   }
 
   createButton() {
@@ -483,6 +508,13 @@ class _ProfilePageState extends State<ProfilePage> {
         padding: EdgeInsets.only(top: 3.0),
         child: FlatButton(
           onPressed: () {
+            if (isBlocked) {
+              final snackBar = SnackBar(
+                  content: Text(
+                      'You must unblock this user first before following!'));
+              ScaffoldMessenger.of(context).showSnackBar(snackBar);
+              return;
+            }
             FutureBuilder(
                 future: follow(currentUser.userID, viewingUser.userID),
                 builder: (context, snapshot) {});

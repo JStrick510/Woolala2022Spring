@@ -178,6 +178,7 @@ class _HomepageScreenState extends State<HomepageScreen> {
   var ratedPosts = [];
   File file;
   int numToShow;
+  var feedLoading = true;
 
   // Change this to load more posts per refresh
   int postsPerReload = 4;
@@ -219,7 +220,8 @@ class _HomepageScreenState extends State<HomepageScreen> {
   @override
   initState() {
     super.initState();
-    if (currentUser != null)
+    if (currentUser != null) {
+      feedLoading = true;
       getFeed(currentUser.userID).then((list) {
         postIDs = list;
         if (postIDs.length < postsPerReload)
@@ -228,9 +230,11 @@ class _HomepageScreenState extends State<HomepageScreen> {
           numToShow = postsPerReload;
         sortPosts(postIDs);
         print(postIDs);
-        setState(() {});
+        setState(() {
+          feedLoading = false;
+        });
       });
-
+    }
     getRatedPosts(currentUser.userID).then((list) {
       ratedPosts = list;
     });
@@ -262,38 +266,56 @@ class _HomepageScreenState extends State<HomepageScreen> {
           )
         ],
       ),
-      body: Center(
-        child: postIDs.length > 0
-            ? SmartRefresher(
-                enablePullDown: true,
-                enablePullUp: true,
-                header: ClassicHeader(),
-                footer: ClassicFooter(),
-                controller: _refreshController,
-                onRefresh: _onRefresh,
-                onLoading: _onLoading,
-                child: ListView.builder(
-                    padding: const EdgeInsets.all(0),
-                    itemCount: numToShow,
-                    addAutomaticKeepAlives: true,
-                    physics: const AlwaysScrollableScrollPhysics(),
-                    itemBuilder: (BuildContext context, int index) {
-                      // The height on this will need to be edited to match whatever height is set for the picture
-                      return SizedBox(
-                        width: double.infinity,
-                        height: 550,
-                        child: FeedCard(postIDs[index], ratedPosts),
-                      );
-                    }),
-              )
-            : Padding(
-                padding: EdgeInsets.all(70.0),
-                child: Text("Follow People to see their posts on your feed!",
+      body: !feedLoading
+          ? Center(
+              child: postIDs.length > 0
+                  ? SmartRefresher(
+                      enablePullDown: true,
+                      enablePullUp: true,
+                      header: ClassicHeader(),
+                      footer: ClassicFooter(),
+                      controller: _refreshController,
+                      onRefresh: _onRefresh,
+                      onLoading: _onLoading,
+                      child: ListView.builder(
+                          padding: const EdgeInsets.all(0),
+                          itemCount: numToShow,
+                          addAutomaticKeepAlives: true,
+                          physics: const AlwaysScrollableScrollPhysics(),
+                          itemBuilder: (BuildContext context, int index) {
+                            // The height on this will need to be edited to match whatever height is set for the picture
+                            return SizedBox(
+                              width: double.infinity,
+                              height: 550,
+                              child: FeedCard(postIDs[index], ratedPosts),
+                            );
+                          }),
+                    )
+                  : Padding(
+                      padding: EdgeInsets.all(70.0),
+                      child: Text(
+                          "Follow People to see their posts on your feed!",
+                          style: TextStyle(
+                              fontSize: 30,
+                              color: Colors.grey,
+                              fontFamily: 'Lucida'))),
+            )
+          : Center(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: <Widget>[
+                  Text(
+                    'Feed Loading...',
                     style: TextStyle(
-                        fontSize: 30,
-                        color: Colors.grey,
-                        fontFamily: 'Lucida'))),
-      ),
+                      fontSize: 36,
+                    ),
+                  ),
+                  Container(width: 50),
+                  CircularProgressIndicator(),
+                ],
+              ),
+            ),
       bottomNavigationBar: BottomNavigationBar(
         onTap: (int index) {
           bottomBar.switchPage(index, context);
