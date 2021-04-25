@@ -187,32 +187,20 @@ class _ProfilePageState extends State<ProfilePage> {
                             // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: [
                               Expanded(
-                                child: FutureBuilder(
-                                  future: checkBlockandFollowing(),
-                                  builder: (BuildContext context,
-                                      AsyncSnapshot<bool> snapshot) {
-                                    if (snapshot.hasData) {
-                                      if (currentOnlineUserEmail !=
-                                          widget.userProfileEmail)
-                                        return Row(
-                                          children: <Widget>[
-                                            createButton(),
-                                            Expanded(
-                                              child: createBlockButton(),
-                                            ),
-                                          ],
-                                        );
-                                      else {
-                                        return createButton();
-                                      }
-                                    } else {
-                                      // print(snapshot);
-                                      return createButtonTitleAndFunction(
-                                        title: 'Loading...',
-                                        futureFunctionName: "",
-                                        color: Colors.white,
-                                        width: 280,
+                                child: Builder(
+                                  builder: (BuildContext context) {
+                                    if (currentOnlineUserEmail !=
+                                        widget.userProfileEmail)
+                                      return Row(
+                                        children: <Widget>[
+                                          createButton(),
+                                          Expanded(
+                                            child: createBlockButton(),
+                                          ),
+                                        ],
                                       );
+                                    else {
+                                      return createButton();
                                     }
                                   },
                                 ),
@@ -243,14 +231,18 @@ class _ProfilePageState extends State<ProfilePage> {
     feedLoading = true;
     profilePageOwner = await getDoesUserExists(widget.userProfileEmail);
     tempUser = await getDoesUserExists(currentOnlineUserEmail);
+    await checkBlockandFollowing();
     if (currentUser != null)
       getOwnFeed().then((list) {
-        postIDs = list;
-        // if (postIDs.length == 0)
-        //   numToShow = 1;
-        // else
-        //   numToShow = postsPerReload;
-        numToShow = 1;
+        if (isBlocked) {
+          numToShow = 1;
+        } else {
+          postIDs = list;
+          if (postIDs.length == 0)
+            numToShow = 1;
+          else
+            numToShow = postsPerReload;
+        }
         sortPosts(postIDs);
         setState(() {
           feedLoading = false;
