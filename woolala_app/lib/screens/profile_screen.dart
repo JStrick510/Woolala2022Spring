@@ -91,7 +91,7 @@ class _ProfilePageState extends State<ProfilePage> {
         }
         profilePageOwner = dataSnapshot.data;
         return SizedBox(
-          height: 360,
+          // height: 360,
           child: Padding(
             padding: EdgeInsets.all(20.0),
             child: Column(
@@ -191,16 +191,25 @@ class _ProfilePageState extends State<ProfilePage> {
                                   builder: (BuildContext context) {
                                     if (currentOnlineUserEmail !=
                                         widget.userProfileEmail)
-                                      return Row(
-                                        children: <Widget>[
-                                          createButton(),
-                                          Expanded(
-                                            child: createBlockButton(),
-                                          ),
-                                        ],
+                                      return Padding(
+                                        padding: const EdgeInsets.only(
+                                            top: 12.0, left: 12),
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: <Widget>[
+                                            createButton(),
+                                            Expanded(
+                                              child: createBlockButton(),
+                                            ),
+                                          ],
+                                        ),
                                       );
                                     else {
-                                      return createButton();
+                                      return Padding(
+                                        padding: EdgeInsets.only(top: 12),
+                                        child: createButton(),
+                                      );
                                     }
                                   },
                                 ),
@@ -454,14 +463,14 @@ class _ProfilePageState extends State<ProfilePage> {
       return createButtonTitleAndFunction(
         title: 'Unfollow',
         futureFunctionName: "unfollowUser",
-        color: Colors.red[400],
+        color: Colors.grey[400],
         width: 220,
       );
     } else {
       return createButtonTitleAndFunction(
         title: 'Follow',
         futureFunctionName: "followUser",
-        color: Colors.blue,
+        color: Colors.white38,
         width: 220,
       );
     }
@@ -475,14 +484,14 @@ class _ProfilePageState extends State<ProfilePage> {
       return createButtonTitleAndFunction(
         title: 'Unblock',
         futureFunctionName: "unblockUser",
-        color: Colors.white,
+        color: Colors.red,
         width: 100,
       );
     } else {
       return createButtonTitleAndFunction(
         title: 'Block',
         futureFunctionName: "blockUser",
-        color: Colors.red[400],
+        color: Colors.white,
         width: 100,
       );
     }
@@ -498,8 +507,8 @@ class _ProfilePageState extends State<ProfilePage> {
     if (futureFunctionName == "followUser") {
       return Container(
         padding: EdgeInsets.only(top: 3.0),
-        child: FlatButton(
-          onPressed: () {
+        child: GestureDetector(
+          onTap: () {
             if (isBlocked) {
               final snackBar = SnackBar(
                   content: Text(
@@ -539,8 +548,8 @@ class _ProfilePageState extends State<ProfilePage> {
     } else if (futureFunctionName == "unfollowUser") {
       return Container(
         padding: EdgeInsets.only(top: 3.0),
-        child: FlatButton(
-          onPressed: () {
+        child: GestureDetector(
+          onTap: () {
             FutureBuilder(
                 future: unfollow(currentUser.userID, viewingUser.userID),
                 builder: (context, snapshot) {});
@@ -607,8 +616,8 @@ class _ProfilePageState extends State<ProfilePage> {
     } else if (futureFunctionName == "unblockUser") {
       return Container(
         padding: EdgeInsets.only(top: 3.0),
-        child: FlatButton(
-          onPressed: () {
+        child: GestureDetector(
+          onTap: () {
             FutureBuilder(
                 future: unblockUser(currentUser.userID, viewingUser.userID),
                 builder: (context, snapshot) {});
@@ -641,8 +650,8 @@ class _ProfilePageState extends State<ProfilePage> {
     } else {
       return Container(
         padding: EdgeInsets.only(top: 3.0),
-        child: FlatButton(
-          onPressed: performFunction,
+        child: GestureDetector(
+          onTap: performFunction,
           key: ValueKey(title),
           child: Container(
             width: width,
@@ -711,11 +720,7 @@ class _ProfilePageState extends State<ProfilePage> {
                           physics: const AlwaysScrollableScrollPhysics(),
                           itemBuilder: (BuildContext context, int index) {
                             if (index == 0) {
-                              return SizedBox(
-                                width: double.infinity,
-                                height: 360,
-                                child: createProfileTop(),
-                              );
+                              return createProfileTop();
                             } else {
                               // The height on this will need to be edited to match whatever height is set for the picture
                               if (profilePageOwner.userID ==
