@@ -310,6 +310,7 @@ class _LoginScreenState extends State<LoginScreen> {
         private: false,
         ratedPosts: [],
         url: "",
+        blockedUsers: [],
       );
       await insertUser(u);
       currentUser = u;
@@ -356,6 +357,7 @@ class _LoginScreenState extends State<LoginScreen> {
           ratedPosts: [],
           private: false,
           url: "",
+          blockedUsers: [],
         );
         await insertUser(u);
         currentUser = u;
@@ -421,6 +423,7 @@ class _LoginScreenState extends State<LoginScreen> {
         private: false,
         ratedPosts: [],
         url: "",
+        blockedUsers: [],
       );
       await insertUser(u);
       currentUser = u;

@@ -27,6 +27,32 @@ Future<http.Response> unfollow(String currentAccountID, String otherAccountID) {
   );
 }
 
+//Database call for blocking people
+Future<http.Response> blockUser(
+    String currentAccountID, String otherAccountID) async {
+  await unfollow(currentAccountID, otherAccountID);
+  return http.post(
+    Uri.parse(domain + '/blockUser/' + currentAccountID + '/' + otherAccountID),
+    headers: <String, String>{
+      'Content-Type': 'application/json',
+    },
+    body: jsonEncode({}),
+  );
+}
+
+//Database call for unblocking people
+Future<http.Response> unblockUser(
+    String currentAccountID, String otherAccountID) {
+  return http.post(
+    Uri.parse(
+        domain + '/unblockUser/' + currentAccountID + '/' + otherAccountID),
+    headers: <String, String>{
+      'Content-Type': 'application/json',
+    },
+    body: jsonEncode({}),
+  );
+}
+
 //Create Stateful Widget
 class SearchPage extends StatefulWidget {
   @override

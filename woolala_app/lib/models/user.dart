@@ -5,6 +5,7 @@ import 'dart:io';
 import 'package:image_picker/image_picker.dart';
 import 'dart:math';
 import 'package:woolala_app/main.dart';
+import 'package:woolala_app/screens/login_screen.dart';
 
 class User {
   final String userID;
@@ -24,6 +25,7 @@ class User {
   List following;
   bool private;
   List ratedPosts;
+  List blockedUsers;
 
   User({
     this.userID,
@@ -41,6 +43,7 @@ class User {
     this.private,
     this.followers,
     this.ratedPosts,
+    this.blockedUsers,
   });
 
   User.fromJSON(Map<String, dynamic> json)
@@ -58,7 +61,8 @@ class User {
         following = json['following'],
         postIDs = json['postIDs'],
         private = json['private'],
-        ratedPosts = json['ratedPosts'];
+        ratedPosts = json['ratedPosts'],
+        blockedUsers = json['blockedUsers'];
 
   Map<String, dynamic> toJSON() => {
         'userID': userID,
@@ -75,7 +79,8 @@ class User {
         'following': following,
         'postIDs': postIDs,
         'private': private,
-        'ratedPosts': ratedPosts
+        'ratedPosts': ratedPosts,
+        'blockedUsers': blockedUsers,
       };
 
   Future<double> getAvgScore() async {

@@ -256,6 +256,30 @@ app.post("/unfollow/:you/:them", (request, response) => {
     response.send({});
 });
 
+// handles blocking a user
+app.post("/blockUser/:you/:them", (request, response) => {
+  var currentUserID = request.params.you;
+  var blockedUserID = request.params.them;
+  var updateCurrent = { $push: { blockedUsers: blockedUserID } };
+
+  userCollection.updateOne({ "userID": currentUserID }, updateCurrent, function (err, res) {
+    console.log(currentUserID + " now has " + blockedUserID + " in their blocked Users array");
+  });
+  response.send({});
+});
+
+// handles blocking a user
+app.post("/unblockUser/:you/:them", (request, response) => {
+  var currentUserID = request.params.you;
+  var blockedUserID = request.params.them;
+  var updateCurrent = { $pull: { blockedUsers: blockedUserID } };
+
+  userCollection.updateOne({ "userID": currentUserID }, updateCurrent, function (err, res) {
+    console.log(currentUserID + " now does not have " + blockedUserID + " in their blocked Users array");
+  });
+  response.send({});
+});
+
 app.post("/deleteUser/:ID", (request, response) => {
     userCollection.deleteOne({"userID": request.params.ID}, function(err, res) {
         console.log("Deleted User: " + request.params.ID);
