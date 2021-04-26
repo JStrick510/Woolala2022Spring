@@ -428,7 +428,7 @@ class _FeedCardState extends State<FeedCard> {
                                     textAlign: TextAlign.left,
                                     style: TextStyle(
                                         fontWeight: FontWeight.bold,
-                                        fontSize: 15),
+                                        fontSize: 18),
                                   ),
                                 ),
                               ),
@@ -436,7 +436,7 @@ class _FeedCardState extends State<FeedCard> {
                                 alignment: Alignment.centerLeft,
                                 child: Padding(
                                   padding: EdgeInsets.fromLTRB(
-                                      10.0, 1.0, 10.0, 20.0),
+                                      10.0, 1.0, 10.0, 15.0),
                                   child: Text(
                                     postInfo.data[1],
                                     textAlign: TextAlign.left,
@@ -458,7 +458,7 @@ class _FeedCardState extends State<FeedCard> {
                               postInfo.data[3],
                               textAlign: TextAlign.left,
                               style: TextStyle(
-                                  fontSize: 15, fontWeight: FontWeight.w500),
+                                  fontSize: 12, fontWeight: FontWeight.w500),
                             ),
                           ),
                         ),
