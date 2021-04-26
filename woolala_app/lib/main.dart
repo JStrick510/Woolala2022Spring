@@ -13,13 +13,13 @@ import 'package:woolala_app/screens/post_screen.dart';
 import 'package:woolala_app/screens/eulaScreen.dart';
 
 // Set to true if running app.js locally and want to connect to it instead
-bool localDev = false;
+bool localDev = true;
 String domain;
 
 void main() async {
   if (localDev) {
-    domain = "http://10.0.2.2:5000";
-    // domain = "http://0.0.0.0:5000"; //when running Mac
+    // domain = "http://10.0.2.2:5000";
+    domain = "http://0.0.0.0:5000"; //when running Mac
     // domain = "http://Bryants-MacBook-Pro.local:5000";
   } else {
     domain = "https://hidden-caverns-85596.herokuapp.com";
@@ -40,6 +40,7 @@ class WooLaLa extends StatelessWidget {
         accentColor: Colors.black,
         // This makes the visual density adapt to the platform that you run the app on. For desktop platforms, the controls will be smaller and closer together (more dense) than on mobile platforms.
         visualDensity: VisualDensity.adaptivePlatformDensity,
+        textSelectionTheme: TextSelectionThemeData(cursorColor: Colors.black),
       ),
       initialRoute: '/',
       routes: {

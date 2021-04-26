@@ -241,6 +241,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
     return RaisedButton(
       child: Text('Delete Account'),
       color: Colors.red,
+      textColor: Colors.white,
       elevation: 5,
       padding: EdgeInsets.fromLTRB(80.0, 0, 80, 0),
       onPressed: () {
@@ -251,6 +252,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
   showDeleteConfirmation(BuildContext context) {
     Widget cancelButton = FlatButton(
+      textColor: Colors.black,
       child: Text("Cancel"),
       onPressed: () {
         Navigator.of(context).pop();
@@ -259,6 +261,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
     Widget continueButton = FlatButton(
       child: Text("Continue"),
+      textColor: Colors.red,
       onPressed: () async {
         unFollowAll();
         deleteUser(currentUser.userID);
