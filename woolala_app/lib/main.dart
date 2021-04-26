@@ -13,7 +13,7 @@ import 'package:woolala_app/screens/post_screen.dart';
 import 'package:woolala_app/screens/eulaScreen.dart';
 
 // Set to true if running app.js locally and want to connect to it instead
-bool localDev = true;
+bool localDev = false;
 String domain;
 
 void main() async {

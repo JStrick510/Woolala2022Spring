@@ -266,7 +266,6 @@ class _HomepageScreenState extends State<HomepageScreen> {
           )
         ],
       ),
-
       body: !feedLoading
           ? Center(
               child: postIDs.length > 0
@@ -302,11 +301,13 @@ class _HomepageScreenState extends State<HomepageScreen> {
                   : Padding(
                       padding: EdgeInsets.all(70.0),
                       child: Text(
-                          "Follow People to see their posts on your feed!",
-                          style: TextStyle(
-                              fontSize: 30,
-                              color: Colors.grey,
-                              fontFamily: 'Lucida'))),
+                        "Follow People to see their posts on your feed!",
+                        style: TextStyle(
+                            fontSize: 30,
+                            color: Colors.grey,
+                            fontFamily: 'Lucida'),
+                      ),
+                    ),
             )
           : Center(
               child: Row(
