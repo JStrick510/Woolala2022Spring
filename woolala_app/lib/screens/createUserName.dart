@@ -5,11 +5,9 @@ import 'dart:io';
 import 'dart:convert';
 import 'package:woolala_app/main.dart';
 
-class CreateUserName extends StatefulWidget{
+class CreateUserName extends StatefulWidget {
   final String currentOnlineUserId;
-  CreateUserName({
-    this.currentOnlineUserId
-  });
+  CreateUserName({this.currentOnlineUserId});
 
   @override
   _CreateUserNameState createState() => _CreateUserNameState();
@@ -19,99 +17,129 @@ class _CreateUserNameState extends State<CreateUserName> {
   TextEditingController userNameController = TextEditingController();
   bool loading = false;
   bool _userNameValid = false;
-  final _scaffoldGlobalKey = GlobalKey<ScaffoldState>();
+  bool _badUsername = false;
+  bool _takenUsername = false;
+  final GlobalKey<ScaffoldMessengerState> _scaffoldGlobalKey =
+      GlobalKey<ScaffoldMessengerState>();
 
-  void initState(){
+  void initState() {
     super.initState();
   }
 
-
-  updateUserInfo() async
-  {
+  updateUserInfo() async {
+    _badUsername = false;
+    _takenUsername = false;
     setState(() {
-      userNameController.text.isEmpty || userNameController.text.trim().length > 30  ? _userNameValid = false : _userNameValid = true;
+      userNameController.text.isEmpty ||
+              userNameController.text.trim().length > 30
+          ? _userNameValid = false
+          : _userNameValid = true;
     });
     String nameToSend = userNameController.text.trim();
-    if(nameToSend.contains(new RegExp('[^a-zA-Z0-9_]')))
-      {
-        setState(() {
-          _userNameValid = false;
-        });
-      }
-    else {
+    if (nameToSend.contains(new RegExp('[^a-zA-Z0-9_]'))) {
+      setState(() {
+        _userNameValid = false;
+        _badUsername = true;
+      });
+    } else {
       http.Response res = await currentUser.isUserNameTaken(nameToSend);
+      // print(res.body.toString());
       if (res.body.isEmpty) {
         setState(() {
           _userNameValid = true;
         });
+      } else {
+        setState(() {
+          _userNameValid = false;
+          _takenUsername = true;
+        });
       }
     }
-    if(_userNameValid)
-    {
+    if (_userNameValid) {
       //print("update user info on server");
       currentUser.setUserName(userNameController.text.trim());
-      SnackBar successSB = SnackBar(content: Text("User Name Updated Successfully"),);
+      SnackBar successSB = SnackBar(
+        content: Text("User Name Updated Successfully"),
+      );
       _scaffoldGlobalKey.currentState.showSnackBar(successSB);
       Navigator.pushReplacementNamed(context, '/home');
+    } else {
+      if (_badUsername) {
+        SnackBar failedSB = SnackBar(
+          content: Text("Invalid Characters in Username. Must be alphanumeric"),
+        );
+        _scaffoldGlobalKey.currentState.showSnackBar(failedSB);
+      } else if (_takenUsername) {
+        SnackBar failedSB = SnackBar(
+          content: Text("Username already taken. Try again."),
+        );
+        _scaffoldGlobalKey.currentState.showSnackBar(failedSB);
+      } else {
+        SnackBar failedSB = SnackBar(
+          content:
+              Text("Invalid Characters in Username or it is already taken"),
+        );
+        _scaffoldGlobalKey.currentState.showSnackBar(failedSB);
+      }
     }
-    else{
-      SnackBar failedSB = SnackBar(content: Text("Invalid Characters in Username or it is already taken"),);
-      _scaffoldGlobalKey.currentState.showSnackBar(failedSB);
-    }
-
   }
 
   @override
-  Widget build(BuildContext context){
-    return Scaffold(
-        key: _scaffoldGlobalKey,
-        appBar: AppBar(
-          iconTheme: IconThemeData(color: Colors.blue),
-          title: Text('Create User Name', style: TextStyle(color: Colors.white),),
-          actions: <Widget>[
-            IconButton(
-              icon: Icon(Icons.done, color: Colors.white, size: 30.0,),
-              onPressed: () => {
-                updateUserInfo(),
-              },
-            )
-          ],
-        ),
-        body: ListView(
-          children: <Widget>[
-            Container(
-              child: Column(
-                children: <Widget>[
-                  Padding(
-                    padding: EdgeInsets.only(top: 16.0, bottom: 7.0),
-                    child: Column(
-                        children: <Widget> [
-                          GestureDetector(
-                              onTap: () => {print("Change pic from gallery")},
-                              child: currentUser.createProfileAvatar()
-                          )
-                        ]
+  Widget build(BuildContext context) {
+    return ScaffoldMessenger(
+      key: _scaffoldGlobalKey,
+      child: Scaffold(
+          // key: _scaffoldGlobalKey,
+          appBar: AppBar(
+            iconTheme: IconThemeData(color: Colors.blue),
+            title: Text(
+              'Create User Name',
+              style: TextStyle(color: Colors.white),
+            ),
+            actions: <Widget>[
+              IconButton(
+                icon: Icon(
+                  Icons.done,
+                  color: Colors.black,
+                  size: 30.0,
+                ),
+                onPressed: () => {
+                  updateUserInfo(),
+                },
+              )
+            ],
+          ),
+          body: ListView(
+            children: <Widget>[
+              Container(
+                child: Column(
+                  children: <Widget>[
+                    Padding(
+                      padding: EdgeInsets.only(top: 16.0, bottom: 7.0),
+                      child: Column(children: <Widget>[
+                        GestureDetector(
+                            onTap: () => {print("Change pic from gallery")},
+                            child: currentUser.createProfileAvatar())
+                      ]),
                     ),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.all(16.0),
-                    child: Column(
-                      children: <Widget>[
-                        createUserNameTextFormField(),
-                        createPrivacySwitch(),
-                      ],
+                    Padding(
+                      padding: EdgeInsets.all(16.0),
+                      child: Column(
+                        children: <Widget>[
+                          createUserNameTextFormField(),
+                          createPrivacySwitch(),
+                        ],
+                      ),
                     ),
-                  ),
-                ],
-              ),
-            )
-          ],
-        )
+                  ],
+                ),
+              )
+            ],
+          )),
     );
   }
 
-
-  Column createUserNameTextFormField(){
+  Column createUserNameTextFormField() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
@@ -134,15 +162,15 @@ class _CreateUserNameState extends State<CreateUserName> {
               borderSide: BorderSide(color: Colors.black),
             ),
             hintStyle: TextStyle(color: Colors.grey),
-            errorText: _userNameValid ? null : "User Name is invalid or already taken",
+            errorText:
+                _userNameValid ? null : "User Name is invalid or already taken",
           ),
         )
-
       ],
     );
   }
 
-  Row createPrivacySwitch(){
+  Row createPrivacySwitch() {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: <Widget>[
@@ -157,7 +185,7 @@ class _CreateUserNameState extends State<CreateUserName> {
           padding: EdgeInsets.only(top: 15.0),
           child: Switch(
             value: currentUser.private,
-            onChanged: (value){
+            onChanged: (value) {
               setState(() {
                 currentUser.setPrivacy(value);
               });
@@ -169,6 +197,4 @@ class _CreateUserNameState extends State<CreateUserName> {
       ],
     );
   }
-
-
 }

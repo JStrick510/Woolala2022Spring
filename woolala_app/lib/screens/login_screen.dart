@@ -447,11 +447,11 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     final tween = MultiTrackTween([
       Track("color1").add(Duration(seconds: 3),
-          ColorTween(begin: Colors.white, end: Colors.white70)),
+          ColorTween(begin: Colors.white, end: Colors.white)),
       Track("color2").add(Duration(seconds: 3),
-          ColorTween(begin: Colors.black, end: Colors.black)),
+          ColorTween(begin: Colors.white, end: Colors.white)),
       Track("color3").add(Duration(seconds: 3),
-          ColorTween(begin: Colors.white, end: Colors.white70))
+          ColorTween(begin: Colors.white, end: Colors.white))
     ]);
 
     // if (_firstTimeLogin) {
@@ -491,56 +491,59 @@ class _LoginScreenState extends State<LoginScreen> {
                               height: 150,
                               fit: BoxFit.contain,
                               semanticLabel: 'WooLaLa logo'),
-                          Text(
-                            "Powered by: ",
-                            style: TextStyle(color: Colors.white, fontSize: 16),
-                          ),
-                          Image.asset('assets/logos/fashionNXT_logo.png',
-                              width: 150,
-                              height: 30,
-                              fit: BoxFit.contain,
-                              semanticLabel: 'FashioNXT logo'),
+                          // Text(
+                          //   "Powered by: ",
+                          //   style: TextStyle(color: Colors.white, fontSize: 16),
+                          // ),
+                          // Image.asset('assets/logos/fashionNXT_logo.png',
+                          //     width: 150,
+                          //     height: 30,
+                          //     fit: BoxFit.contain,
+                          //     semanticLabel: 'FashioNXT logo'),
                           SizedBox(
                             height: 25,
                           ),
-                          CarouselSlider(
-                            options: CarouselOptions(
-                              height: 160.0,
-                              initialPage: 0,
-                              enlargeCenterPage: true,
-                              autoPlay: true,
-                              reverse: false,
-                              enableInfiniteScroll: true,
-                              autoPlayInterval: Duration(seconds: 4),
-                              autoPlayAnimationDuration:
-                                  Duration(milliseconds: 2000),
-                              scrollDirection: Axis.horizontal,
-                            ),
-                            items: images.map((imgUrl) {
-                              return Builder(
-                                builder: (BuildContext context) {
-                                  return Container(
-                                    width: MediaQuery.of(context).size.width,
-                                    margin:
-                                        EdgeInsets.symmetric(horizontal: 10.0),
-                                    decoration: BoxDecoration(
-                                      color: Colors.black,
-                                    ),
-                                    child: Image.network(
-                                      imgUrl,
-                                      fit: BoxFit.fill,
-                                    ),
-                                  );
-                                },
-                              );
-                            }).toList(),
-                          ),
+                          // CarouselSlider(
+                          //   options: CarouselOptions(
+                          //     height: 160.0,
+                          //     initialPage: 0,
+                          //     enlargeCenterPage: true,
+                          //     autoPlay: true,
+                          //     reverse: false,
+                          //     enableInfiniteScroll: true,
+                          //     autoPlayInterval: Duration(seconds: 4),
+                          //     autoPlayAnimationDuration:
+                          //         Duration(milliseconds: 2000),
+                          //     scrollDirection: Axis.horizontal,
+                          //   ),
+                          //   items: images.map((imgUrl) {
+                          //     return Builder(
+                          //       builder: (BuildContext context) {
+                          //         return Container(
+                          //           width: MediaQuery.of(context).size.width,
+                          //           margin:
+                          //               EdgeInsets.symmetric(horizontal: 10.0),
+                          //           decoration: BoxDecoration(
+                          //             color: Colors.black,
+                          //           ),
+                          //           child: Image.network(
+                          //             imgUrl,
+                          //             fit: BoxFit.fill,
+                          //           ),
+                          //         );
+                          //       },
+                          //     );
+                          //   }).toList(),
+                          // ),
                           SizedBox(
                             height: 25,
                           ),
                           Text(
                             "Login With:",
-                            style: TextStyle(color: Colors.white, fontSize: 24),
+                            style: TextStyle(
+                              // color: Colors.white,
+                              fontSize: 24,
+                            ),
                           ),
                           _buildSocialButtonRow()
                         ],

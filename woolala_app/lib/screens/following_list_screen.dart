@@ -22,12 +22,14 @@ Future<String> getProfileName(String userID) async {
   Map userMap = jsonDecode(res.body.toString());
   return User.fromJSON(userMap).profileName;
 }
+
 //Gets the email of the user
 Future<String> getUserEmail(String userID) async {
   http.Response res = await http.get(Uri.parse(domain + "/getUser/" + userID));
   Map userMap = jsonDecode(res.body.toString());
   return User.fromJSON(userMap).email;
 }
+
 //Gets the userName of the user
 Future<String> getUserName(String userID) async {
   http.Response res = await http.get(Uri.parse(domain + "/getUser/" + userID));
@@ -49,7 +51,6 @@ class _FollowingListScreenState extends State<FollowingListScreen> {
   List followingUserNameList = new List();
   List followingUserIDList = new List();
 
-
   //Build the list Asynchronously
   listbuilder() async {
     //Make sure the user Exists
@@ -59,7 +60,7 @@ class _FollowingListScreenState extends State<FollowingListScreen> {
 
     //Go through the Follower List of userIDs and grab their profileName, email, and userName
     for (int i = 0; i < tempFollowingList.length; i++) {
-      if(tempFollowingList[i] != currentProfile.userID){
+      if (tempFollowingList[i] != currentProfile.userID) {
         String tempProfileName = await getProfileName(tempFollowingList[i]);
         String tempUserEmail = await getUserEmail(tempFollowingList[i]);
         String tempUserName = await getUserName(tempFollowingList[i]);
@@ -98,17 +99,19 @@ class _FollowingListScreenState extends State<FollowingListScreen> {
                       child: new IconButton(
                         icon: Icon(Icons.remove_circle_outline),
                         onPressed: () {
-                          unfollow(currentUser.userID, followingUserIDList[index]);
+                          unfollow(
+                              currentUser.userID, followingUserIDList[index]);
                           followingList.remove(followingList[index]);
                           _buildList();
                           Navigator.pushReplacement(
-                            context,
+                              context,
                               PageRouteBuilder(
-                                pageBuilder: (context, animation1, animation2) => FollowingListScreen(currentUser.email),
+                                pageBuilder:
+                                    (context, animation1, animation2) =>
+                                        FollowingListScreen(currentUser.email),
                                 transitionDuration: Duration(seconds: 0),
-                              )
-                          );
-                          },
+                              ));
+                        },
                       ),
                     ),
                   ],
@@ -125,7 +128,8 @@ class _FollowingListScreenState extends State<FollowingListScreen> {
           );
         }
         //Check to make sure if user is viewing someone else's profile
-        else if (snapshot.hasData && currentUser.userID != currentProfile.userID){
+        else if (snapshot.hasData &&
+            currentUser.userID != currentProfile.userID) {
           return ListView.builder(
             key: ValueKey("ListView"),
             scrollDirection: Axis.vertical,
@@ -134,7 +138,13 @@ class _FollowingListScreenState extends State<FollowingListScreen> {
             itemBuilder: (BuildContext context, int index) {
               return new ListTile(
                 leading: CircleAvatar(
-                  child: Text(followingList[index][0]),
+                  child: Text(
+                    followingList[index][0],
+                    style: TextStyle(
+                      color: Colors.white,
+                    ),
+                  ),
+                  backgroundColor: Colors.grey,
                 ),
                 title: Text(followingList[index]),
                 subtitle: Text(followingUserNameList[index]),
@@ -148,8 +158,7 @@ class _FollowingListScreenState extends State<FollowingListScreen> {
               );
             },
           );
-        }
-        else if (snapshot.hasError) {
+        } else if (snapshot.hasError) {
           return Center(child: Text("No Results"));
         } else {
           return Center(child: CircularProgressIndicator());
@@ -164,18 +173,18 @@ class _FollowingListScreenState extends State<FollowingListScreen> {
     return Scaffold(
       appBar: AppBar(
           leading: BackButton(
-              color: Colors.white,
+              // color: Colors.white,
               onPressed: () {
-                //(Navigator.pushReplacementNamed(context, '/profile'))
-                Navigator.pop(context);
-                Navigator.pushReplacement(
-                    context,
-                    PageRouteBuilder(
-                      pageBuilder: (context, animation1, animation2) => ProfilePage(currentProfile.email),
-                      transitionDuration: Duration(seconds: 0),
-                    )
-                );
-              }),
+            //(Navigator.pushReplacementNamed(context, '/profile'))
+            Navigator.pop(context);
+            Navigator.pushReplacement(
+                context,
+                PageRouteBuilder(
+                  pageBuilder: (context, animation1, animation2) =>
+                      ProfilePage(currentProfile.email),
+                  transitionDuration: Duration(seconds: 0),
+                ));
+          }),
           title: Text("Following"),
           actions: <Widget>[]),
       body: ListView(padding: const EdgeInsets.all(8), children: <Widget>[

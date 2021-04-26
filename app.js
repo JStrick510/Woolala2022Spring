@@ -2,8 +2,9 @@ const Express = require("express");
 const BodyParser = require("body-parser");
 const MongoClient = require("mongodb").MongoClient;
 const ObjectId = require("mongodb").ObjectID;
-const CONNECTION_URL = "mongodb+srv://Developer_1:Developer_1@woolalacluster.o4vv6.mongodb.net/Feed?retryWrites=true&w=majority";
+// const CONNECTION_URL = "mongodb+srv://Developer_1:Developer_1@woolalacluster.o4vv6.mongodb.net/Feed?retryWrites=true&w=majority";
 //const CONNECTION_URL = "mongodb+srv://Lead_Devloper:poQLxqdUb4c2RfvJ@woolalacluster.o4vv6.mongodb.net/Feed?retryWrites=true&w=majority";
+const CONNECTION_URL = "mongodb://127.0.0.1:27017";
 const DATABASE_NAME = "Feed";
 
 const path = require("path")
@@ -146,10 +147,12 @@ app.get("/getPostInfo/:id", (request, response) => {
 });
 
 app.get("/doesUserExist/:email", (request, response) => {
+  console.log("Requesting user with email: " + request.params.email);
     userCollection.findOne({"email":request.params.email}, function(err, document) {
       if(document)
       {
         //console.log(document);
+        console.log("Found user: " + document.userID);
         response.send(document);
         }
       else
@@ -161,6 +164,7 @@ app.get("/doesUserExist/:email", (request, response) => {
 
 // gets a user by userID
 app.get("/getUser/:userID", (request, response) => {
+  console.log("Requesting user " + request.params.userID);
     userCollection.findOne({"userID":request.params.userID}, function(err, document) {
       if(document)
         console.log("Found user: " + request.params.userID);
@@ -169,6 +173,7 @@ app.get("/getUser/:userID", (request, response) => {
 });
 
 app.get("/getUserByUserName/:userName", (request, response) => {
+  console.log("Checking if " + request.params.userName + " exists");
     userCollection.findOne({"userName":request.params.userName}, function(err, document) {
       if(document)
         console.log("Found user! with UserName: " + request.params.userName);
@@ -201,7 +206,7 @@ app.get("/getFeed/:userID", (request, response) => {
               {
                 postIDs.push(...results[i].postIDs);
               }
-              console.log(postIDs);
+              // console.log(postIDs);
               response.send({"postIDs":postIDs});
           });
         }

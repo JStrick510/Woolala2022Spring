@@ -45,6 +45,7 @@ class _FollowerListScreenState extends State<FollowerListScreen> {
     }
     return followerList;
   }
+
   //Build the list using a Futurebuilder for Async
   Widget _buildList() {
     return FutureBuilder(
@@ -61,7 +62,13 @@ class _FollowerListScreenState extends State<FollowerListScreen> {
               return new ListTile(
                 //Create the circular avatar for the user
                 leading: CircleAvatar(
-                  child: Text(followerList[index][0]),
+                  child: Text(
+                    followerList[index][0],
+                    style: TextStyle(
+                      color: Colors.white,
+                    ),
+                  ),
+                  backgroundColor: Colors.grey,
                 ),
                 title: Text(followerList[index]),
                 subtitle: Text(followerUserNameList[index]),
@@ -90,7 +97,7 @@ class _FollowerListScreenState extends State<FollowerListScreen> {
     return Scaffold(
       appBar: AppBar(
           leading: BackButton(
-              color: Colors.white,
+              // color: Colors.white,
               onPressed: () =>
                   //(Navigator.pushReplacementNamed(context, '/profile'))
                   (Navigator.pop(context))),
@@ -100,10 +107,10 @@ class _FollowerListScreenState extends State<FollowerListScreen> {
         _buildList(),
       ]),
       bottomNavigationBar: BottomNavigationBar(
-          onTap: (int index) {
-            bottomBar.switchPage(index, context);
-          },
-          items: bottomBar.bottom_items,
+        onTap: (int index) {
+          bottomBar.switchPage(index, context);
+        },
+        items: bottomBar.bottom_items,
       ),
     );
   }
