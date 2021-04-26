@@ -21,6 +21,7 @@ class _CreateUserNameState extends State<CreateUserName> {
   bool _takenUsername = false;
   final GlobalKey<ScaffoldMessengerState> _scaffoldGlobalKey =
       GlobalKey<ScaffoldMessengerState>();
+  final GlobalKey<FormState> _textinputGlobalKey = GlobalKey();
 
   void initState() {
     super.initState();
@@ -82,6 +83,7 @@ class _CreateUserNameState extends State<CreateUserName> {
         _scaffoldGlobalKey.currentState.showSnackBar(failedSB);
       }
     }
+    _textinputGlobalKey.currentState.validate();
   }
 
   @override
@@ -150,20 +152,32 @@ class _CreateUserNameState extends State<CreateUserName> {
             style: TextStyle(color: Colors.black),
           ),
         ),
-        TextField(
-          style: TextStyle(color: Colors.black),
-          controller: userNameController,
-          decoration: InputDecoration(
-            hintText: "Enter a unique user name here",
-            enabledBorder: UnderlineInputBorder(
-              borderSide: BorderSide(color: Colors.grey),
+        Form(
+          key: _textinputGlobalKey,
+          child: TextFormField(
+            style: TextStyle(color: Colors.black),
+            controller: userNameController,
+            decoration: InputDecoration(
+              hintText: "Enter a unique user name here",
+              enabledBorder: UnderlineInputBorder(
+                borderSide: BorderSide(color: Colors.grey),
+              ),
+              focusedBorder: UnderlineInputBorder(
+                borderSide: BorderSide(color: Colors.black),
+              ),
+              hintStyle: TextStyle(color: Colors.grey),
+              // errorText:
+              //     _userNameValid ? null : "User Name is invalid or already taken",
             ),
-            focusedBorder: UnderlineInputBorder(
-              borderSide: BorderSide(color: Colors.black),
-            ),
-            hintStyle: TextStyle(color: Colors.grey),
-            errorText:
-                _userNameValid ? null : "User Name is invalid or already taken",
+            validator: (val) {
+              if (val != null) {
+                if (_badUsername)
+                  return "Username must only be alphanumeric";
+                else if (_takenUsername) return "Username is already taken";
+                return "User Name is invalid or already taken";
+              }
+              return null;
+            },
           ),
         )
       ],
