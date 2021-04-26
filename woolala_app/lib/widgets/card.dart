@@ -213,251 +213,257 @@ class _FeedCardState extends State<FeedCard> {
               future: getUserFromDB(postInfo.data[2]),
               builder: (context, userInfo) {
                 if (userInfo.hasData) {
-                  return Column(
-                    children: <Widget>[
-                      Container(
-                        margin: const EdgeInsets.all(2),
-                        color: Colors.white,
-                        width: double.infinity,
-                        height: 35.0,
-                        child: Row(
-                          children: <Widget>[
-                            Row(
-                              children: <Widget>[
-                                Padding(
-                                    child: userInfo.data.createProfileAvatar(
-                                        radius: 15.0, font: 18.0),
-                                    padding: EdgeInsets.all(5)),
-                                GestureDetector(
-                                    onTap: () => {
-                                          Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                  builder:
-                                                      (BuildContext context) =>
-                                                          ProfilePage(userInfo
-                                                              .data.email)))
-                                        },
-                                    child: Padding(
-                                        padding: EdgeInsets.all(5),
-                                        child: Text(userInfo.data.profileName,
-                                            textAlign: TextAlign.left,
-                                            style: TextStyle(
-                                                color: Colors.black,
-                                                fontSize: 16)))),
-                              ],
-                            ),
-                            PopupMenuButton<String>(
-                              onSelected: (String result) async {
-                                switch (result) {
-                                  case 'Report Post':
-                                    http.Response res = await reportPost(
-                                        widget.postID,
-                                        currentUser.userID,
-                                        postInfo.data[3],
-                                        postInfo.data[2]);
-                                    showReportSuccess(
-                                        res.body.isNotEmpty, context);
-                                    http.Response reportCheck =
-                                        await getReports(
-                                            widget.postID, postInfo.data[2]);
-                                    showDeletionSuccess(
-                                        (reportCheck.body.isNotEmpty &&
-                                            reportCheck.statusCode != 400),
-                                        context);
-                                    break;
-                                }
-                              },
-                              itemBuilder: (BuildContext context) {
-                                return {'Report Post'}.map((String choice) {
-                                  return PopupMenuItem<String>(
-                                    value: choice,
-                                    child: Text(choice),
-                                  );
-                                }).toList();
-                              },
-                            ),
-                          ],
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        ),
-                      ),
-                      GestureDetector(
-                          child: Screenshot(
-                            controller: sc,
-                            child: Stack(
-                              children: [
-                                postInfo.data[0],
-                                Positioned(
-                                    bottom: 10,
-                                    left: 10,
-                                    child: score(widget.postID))
-                              ],
-                            ),
-                          ),
-                          onHorizontalDragStart:
-                              (DragStartDetails dragStartDetails) {
-                            if (!rated) {
-                              startPos = dragStartDetails.globalPosition.dx;
-                            }
-                          },
-                          onHorizontalDragUpdate:
-                              (DragUpdateDetails dragUpdateDetails) {
-                            if (!rated) {
-                              distance = dragUpdateDetails.globalPosition.dx -
-                                  startPos;
-
-                              if (distance < -150)
-                                stars = 0.0;
-                              else if (distance > -150 && distance < -120)
-                                stars = 0.5;
-                              else if (distance > -120 && distance < -90)
-                                stars = 1.0;
-                              else if (distance > -90 && distance < -60)
-                                stars = 1.5;
-                              else if (distance > -60 && distance < -30)
-                                stars = 2.0;
-                              if (distance > -30 && distance < 30)
-                                stars = 2.5;
-                              else if (distance > 30 && distance < 60)
-                                stars = 3.0;
-                              else if (distance > 60 && distance < 90)
-                                stars = 3.5;
-                              else if (distance > 90 && distance < 120)
-                                stars = 4.0;
-                              else if (distance > 120 && distance < 150)
-                                stars = 4.5;
-                              else if (distance > 150) stars = 5.0;
-                              setState(() {});
-                            }
-                          },
-                          onHorizontalDragEnd: (DragEndDetails dragEndDetails) {
-                            if (!rated) {
-                              ratePost(stars, widget.postID);
-                              widget.ratedPosts
-                                  .add([widget.postID, stars.toString()]);
-                              rated = true;
-                              setState(() {});
-                            }
-                          }),
-                      Container(
-                        alignment: Alignment(-1.0, 0.0),
-                        child: Column(
-                          children: <Widget>[
-                            Center(
-                              child: Row(
-                                mainAxisSize: MainAxisSize.max,
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceEvenly,
+                  return Padding(
+                    padding: const EdgeInsets.only(top: 20.0),
+                    child: Column(
+                      children: <Widget>[
+                        Container(
+                          margin: const EdgeInsets.all(2),
+                          color: Colors.white,
+                          width: double.infinity,
+                          height: 35.0,
+                          child: Row(
+                            children: <Widget>[
+                              Row(
                                 children: <Widget>[
-                                  new IconButton(
-                                    icon: Icon(Icons.share),
-                                    iconSize: 28,
-                                    onPressed: () async {
-                                      await sc.capture().then((image) async {
-                                        Directory tempDir =
-                                            await getTemporaryDirectory();
-                                        String filePath =
-                                            '${tempDir.path}/tmp_img.jpg';
-                                        await File(filePath)
-                                            .writeAsBytes(image);
-                                        await SocialShare.shareOptions(
-                                          "Shared from ChooseNXT App",
-                                          imagePath: filePath,
-                                        ).then((data) {
-                                          print(data);
-                                        });
-
-                                        //facebook appId is mandatory for android or else share won't work
-                                        // Platform.isAndroid
-                                        //     ? SocialShare.shareFacebookStory(
-                                        //             _originalImage.path,
-                                        //             "#ffffff",
-                                        //             "#000000",
-                                        //     "https://deep-link-url",
-                                        //     appId: "457421962253693")
-                                        //         .then((data) {
-                                        //         print(data);
-                                        //       })
-                                        //     : SocialShare.shareFacebookStory(
-                                        //             _originalImage.path,
-                                        //             "#ffffff",
-                                        //             "#000000",
-                                        //     "https://deep-link-url")
-                                        //         .then((data) {
-                                        //         print(data);
-                                        //       });
-                                      });
-                                    },
-                                    // child: Text("Share Options"),
-                                  ),
-                                  starSlider(widget.postID, stars, rated),
-                                  new IconButton(
-                                    icon: wouldBuy,
-                                    iconSize: 28,
-                                    onPressed: () {
-                                      setState(() {
-                                        if (wouldBuy.icon ==
-                                            Icons.remove_shopping_cart) {
-                                          wouldBuy =
-                                              Icon(Icons.add_shopping_cart);
-                                          removeWouldBuy(currentUser.userID,
-                                              widget.postID);
-                                        } else {
-                                          wouldBuy =
-                                              Icon(Icons.remove_shopping_cart);
-                                          addWouldBuy(currentUser.userID,
-                                              widget.postID);
-                                        }
-                                      });
-                                    },
-                                  ),
+                                  Padding(
+                                      child: userInfo.data.createProfileAvatar(
+                                          radius: 15.0, font: 18.0),
+                                      padding: EdgeInsets.all(5)),
+                                  GestureDetector(
+                                      onTap: () => {
+                                            Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                    builder: (BuildContext
+                                                            context) =>
+                                                        ProfilePage(userInfo
+                                                            .data.email)))
+                                          },
+                                      child: Padding(
+                                          padding: EdgeInsets.all(5),
+                                          child: Text(userInfo.data.profileName,
+                                              textAlign: TextAlign.left,
+                                              style: TextStyle(
+                                                  color: Colors.black,
+                                                  fontSize: 16)))),
+                                ],
+                              ),
+                              PopupMenuButton<String>(
+                                onSelected: (String result) async {
+                                  switch (result) {
+                                    case 'Report Post':
+                                      http.Response res = await reportPost(
+                                          widget.postID,
+                                          currentUser.userID,
+                                          postInfo.data[3],
+                                          postInfo.data[2]);
+                                      showReportSuccess(
+                                          res.body.isNotEmpty, context);
+                                      http.Response reportCheck =
+                                          await getReports(
+                                              widget.postID, postInfo.data[2]);
+                                      showDeletionSuccess(
+                                          (reportCheck.body.isNotEmpty &&
+                                              reportCheck.statusCode != 400),
+                                          context);
+                                      break;
+                                  }
+                                },
+                                itemBuilder: (BuildContext context) {
+                                  return {'Report Post'}.map((String choice) {
+                                    return PopupMenuItem<String>(
+                                      value: choice,
+                                      child: Text(choice),
+                                    );
+                                  }).toList();
+                                },
+                              ),
+                            ],
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          ),
+                        ),
+                        GestureDetector(
+                            child: Screenshot(
+                              controller: sc,
+                              child: Stack(
+                                children: [
+                                  postInfo.data[0],
+                                  Positioned(
+                                      bottom: 10,
+                                      left: 10,
+                                      child: score(widget.postID))
                                 ],
                               ),
                             ),
-                            // Align(   //remove username from posts
-                            //   alignment: Alignment.centerLeft,
-                            //   child: Padding(
-                            //     padding:
-                            //         EdgeInsets.fromLTRB(10.0, 4.0, 10.0, 2.0),
-                            //     child: Text(
-                            //       userInfo.data.profileName,
-                            //       textAlign: TextAlign.left,
-                            //       style: TextStyle(
-                            //           fontWeight: FontWeight.bold,
-                            //           fontSize: 15),
-                            //     ),
-                            //   ),
-                            // ),
-                            Align(
-                              alignment: Alignment.centerLeft,
-                              child: Padding(
-                                padding:
-                                    EdgeInsets.fromLTRB(10.0, 1.0, 10.0, 20.0),
-                                child: Text(
-                                  postInfo.data[1],
-                                  textAlign: TextAlign.left,
-                                  style: TextStyle(
-                                    fontSize: 18,
+                            onHorizontalDragStart:
+                                (DragStartDetails dragStartDetails) {
+                              if (!rated) {
+                                startPos = dragStartDetails.globalPosition.dx;
+                              }
+                            },
+                            onHorizontalDragUpdate:
+                                (DragUpdateDetails dragUpdateDetails) {
+                              if (!rated) {
+                                distance = dragUpdateDetails.globalPosition.dx -
+                                    startPos;
+
+                                if (distance < -150)
+                                  stars = 0.0;
+                                else if (distance > -150 && distance < -120)
+                                  stars = 0.5;
+                                else if (distance > -120 && distance < -90)
+                                  stars = 1.0;
+                                else if (distance > -90 && distance < -60)
+                                  stars = 1.5;
+                                else if (distance > -60 && distance < -30)
+                                  stars = 2.0;
+                                if (distance > -30 && distance < 30)
+                                  stars = 2.5;
+                                else if (distance > 30 && distance < 60)
+                                  stars = 3.0;
+                                else if (distance > 60 && distance < 90)
+                                  stars = 3.5;
+                                else if (distance > 90 && distance < 120)
+                                  stars = 4.0;
+                                else if (distance > 120 && distance < 150)
+                                  stars = 4.5;
+                                else if (distance > 150) stars = 5.0;
+                                setState(() {});
+                              }
+                            },
+                            onHorizontalDragEnd:
+                                (DragEndDetails dragEndDetails) {
+                              if (!rated) {
+                                ratePost(stars, widget.postID);
+                                widget.ratedPosts
+                                    .add([widget.postID, stars.toString()]);
+                                rated = true;
+                                setState(() {});
+                              }
+                            }),
+                        Container(
+                          alignment: Alignment(-1.0, 0.0),
+                          child: Column(
+                            children: <Widget>[
+                              Center(
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.max,
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceEvenly,
+                                  children: <Widget>[
+                                    new IconButton(
+                                      icon: Icon(Icons.share),
+                                      iconSize: 28,
+                                      onPressed: () async {
+                                        await sc.capture().then((image) async {
+                                          Directory tempDir =
+                                              await getTemporaryDirectory();
+                                          String filePath =
+                                              '${tempDir.path}/tmp_img.jpg';
+                                          await File(filePath)
+                                              .writeAsBytes(image);
+                                          await SocialShare.shareOptions(
+                                            "Shared from ChooseNXT App",
+                                            imagePath: filePath,
+                                          ).then((data) {
+                                            print(data);
+                                          });
+
+                                          //facebook appId is mandatory for android or else share won't work
+                                          // Platform.isAndroid
+                                          //     ? SocialShare.shareFacebookStory(
+                                          //             _originalImage.path,
+                                          //             "#ffffff",
+                                          //             "#000000",
+                                          //     "https://deep-link-url",
+                                          //     appId: "457421962253693")
+                                          //         .then((data) {
+                                          //         print(data);
+                                          //       })
+                                          //     : SocialShare.shareFacebookStory(
+                                          //             _originalImage.path,
+                                          //             "#ffffff",
+                                          //             "#000000",
+                                          //     "https://deep-link-url")
+                                          //         .then((data) {
+                                          //         print(data);
+                                          //       });
+                                        });
+                                      },
+                                      // child: Text("Share Options"),
+                                    ),
+                                    starSlider(widget.postID, stars, rated),
+                                    new IconButton(
+                                      icon: wouldBuy,
+                                      iconSize: 28,
+                                      onPressed: () {
+                                        setState(() {
+                                          if (wouldBuy.icon ==
+                                              Icons.remove_shopping_cart) {
+                                            wouldBuy =
+                                                Icon(Icons.add_shopping_cart);
+                                            removeWouldBuy(currentUser.userID,
+                                                widget.postID);
+                                          } else {
+                                            wouldBuy = Icon(
+                                                Icons.remove_shopping_cart);
+                                            addWouldBuy(currentUser.userID,
+                                                widget.postID);
+                                          }
+                                        });
+                                      },
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              Align(
+                                //remove username from posts
+                                alignment: Alignment.centerLeft,
+                                child: Padding(
+                                  padding:
+                                      EdgeInsets.fromLTRB(10.0, 4.0, 10.0, 2.0),
+                                  child: Text(
+                                    userInfo.data.profileName,
+                                    textAlign: TextAlign.left,
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 15),
                                   ),
                                 ),
                               ),
-                            ),
-                          ],
+                              Align(
+                                alignment: Alignment.centerLeft,
+                                child: Padding(
+                                  padding: EdgeInsets.fromLTRB(
+                                      10.0, 1.0, 10.0, 20.0),
+                                  child: Text(
+                                    postInfo.data[1],
+                                    textAlign: TextAlign.left,
+                                    style: TextStyle(
+                                      fontSize: 18,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
-                      ),
-                      // Align(   //remove date from posts
-                      //   alignment: Alignment.centerLeft,
-                      //   child: Padding(
-                      //     padding: EdgeInsets.fromLTRB(10.0, 1.0, 10.0, 2.0),
-                      //     child: Text(
-                      //       postInfo.data[3],
-                      //       textAlign: TextAlign.left,
-                      //       style: TextStyle(
-                      //           fontSize: 15, fontWeight: FontWeight.w500),
-                      //     ),
-                      //   ),
-                      // ),
-                    ],
+                        Align(
+                          //remove date from posts
+                          alignment: Alignment.centerLeft,
+                          child: Padding(
+                            padding: EdgeInsets.fromLTRB(10.0, 1.0, 10.0, 2.0),
+                            child: Text(
+                              postInfo.data[3],
+                              textAlign: TextAlign.left,
+                              style: TextStyle(
+                                  fontSize: 15, fontWeight: FontWeight.w500),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   );
                 } else {
                   return Container();

@@ -22,12 +22,12 @@ Widget starSlider(String postID, num, rated) => RatingBar(
       allowHalfRating: true,
       ignoreGestures: rated,
       itemCount: 5,
-      unratedColor: rated ? Colors.grey : Colors.black,
+      unratedColor: rated ? Colors.grey[400] : Colors.grey[400],
       itemSize: 30,
       itemPadding: EdgeInsets.symmetric(horizontal: 4.0),
       itemBuilder: (context, _) => Icon(
         Icons.star,
-        color: rated ? Colors.amber : Colors.blue,
+        color: rated ? Colors.black : Colors.grey[800],
       ),
       onRatingUpdate: (rating) {
         print(rating);
@@ -279,9 +279,16 @@ class _HomepageScreenState extends State<HomepageScreen> {
                     physics: const AlwaysScrollableScrollPhysics(),
                     itemBuilder: (BuildContext context, int index) {
                       // The height on this will need to be edited to match whatever height is set for the picture
-                      return SizedBox(
-                        width: double.infinity,
-                        height: 550,
+                      // return SizedBox(
+                      //   width: double.infinity,
+                      //   height: 550,
+                      //   child: FeedCard(postIDs[index], ratedPosts),
+                      // );
+                      return Container(
+                        constraints: BoxConstraints(
+                          minHeight: 570,
+                          minWidth: double.infinity,
+                        ),
                         child: FeedCard(postIDs[index], ratedPosts),
                       );
                     }),
