@@ -77,6 +77,20 @@ Future<http.Response> insertUser(User u) {
   );
 }
 
+bool checkActive(User tempUser, BuildContext context) {
+  if (tempUser.status == "delete") {
+    googleLogoutUser();
+    facebookLogoutUser();
+    //needs error message saying account has been deactivated by admin
+    Navigator.pop(context);
+    // Navigator.pushNamed(context, '/'); //goes back to login page
+    ScaffoldMessenger.of(context).showSnackBar(new SnackBar(
+        content: Text('Your account is pending deletion by administrators')));
+    return true;
+  }
+  return false;
+}
+
 // images for CarouselSlider -> make this image list from trending posts
 List<String> images = [
   'https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/index2-1583967114.png',
@@ -271,6 +285,9 @@ class _LoginScreenState extends State<LoginScreen> {
     showAlertDialog(context);
     final GoogleSignInAccount gAccount = gSignIn.currentUser;
     User tempUser = await getDoesUserExists(gAccount.email);
+    if (checkActive(tempUser, context))
+      return; //return out of logging in if acc pending deletion
+
     if (tempUser != null && tempUser.userID != "") //account exists
     {
       print("User account found with Google email.");
@@ -311,6 +328,7 @@ class _LoginScreenState extends State<LoginScreen> {
         ratedPosts: [],
         url: "",
         blockedUsers: [],
+        status: "active",
       );
       await insertUser(u);
       currentUser = u;
@@ -358,6 +376,7 @@ class _LoginScreenState extends State<LoginScreen> {
           private: false,
           url: "",
           blockedUsers: [],
+          status: "active",
         );
         await insertUser(u);
         currentUser = u;
@@ -369,6 +388,8 @@ class _LoginScreenState extends State<LoginScreen> {
       default:
         print("User account found with Facebook email.");
         currentUser = tempUser;
+        if (checkActive(tempUser, context))
+          return; //return out of logging in if acc pending deletion
         Navigator.pop(context);
         isSignedInWithFacebook = true;
         Navigator.pushReplacementNamed(
@@ -386,6 +407,8 @@ class _LoginScreenState extends State<LoginScreen> {
 
   saveAppleUserInfoToServer(firstTime, email, fullName) async {
     User tempUser = await getDoesUserExists(email);
+    if (checkActive(tempUser, context))
+      return; //return out of logging in if acc pending deletion
     if (tempUser != null && tempUser.userID != "") //account exists
     {
       print("User account found with Apple ID email.");
@@ -424,6 +447,7 @@ class _LoginScreenState extends State<LoginScreen> {
         ratedPosts: [],
         url: "",
         blockedUsers: [],
+        status: "active",
       );
       await insertUser(u);
       currentUser = u;
