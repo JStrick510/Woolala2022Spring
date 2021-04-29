@@ -15,8 +15,8 @@ class ImageUploadScreen extends StatefulWidget {
 Future<File> cropImage(imagePath) async {
   File croppedImage = await ImageCropper.cropImage(
     sourcePath: imagePath,
-    maxHeight: 1000,
-    maxWidth: 1000,
+    maxHeight: 800,
+    maxWidth: 800,
     aspectRatio: CropAspectRatio(ratioX: 1, ratioY: 1),
     androidUiSettings: AndroidUiSettings(
       toolbarTitle: 'ChooseNXT',
