@@ -20,9 +20,9 @@ Future<File> cropImage(imagePath) async {
     aspectRatio: CropAspectRatio(ratioX: 1, ratioY: 1),
     androidUiSettings: AndroidUiSettings(
       toolbarTitle: 'ChooseNXT',
-      activeControlsWidgetColor: Colors.green,
-      toolbarColor: Colors.blue,
-      toolbarWidgetColor: Colors.white,
+      activeControlsWidgetColor: Colors.blue,
+      toolbarColor: Colors.white,
+      toolbarWidgetColor: Colors.black,
     ),
   );
   return croppedImage;

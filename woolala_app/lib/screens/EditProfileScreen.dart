@@ -77,9 +77,9 @@ class _EditProfilePageState extends State<EditProfilePage> {
       aspectRatio: CropAspectRatio(ratioX: 1, ratioY: 1),
       androidUiSettings: AndroidUiSettings(
         toolbarTitle: 'ChooseNXT',
-        activeControlsWidgetColor: Colors.green,
-        toolbarColor: Colors.blue,
-        toolbarWidgetColor: Colors.white,
+        activeControlsWidgetColor: Colors.blue,
+        toolbarColor: Colors.white,
+        toolbarWidgetColor: Colors.black,
       ),
     );
     return onlyCroppedImage;
@@ -101,8 +101,11 @@ class _EditProfilePageState extends State<EditProfilePage> {
         print('No image selected.');
       }
     } else {
-      http.Response res = await currentUser.setProfilePic('default');
-      Navigator.pushReplacementNamed(context, '/editProfile');
+      final snackBar =
+      SnackBar(content: Text('No image has been selected'));
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      //http.Response res = await currentUser.setProfilePic('default');
+      //Navigator.pushReplacementNamed(context, '/editProfile');
     }
   }
 
