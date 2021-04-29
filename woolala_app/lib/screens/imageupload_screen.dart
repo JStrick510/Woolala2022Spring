@@ -28,6 +28,7 @@ Future<File> cropImage(imagePath) async {
   return croppedImage;
 }
 
+
 class _ImageUploadScreenState extends State<ImageUploadScreen> {
   File _image;
   String img64;
