@@ -11,13 +11,13 @@ import 'package:woolala_app/screens/following_list_screen.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-
 //Create Stateful Widget
 class WouldBuyListScreen extends StatefulWidget {
   final String postID;
   final List wouldBuyNameList;
   final List wouldBuyEmailList;
-  WouldBuyListScreen(this.postID, this.wouldBuyNameList, this.wouldBuyEmailList);
+  WouldBuyListScreen(
+      this.postID, this.wouldBuyNameList, this.wouldBuyEmailList);
   @override
   _WouldBuyListScreen createState() => _WouldBuyListScreen();
 }
@@ -29,7 +29,6 @@ class _WouldBuyListScreen extends State<WouldBuyListScreen> {
   List followerList = new List();
   List followerEmailList = new List();
   List followerUserNameList = new List();
-
 
   //Build the list using a Futurebuilder for Async
   // Widget _buildList() {
@@ -76,42 +75,55 @@ class _WouldBuyListScreen extends State<WouldBuyListScreen> {
     return Scaffold(
       appBar: AppBar(
           leading: BackButton(
-              color: Colors.white,
+              // color: Colors.white,
               onPressed: () =>
-              //(Navigator.pushReplacementNamed(context, '/profile'))
-              (Navigator.pop(context))),
+                  //(Navigator.pushReplacementNamed(context, '/profile'))
+                  (Navigator.pop(context))),
           title: Text("Users Interested in This Post"),
           actions: <Widget>[]),
       body: ListView.separated(
         separatorBuilder: (context, index) => Divider(
           color: Colors.black,
         ),
-        itemCount: widget.wouldBuyNameList.length,
+        itemCount: widget.wouldBuyNameList.length + 1,
         itemBuilder: (context, index) {
-          return ListTile(
-            title: Text('${widget.wouldBuyNameList[index]}  --  ${widget.wouldBuyEmailList[index]}'),
-            onLongPress: () {
-              launchMailtoSingle(index);
-            },
-            onTap: (){
-              showToast("Hold on a item to send email");
-            },
-          );
+          if (index == 0) {
+            return ListTile(
+              title: Text(
+                'Tap and hold a user to send an individual email or tap the mail button to send to all!',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            );
+          } else {
+            return ListTile(
+              title: Text(
+                  '${widget.wouldBuyNameList[index - 1]}  --  ${widget.wouldBuyEmailList[index - 1]}'),
+              onLongPress: () {
+                launchMailtoSingle(index);
+              },
+              onTap: () {
+                // showToast("Hold on a item to send email");
+                final snackBar =
+                    SnackBar(content: Text('Hold on a user to send email!'));
+                ScaffoldMessenger.of(context).showSnackBar(snackBar);
+              },
+            );
+          }
         },
-
       ),
 
       //show floating action button with mail icon
-      /*floatingActionButton: FloatingActionButton(
+      floatingActionButton: FloatingActionButton(
           elevation: 20.0,
           child: Icon(Icons.email),
-          onPressed: (){
+          onPressed: () {
             launchMailtoAll();
-          }
-      ),*/
+          }),
 
       bottomNavigationBar: BottomNavigationBar(
-        backgroundColor: Colors.blue,
+        // backgroundColor: Colors.blue,
         onTap: (int index) {
           bottomBar.switchPage(index, context);
         },
@@ -139,13 +151,12 @@ class _WouldBuyListScreen extends State<WouldBuyListScreen> {
 
   //prompts to the default mailing app to email all
   launchMailtoAll() async {
-    List allMails = new List();
-    List allNames = new List();
+    List<String> allMails = new List();
+    List<String> allNames = new List();
 
-    for(int i=0; i< widget.wouldBuyEmailList.length; i++){
+    for (int i = 0; i < widget.wouldBuyEmailList.length; i++) {
       allMails.add('${widget.wouldBuyEmailList[i]}');
       allNames.add('${widget.wouldBuyNameList[i]}');
-
     }
     String greeting = "Hi there," + "\n\n";
     final mailtoLink = Mailto(
@@ -157,16 +168,14 @@ class _WouldBuyListScreen extends State<WouldBuyListScreen> {
     await launch('$mailtoLink');
   }
 
-
-  showToast(message){
-    Fluttertoast.showToast(
-        msg: message,
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.BOTTOM,
-        timeInSecForIosWeb: 1,
-        backgroundColor: Colors.white,
-        textColor: Colors.black,
-        fontSize: 16.0
-    );
-  }
+//   showToast(message) {
+//     Fluttertoast.showToast(
+//         msg: message,
+//         toastLength: Toast.LENGTH_SHORT,
+//         gravity: ToastGravity.BOTTOM,
+//         timeInSecForIosWeb: 1,
+//         backgroundColor: Colors.white,
+//         textColor: Colors.black,
+//         fontSize: 16.0);
+//   }
 }

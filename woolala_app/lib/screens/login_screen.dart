@@ -430,7 +430,7 @@ class _LoginScreenState extends State<LoginScreen> {
       _firstTimeLogin = true;
       Navigator.pop(context);
       isSignedInWithApple = true;
-      Navigator.pushReplacementNamed(context, '/createUser');
+      Navigator.pushReplacementNamed(context, '/createAccount');
     }
   }
 

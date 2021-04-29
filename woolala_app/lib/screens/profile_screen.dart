@@ -725,14 +725,18 @@ class _ProfilePageState extends State<ProfilePage> {
                               // The height on this will need to be edited to match whatever height is set for the picture
                               if (profilePageOwner.userID ==
                                   currentUser.userID) {
-                                return SizedBox(
-                                    width: double.infinity,
-                                    height: 620,
+                                return Container(
+                                    constraints: BoxConstraints(
+                                      minHeight: 570,
+                                      minWidth: double.infinity,
+                                    ),
                                     child: OwnFeedCard(postIDs[index - 1]));
                               } else {
-                                return SizedBox(
-                                    width: double.infinity,
-                                    height: 620,
+                                return Container(
+                                    constraints: BoxConstraints(
+                                      minHeight: 570,
+                                      minWidth: double.infinity,
+                                    ),
                                     child: FeedCard(
                                         postIDs[index - 1], ratedPosts));
                               }

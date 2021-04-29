@@ -92,7 +92,7 @@ class _SearchPageState extends State<SearchPage> {
             filteredResults = results;
           },
           autofocus: true,
-          cursorColor: Colors.white,
+          // cursorColor: Colors.white,
           decoration: new InputDecoration(
               prefixIcon: new Icon(Icons.search), hintText: 'Search...'),
         );

@@ -12,9 +12,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:woolala_app/screens/homepage_screen.dart';
 import 'package:intl/intl.dart';
 
-
-String getNewID()
-{
+String getNewID() {
   final DateTime timeID = DateTime.now().toLocal();
   final DateFormat formatterID = DateFormat('yyyyMMddHHmmss');
   return formatterID.format(timeID);
@@ -73,7 +71,17 @@ class _PostScreenState extends State<PostScreen> {
               ),
             ),
             SizedBox(height: 20.0),
-            TextField(maxLength: 69, maxLengthEnforced: true, textInputAction: TextInputAction.go, keyboardType: TextInputType.multiline, maxLines: null, decoration: new InputDecoration(hintText: "Enter a caption!", contentPadding: const EdgeInsets.all(20.0)), controller: _c,),
+            TextField(
+              maxLength: 280,
+              maxLengthEnforced: true,
+              textInputAction: TextInputAction.go,
+              keyboardType: TextInputType.multiline,
+              maxLines: null,
+              decoration: new InputDecoration(
+                  hintText: "Enter a caption!",
+                  contentPadding: const EdgeInsets.all(20.0)),
+              controller: _c,
+            ),
           ],
         ),
       ),
@@ -85,12 +93,12 @@ class _PostScreenState extends State<PostScreen> {
             FloatingActionButton(
               child: Icon(Icons.check),
               onPressed: () => {
-
-              setState(() {
-              this._text = _c.text;
-              }),
+                setState(() {
+                  this._text = _c.text;
+                }),
                 print(_text),
-                createPost(currentUser.userID + ":::" + getNewID() , img64, date, _text, currentUser.userID, currentUser.profileName),
+                createPost(currentUser.userID + ":::" + getNewID(), img64, date,
+                    _text, currentUser.userID, currentUser.profileName),
                 Navigator.pop(context),
                 Navigator.pushReplacementNamed(context, '/home'),
               },
