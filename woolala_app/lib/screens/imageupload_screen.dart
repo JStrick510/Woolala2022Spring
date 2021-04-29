@@ -13,7 +13,7 @@ class ImageUploadScreen extends StatefulWidget {
 }
 
 Future<File> cropImage(imagePath) async {
-  File onlyCroppedImage = await ImageCropper.cropImage(
+  File croppedImage = await ImageCropper.cropImage(
     sourcePath: imagePath,
     maxHeight: 1000,
     maxWidth: 1000,
@@ -25,7 +25,7 @@ Future<File> cropImage(imagePath) async {
       toolbarWidgetColor: Colors.white,
     ),
   );
-  return onlyCroppedImage;
+  return croppedImage;
 }
 
 
