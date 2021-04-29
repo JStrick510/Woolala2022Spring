@@ -1,16 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:woolala_app/models/user.dart';
 import 'package:woolala_app/screens/search_screen.dart';
 import 'package:woolala_app/screens/login_screen.dart';
-import 'package:woolala_app/screens/profile_screen.dart';
-import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 import '../main.dart';
-import 'following_list_screen.dart';
 
 class EditProfilePage extends StatefulWidget {
   final String currentOnlineUserId;
@@ -72,16 +69,37 @@ class _EditProfilePageState extends State<EditProfilePage> {
     displayUserInfo();
   }
 
+  Future<File> cropProfilePic(imagePath) async {
+    File onlyCroppedImage = await ImageCropper.cropImage(
+      sourcePath: imagePath,
+      maxHeight: 400,
+      maxWidth: 400,
+      aspectRatio: CropAspectRatio(ratioX: 1, ratioY: 1),
+      androidUiSettings: AndroidUiSettings(
+        toolbarTitle: 'ChooseNXT Profile Pic',
+        activeControlsWidgetColor: Colors.green,
+        toolbarColor: Colors.blue,
+        toolbarWidgetColor: Colors.white,
+      ),
+    );
+    return onlyCroppedImage;
+  }
+
   Future getImageGallery() async {
     final pickedFile = await picker.getImage(source: ImageSource.gallery);
     if (pickedFile != null) {
-      _image = File(pickedFile.path);
-      final bytes = _image.readAsBytesSync();
-      img64 = base64Encode(bytes);
-      http.Response res = await currentUser.setProfilePic(img64);
-      //print("Res: " + res.toString());
-      //Navigator.pop(context);
-      Navigator.pushReplacementNamed(context, '/editProfile');
+      //_image = File(pickedFile.path);
+      _image = await cropProfilePic(pickedFile.path);
+      if (_image != null) {
+        final bytes = _image.readAsBytesSync();
+        img64 = base64Encode(bytes);
+        http.Response res = await currentUser.setProfilePic(img64);
+        //print("Res: " + res.toString());
+        //Navigator.pop(context);
+        Navigator.pushReplacementNamed(context, '/editProfile');
+      }else {
+        print('No image selected.');
+      }
     } else {
       http.Response res = await currentUser.setProfilePic('default');
       Navigator.pushReplacementNamed(context, '/editProfile');
