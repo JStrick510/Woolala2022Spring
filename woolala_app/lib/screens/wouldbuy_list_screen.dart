@@ -139,9 +139,9 @@ class _WouldBuyListScreen extends State<WouldBuyListScreen> {
 
   //prompts to the default mailing app to email only individual.
   launchMailtoSingle(index) async {
-    String greeting = "Hi " + '${widget.wouldBuyNameList[index]}' + ",\n\n";
+    String greeting = "Hi " + '${widget.wouldBuyNameList[index - 1]}' + ",\n\n";
     final mailtoLink = Mailto(
-      to: ['${widget.wouldBuyEmailList[index]}'],
+      to: ['${widget.wouldBuyEmailList[index - 1]}'],
       cc: [],
       subject: 'Hello from ChooseNXT',
       body: greeting,

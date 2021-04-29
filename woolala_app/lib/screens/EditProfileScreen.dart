@@ -76,7 +76,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
       maxWidth: 400,
       aspectRatio: CropAspectRatio(ratioX: 1, ratioY: 1),
       androidUiSettings: AndroidUiSettings(
-        toolbarTitle: 'ChooseNXT Profile Pic',
+        toolbarTitle: 'ChooseNXT',
         activeControlsWidgetColor: Colors.green,
         toolbarColor: Colors.blue,
         toolbarWidgetColor: Colors.white,
