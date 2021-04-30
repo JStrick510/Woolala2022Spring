@@ -170,6 +170,7 @@ class _LoginScreenState extends State<LoginScreen> {
       if (!_disposed) {
         setState(() {
           isSignedInWithGoogle = false;
+          isSignedInWithFacebook = false;
         });
       }
       return;
@@ -192,7 +193,8 @@ class _LoginScreenState extends State<LoginScreen> {
       await saveAppleUserInfoToServer(_appleNewUser, result.user.email,
           appleCredential.givenName + appleCredential.familyName);
     } else {
-      await saveAppleUserInfoToServer(_appleNewUser, result.user.email, "");
+      await saveAppleUserInfoToServer(
+          _appleNewUser, result.user.email, "Apple User");
     }
 
     if (!_disposed) {

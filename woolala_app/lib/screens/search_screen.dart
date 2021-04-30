@@ -211,7 +211,7 @@ class _SearchPageState extends State<SearchPage> {
           bottomBar.switchPage(index, context);
         },
         items: bottomBar.bottom_items,
-        backgroundColor: Colors.blueGrey[400],
+        backgroundColor: Colors.white,
       ),
     );
   }
