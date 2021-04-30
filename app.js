@@ -64,11 +64,13 @@ app.post("/insertUser", (request, response) => {
 // handles everything that needs to happen when a post is rated
 app.post("/ratePost/:id/:rating/:userID", (request, response) => {
   collection.findOne({"postID":request.params.id}, function(err, document) {
+    var ratedBy = document.ratedBy;
+    ratedBy.push(request.params.userID);
   var newNumRatings = 1 + document.numRatings;
   var newCumulativeRating = parseInt(request.params.rating) + document.cumulativeRating;
   console.log(newNumRatings);
   console.log(newCumulativeRating);
-  var newvalues = { $set: {numRatings: newNumRatings, cumulativeRating: newCumulativeRating } };
+  var newvalues = { $set: {numRatings: newNumRatings, cumulativeRating: newCumulativeRating, ratedBy: ratedBy } };
   collection.updateOne({"postID":request.params.id}, newvalues, function(err, res) {
   console.log("1 document updated");
     });
@@ -142,7 +144,7 @@ app.post("/updateURL/:id/:url", (request, response) => {
 //returns the entire post
 app.get("/getPostInfo/:id", (request, response) => {
     collection.findOne({"postID":request.params.id}, function(err, document) {
-    response.send(document);
+      response.send(document);
     });
 });
 
@@ -199,16 +201,20 @@ app.get("/getFeed/:userID", (request, response) => {
       userCollection.findOne({"userID":request.params.userID}, function(err, document) {
         if(document)
         {
-          var following = document.following;
-          userCollection.find({"userID": {$in: following}}).toArray(function(err, results)
-          {
-              for(var i = 0; i < results.length; i++)
-              {
-                postIDs.push(...results[i].postIDs);
-              }
-              // console.log(postIDs);
-              response.send({"postIDs":postIDs});
-          });
+          // var following = document.following;
+          // userCollection.find({"userID": {$in: following}}).toArray(function(err, results)
+          // {
+          //     for(var i = 0; i < results.length; i++)
+          //     {
+          //       postIDs.push(...results[i].postIDs);
+          //     }
+          //     // console.log(postIDs);
+          //     response.send({"postIDs":postIDs});
+          // });
+          var recommendedPosts = document.recommendedPosts;
+          postIDs = recommendedPosts;
+          console.log(postIDs);
+          response.send({'postIDs':postIDs});
         }
       });
 });
