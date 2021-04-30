@@ -154,7 +154,9 @@ class _SearchPageState extends State<SearchPage> {
             itemBuilder: (BuildContext context, int index) {
               return new ListTile(
                 leading: CircleAvatar(
-                  child: Text(filteredResults[index]['profileName'][0]),
+                  child: filteredResults[index]['profileName'] != ""
+                      ? Text(filteredResults[index]['profileName'][0])
+                      : Text(" "),
                   backgroundColor: Colors.grey,
                   foregroundColor: Colors.white,
                 ),
