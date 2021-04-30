@@ -686,10 +686,9 @@ class _ProfilePageState extends State<ProfilePage> {
     return Scaffold(
       appBar: AppBar(
         leading: Container(),
-        title: Text(
-          'ChooseNXT',
-          style: TextStyle(fontSize: 25, fontFamily: 'Lucida'),
-          textAlign: TextAlign.center,
+        title: Image.asset(
+          './assets/logos/ChooseNXT wide logo WBG.png',
+          width: 200,
         ),
         centerTitle: true,
         key: ValueKey("homepage"),

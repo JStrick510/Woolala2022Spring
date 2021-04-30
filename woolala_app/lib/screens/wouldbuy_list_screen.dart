@@ -79,7 +79,7 @@ class _WouldBuyListScreen extends State<WouldBuyListScreen> {
               onPressed: () =>
                   //(Navigator.pushReplacementNamed(context, '/profile'))
                   (Navigator.pop(context))),
-          title: Text("Users Interested in This Post"),
+          title: Text("Interested Buyers"),
           actions: <Widget>[]),
       body: ListView.separated(
         separatorBuilder: (context, index) => Divider(

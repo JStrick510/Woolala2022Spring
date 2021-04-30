@@ -488,7 +488,8 @@ class _LoginScreenState extends State<LoginScreen> {
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
-                          new Image.asset('./assets/logos/ChooseNXT logo.png',
+                          new Image.asset(
+                              './assets/logos/ChooseNXT wide logo WBG.png',
                               width: 300,
                               height: 150,
                               fit: BoxFit.contain,

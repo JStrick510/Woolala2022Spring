@@ -249,7 +249,11 @@ class _HomepageScreenState extends State<HomepageScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('ChooseNXT', style: TextStyle(fontSize: 25)),
+        // title: Text('ChooseNXT', style: TextStyle(fontSize: 25)),
+        title: Image.asset(
+          './assets/logos/ChooseNXT wide logo WBG.png',
+          width: 200,
+        ),
         centerTitle: true,
         key: ValueKey("homepage"),
         actions: <Widget>[
@@ -300,12 +304,51 @@ class _HomepageScreenState extends State<HomepageScreen> {
                     )
                   : Padding(
                       padding: EdgeInsets.all(70.0),
-                      child: Text(
-                        "Follow People to see their posts on your feed!",
-                        style: TextStyle(
-                            fontSize: 30,
-                            color: Colors.grey,
-                            fontFamily: 'Lucida'),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            "Follow People to see their posts on your feed!",
+                            style: TextStyle(
+                                fontSize: 30,
+                                color: Colors.grey,
+                                fontFamily: 'Lucida'),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(top: 16.0),
+                            child: ElevatedButton(
+                              style: ButtonStyle(
+                                shape: MaterialStateProperty.all<
+                                    RoundedRectangleBorder>(
+                                  RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(100),
+                                  ),
+                                ),
+                              ),
+                              child: Container(
+                                constraints: BoxConstraints(
+                                  minWidth: 150,
+                                  maxWidth: 300,
+                                  minHeight: 50,
+                                ),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: <Widget>[
+                                    Icon(Icons.search),
+                                    Text('Search people here'),
+                                  ],
+                                ),
+                              ),
+                              onPressed: () {
+                                Navigator.push(context,
+                                    MaterialPageRoute(builder: (context) {
+                                  return SearchPage();
+                                }));
+                              },
+                            ),
+                          ),
+                        ],
                       ),
                     ),
             )
