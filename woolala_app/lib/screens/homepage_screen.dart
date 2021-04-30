@@ -1,6 +1,7 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'package:woolala_app/models/post.dart';
 import 'package:woolala_app/screens/login_screen.dart';
 import 'package:woolala_app/models/user.dart';
 import 'package:http/http.dart' as http;
@@ -71,7 +72,9 @@ Future<http.Response> createPost(String postID, String image, String date,
       'caption': caption,
       'cumulativeRating': 0.0,
       'numRatings': 0,
-      'wouldBuy': []
+      'wouldBuy': [],
+      'ratedBy': [],
+      'status': 'active',
     }),
   );
 }
@@ -128,8 +131,11 @@ Future<List> getPost(String id) async {
     info["userID"],
     info["date"],
     avg,
-    info["numRatings"]
+    info["numRatings"],
+    info['ratedBy'],
+    info['status'],
   ];
+  if (info['status'] == 'delete') return null; //fixme
   return ret;
 }
 

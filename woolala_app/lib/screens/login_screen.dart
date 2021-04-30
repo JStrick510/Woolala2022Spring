@@ -285,11 +285,11 @@ class _LoginScreenState extends State<LoginScreen> {
     showAlertDialog(context);
     final GoogleSignInAccount gAccount = gSignIn.currentUser;
     User tempUser = await getDoesUserExists(gAccount.email);
-    if (checkActive(tempUser, context))
-      return; //return out of logging in if acc pending deletion
 
     if (tempUser != null && tempUser.userID != "") //account exists
     {
+      if (checkActive(tempUser, context))
+        return; //return out of logging in if acc pending deletion
       print("User account found with Google email.");
       currentUser = tempUser;
       Navigator.pop(context);
@@ -329,6 +329,10 @@ class _LoginScreenState extends State<LoginScreen> {
         url: "",
         blockedUsers: [],
         status: "active",
+        recommendedPosts: [
+          'YnJ5YW50LnBhc3NhZ2VAZ21haWwuY29t:::20210428130931',
+          'bGVuc3MudGFtdS5zdG9yZUBnbWFpbC5jb20=:::20210428110447',
+        ],
       );
       await insertUser(u);
       currentUser = u;
@@ -377,6 +381,7 @@ class _LoginScreenState extends State<LoginScreen> {
           url: "",
           blockedUsers: [],
           status: "active",
+          recommendedPosts: [],
         );
         await insertUser(u);
         currentUser = u;
@@ -407,10 +412,11 @@ class _LoginScreenState extends State<LoginScreen> {
 
   saveAppleUserInfoToServer(firstTime, email, fullName) async {
     User tempUser = await getDoesUserExists(email);
-    if (checkActive(tempUser, context))
-      return; //return out of logging in if acc pending deletion
+
     if (tempUser != null && tempUser.userID != "") //account exists
     {
+      if (checkActive(tempUser, context))
+        return; //return out of logging in if acc pending deletion
       print("User account found with Apple ID email.");
       currentUser = tempUser;
       Navigator.pop(context);
@@ -448,6 +454,7 @@ class _LoginScreenState extends State<LoginScreen> {
         url: "",
         blockedUsers: [],
         status: "active",
+        recommendedPosts: [],
       );
       await insertUser(u);
       currentUser = u;

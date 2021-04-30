@@ -471,6 +471,12 @@ class _FeedCardState extends State<FeedCard> {
               });
         } else if (postInfo.hasError) {
           return Container();
+        } else if (postInfo.data == null) {
+          return Container(
+              child: Center(
+            child:
+                Text("This post has been marked for deletion. Keep scrolling"),
+          ));
         } else {
           return SizedBox(
             child: Center(child: CircularProgressIndicator()),

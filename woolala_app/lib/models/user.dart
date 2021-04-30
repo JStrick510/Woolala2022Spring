@@ -27,6 +27,7 @@ class User {
   List ratedPosts;
   List blockedUsers;
   String status;
+  List recommendedPosts;
 
   User({
     this.userID,
@@ -46,6 +47,7 @@ class User {
     this.ratedPosts,
     this.blockedUsers,
     this.status,
+    this.recommendedPosts,
   });
 
   User.fromJSON(Map<String, dynamic> json)
@@ -65,7 +67,8 @@ class User {
         private = json['private'],
         ratedPosts = json['ratedPosts'],
         blockedUsers = json['blockedUsers'],
-        status = json['status'];
+        status = json['status'],
+        recommendedPosts = json['recommendedPosts'];
 
   Map<String, dynamic> toJSON() => {
         'userID': userID,
@@ -85,6 +88,7 @@ class User {
         'ratedPosts': ratedPosts,
         'blockedUsers': blockedUsers,
         'status': status,
+        'recommendedPosts': recommendedPosts,
       };
 
   Future<double> getAvgScore() async {
