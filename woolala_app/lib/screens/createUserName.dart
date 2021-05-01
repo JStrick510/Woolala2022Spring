@@ -48,6 +48,8 @@ class _CreateUserNameState extends State<CreateUserName> {
       if (res.body.isEmpty) {
         setState(() {
           _userNameValid = true;
+          _takenUsername = false;
+          _badUsername = false;
         });
       } else {
         setState(() {
@@ -67,7 +69,8 @@ class _CreateUserNameState extends State<CreateUserName> {
     } else {
       if (_badUsername) {
         SnackBar failedSB = SnackBar(
-          content: Text("Invalid Characters in Username. Must be alphanumeric"),
+          content: Text(
+              "Invalid Characters in Username. Must be letters or numbers only"),
         );
         _scaffoldGlobalKey.currentState.showSnackBar(failedSB);
       } else if (_takenUsername) {
@@ -172,7 +175,7 @@ class _CreateUserNameState extends State<CreateUserName> {
             validator: (val) {
               if (val != null) {
                 if (_badUsername)
-                  return "Username must only be alphanumeric";
+                  return "Username must only be letters and/or numbers only";
                 else if (_takenUsername) return "Username is already taken";
                 return "User Name is invalid or already taken";
               }
