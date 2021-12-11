@@ -17,6 +17,7 @@ import 'dart:io' as Io;
 import 'package:audioplayers/audioplayers.dart';
 import 'dart:collection';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
+import 'package:flutter_image_slideshow/flutter_image_slideshow.dart';
 
 import 'dart:io';
 import 'package:woolala_app/screens/login_screen.dart';
@@ -37,7 +38,7 @@ import 'dart:convert';
 // This entire class is the widget that will populate the feed on the homepage
 
 class FeedCard extends StatefulWidget {
-  FeedCard(String postID, List rated) {
+   FeedCard(String postID, List rated) {
     this.postID = postID;
     this.ratedPosts = rated;
   }
@@ -288,7 +289,7 @@ class _FeedCardState extends State<FeedCard> {
                               controller: sc,
                               child: Stack(
                                 children: [
-                                  postInfo.data[0],
+                                  postInfo.data[6],
                                   Positioned(
                                       bottom: 10,
                                       left: 10,
