@@ -35,6 +35,7 @@ Future<void> deletePosts(String currentAccountID) async {
 
 class _EditProfilePageState extends State<EditProfilePage> {
   TextEditingController profileNameController = TextEditingController();
+  TextEditingController handleController = TextEditingController();
   TextEditingController bioController = TextEditingController();
   TextEditingController urlController = TextEditingController();
   final _scaffoldGlobalKey = GlobalKey<ScaffoldState>();
@@ -115,6 +116,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
     });
     //access the user's info from the database and set the default text to be the current text
     profileNameController.text = currentUser.profileName;
+    handleController.text = currentUser.userName;
     bioController.text = currentUser.bio;
     urlController.text = currentUser.url;
 
@@ -137,6 +139,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
       print("update user info on server");
       currentUser.setUserBio(bioController.text.trim());
       currentUser.setProfileName(profileNameController.text.trim());
+      currentUser.setUserName(handleController.text.trim());
       currentUser.setURL(urlController.text.trim());
       SnackBar successSB = SnackBar(
         content: Text("Profile Updated Successfully"),
@@ -206,6 +209,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                   child: Column(
                     children: <Widget>[
                       createProfileNameTextFormField(),
+                      createHandleTextFormField(),
                       createBioTextFormField(),
                       createUrlTextFormField(),
                       createPrivacySwitch(),
@@ -308,6 +312,35 @@ class _EditProfilePageState extends State<EditProfilePage> {
       },
     );
   }
+
+ Column createHandleTextFormField(){
+ return Column(
+       crossAxisAlignment: CrossAxisAlignment.start,
+       children: <Widget>[
+         Padding(
+           padding: EdgeInsets.only(top: 13.0),
+           child: Text(
+             "User Handle",
+             style: TextStyle(color: Colors.black),
+           ),
+         ),
+         TextField(
+           style: TextStyle(color: Colors.black),
+           controller: handleController,
+           decoration: InputDecoration(
+             hintText: "Enter user handle here",
+             enabledBorder: UnderlineInputBorder(
+               borderSide: BorderSide(color: Colors.grey),
+             ),
+             focusedBorder: UnderlineInputBorder(
+               borderSide: BorderSide(color: Colors.black),
+             ),
+             hintStyle: TextStyle(color: Colors.grey),
+           ),
+         )
+       ],
+     );
+ }
 
   Column createProfileNameTextFormField() {
     return Column(
