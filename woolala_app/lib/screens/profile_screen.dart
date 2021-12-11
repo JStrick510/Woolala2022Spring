@@ -497,6 +497,57 @@ class _ProfilePageState extends State<ProfilePage> {
     }
   }
 
+Future<void> showBlockConfirmDialog() async {
+ return showDialog<void>(
+    context: context,
+    barrierDismissible: false,
+    builder: (BuildContext context) {
+     return AlertDialog(
+        title: Text('Confirm Block'),
+        content: SingleChildScrollView(
+            child: Column(
+                children: <Widget>[
+                    Text('Are you sure you want to block this user?'),
+                ],
+            ),
+        ),
+        actions: <Widget>[
+            TextButton(
+
+                child: Text('Confirm'),
+                style: TextButton.styleFrom(
+                    textStyle: const TextStyle(fontSize: 20),
+                ),
+                onPressed: () {
+                    Navigator.of(context).pop();
+                    FutureBuilder(
+                        future: blockUser(currentUser.userID, viewingUser.userID),
+                        builder: (context, snapshot) {}
+                    );
+                    Navigator.pushReplacement(
+                        context,
+                        PageRouteBuilder(
+                        pageBuilder: (context, animation1, animation2) =>
+                              ProfilePage(viewingUser.email),
+                        transitionDuration: Duration(seconds: 0),
+                    ));
+                  },
+            ),
+            TextButton(
+            style: TextButton.styleFrom(
+                                      textStyle: const TextStyle(fontSize: 20),
+                                    ),
+                child: Text('Cancel'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+            ),
+        ],
+     );
+    },
+ );
+}
+
   Widget createButtonTitleAndFunction({
     String title,
     Function performFunction,
@@ -584,16 +635,7 @@ class _ProfilePageState extends State<ProfilePage> {
         padding: EdgeInsets.only(top: 3.0),
         child: FlatButton(
           onPressed: () {
-            FutureBuilder(
-                future: blockUser(currentUser.userID, viewingUser.userID),
-                builder: (context, snapshot) {});
-            Navigator.pushReplacement(
-                context,
-                PageRouteBuilder(
-                  pageBuilder: (context, animation1, animation2) =>
-                      ProfilePage(viewingUser.email),
-                  transitionDuration: Duration(seconds: 0),
-                ));
+            showBlockConfirmDialog();
           },
           key: ValueKey(title),
           child: Container(

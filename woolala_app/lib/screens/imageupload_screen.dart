@@ -14,6 +14,7 @@ class ImageUploadScreen extends StatefulWidget {
 
 Future<File> cropImage(imagePath) async {
   File croppedImage = await ImageCropper.cropImage(
+    compressQuality: 30,
     sourcePath: imagePath,
     maxHeight: 800,
     maxWidth: 800,
@@ -36,7 +37,7 @@ class _ImageUploadScreenState extends State<ImageUploadScreen> {
   bool selected = false;
 
   Future getImageGallery() async {
-    final pickedFile = await picker.getImage(source: ImageSource.gallery);
+    final pickedFile = await picker.getImage(source: ImageSource.gallery, imageQuality: 50);
     if (pickedFile != null) {
       _image = await cropImage(pickedFile.path);
       if (_image != null) {
@@ -51,7 +52,7 @@ class _ImageUploadScreenState extends State<ImageUploadScreen> {
   }
 
   Future getImageCamera() async {
-    final pickedFile = await picker.getImage(source: ImageSource.camera);
+    final pickedFile = await picker.getImage(source: ImageSource.camera, imageQuality: 50);
     if (pickedFile != null) {
       _image = await cropImage(pickedFile.path);
       if (_image != null) {
