@@ -7,6 +7,7 @@ class Post {
   final String Comments;
   final double CumulativeRating;
   final int NumRatings;
+  final String price;
 
   Post({
     this.ID, this.UserID, this.ImageID, this.Date, this.Description, this.Comments, this.CumulativeRating, this.NumRatings,
@@ -21,6 +22,7 @@ class Post {
       Comments = json["Comments"],
       CumulativeRating = json["CumulativeRating"],
       NumRatings = json["NumRatings"];
+      // price = json["price"]
 
   Map<String, dynamic> toJSON() => {
     "ID" : ID,
@@ -31,5 +33,6 @@ class Post {
     "Comments" : Comments,
     "CumulativeRating" : CumulativeRating,
     "NumRatings" : NumRatings,
+    // "price" : price,
   };
 }

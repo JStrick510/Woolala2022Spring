@@ -70,6 +70,7 @@ Future<http.Response> createPost(String postID, String image, String date,
       'image': image,
       'date': date,
       'caption': caption,
+      'price': price,
       'cumulativeRating': 0.0,
       'numRatings': 0,
       'wouldBuy': []
@@ -126,6 +127,7 @@ Future<List> getPost(String id) async {
   var ret = [
     Image.memory(decodedBytes),
     info["caption"],
+    // info["price"],
     info["userID"],
     info["date"],
     avg,
