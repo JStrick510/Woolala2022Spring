@@ -1,5 +1,6 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:flutter_image_slideshow/flutter_image_slideshow.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:woolala_app/screens/login_screen.dart';
 import 'package:woolala_app/models/user.dart';
@@ -128,7 +129,15 @@ Future<List> getPost(String id) async {
     info["userID"],
     info["date"],
     avg,
-    info["numRatings"]
+    info["numRatings"],
+    ImageSlideshow(
+      width: double.infinity,
+      children: [
+        Image.memory(decodedBytes),
+        Image.memory(decodedBytes),
+        Image.memory(decodedBytes)
+      ]
+    )
   ];
   return ret;
 }
