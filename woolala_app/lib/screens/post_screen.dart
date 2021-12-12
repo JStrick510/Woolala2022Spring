@@ -28,7 +28,9 @@ class _PostScreenState extends State<PostScreen> {
   File _image;
   List<Object> test;
   String _text = "";
+  String _price = "";
   TextEditingController _c;
+  TextEditingController _d;
   String img64;
 
   static final DateTime now = DateTime.now().toLocal();
@@ -38,6 +40,7 @@ class _PostScreenState extends State<PostScreen> {
   @override
   initState() {
     _c = new TextEditingController();
+    _d = new TextEditingController();
     super.initState();
   }
 
@@ -82,6 +85,18 @@ class _PostScreenState extends State<PostScreen> {
                   contentPadding: const EdgeInsets.all(20.0)),
               controller: _c,
             ),
+            SizedBox(height: 20.0),
+            TextField(
+              maxLength: 280,
+              maxLengthEnforced: true,
+              textInputAction: TextInputAction.go,
+              keyboardType: TextInputType.multiline,
+              maxLines: null,
+              decoration: new InputDecoration(
+                  hintText: "Enter a target price!",
+                  contentPadding: const EdgeInsets.all(20.0)),
+              controller: _d,
+            ),
           ],
         ),
       ),
@@ -95,6 +110,7 @@ class _PostScreenState extends State<PostScreen> {
               onPressed: () => {
                 setState(() {
                   this._text = _c.text;
+                  this._price = _d.text;
                 }),
                 print(_text),
                 createPost(currentUser.userID + ":::" + getNewID(), img64, date,
