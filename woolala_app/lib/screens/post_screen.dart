@@ -114,7 +114,7 @@ class _PostScreenState extends State<PostScreen> {
                 }),
                 print(_text),
                 createPost(currentUser.userID + ":::" + getNewID(), img64, date,
-                    _text, currentUser.userID, currentUser.profileName),
+                    _text, currentUser.userID, currentUser.profileName, _price),
                 Navigator.pop(context),
                 Navigator.pushReplacementNamed(context, '/home'),
               },
