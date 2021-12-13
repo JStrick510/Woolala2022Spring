@@ -57,7 +57,7 @@ Future<http.Response> ratePost(double rating, String id) {
 
 // Will be used to make the post for the first time.
 Future<http.Response> createPost(String postID, String image, String date,
-    String caption, String userID, String userName) {
+    String caption, String userID, String userName, String price) {
   return http.post(
     Uri.parse(domain + '/insertPost'),
     headers: <String, String>{
