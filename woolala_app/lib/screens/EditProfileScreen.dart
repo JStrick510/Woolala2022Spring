@@ -49,8 +49,8 @@ class _EditProfilePageState extends State<EditProfilePage> {
   List<Object> args;
 
   //Lists to delete the followers and following.
-  List followingList = new List();
-  List followerList = new List();
+  List followingList = [];
+  List followerList = [];
 
   unFollowAll() async {
     followingList = currentUser.following;
@@ -87,7 +87,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
   }
 
   Future getImageGallery() async {
-    final pickedFile = await picker.getImage(source: ImageSource.gallery);
+    final pickedFile = await picker.pickImage (source: ImageSource.gallery);
     if (pickedFile != null) {
       //_image = File(pickedFile.path);
       _image = await cropProfilePic(pickedFile.path);
@@ -452,7 +452,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
   changeProfilePic() async {
     print("Picture Changing...");
-    final pickedFile = await picker.getImage(source: ImageSource.gallery);
+    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
     if (pickedFile != null) {
       _image = File(pickedFile.path);
       final bytes = _image.readAsBytesSync();

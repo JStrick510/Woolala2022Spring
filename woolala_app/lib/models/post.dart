@@ -7,7 +7,7 @@ class Post {
   final String Comments;
   final double CumulativeRating;
   final int NumRatings;
-  final String price;
+  //final String price;
 
   Post({
     this.ID, this.UserID, this.ImageID, this.Date, this.Description, this.Comments, this.CumulativeRating, this.NumRatings,

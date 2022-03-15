@@ -9,7 +9,7 @@ class BottomNav {
   int currentIndex = 1;
   String currEmail;
 
-  List bottom_items = <BottomNavigationBarItem>[
+  List bottomItems = <BottomNavigationBarItem>[
     BottomNavigationBarItem(
       icon: Icon(Icons.add_circle,
           key: ValueKey("Make Post"), color: Colors.black),

@@ -46,16 +46,16 @@ Future<String> getUserID(String userID) async {
 class _FollowingListScreenState extends State<FollowingListScreen> {
   //Lists to build the ListView
   User currentProfile;
-  List followingList = new List();
-  List followingEmailList = new List();
-  List followingUserNameList = new List();
-  List followingUserIDList = new List();
+  List followingList = [];
+  List followingEmailList = [];
+  List followingUserNameList = [];
+  List followingUserIDList = [];
 
   //Build the list Asynchronously
   listbuilder() async {
     //Make sure the user Exists
     currentProfile = await getDoesUserExists(widget.userEmail);
-    List tempFollowingList = new List();
+    List tempFollowingList = [];
     tempFollowingList = currentProfile.following;
 
     //Go through the Follower List of userIDs and grab their profileName, email, and userName
@@ -194,7 +194,7 @@ class _FollowingListScreenState extends State<FollowingListScreen> {
           onTap: (int index) {
             bottomBar.switchPage(index, context);
           },
-          items: bottomBar.bottom_items),
+          items: bottomBar.bottomItems),
     );
   }
 }

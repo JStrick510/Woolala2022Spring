@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import 'dart:io';
+//import 'dart:io';
 import 'package:image_picker/image_picker.dart';
-import 'dart:math';
+//import 'dart:math';
 import 'package:woolala_app/main.dart';
-import 'package:woolala_app/screens/login_screen.dart';
+//import 'package:woolala_app/screens/login_screen.dart';
 
 class User {
   final String userID;
   final picker = ImagePicker();
-  File _image;
+  //File _image;
   String profileName;
   String url;
   final String googleID;

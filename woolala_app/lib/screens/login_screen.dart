@@ -2,18 +2,18 @@ import 'dart:math';
 import 'dart:io';
 
 // import 'package:apple_sign_in/apple_sign_in.dart';
-import 'package:firebase_core/firebase_core.dart';
+//import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:simple_animations/simple_animations.dart';
-import 'homepage_screen.dart';
+//import 'homepage_screen.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:flutter_facebook_login/flutter_facebook_login.dart';
-import 'package:carousel_slider/carousel_slider.dart';
+//import 'package:carousel_slider/carousel_slider.dart';
 import 'package:woolala_app/models/user.dart';
 import 'package:http/http.dart' as http;
-import 'package:woolala_app/screens/homepage_screen.dart';
+//import 'package:woolala_app/screens/homepage_screen.dart';
 import 'dart:convert';
-import 'package:woolala_app/screens/createUserName.dart';
+//import 'package:woolala_app/screens/createUserName.dart';
 import 'package:woolala_app/main.dart';
 
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
@@ -328,7 +328,7 @@ class _LoginScreenState extends State<LoginScreen> {
     var tempToken = (await facebookLogin.currentAccessToken);
     var token = tempToken.token;
     final graphResponse = await http.get(Uri.parse(
-        'https://graph.facebook.com/v2.12/me?fields=name,first_name,last_name,picture.type(large),email&access_token=${token}'));
+        'https://graph.facebook.com/v2.12/me?fields=name,first_name,last_name,picture.type(large),email&access_token=$token'));
     final profile = json.decode(graphResponse.body);
     User tempUser = await getDoesUserExists(profile['email']);
     switch (tempUser) {
