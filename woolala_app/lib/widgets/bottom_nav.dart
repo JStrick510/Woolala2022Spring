@@ -13,18 +13,20 @@ class BottomNav {
     BottomNavigationBarItem(
       icon: Icon(Icons.add_circle,
           key: ValueKey("Make Post"), color: Colors.black),
-      title: Text(
-        "New",
-        style: TextStyle(color: Colors.black),
-      ),
+      label: "New",
+      //title: Text(
+        //"New",
+        //style: TextStyle(color: Colors.black),
+      //),
     ),
     BottomNavigationBarItem(
       icon: Icon(Icons.home, color: Colors.black),
       activeIcon: Icon(Icons.home, color: Colors.black),
-      title: Text(
-        'Home',
-        style: TextStyle(color: Colors.black),
-      ),
+      label: "Home",
+      //title: Text(
+        //'Home',
+        //style: TextStyle(color: Colors.black),
+      //),
     ),
     BottomNavigationBarItem(
       icon: Icon(
@@ -36,10 +38,11 @@ class BottomNav {
         Icons.person,
         color: Colors.black,
       ),
-      title: Text(
-        "Profile",
-        style: TextStyle(color: Colors.black),
-      ),
+      label: "Profile",
+      //title: Text(
+        //"Profile",
+        //style: TextStyle(color: Colors.black),
+      //),
     ),
   ];
 
