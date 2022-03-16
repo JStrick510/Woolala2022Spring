@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:google_sign_in/google_sign_in.dart';
-import 'package:flutter_rating_bar/flutter_rating_bar.dart';
-import 'package:flutter_facebook_login/flutter_facebook_login.dart';
+//import 'package:flutter/services.dart';
+//import 'package:google_sign_in/google_sign_in.dart';
+//import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+//import 'package:flutter_facebook_login/flutter_facebook_login.dart';
 import 'package:woolala_app/screens/login_screen.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
+//import 'package:http/http.dart' as http;
+//import 'dart:convert';
 import 'dart:io';
-import 'package:woolala_app/screens/login_screen.dart';
-import 'package:image_picker/image_picker.dart';
+//import 'package:woolala_app/screens/login_screen.dart';
+//import 'package:image_picker/image_picker.dart';
 import 'package:woolala_app/screens/homepage_screen.dart';
 import 'package:intl/intl.dart';
 
@@ -77,6 +77,7 @@ class _PostScreenState extends State<PostScreen> {
             TextField(
               maxLength: 280,
               maxLengthEnforced: true,
+              //maxLengthEnforcement: MaxLengthEnforcement.enforced,
               textInputAction: TextInputAction.go,
               keyboardType: TextInputType.multiline,
               maxLines: null,
@@ -89,6 +90,7 @@ class _PostScreenState extends State<PostScreen> {
             TextField(
               maxLength: 280,
               maxLengthEnforced: true,
+              //maxLengthEnforcement: MaxLengthEnforcement.enforced,
               textInputAction: TextInputAction.go,
               keyboardType: TextInputType.multiline,
               maxLines: null,

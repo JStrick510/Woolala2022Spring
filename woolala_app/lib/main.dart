@@ -32,12 +32,12 @@ void main() async {
 class WooLaLa extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final ThemeData theme = ThemeData();
     return MaterialApp(
       title: 'ChooseNXT',
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        primarySwatch: primaryWhite, //locally defined color swatch
-        accentColor: Colors.black,
+      theme: theme.copyWith(
+        colorScheme: ColorScheme.fromSwatch(primarySwatch: primaryWhite,).copyWith(secondary: Colors.black),
         // This makes the visual density adapt to the platform that you run the app on. For desktop platforms, the controls will be smaller and closer together (more dense) than on mobile platforms.
         visualDensity: VisualDensity.adaptivePlatformDensity,
         textSelectionTheme: TextSelectionThemeData(cursorColor: Colors.black),

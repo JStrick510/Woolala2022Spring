@@ -1,39 +1,39 @@
-import 'dart:typed_data';
-import 'dart:ui';
+//import 'dart:typed_data';
+//import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:google_sign_in/google_sign_in.dart';
-import 'package:flutter_rating_bar/flutter_rating_bar.dart';
-import 'package:flutter_facebook_login/flutter_facebook_login.dart';
-import 'package:share/share.dart';
+//import 'package:google_sign_in/google_sign_in.dart';
+//import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+//import 'package:flutter_facebook_login/flutter_facebook_login.dart';
+//import 'package:share/share.dart';
 import 'package:woolala_app/screens/login_screen.dart';
-import 'package:woolala_app/models/user.dart';
+//import 'package:woolala_app/models/user.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import 'package:mongo_dart/mongo_dart.dart' as mongo;
-import 'dart:io' as Io;
+//import 'package:mongo_dart/mongo_dart.dart' as mongo;
+//import 'dart:io' as Io;
 //import 'package:audioplayers/src/audio_cache.dart';
-import 'package:audioplayers/audioplayers.dart';
-import 'dart:collection';
-import 'package:pull_to_refresh/pull_to_refresh.dart';
-import 'package:flutter_image_slideshow/flutter_image_slideshow.dart';
+//import 'package:audioplayers/audioplayers.dart';
+//import 'dart:collection';
+//import 'package:pull_to_refresh/pull_to_refresh.dart';
+//import 'package:flutter_image_slideshow/flutter_image_slideshow.dart';
 
 import 'dart:io';
-import 'package:woolala_app/screens/login_screen.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:woolala_app/screens/post_screen.dart';
+//import 'package:woolala_app/screens/login_screen.dart';
+//import 'package:image_picker/image_picker.dart';
+//import 'package:woolala_app/screens/post_screen.dart';
 import 'package:woolala_app/screens/profile_screen.dart';
 import 'package:woolala_app/screens/homepage_screen.dart';
-import 'package:woolala_app/screens/search_screen.dart';
-import 'package:woolala_app/widgets/bottom_nav.dart';
+//import 'package:woolala_app/screens/search_screen.dart';
+//import 'package:woolala_app/widgets/bottom_nav.dart';
 import 'package:woolala_app/main.dart';
 import 'package:screenshot/screenshot.dart';
 import 'package:social_share/social_share.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:path_provider/path_provider.dart';
-import 'package:image/image.dart' as ui;
-import 'dart:convert';
+//import 'package:image/image.dart' as ui;
+//import 'dart:convert';
 
 // This entire class is the widget that will populate the feed on the homepage
 
@@ -52,7 +52,7 @@ class FeedCard extends StatefulWidget {
 
 class _FeedCardState extends State<FeedCard> {
 //(String postID)
-  final _scaffoldGlobalKey = GlobalKey<ScaffoldState>();
+  //final _scaffoldGlobalKey = GlobalKey<ScaffoldState>();
   var startPos;
   var distance = 0.0;
   var stars = 2.5;
@@ -114,7 +114,7 @@ class _FeedCardState extends State<FeedCard> {
         : Container();
   }
 
-  Uint8List _originalImage;
+  //Uint8List _originalImage;
 
   Future<File> convertImageToFile(String imagePath) async {
     final byteData = await rootBundle.load('assets/$imagePath');

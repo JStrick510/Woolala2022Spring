@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:woolala_app/screens/login_screen.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
+//import 'package:http/http.dart' as http;
+//import 'dart:convert';
 import 'package:woolala_app/models/user.dart';
 import 'package:woolala_app/screens/profile_screen.dart';
 import 'package:woolala_app/widgets/bottom_nav.dart';
-import 'package:woolala_app/main.dart';
+//import 'package:woolala_app/main.dart';
 import 'package:woolala_app/screens/following_list_screen.dart';
 
 //Create Stateful Widget
@@ -18,11 +18,11 @@ class FollowerListScreen extends StatefulWidget {
 
 class _FollowerListScreenState extends State<FollowerListScreen> {
   //Lists to build the ListView
-  List followerNameList = new List();
+  List followerNameList = [];
   User currentProfile;
-  List followerList = new List();
-  List followerEmailList = new List();
-  List followerUserNameList = new List();
+  List followerList = [];
+  List followerEmailList = [];
+  List followerUserNameList = [];
 
   //Build the list Asynchronously
   listbuilder() async {
@@ -30,7 +30,7 @@ class _FollowerListScreenState extends State<FollowerListScreen> {
     currentProfile = await getDoesUserExists(widget.userEmail);
 
     //Follower list of the user
-    List tempFollowerList = new List();
+    List tempFollowerList = [];
     tempFollowerList = currentProfile.followers;
 
     //Go through the Follower List of userIDs and grab their profileName, email, and userName
@@ -110,7 +110,7 @@ class _FollowerListScreenState extends State<FollowerListScreen> {
         onTap: (int index) {
           bottomBar.switchPage(index, context);
         },
-        items: bottomBar.bottom_items,
+        items: bottomBar.bottomItems,
       ),
     );
   }

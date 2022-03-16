@@ -37,7 +37,7 @@ class _ImageUploadScreenState extends State<ImageUploadScreen> {
   bool selected = false;
 
   Future getImageGallery() async {
-    final pickedFile = await picker.getImage(source: ImageSource.gallery, imageQuality: 50);
+    final pickedFile = await picker.pickImage(source: ImageSource.gallery, imageQuality: 50);
     if (pickedFile != null) {
       _image = await cropImage(pickedFile.path);
       if (_image != null) {
@@ -52,7 +52,7 @@ class _ImageUploadScreenState extends State<ImageUploadScreen> {
   }
 
   Future getImageCamera() async {
-    final pickedFile = await picker.getImage(source: ImageSource.camera, imageQuality: 50);
+    final pickedFile = await picker.pickImage(source: ImageSource.camera, imageQuality: 50);
     if (pickedFile != null) {
       _image = await cropImage(pickedFile.path);
       if (_image != null) {
@@ -137,7 +137,7 @@ class _ImageUploadScreenState extends State<ImageUploadScreen> {
         onTap: (int index) {
           bottomBar.switchPage(index, context);
         },
-        items: bottomBar.bottom_items,
+        items: bottomBar.bottomItems,
         backgroundColor: Colors.white,
       ),
     );

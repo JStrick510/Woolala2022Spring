@@ -799,7 +799,7 @@ Future<void> showBlockConfirmDialog() async {
         onTap: (int pageIndex) {
           bottomBar.switchPage(pageIndex, context);
         },
-        items: bottomBar.bottom_items,
+        items: bottomBar.bottomItems,
         backgroundColor: Colors.white,
       ),
     );

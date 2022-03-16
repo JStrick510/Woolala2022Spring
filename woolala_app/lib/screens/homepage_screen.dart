@@ -1,4 +1,4 @@
-import 'dart:ui';
+//import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_image_slideshow/flutter_image_slideshow.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
@@ -6,9 +6,9 @@ import 'package:woolala_app/screens/login_screen.dart';
 import 'package:woolala_app/models/user.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import 'package:audioplayers/audioplayers.dart';
+//import 'package:audioplayers/audioplayers.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
-import 'package:woolala_app/screens/profile_screen.dart';
+//import 'package:woolala_app/screens/profile_screen.dart';
 import 'package:woolala_app/screens/search_screen.dart';
 import 'package:woolala_app/widgets/bottom_nav.dart';
 import 'package:woolala_app/widgets/card.dart';
@@ -383,7 +383,7 @@ class _HomepageScreenState extends State<HomepageScreen> {
         onTap: (int index) {
           bottomBar.switchPage(index, context);
         },
-        items: bottomBar.bottom_items,
+        items: bottomBar.bottomItems,
         backgroundColor: Colors.white,
       ),
     );
