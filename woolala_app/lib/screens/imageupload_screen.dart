@@ -36,7 +36,74 @@ class _ImageUploadScreenState extends State<ImageUploadScreen> {
   final picker = ImagePicker();
   bool selected = false;
 
+  List<XFile> imageFiles;
+
   Future getImageGallery() async {
+
+    try {
+      var pickedFiles = await picker.pickMultiImage(imageQuality: 50);
+      //you can use ImageCourse.camera for Camera capture
+      if(pickedFiles != null){
+        imageFiles = pickedFiles;
+        setState(() {
+        });
+      }else{
+        print("No image is selected.");
+      }
+    }catch (e) {
+      print("error while picking file.");
+    }
+
+    List<File> files = [];
+    List<String> encodes = [];
+
+
+    for (int i = 0; i < imageFiles.length; i++) {
+      _image = await cropImage(imageFiles[i].path);
+      if (_image != null) {
+        final bytes = _image.readAsBytesSync();
+        img64 = base64Encode(bytes);
+
+        files.add(_image);
+        encodes.add(img64);
+        print(files.length);
+        print(encodes.length);
+        //Navigator.pushReplacementNamed(context, '/makepost',
+            //arguments: [_image, img64]);
+      }
+    }
+
+
+    /*
+    //maybe try Future.forEach
+    imageFiles.forEach((temp) async{
+      _image = await cropImage(temp.path);
+      if (_image != null) {
+        final bytes = _image.readAsBytesSync();
+        img64 = base64Encode(bytes);
+
+        files.add(_image);
+        encodes.add(img64);
+        print(files.length);
+        print(encodes.length);
+
+        //Navigator.pushReplacementNamed(context, '/makepost',
+            //arguments: [_image, img64]);
+      }
+      //print("item");
+    });
+
+     */
+
+    for(int i = files.length; i < 5; i++){
+      files.add(null);
+      encodes.add(null);
+    }
+
+    Navigator.pushReplacementNamed(context, '/makepost',
+        arguments: [files.sublist(0,5), encodes.sublist(0,5)]);
+
+    /*
     final pickedFile = await picker.pickImage(source: ImageSource.gallery, imageQuality: 50);
     if (pickedFile != null) {
       _image = await cropImage(pickedFile.path);
@@ -49,8 +116,10 @@ class _ImageUploadScreenState extends State<ImageUploadScreen> {
     } else {
       print('No image selected.');
     }
+     */
   }
 
+  /*
   Future getImageCamera() async {
     final pickedFile = await picker.pickImage(source: ImageSource.camera, imageQuality: 50);
     if (pickedFile != null) {
@@ -65,6 +134,8 @@ class _ImageUploadScreenState extends State<ImageUploadScreen> {
       print('No image selected.');
     }
   }
+
+   */
 
   @override
   Widget build(BuildContext context) {
@@ -119,7 +190,7 @@ class _ImageUploadScreenState extends State<ImageUploadScreen> {
                         FloatingActionButton(
                           child: Icon(Icons.camera_enhance),
                           key: ValueKey("Camera"),
-                          onPressed: () => getImageCamera(),
+                          onPressed: () => getImageGallery(),
                           heroTag: null,
                         ),
                         FloatingActionButton(
