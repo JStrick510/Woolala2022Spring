@@ -356,7 +356,7 @@ class _OwnFeedCardState extends State<OwnFeedCard> {
                                   padding: EdgeInsets.fromLTRB(
                                       10.0, 1.0, 10.0, 15.0),
                                   child: Text(
-                                    postInfo.data[1],
+                                    postInfo.data[0], //was 1
                                     textAlign: TextAlign.left,
                                     style: TextStyle(
                                       fontSize: 18,
