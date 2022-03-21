@@ -114,7 +114,7 @@ class _OwnFeedCardState extends State<OwnFeedCard> {
                           color: new Color.fromRGBO(100, 100, 100, 0.90)),
                     ),
                     Text(
-                      postInfo.data[4].toStringAsFixed(2),
+                      postInfo.data[3].toStringAsFixed(2),
                       style: TextStyle(
                         fontSize: 25,
                         color: Colors.white,
@@ -164,7 +164,7 @@ class _OwnFeedCardState extends State<OwnFeedCard> {
       builder: (context, postInfo) {
         if (postInfo.hasData) {
           return FutureBuilder(
-              future: getUserFromDB(postInfo.data[2]),
+              future: getUserFromDB(postInfo.data[1]),
               builder: (context, userInfo) {
                 if (userInfo.hasData) {
                   return Padding(
@@ -232,7 +232,7 @@ class _OwnFeedCardState extends State<OwnFeedCard> {
                               controller: sc,
                               child: Stack(
                                 children: [
-                                  postInfo.data[0],
+                                  postInfo.data[5],
                                   Positioned(
                                       bottom: 10,
                                       left: 10,
@@ -306,7 +306,7 @@ class _OwnFeedCardState extends State<OwnFeedCard> {
                                       },
                                     ),
                                     Text(
-                                      "Scores: " + postInfo.data[5].toString(),
+                                      "Scores: " + postInfo.data[4].toString(),
                                       style: TextStyle(
                                         fontSize: 20.0,
                                         fontWeight: FontWeight.w500,
@@ -314,7 +314,7 @@ class _OwnFeedCardState extends State<OwnFeedCard> {
                                     ),
                                     Text(
                                       "Avg: " +
-                                          postInfo.data[4].toStringAsFixed(2),
+                                          postInfo.data[3].toStringAsFixed(2),
                                       style: TextStyle(
                                         fontSize: 20.0,
                                         fontWeight: FontWeight.w500,
@@ -356,7 +356,7 @@ class _OwnFeedCardState extends State<OwnFeedCard> {
                                   padding: EdgeInsets.fromLTRB(
                                       10.0, 1.0, 10.0, 15.0),
                                   child: Text(
-                                    postInfo.data[1],
+                                    postInfo.data[0], //was 1
                                     textAlign: TextAlign.left,
                                     style: TextStyle(
                                       fontSize: 18,
@@ -372,7 +372,7 @@ class _OwnFeedCardState extends State<OwnFeedCard> {
                           child: Padding(
                             padding: EdgeInsets.fromLTRB(10.0, 1.0, 10.0, 2.0),
                             child: Text(
-                              postInfo.data[3],
+                              postInfo.data[2],
                               textAlign: TextAlign.left,
                               style: TextStyle(
                                   fontSize: 12, fontWeight: FontWeight.w500),

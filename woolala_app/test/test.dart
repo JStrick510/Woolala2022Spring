@@ -82,7 +82,8 @@ void main() {
   }
   );
 
-  test('multiple images display', () {
+
+  test('image_display', () {
 
     WidgetsFlutterBinding.ensureInitialized();
 
@@ -90,8 +91,8 @@ void main() {
     ImageUploadScreen edit = new ImageUploadScreen();
 
     //do the test
-    //var state = edit.createState();
-    //state.googleLoginUser();
+    var state = edit.createState();
+    Widget w = state.pickImages();
 
     //expected result
     //expect(state.isSignedInWithGoogle,false);

@@ -98,7 +98,7 @@ class _FeedCardState extends State<FeedCard> {
                           color: new Color.fromRGBO(100, 100, 100, 0.90)),
                     ),
                     Text(
-                      postInfo.data[4].toStringAsFixed(2),
+                      postInfo.data[3].toStringAsFixed(2),
                       style: TextStyle(
                         fontSize: 25,
                         color: Colors.white,
@@ -211,7 +211,7 @@ class _FeedCardState extends State<FeedCard> {
       builder: (context, postInfo) {
         if (postInfo.hasData) {
           return FutureBuilder(
-              future: getUserFromDB(postInfo.data[2]),
+              future: getUserFromDB(postInfo.data[1]),
               builder: (context, userInfo) {
                 if (userInfo.hasData) {
                   return Padding(
@@ -257,13 +257,13 @@ class _FeedCardState extends State<FeedCard> {
                                       http.Response res = await reportPost(
                                           widget.postID,
                                           currentUser.userID,
-                                          postInfo.data[3],
-                                          postInfo.data[2]);
+                                          postInfo.data[2],
+                                          postInfo.data[1]);
                                       showReportSuccess(
                                           res.body.isNotEmpty, context);
                                       http.Response reportCheck =
                                           await getReports(
-                                              widget.postID, postInfo.data[2]);
+                                              widget.postID, postInfo.data[1]);
                                       showDeletionSuccess(
                                           (reportCheck.body.isNotEmpty &&
                                               reportCheck.statusCode != 400),
@@ -289,7 +289,7 @@ class _FeedCardState extends State<FeedCard> {
                               controller: sc,
                               child: Stack(
                                 children: [
-                                  postInfo.data[6],
+                                  postInfo.data[5],
                                   Positioned(
                                       bottom: 10,
                                       left: 10,
@@ -439,7 +439,7 @@ class _FeedCardState extends State<FeedCard> {
                                   padding: EdgeInsets.fromLTRB(
                                       10.0, 1.0, 10.0, 15.0),
                                   child: Text(
-                                    postInfo.data[1],
+                                    postInfo.data[0],
                                     textAlign: TextAlign.left,
                                     style: TextStyle(
                                       fontSize: 18,
@@ -456,7 +456,7 @@ class _FeedCardState extends State<FeedCard> {
                           child: Padding(
                             padding: EdgeInsets.fromLTRB(10.0, 1.0, 10.0, 2.0),
                             child: Text(
-                              postInfo.data[3],
+                              postInfo.data[2],
                               textAlign: TextAlign.left,
                               style: TextStyle(
                                   fontSize: 12, fontWeight: FontWeight.w500),

@@ -56,7 +56,8 @@ Future<http.Response> ratePost(double rating, String id) {
 }
 
 // Will be used to make the post for the first time.
-Future<http.Response> createPost(String postID, String image, String date,
+Future<http.Response> createPost(String postID, String image1, String image2,
+    String image3, String image4, String image5, String date,
     String caption, String userID, String userName, String price) {
   return http.post(
     Uri.parse(domain + '/insertPost'),
@@ -67,7 +68,11 @@ Future<http.Response> createPost(String postID, String image, String date,
       'postID': postID,
       'userID': userID,
       'userName': userName,
-      'image': image,
+      'image1': image1,
+      'image2': image2,
+      'image3': image3,
+      'image4': image4,
+      'image5': image5,
       'date': date,
       'caption': caption,
       'price': price,
@@ -117,7 +122,31 @@ Future<http.Response> getReports(String postID, String postUserID) async {
 Future<List> getPost(String id) async {
   http.Response res = await http.get(Uri.parse(domain + '/getPostInfo/' + id));
   Map info = jsonDecode(res.body.toString());
-  final decodedBytes = base64Decode(info["image"]);
+
+  List<Image> display = [];
+
+  if(info["image1"] != null){
+    display.add(Image.memory(base64Decode(info["image1"])));
+  }
+  if(info["image2"] != null){
+    display.add(Image.memory(base64Decode(info["image2"])));
+  }
+  if(info["image3"] != null){
+    display.add(Image.memory(base64Decode(info["image3"])));
+  }
+  if(info["image4"] != null){
+    display.add(Image.memory(base64Decode(info["image4"])));
+  }
+  if(info["image5"] != null){
+    display.add(Image.memory(base64Decode(info["image5"])));
+  }
+  //final decodedBytes1 = base64Decode(info["image1"]);
+  //final decodedBytes2 = base64Decode(info["image2"]);
+  //final decodedBytes3 = base64Decode(info["image3"]);
+  //final decodedBytes4 = base64Decode(info["image4"]);
+  //final decodedBytes5 = base64Decode(info["image5"]);
+  //final List<Image> display = [Image.memory(decodedBytes1),Image.memory(decodedBytes2),
+    //Image.memory(decodedBytes3),Image.memory(decodedBytes4),Image.memory(decodedBytes5)];
   var avg;
   if (info["numRatings"] > 0) {
     avg = info["cumulativeRating"] / info["numRatings"];
@@ -125,7 +154,11 @@ Future<List> getPost(String id) async {
     avg = 0.0;
   }
   var ret = [
-    Image.memory(decodedBytes),
+    //Image.memory(decodedBytes1),
+    //Image.memory(decodedBytes2),
+    //Image.memory(decodedBytes3),
+    //Image.memory(decodedBytes4),
+    //Image.memory(decodedBytes5),
     info["caption"],
     // info["price"],
     info["userID"],
@@ -134,11 +167,15 @@ Future<List> getPost(String id) async {
     info["numRatings"],
     ImageSlideshow(
       width: double.infinity,
-      children: [
-        Image.memory(decodedBytes),
-        Image.memory(decodedBytes),
-        Image.memory(decodedBytes)
+      children: display
+      /*[
+        Image.memory(decodedBytes4),
+        Image.memory(decodedBytes4),
+        Image.memory(decodedBytes4),
+        Image.memory(decodedBytes4),
+        Image.memory(decodedBytes4)
       ]
+       */
     )
   ];
   return ret;

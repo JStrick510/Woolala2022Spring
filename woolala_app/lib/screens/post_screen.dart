@@ -26,12 +26,14 @@ class PostScreen extends StatefulWidget {
 
 class _PostScreenState extends State<PostScreen> {
   File _image;
-  List<Object> test;
+  List<Object> arguments;
   String _text = "";
   String _price = "";
   TextEditingController _c;
   TextEditingController _d;
-  String img64;
+  //String img64;
+  List<File> images;
+  List<String> encodes;
 
   static final DateTime now = DateTime.now().toLocal();
   static final DateFormat formatter = DateFormat('yyyy-MM-dd');
@@ -46,9 +48,13 @@ class _PostScreenState extends State<PostScreen> {
 
   @override
   Widget build(BuildContext context) {
-    test = ModalRoute.of(context).settings.arguments;
-    _image = test[0];
-    img64 = test[1];
+    arguments = ModalRoute.of(context).settings.arguments;
+
+    images = arguments[0];
+    encodes = arguments[1];
+
+    _image = images[0];
+    //img64 = arguments[1];
     return Scaffold(
       resizeToAvoidBottomInset: true,
       // backgroundColor: Colors.grey[800],
@@ -115,7 +121,8 @@ class _PostScreenState extends State<PostScreen> {
                   this._price = _d.text;
                 }),
                 print(_text),
-                createPost(currentUser.userID + ":::" + getNewID(), img64, date,
+                createPost(currentUser.userID + ":::" + getNewID(), encodes[0],
+                    encodes[1], encodes[2], encodes[3], encodes[4], date,
                     _text, currentUser.userID, currentUser.profileName, _price),
                 Navigator.pop(context),
                 Navigator.pushReplacementNamed(context, '/home'),
