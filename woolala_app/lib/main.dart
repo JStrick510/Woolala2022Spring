@@ -22,7 +22,7 @@ void main() async {
     domain = "http://0.0.0.0:5000"; //when running Mac
     // domain = "http://Bryants-MacBook-Pro.local:5000";
   } else {
-    domain = "https://hidden-caverns-85596.herokuapp.com";
+    domain = "https://woolala-2022.herokuapp.com";
   }
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
