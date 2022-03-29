@@ -35,6 +35,8 @@ import 'package:path_provider/path_provider.dart';
 //import 'package:image/image.dart' as ui;
 //import 'dart:convert';
 
+import 'package:carousel_slider/carousel_slider.dart';
+
 // This entire class is the widget that will populate the feed on the homepage
 
 class FeedCard extends StatefulWidget {
@@ -58,6 +60,8 @@ class _FeedCardState extends State<FeedCard> {
   var stars = 2.5;
   bool rated = false;
   Icon wouldBuy = Icon(Icons.add_shopping_cart);
+
+  final CarouselController _controller = CarouselController();
 
   void initState() {
     checkWouldBuy(currentUser.userID, widget.postID);
@@ -285,17 +289,29 @@ class _FeedCardState extends State<FeedCard> {
                           ),
                         ),
                         GestureDetector(
-                            child: Screenshot(
-                              controller: sc,
-                              child: Stack(
-                                children: [
-                                  postInfo.data[5],
-                                  Positioned(
-                                      bottom: 10,
-                                      left: 10,
-                                      child: score(widget.postID))
+                            child: Column(
+                            children: <Widget>[
+                              CarouselSlider(
+                                items: postInfo.data[5],
+                                options: CarouselOptions(enlargeCenterPage: true, height: 200),
+                                carouselController: _controller,
+                                ),
+                              Row(
+                                mainAxisSize: MainAxisSize.min,
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: <Widget>[
+                                  ...Iterable<int>.generate(postInfo.data[5].length).map(
+                                        (int pageIndex) => Flexible(
+                                      child: ElevatedButton(
+                                          onPressed: () => _controller.animateToPage(pageIndex),
+                                          child: postInfo.data[5][pageIndex],
+                                          style: ElevatedButton.styleFrom(
+                                              fixedSize: const Size(80, 80)),
+                                      ),
+                                    ),
+                                  ),
                                 ],
-                              ),
+                              )]
                             ),
                             onHorizontalDragStart:
                                 (DragStartDetails dragStartDetails) {
@@ -343,6 +359,7 @@ class _FeedCardState extends State<FeedCard> {
                                 setState(() {});
                               }
                             }),
+
                         Container(
                           alignment: Alignment(-1.0, 0.0),
                           child: Column(
