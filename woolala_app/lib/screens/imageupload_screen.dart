@@ -68,32 +68,8 @@ class _ImageUploadScreenState extends State<ImageUploadScreen> {
         encodes.add(img64);
         print(files.length);
         print(encodes.length);
-        //Navigator.pushReplacementNamed(context, '/makepost',
-            //arguments: [_image, img64]);
       }
     }
-
-
-    /*
-    //maybe try Future.forEach
-    imageFiles.forEach((temp) async{
-      _image = await cropImage(temp.path);
-      if (_image != null) {
-        final bytes = _image.readAsBytesSync();
-        img64 = base64Encode(bytes);
-
-        files.add(_image);
-        encodes.add(img64);
-        print(files.length);
-        print(encodes.length);
-
-        //Navigator.pushReplacementNamed(context, '/makepost',
-            //arguments: [_image, img64]);
-      }
-      //print("item");
-    });
-
-     */
 
     for(int i = files.length; i < 5; i++){
       files.add(null);
@@ -102,24 +78,9 @@ class _ImageUploadScreenState extends State<ImageUploadScreen> {
 
     Navigator.pushReplacementNamed(context, '/makepost',
         arguments: [files.sublist(0,5), encodes.sublist(0,5)]);
-
-    /*
-    final pickedFile = await picker.pickImage(source: ImageSource.gallery, imageQuality: 50);
-    if (pickedFile != null) {
-      _image = await cropImage(pickedFile.path);
-      if (_image != null) {
-        final bytes = _image.readAsBytesSync();
-        img64 = base64Encode(bytes);
-        Navigator.pushReplacementNamed(context, '/makepost',
-            arguments: [_image, img64]);
-      }
-    } else {
-      print('No image selected.');
-    }
-     */
   }
 
-  /*
+
   Future getImageCamera() async {
     final pickedFile = await picker.pickImage(source: ImageSource.camera, imageQuality: 50);
     if (pickedFile != null) {
@@ -128,14 +89,16 @@ class _ImageUploadScreenState extends State<ImageUploadScreen> {
         final bytes = _image.readAsBytesSync();
         img64 = base64Encode(bytes);
         Navigator.pushReplacementNamed(context, '/makepost',
-            arguments: [_image, img64]);
+            arguments: [[_image, null, null, null, null], [img64, null, null, null, null]]);
+        //Navigator.pushReplacementNamed(context, '/makepost',
+            //arguments: [_image, img64]);
       }
     } else {
       print('No image selected.');
     }
   }
 
-   */
+
 
   @override
   Widget build(BuildContext context) {
@@ -190,7 +153,7 @@ class _ImageUploadScreenState extends State<ImageUploadScreen> {
                         FloatingActionButton(
                           child: Icon(Icons.camera_enhance),
                           key: ValueKey("Camera"),
-                          onPressed: () => getImageGallery(),
+                          onPressed: () => getImageCamera(),
                           heroTag: null,
                         ),
                         FloatingActionButton(

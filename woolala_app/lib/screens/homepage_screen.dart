@@ -165,9 +165,13 @@ Future<List> getPost(String id) async {
     info["date"],
     avg,
     info["numRatings"],
+    display
+    /*
     ImageSlideshow(
       width: double.infinity,
       children: display
+
+
       /*[
         Image.memory(decodedBytes4),
         Image.memory(decodedBytes4),
@@ -177,6 +181,8 @@ Future<List> getPost(String id) async {
       ]
        */
     )
+
+     */
   ];
   return ret;
 }

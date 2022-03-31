@@ -31,6 +31,8 @@ import 'package:woolala_app/main.dart';
 import 'package:screenshot/screenshot.dart';
 import 'package:social_share/social_share.dart';
 
+import 'package:carousel_slider/carousel_slider.dart';
+
 Future<http.Response> deletePost(String postID, String userID) {
   return http.post(
     Uri.parse(domain + '/deleteOnePost/' + postID + '/' + userID),
@@ -56,6 +58,8 @@ class OwnFeedCard extends StatefulWidget {
 
 class _OwnFeedCardState extends State<OwnFeedCard> {
 //(String postID)
+
+  final CarouselController _controller = CarouselController();
 
   void initState() {
     super.initState();
@@ -228,17 +232,29 @@ class _OwnFeedCardState extends State<OwnFeedCard> {
                           ),
                         ),
                         GestureDetector(
-                            child: Screenshot(
-                              controller: sc,
-                              child: Stack(
-                                children: [
-                                  postInfo.data[5],
-                                  Positioned(
-                                      bottom: 10,
-                                      left: 10,
-                                      child: score(widget.postID))
-                                ],
-                              ),
+                            child: Column(
+                                children: <Widget>[
+                                  CarouselSlider(
+                                    items: postInfo.data[5],
+                                    options: CarouselOptions(enlargeCenterPage: true, height: 200),
+                                    carouselController: _controller,
+                                  ),
+                                  Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: <Widget>[
+                                      ...Iterable<int>.generate(postInfo.data[5].length).map(
+                                            (int pageIndex) => Flexible(
+                                          child: ElevatedButton(
+                                            onPressed: () => _controller.animateToPage(pageIndex),
+                                            child: postInfo.data[5][pageIndex],
+                                            style: ElevatedButton.styleFrom(
+                                                fixedSize: const Size(80, 80)),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  )]
                             ),
                             onHorizontalDragStart:
                                 (DragStartDetails dragStartDetails) {
