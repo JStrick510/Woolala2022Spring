@@ -14,6 +14,7 @@ import 'package:woolala_app/widgets/bottom_nav.dart';
 import 'package:woolala_app/widgets/card.dart';
 import 'package:woolala_app/main.dart';
 import 'dart:io';
+import "dart:math";///////////////////////ADDED
 
 // Star widget on the home page
 Widget starSlider(String postID, num, rated) => RatingBar(
@@ -211,6 +212,27 @@ Future<List> getFeed(String userID) async {
   return jsonDecode(res.body.toString())["postIDs"];
 }
 
+///////////////////////////////Start/////////////////////////////////////
+Future<List> getUsrs() async {
+  List results = new List();
+  List filteredResults = new List();
+  http.Response res = await http.get(Uri.parse(domain + "/getAllUsers"));
+  if (res.body.isNotEmpty) {
+    print("results Length");
+    results = jsonDecode(res.body.toString());
+    filteredResults = results;
+    print(filteredResults.length);
+  }
+  return filteredResults;
+}
+
+Future<List> getAllPosts(String userID) async {
+  http.Response res = await http
+      .get(Uri.parse(domain + '/getOwnFeed/' + userID));
+  return jsonDecode(res.body.toString());
+}
+////////////////////////////////END///////////////////////////////////////////
+
 class HomepageScreen extends StatefulWidget {
   final bool signedInWithGoogle;
   final bool signedInWithFacebook;
@@ -234,6 +256,8 @@ class _HomepageScreenState extends State<HomepageScreen> {
   int numToShow;
   var feedLoading = true;
 
+  List users = [];/////////////////////////////ADDED
+
   // Change this to load more posts per refresh
   int postsPerReload = 4;
 
@@ -245,9 +269,15 @@ class _HomepageScreenState extends State<HomepageScreen> {
         int.parse(a.substring(a.indexOf(':::') + 3)));
   }
 
+  /////////////////////////START//////////////////////////////////////////
   // is called when the user pulls up on home screen
   void _onRefresh() async {
-    postIDs = await getFeed(currentUser.userID);
+    print("refresh");
+    List temp = [];
+    temp = await getFeed(currentUser.userID);
+    if (temp.length > 0){
+      postIDs = temp;
+    }
     ratedPosts = await getRatedPosts(currentUser.userID);
     sortPosts(postIDs);
     print(postIDs);
@@ -256,6 +286,7 @@ class _HomepageScreenState extends State<HomepageScreen> {
     if (mounted) setState(() {});
     _refreshController.refreshCompleted();
   }
+  /////////////////////////////////END/////////////////////////////
 
   // is called when the user pulls down on the home screen
   void _onLoading() async {
@@ -271,28 +302,57 @@ class _HomepageScreenState extends State<HomepageScreen> {
     _refreshController.loadComplete();
   }
 
+  //////////////////////////START/////////////////////////////////////////
   @override
   initState() {
     super.initState();
-    if (currentUser != null) {
+    if (currentUser != null && postIDs.length == 0) {
       feedLoading = true;
       getFeed(currentUser.userID).then((list) {
         postIDs = list;
-        if (postIDs.length < postsPerReload)
-          numToShow = postIDs.length;
-        else
-          numToShow = postsPerReload;
+        if (postIDs.length == 0){
+          getUsrs().then((list){
+            users += list; //all users
+            for (int i = 0; i < 20; i++){
+              final random = new Random();
+              var ind = random.nextInt(users.length);
+
+            getAllPosts(users[ind]['userID']).then((list) {
+            postIDs+=list;
+
+            sortPosts(postIDs);
+            if (postIDs.length < postsPerReload)
+            numToShow = postIDs.length;
+            else
+            numToShow = postsPerReload;
+            setState(() {
+            feedLoading = false;
+            });
+            });
+          }
+          });
+
+        }
+        else{
         sortPosts(postIDs);
-        print(postIDs);
+        if (postIDs.length < postsPerReload)
+        numToShow = postIDs.length;
+        else
+        numToShow = postsPerReload;
         setState(() {
-          feedLoading = false;
+        feedLoading = false;
         });
+        }
+
       });
+
+
     }
     getRatedPosts(currentUser.userID).then((list) {
-      ratedPosts = list;
+    ratedPosts = list;
     });
   }
+////////////////////////////////////////END/////////////////////////////////
 
   @override
   Widget build(BuildContext context) {
