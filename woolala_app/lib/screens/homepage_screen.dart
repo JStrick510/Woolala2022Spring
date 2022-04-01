@@ -16,6 +16,7 @@ import 'package:woolala_app/main.dart';
 import 'dart:io';
 
 // Star widget on the home page
+//check
 Widget starSlider(String postID, num, rated) => RatingBar(
       initialRating: num,
       minRating: 0,
