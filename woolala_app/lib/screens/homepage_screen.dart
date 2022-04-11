@@ -14,7 +14,7 @@ import 'package:woolala_app/widgets/bottom_nav.dart';
 import 'package:woolala_app/widgets/card.dart';
 import 'package:woolala_app/main.dart';
 import 'dart:io';
-import "dart:math";///////////////////////ADDED
+import "dart:math";
 
 // Star widget on the home page
 Widget starSlider(String postID, num, rated) => RatingBar(
@@ -141,13 +141,7 @@ Future<List> getPost(String id) async {
   if(info["image5"] != null){
     display.add(Image.memory(base64Decode(info["image5"])));
   }
-  //final decodedBytes1 = base64Decode(info["image1"]);
-  //final decodedBytes2 = base64Decode(info["image2"]);
-  //final decodedBytes3 = base64Decode(info["image3"]);
-  //final decodedBytes4 = base64Decode(info["image4"]);
-  //final decodedBytes5 = base64Decode(info["image5"]);
-  //final List<Image> display = [Image.memory(decodedBytes1),Image.memory(decodedBytes2),
-    //Image.memory(decodedBytes3),Image.memory(decodedBytes4),Image.memory(decodedBytes5)];
+
   var avg;
   if (info["numRatings"] > 0) {
     avg = info["cumulativeRating"] / info["numRatings"];
@@ -155,11 +149,6 @@ Future<List> getPost(String id) async {
     avg = 0.0;
   }
   var ret = [
-    //Image.memory(decodedBytes1),
-    //Image.memory(decodedBytes2),
-    //Image.memory(decodedBytes3),
-    //Image.memory(decodedBytes4),
-    //Image.memory(decodedBytes5),
     info["caption"],
     // info["price"],
     info["userID"],
@@ -167,23 +156,6 @@ Future<List> getPost(String id) async {
     avg,
     info["numRatings"],
     display
-    /*
-    ImageSlideshow(
-      width: double.infinity,
-      children: display
-
-
-      /*[
-        Image.memory(decodedBytes4),
-        Image.memory(decodedBytes4),
-        Image.memory(decodedBytes4),
-        Image.memory(decodedBytes4),
-        Image.memory(decodedBytes4)
-      ]
-       */
-    )
-
-     */
   ];
   return ret;
 }
@@ -212,7 +184,6 @@ Future<List> getFeed(String userID) async {
   return jsonDecode(res.body.toString())["postIDs"];
 }
 
-///////////////////////////////Start/////////////////////////////////////
 Future<List> getUsrs() async {
   List results = new List();
   List filteredResults = new List();
@@ -231,7 +202,6 @@ Future<List> getAllPosts(String userID) async {
       .get(Uri.parse(domain + '/getOwnFeed/' + userID));
   return jsonDecode(res.body.toString());
 }
-////////////////////////////////END///////////////////////////////////////////
 
 class HomepageScreen extends StatefulWidget {
   final bool signedInWithGoogle;
@@ -256,7 +226,7 @@ class _HomepageScreenState extends State<HomepageScreen> {
   int numToShow;
   var feedLoading = true;
 
-  List users = [];/////////////////////////////ADDED
+  List users = [];
 
   // Change this to load more posts per refresh
   int postsPerReload = 4;
@@ -269,7 +239,6 @@ class _HomepageScreenState extends State<HomepageScreen> {
         int.parse(a.substring(a.indexOf(':::') + 3)));
   }
 
-  /////////////////////////START//////////////////////////////////////////
   // is called when the user pulls up on home screen
   void _onRefresh() async {
     print("refresh");
@@ -286,7 +255,6 @@ class _HomepageScreenState extends State<HomepageScreen> {
     if (mounted) setState(() {});
     _refreshController.refreshCompleted();
   }
-  /////////////////////////////////END/////////////////////////////
 
   // is called when the user pulls down on the home screen
   void _onLoading() async {
@@ -302,7 +270,6 @@ class _HomepageScreenState extends State<HomepageScreen> {
     _refreshController.loadComplete();
   }
 
-  //////////////////////////START/////////////////////////////////////////
   @override
   initState() {
     super.initState();
@@ -352,7 +319,6 @@ class _HomepageScreenState extends State<HomepageScreen> {
     ratedPosts = list;
     });
   }
-////////////////////////////////////////END/////////////////////////////////
 
   @override
   Widget build(BuildContext context) {
@@ -360,6 +326,7 @@ class _HomepageScreenState extends State<HomepageScreen> {
     BottomNav bottomBar = BottomNav(context);
     bottomBar.currentIndex = 1;
     bottomBar.currEmail = currentUser.email;
+    bottomBar.brand = currentUser.brand;
 
     return Scaffold(
       appBar: AppBar(
@@ -486,7 +453,7 @@ class _HomepageScreenState extends State<HomepageScreen> {
         onTap: (int index) {
           bottomBar.switchPage(index, context);
         },
-        items: bottomBar.bottomItems,
+        items: bottomBar.getItems(),
         backgroundColor: Colors.white,
       ),
     );
