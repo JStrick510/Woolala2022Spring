@@ -72,6 +72,7 @@ class _WouldBuyListScreen extends State<WouldBuyListScreen> {
   @override
   Widget build(BuildContext context) {
     BottomNav bottomBar = BottomNav(context);
+    bottomBar.brand = currentProfile.brand;
     return Scaffold(
       appBar: AppBar(
           leading: BackButton(
@@ -127,7 +128,7 @@ class _WouldBuyListScreen extends State<WouldBuyListScreen> {
         onTap: (int index) {
           bottomBar.switchPage(index, context);
         },
-        items: bottomBar.bottomItems,
+        items: bottomBar.getItems(),
       ),
     );
   }
