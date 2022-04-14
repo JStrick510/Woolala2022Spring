@@ -488,23 +488,30 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget _emailField() {
     return Container(
       padding: EdgeInsets.fromLTRB(60, 20, 60, 10),
-      child: TextField(
-        controller: _emailController,
-        keyboardType: TextInputType.emailAddress,
-        textInputAction: TextInputAction.done,
-        decoration: InputDecoration(
-          border: OutlineInputBorder(),
-          hintText: 'name@example.com',
-          label: const Text('email'),
-          prefixIcon: Icon(Icons.email),
-          suffixIcon: _emailController.text.isEmpty
-              ? Container(
-                  width: 0,
-                )
-              : IconButton(
-                  onPressed: () => _emailController.clear(),
-                  icon: Icon(Icons.close),
-                ),
+      child: Theme(
+        data: ThemeData().copyWith(
+          colorScheme: ThemeData().colorScheme.copyWith(
+                primary: Colors.black,
+              ),
+        ),
+        child: TextField(
+          controller: _emailController,
+          keyboardType: TextInputType.emailAddress,
+          textInputAction: TextInputAction.done,
+          decoration: InputDecoration(
+            border: OutlineInputBorder(),
+            hintText: 'name@example.com',
+            label: const Text('email'),
+            prefixIcon: Icon(Icons.email),
+            suffixIcon: _emailController.text.isEmpty
+                ? Container(
+                    width: 0,
+                  )
+                : IconButton(
+                    onPressed: () => _emailController.clear(),
+                    icon: Icon(Icons.close),
+                  ),
+          ),
         ),
       ),
     );
@@ -513,21 +520,28 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget _passwordField() {
     return Container(
       padding: EdgeInsets.fromLTRB(60, 10, 60, 10),
-      child: TextField(
-        controller: _passwordController,
-        decoration: InputDecoration(
-          border: OutlineInputBorder(),
-          hintText: 'Enter your password',
-          label: const Text('password'),
-          suffixIcon: IconButton(
-            icon: isPasswordVisble
-                ? Icon(Icons.visibility)
-                : Icon(Icons.visibility_off),
-            onPressed: () =>
-                setState(() => isPasswordVisble = !isPasswordVisble),
-          ),
+      child: Theme(
+        data: ThemeData().copyWith(
+          colorScheme: ThemeData().colorScheme.copyWith(
+                primary: Colors.black,
+              ),
         ),
-        obscureText: isPasswordVisble,
+        child: TextField(
+          controller: _passwordController,
+          decoration: InputDecoration(
+            border: OutlineInputBorder(),
+            hintText: 'Enter your password',
+            label: const Text('password'),
+            suffixIcon: IconButton(
+              icon: isPasswordVisble
+                  ? Icon(Icons.visibility)
+                  : Icon(Icons.visibility_off),
+              onPressed: () =>
+                  setState(() => isPasswordVisble = !isPasswordVisble),
+            ),
+          ),
+          obscureText: isPasswordVisble,
+        ),
       ),
     );
   }
@@ -621,18 +635,18 @@ class _LoginScreenState extends State<LoginScreen> {
             children: <Widget>[
               new Image.asset('./assets/logos/ChooseNXT wide logo WBG.png',
                   width: 300,
-                  height: 150,
+                  height: 100,
                   fit: BoxFit.contain,
                   semanticLabel: 'WooLaLa logo'),
-              Text(
-                "Powered by: ",
-                style: TextStyle(color: Colors.black, fontSize: 16),
-              ),
-              Image.asset('assets/logos/fashionNXT_logo.png',
-                  width: 150,
-                  height: 30,
-                  fit: BoxFit.contain,
-                  semanticLabel: 'FashioNXT logo'),
+              // Text(
+              //   "Powered by: ",
+              //   style: TextStyle(color: Colors.black, fontSize: 16),
+              // ),
+              // Image.asset('assets/logos/fashionNXT_logo.png',
+              //     width: 150,
+              //     height: 30,
+              //     fit: BoxFit.contain,
+              //     semanticLabel: 'FashioNXT logo'),
               // SizedBox(
               //   height: 25,
               // ),
