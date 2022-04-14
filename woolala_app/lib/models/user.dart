@@ -26,6 +26,7 @@ class User {
   bool private;
   List ratedPosts;
   List blockedUsers;
+  bool brand;
 
   User({
     this.userID,
@@ -44,6 +45,7 @@ class User {
     this.followers,
     this.ratedPosts,
     this.blockedUsers,
+    this.brand,
   });
 
   User.fromJSON(Map<String, dynamic> json)
@@ -62,7 +64,8 @@ class User {
         postIDs = json['postIDs'],
         private = json['private'],
         ratedPosts = json['ratedPosts'],
-        blockedUsers = json['blockedUsers'];
+        blockedUsers = json['blockedUsers'],
+        brand = json['brand'];
 
   Map<String, dynamic> toJSON() => {
         'userID': userID,
@@ -81,6 +84,7 @@ class User {
         'private': private,
         'ratedPosts': ratedPosts,
         'blockedUsers': blockedUsers,
+        'brand': brand,
       };
 
   Future<double> getAvgScore() async {
@@ -201,5 +205,14 @@ class User {
         backgroundImage: MemoryImage(base64Decode(profilePic)),
       );
     }
+  }
+
+  Future<http.Response> setBrand(bool ut) {
+    private = ut;
+    String request =
+        domain + '/updateUserType/' + userID + '/' + private.toString();
+    return http.post(Uri.parse(request), headers: <String, String>{
+      'Content-Type': 'application/json',
+    });
   }
 }

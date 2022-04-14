@@ -170,6 +170,7 @@ class _FollowingListScreenState extends State<FollowingListScreen> {
   @override
   Widget build(BuildContext context) {
     BottomNav bottomBar = BottomNav(context);
+    bottomBar.brand = currentUser.brand;
     return Scaffold(
       appBar: AppBar(
           leading: BackButton(
@@ -194,7 +195,7 @@ class _FollowingListScreenState extends State<FollowingListScreen> {
           onTap: (int index) {
             bottomBar.switchPage(index, context);
           },
-          items: bottomBar.bottomItems),
+          items: bottomBar.getItems()),
     );
   }
 }

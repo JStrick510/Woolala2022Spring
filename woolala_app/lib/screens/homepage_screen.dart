@@ -14,6 +14,7 @@ import 'package:woolala_app/widgets/bottom_nav.dart';
 import 'package:woolala_app/widgets/card.dart';
 import 'package:woolala_app/main.dart';
 import 'dart:io';
+import "dart:math";
 
 // Star widget on the home page
 Widget starSlider(String postID, num, rated) => RatingBar(
@@ -56,7 +57,8 @@ Future<http.Response> ratePost(double rating, String id) {
 }
 
 // Will be used to make the post for the first time.
-Future<http.Response> createPost(String postID, String image, String date,
+Future<http.Response> createPost(String postID, String image1, String image2,
+    String image3, String image4, String image5, String date,
     String caption, String userID, String userName, String price) {
   return http.post(
     Uri.parse(domain + '/insertPost'),
@@ -67,7 +69,11 @@ Future<http.Response> createPost(String postID, String image, String date,
       'postID': postID,
       'userID': userID,
       'userName': userName,
-      'image': image,
+      'image1': image1,
+      'image2': image2,
+      'image3': image3,
+      'image4': image4,
+      'image5': image5,
       'date': date,
       'caption': caption,
       'price': price,
@@ -117,7 +123,25 @@ Future<http.Response> getReports(String postID, String postUserID) async {
 Future<List> getPost(String id) async {
   http.Response res = await http.get(Uri.parse(domain + '/getPostInfo/' + id));
   Map info = jsonDecode(res.body.toString());
-  final decodedBytes = base64Decode(info["image"]);
+
+  List<Image> display = [];
+
+  if(info["image1"] != null){
+    display.add(Image.memory(base64Decode(info["image1"])));
+  }
+  if(info["image2"] != null){
+    display.add(Image.memory(base64Decode(info["image2"])));
+  }
+  if(info["image3"] != null){
+    display.add(Image.memory(base64Decode(info["image3"])));
+  }
+  if(info["image4"] != null){
+    display.add(Image.memory(base64Decode(info["image4"])));
+  }
+  if(info["image5"] != null){
+    display.add(Image.memory(base64Decode(info["image5"])));
+  }
+
   var avg;
   if (info["numRatings"] > 0) {
     avg = info["cumulativeRating"] / info["numRatings"];
@@ -125,21 +149,13 @@ Future<List> getPost(String id) async {
     avg = 0.0;
   }
   var ret = [
-    Image.memory(decodedBytes),
     info["caption"],
     // info["price"],
     info["userID"],
     info["date"],
     avg,
     info["numRatings"],
-    ImageSlideshow(
-      width: double.infinity,
-      children: [
-        Image.memory(decodedBytes),
-        Image.memory(decodedBytes),
-        Image.memory(decodedBytes)
-      ]
-    )
+    display
   ];
   return ret;
 }
@@ -168,6 +184,25 @@ Future<List> getFeed(String userID) async {
   return jsonDecode(res.body.toString())["postIDs"];
 }
 
+Future<List> getUsrs() async {
+  List results = new List();
+  List filteredResults = new List();
+  http.Response res = await http.get(Uri.parse(domain + "/getAllUsers"));
+  if (res.body.isNotEmpty) {
+    print("results Length");
+    results = jsonDecode(res.body.toString());
+    filteredResults = results;
+    print(filteredResults.length);
+  }
+  return filteredResults;
+}
+
+Future<List> getAllPosts(String userID) async {
+  http.Response res = await http
+      .get(Uri.parse(domain + '/getOwnFeed/' + userID));
+  return jsonDecode(res.body.toString());
+}
+
 class HomepageScreen extends StatefulWidget {
   final bool signedInWithGoogle;
   final bool signedInWithFacebook;
@@ -191,6 +226,8 @@ class _HomepageScreenState extends State<HomepageScreen> {
   int numToShow;
   var feedLoading = true;
 
+  List users = [];
+
   // Change this to load more posts per refresh
   int postsPerReload = 4;
 
@@ -204,7 +241,12 @@ class _HomepageScreenState extends State<HomepageScreen> {
 
   // is called when the user pulls up on home screen
   void _onRefresh() async {
-    postIDs = await getFeed(currentUser.userID);
+    print("refresh");
+    List temp = [];
+    temp = await getFeed(currentUser.userID);
+    if (temp.length > 0){
+      postIDs = temp;
+    }
     ratedPosts = await getRatedPosts(currentUser.userID);
     sortPosts(postIDs);
     print(postIDs);
@@ -231,23 +273,50 @@ class _HomepageScreenState extends State<HomepageScreen> {
   @override
   initState() {
     super.initState();
-    if (currentUser != null) {
+    if (currentUser != null && postIDs.length == 0) {
       feedLoading = true;
       getFeed(currentUser.userID).then((list) {
         postIDs = list;
-        if (postIDs.length < postsPerReload)
-          numToShow = postIDs.length;
-        else
-          numToShow = postsPerReload;
+        if (postIDs.length == 0){
+          getUsrs().then((list){
+            users += list; //all users
+            for (int i = 0; i < 20; i++){
+              final random = new Random();
+              var ind = random.nextInt(users.length);
+
+            getAllPosts(users[ind]['userID']).then((list) {
+            postIDs+=list;
+
+            sortPosts(postIDs);
+            if (postIDs.length < postsPerReload)
+            numToShow = postIDs.length;
+            else
+            numToShow = postsPerReload;
+            setState(() {
+            feedLoading = false;
+            });
+            });
+          }
+          });
+
+        }
+        else{
         sortPosts(postIDs);
-        print(postIDs);
+        if (postIDs.length < postsPerReload)
+        numToShow = postIDs.length;
+        else
+        numToShow = postsPerReload;
         setState(() {
-          feedLoading = false;
+        feedLoading = false;
         });
+        }
+
       });
+
+
     }
     getRatedPosts(currentUser.userID).then((list) {
-      ratedPosts = list;
+    ratedPosts = list;
     });
   }
 
@@ -257,6 +326,7 @@ class _HomepageScreenState extends State<HomepageScreen> {
     BottomNav bottomBar = BottomNav(context);
     bottomBar.currentIndex = 1;
     bottomBar.currEmail = currentUser.email;
+    bottomBar.brand = currentUser.brand;
 
     return Scaffold(
       appBar: AppBar(
@@ -383,7 +453,7 @@ class _HomepageScreenState extends State<HomepageScreen> {
         onTap: (int index) {
           bottomBar.switchPage(index, context);
         },
-        items: bottomBar.bottomItems,
+        items: bottomBar.getItems(),
         backgroundColor: Colors.white,
       ),
     );

@@ -36,20 +36,50 @@ class _ImageUploadScreenState extends State<ImageUploadScreen> {
   final picker = ImagePicker();
   bool selected = false;
 
+  List<XFile> imageFiles;
+
   Future getImageGallery() async {
-    final pickedFile = await picker.pickImage(source: ImageSource.gallery, imageQuality: 50);
-    if (pickedFile != null) {
-      _image = await cropImage(pickedFile.path);
+
+    try {
+      var pickedFiles = await picker.pickMultiImage(imageQuality: 50);
+      //you can use ImageCourse.camera for Camera capture
+      if(pickedFiles != null){
+        imageFiles = pickedFiles;
+        setState(() {
+        });
+      }else{
+        print("No image is selected.");
+      }
+    }catch (e) {
+      print("error while picking file.");
+    }
+
+    List<File> files = [];
+    List<String> encodes = [];
+
+
+    for (int i = 0; i < imageFiles.length; i++) {
+      _image = await cropImage(imageFiles[i].path);
       if (_image != null) {
         final bytes = _image.readAsBytesSync();
         img64 = base64Encode(bytes);
-        Navigator.pushReplacementNamed(context, '/makepost',
-            arguments: [_image, img64]);
+
+        files.add(_image);
+        encodes.add(img64);
+        print(files.length);
+        print(encodes.length);
       }
-    } else {
-      print('No image selected.');
     }
+
+    for(int i = files.length; i < 5; i++){
+      files.add(null);
+      encodes.add(null);
+    }
+
+    Navigator.pushReplacementNamed(context, '/makepost',
+        arguments: [files.sublist(0,5), encodes.sublist(0,5)]);
   }
+
 
   Future getImageCamera() async {
     final pickedFile = await picker.pickImage(source: ImageSource.camera, imageQuality: 50);
@@ -59,17 +89,20 @@ class _ImageUploadScreenState extends State<ImageUploadScreen> {
         final bytes = _image.readAsBytesSync();
         img64 = base64Encode(bytes);
         Navigator.pushReplacementNamed(context, '/makepost',
-            arguments: [_image, img64]);
+            arguments: [[_image, null, null, null, null], [img64, null, null, null, null]]);
       }
     } else {
       print('No image selected.');
     }
   }
 
+
+
   @override
   Widget build(BuildContext context) {
     BottomNav bottomBar = BottomNav(context);
     bottomBar.currentIndex = 0;
+    bottomBar.brand = false; //hardcoded since user info not already present and already on upload screen
 
     final tween = MultiTrackTween([
       Track("color1").add(Duration(seconds: 3),
@@ -137,7 +170,7 @@ class _ImageUploadScreenState extends State<ImageUploadScreen> {
         onTap: (int index) {
           bottomBar.switchPage(index, context);
         },
-        items: bottomBar.bottomItems,
+        items: bottomBar.getItems(),
         backgroundColor: Colors.white,
       ),
     );
