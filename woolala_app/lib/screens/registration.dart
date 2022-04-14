@@ -136,7 +136,7 @@ class _RegistrationState extends State<Registration> {
                   setState(() => isPasswordVisble = !isPasswordVisble),
             ),
           ),
-          obscureText: isPasswordVisble,
+          obscureText: !isPasswordVisble,
         ),
       ),
     );
@@ -239,12 +239,12 @@ class _RegistrationState extends State<Registration> {
         ],
         private: false,
         ratedPosts: [],
-        url: "",
+        url: _urlController.text,
         blockedUsers: [],
       );
       await insertUser(u);
       currentUser = u;
-      Navigator.pushReplacementNamed(context, '/home');
+      Navigator.pushReplacementNamed(context, '/editProfile');
     }
   }
 

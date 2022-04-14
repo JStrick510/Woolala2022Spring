@@ -540,7 +540,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   setState(() => isPasswordVisble = !isPasswordVisble),
             ),
           ),
-          obscureText: isPasswordVisble,
+          obscureText: !isPasswordVisble,
         ),
       ),
     );
