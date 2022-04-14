@@ -62,6 +62,7 @@ class _RegistrationState extends State<Registration> {
                 items: tiers.map(buildMenuItem).toList(),
                 onChanged: (value) {
                   setState(() => (tier = value));
+                  print(tier);
                 },
               ),
             ),
@@ -241,7 +242,9 @@ class _RegistrationState extends State<Registration> {
         ratedPosts: [],
         url: _urlController.text,
         blockedUsers: [],
+        brand: tier == 'Business',
       );
+      print(u.brand);
       await insertUser(u);
       currentUser = u;
       Navigator.pushReplacementNamed(context, '/editProfile');
