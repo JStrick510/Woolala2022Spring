@@ -16,7 +16,6 @@ import 'package:woolala_app/main.dart';
 import 'dart:io';
 import "dart:math";///////////////////////ADDED
 import "dart:collection";///////////////////////ADDED2
-
 // Star widget on the home page
 Widget starSlider(String postID, num, rated) => RatingBar(
   initialRating: num,
@@ -174,8 +173,6 @@ Future<List> getPost(String id) async {
     ImageSlideshow(
       width: double.infinity,
       children: display
-
-
       /*[
         Image.memory(decodedBytes4),
         Image.memory(decodedBytes4),
@@ -185,7 +182,6 @@ Future<List> getPost(String id) async {
       ]
        */
     )
-
      */
   ];
   return ret;
@@ -233,7 +229,6 @@ Future<List> getAllPosts(String userID) async {
   return jsonDecode(res.body.toString());
 }
 ////////////////////////////////END///////////////////////////////////////////
-
 class HomepageScreen extends StatefulWidget {
   final bool signedInWithGoogle;
   final bool signedInWithFacebook;
@@ -275,7 +270,6 @@ class _HomepageScreenState extends State<HomepageScreen> {
   List prePostIDs = [];
   List users = [];/////////////////////////////ADDED
   final Map<String, double> popular = HashMap();/////////////////////////////ADDED2
-
   // Change this to load more posts per refresh
   int postsPerReload = 4;
 
@@ -363,7 +357,7 @@ class _HomepageScreenState extends State<HomepageScreen> {
   ///////////////////////START2////////////////////////////////
   void _sort(Map<String, double> popular, List users, var feedLoading) async {
     await Future.delayed(Duration(milliseconds: 9000));
-    if (popular.length == users.length){
+    if (popular.length == (users.length-2)){
       print("sorting");
 
       var sortedKeys = popular.keys.toList(growable:false)
@@ -409,7 +403,6 @@ class _HomepageScreenState extends State<HomepageScreen> {
   ///////////////////////////////END2////////////////////////////////
 
 
-
   //////////////////////////START/////////////////////////////////////////
   @override
   initState() {
@@ -424,15 +417,18 @@ class _HomepageScreenState extends State<HomepageScreen> {
           User rateUser;
           users += list1; //all users
           for (int j = 0; j < users.length; j++){
-            getUserFromDB(users[j]['userID']).then((usr){
-              rateUser = usr;
+            if((users[j]['userID'] != '')&&(users[j]['userID'] != 'cmFodWwubXVydGh5NzExQGdtYWlsLmNvbQ==')){
+              getUserFromDB(users[j]['userID']).then((usr){
+                rateUser = usr;
 
-              //Find the popularity of user:
-              rateUser.getAvgScore().then((score){
-                popular.addAll({users[j]['userID']: score});
+                //Find the popularity of user:
+                rateUser.getAvgScore().then((score){
+                  popular.addAll({users[j]['userID']: score});
+                });
+
               });
 
-            });
+            }
           }
         });
 
@@ -443,7 +439,6 @@ class _HomepageScreenState extends State<HomepageScreen> {
     });
   }
 ////////////////////////////////////////END/////////////////////////////////
-
   @override
   Widget build(BuildContext context) {
     print(Navigator.of(context).toString());
