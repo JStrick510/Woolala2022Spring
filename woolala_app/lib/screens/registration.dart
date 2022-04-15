@@ -62,6 +62,7 @@ class _RegistrationState extends State<Registration> {
                 items: tiers.map(buildMenuItem).toList(),
                 onChanged: (value) {
                   setState(() => (tier = value));
+                  print(tier);
                 },
               ),
             ),
@@ -84,23 +85,30 @@ class _RegistrationState extends State<Registration> {
   Widget _emailField() {
     return Container(
       padding: EdgeInsets.fromLTRB(60, 20, 60, 10),
-      child: TextField(
-        controller: _emailController,
-        keyboardType: TextInputType.emailAddress,
-        textInputAction: TextInputAction.done,
-        decoration: InputDecoration(
-          border: OutlineInputBorder(),
-          hintText: 'name@example.com',
-          label: const Text('email'),
-          prefixIcon: Icon(Icons.email),
-          suffixIcon: _emailController.text.isEmpty
-              ? Container(
-                  width: 0,
-                )
-              : IconButton(
-                  onPressed: () => _emailController.clear(),
-                  icon: Icon(Icons.close),
-                ),
+      child: Theme(
+        data: ThemeData().copyWith(
+          colorScheme: ThemeData().colorScheme.copyWith(
+                primary: Colors.black,
+              ),
+        ),
+        child: TextField(
+          controller: _emailController,
+          keyboardType: TextInputType.emailAddress,
+          textInputAction: TextInputAction.done,
+          decoration: InputDecoration(
+            border: OutlineInputBorder(),
+            hintText: 'name@example.com',
+            label: const Text('email'),
+            prefixIcon: Icon(Icons.email),
+            suffixIcon: _emailController.text.isEmpty
+                ? Container(
+                    width: 0,
+                  )
+                : IconButton(
+                    onPressed: () => _emailController.clear(),
+                    icon: Icon(Icons.close),
+                  ),
+          ),
         ),
       ),
     );
@@ -109,21 +117,28 @@ class _RegistrationState extends State<Registration> {
   Widget _passwordField() {
     return Container(
       padding: EdgeInsets.fromLTRB(60, 10, 60, 10),
-      child: TextField(
-        controller: _passwordController,
-        decoration: InputDecoration(
-          border: OutlineInputBorder(),
-          hintText: 'Enter your password',
-          label: const Text('password'),
-          suffixIcon: IconButton(
-            icon: isPasswordVisble
-                ? Icon(Icons.visibility)
-                : Icon(Icons.visibility_off),
-            onPressed: () =>
-                setState(() => isPasswordVisble = !isPasswordVisble),
-          ),
+      child: Theme(
+        data: ThemeData().copyWith(
+          colorScheme: ThemeData().colorScheme.copyWith(
+                primary: Colors.black,
+              ),
         ),
-        obscureText: isPasswordVisble,
+        child: TextField(
+          controller: _passwordController,
+          decoration: InputDecoration(
+            border: OutlineInputBorder(),
+            hintText: 'Enter your password',
+            label: const Text('password'),
+            suffixIcon: IconButton(
+              icon: isPasswordVisble
+                  ? Icon(Icons.visibility)
+                  : Icon(Icons.visibility_off),
+              onPressed: () =>
+                  setState(() => isPasswordVisble = !isPasswordVisble),
+            ),
+          ),
+          obscureText: !isPasswordVisble,
+        ),
       ),
     );
   }
@@ -225,12 +240,14 @@ class _RegistrationState extends State<Registration> {
         ],
         private: false,
         ratedPosts: [],
-        url: "",
+        url: _urlController.text,
         blockedUsers: [],
+        brand: tier == 'Business',
       );
+      print(u.brand);
       await insertUser(u);
       currentUser = u;
-      Navigator.pushReplacementNamed(context, '/home');
+      Navigator.pushReplacementNamed(context, '/editProfile');
     }
   }
 

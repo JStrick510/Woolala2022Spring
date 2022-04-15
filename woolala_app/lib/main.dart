@@ -37,14 +37,14 @@ class WooLaLa extends StatelessWidget {
     return MaterialApp(
       title: 'ChooseNXT',
       debugShowCheckedModeBanner: false,
-      // theme: theme.copyWith(
-      //   colorScheme: ColorScheme.fromSwatch(
-      //     primarySwatch: primaryWhite,
-      //   ).copyWith(secondary: Colors.black),
-      //   // This makes the visual density adapt to the platform that you run the app on. For desktop platforms, the controls will be smaller and closer together (more dense) than on mobile platforms.
-      //   visualDensity: VisualDensity.adaptivePlatformDensity,
-      //   textSelectionTheme: TextSelectionThemeData(cursorColor: Colors.black),
-      // ),
+      theme: theme.copyWith(
+        colorScheme: ColorScheme.fromSwatch(
+          primarySwatch: primaryWhite,
+        ).copyWith(secondary: Colors.black),
+        // This makes the visual density adapt to the platform that you run the app on. For desktop platforms, the controls will be smaller and closer together (more dense) than on mobile platforms.
+        visualDensity: VisualDensity.adaptivePlatformDensity,
+        textSelectionTheme: TextSelectionThemeData(cursorColor: Colors.black),
+      ),
       initialRoute: '/',
       routes: {
         // easier use for multiple page navigation
