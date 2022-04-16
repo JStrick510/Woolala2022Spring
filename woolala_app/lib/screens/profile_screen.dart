@@ -724,6 +724,7 @@ Future<void> showBlockConfirmDialog() async {
     BottomNav bottomBar = BottomNav(context);
     bottomBar.currentIndex = 2;
     bottomBar.currEmail = currentUser.email;
+    bottomBar.brand = currentUser.brand;
 
     return Scaffold(
       appBar: AppBar(
@@ -799,7 +800,7 @@ Future<void> showBlockConfirmDialog() async {
         onTap: (int pageIndex) {
           bottomBar.switchPage(pageIndex, context);
         },
-        items: bottomBar.bottomItems,
+        items: bottomBar.getItems(),
         backgroundColor: Colors.white,
       ),
     );

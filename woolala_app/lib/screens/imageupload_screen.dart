@@ -90,8 +90,6 @@ class _ImageUploadScreenState extends State<ImageUploadScreen> {
         img64 = base64Encode(bytes);
         Navigator.pushReplacementNamed(context, '/makepost',
             arguments: [[_image, null, null, null, null], [img64, null, null, null, null]]);
-        //Navigator.pushReplacementNamed(context, '/makepost',
-            //arguments: [_image, img64]);
       }
     } else {
       print('No image selected.');
@@ -104,6 +102,7 @@ class _ImageUploadScreenState extends State<ImageUploadScreen> {
   Widget build(BuildContext context) {
     BottomNav bottomBar = BottomNav(context);
     bottomBar.currentIndex = 0;
+    bottomBar.brand = false; //hardcoded since user info not already present and already on upload screen
 
     final tween = MultiTrackTween([
       Track("color1").add(Duration(seconds: 3),
@@ -171,7 +170,7 @@ class _ImageUploadScreenState extends State<ImageUploadScreen> {
         onTap: (int index) {
           bottomBar.switchPage(index, context);
         },
-        items: bottomBar.bottomItems,
+        items: bottomBar.getItems(),
         backgroundColor: Colors.white,
       ),
     );
