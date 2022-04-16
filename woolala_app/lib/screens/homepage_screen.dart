@@ -14,6 +14,7 @@ import 'package:woolala_app/widgets/bottom_nav.dart';
 import 'package:woolala_app/widgets/card.dart';
 import 'package:woolala_app/main.dart';
 import 'dart:io';
+import "dart:math";///////////////////////ADDED
 import "dart:collection";///////////////////////ADDED2
 
 // Star widget on the home page
@@ -60,7 +61,7 @@ Future<http.Response> ratePost(double rating, String id) {
 // Will be used to make the post for the first time.
 Future<http.Response> createPost(String postID, String image1, String image2,
     String image3, String image4, String image5, String date,
-    String caption, String userID, String userName, String price) {
+    String caption, String userID, String userName, String price, String Category) {
   return http.post(
     Uri.parse(domain + '/insertPost'),
     headers: <String, String>{
@@ -80,6 +81,7 @@ Future<http.Response> createPost(String postID, String image1, String image2,
       'price': price,
       'cumulativeRating': 0.0,
       'numRatings': 0,
+      'Category': Category,
       'wouldBuy': []
     }),
   );
@@ -422,6 +424,27 @@ class _HomepageScreenState extends State<HomepageScreen> {
     bottomBar.currEmail = currentUser.email;
     bottomBar.brand = currentUser.brand;
 
+    if (postIDs.length > 0){
+      feedLoading = false;
+      if (!sorted){
+        _sort(popular, users, feedLoading);
+
+        sorted = true;
+      }
+      if (count < 3){
+        print("Filtering");
+        filterOut();
+      }
+
+      if (toRemove.length == 0){
+        postIDs = List.from(prePostIDs);
+      }
+
+    }
+    else{
+      _sort(popular, users, feedLoading);
+    }
+
     return Scaffold(
       appBar: AppBar(
         // title: Text('ChooseNXT', style: TextStyle(fontSize: 25)),
@@ -442,6 +465,48 @@ class _HomepageScreenState extends State<HomepageScreen> {
           IconButton(
             icon: Icon(Icons.exit_to_app),
             onPressed: () => startSignOut(context),
+          ),
+          IconButton(
+            icon: Icon(Icons.edit_note),
+            onPressed: () {
+              count = 0;
+              sorted = false;
+              Navigator.push(context, MaterialPageRoute<void>(
+                builder: (BuildContext context) {
+
+                  return Scaffold(
+                    appBar: AppBar(
+                      title: const Text('Filter Feed:'),
+                    ),
+                    body: Center(
+                      child: DropdownButton(
+
+                        // Initial Value
+                        value: dropdownvalue,
+
+                        // Down Arrow Icon
+                        icon: const Icon(Icons.keyboard_arrow_down),
+
+                        // Array list of items
+                        items: items.map((String items) {
+                          return DropdownMenuItem(
+                            value: items,
+                            child: Text(items),
+                          );
+                        }).toList(),
+                        // After selecting the desired option,it will
+                        // change button value to selected value
+                        onChanged: (String newValue) {
+                          setState(() {
+                            dropdownvalue = newValue;
+                          });
+                        },
+                      ),
+                    ),
+                  );
+                },
+              ));
+            },
           )
         ],
       ),
