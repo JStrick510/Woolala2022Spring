@@ -60,6 +60,7 @@ class _FeedCardState extends State<FeedCard> {
   var stars = 2.5;
   bool rated = false;
   Icon wouldBuy = Icon(Icons.add_shopping_cart);
+  double _currentSliderValue = 20;
 
   final CarouselController _controller = CarouselController();
 
@@ -412,26 +413,48 @@ class _FeedCardState extends State<FeedCard> {
                                       // child: Text("Share Options"),
                                     ),
                                     starSlider(widget.postID, stars, rated),
-                                    new IconButton(
-                                      icon: wouldBuy,
-                                      iconSize: 28,
-                                      onPressed: () {
-                                        setState(() {
-                                          if (wouldBuy.icon ==
-                                              Icons.remove_shopping_cart) {
-                                            wouldBuy =
-                                                Icon(Icons.add_shopping_cart);
-                                            removeWouldBuy(currentUser.userID,
-                                                widget.postID);
-                                          } else {
-                                            wouldBuy = Icon(
-                                                Icons.remove_shopping_cart);
-                                            addWouldBuy(currentUser.userID,
-                                                widget.postID);
-                                          }
-                                        });
-                                      },
+                                    // new IconButton(
+                                    //   icon: wouldBuy,
+                                    //   iconSize: 28,
+                                    //   onPressed: () {
+                                    //     setState(() {
+                                    //       if (wouldBuy.icon ==
+                                    //           Icons.remove_shopping_cart) {
+                                    //         wouldBuy =
+                                    //             Icon(Icons.add_shopping_cart);
+                                    //         removeWouldBuy(currentUser.userID,
+                                    //             widget.postID);
+                                    //       } else {
+                                    //         wouldBuy = Icon(
+                                    //             Icons.remove_shopping_cart);
+                                    //         addWouldBuy(currentUser.userID,
+                                    //             widget.postID);
+                                    //       }
+                                    //     });
+                                    //   },
+                                    // ),
+                                    //f:
+                                    SliderTheme(
+                                      data: SliderThemeData(
+                                        thumbColor: Color(0xFF424242),
+                                        thumbShape: RoundSliderThumbShape(enabledThumbRadius: 10)
+                                      ),
+                                      child:
+                                        Slider(
+                                          value: _currentSliderValue,
+                                          max: 100,
+                                          divisions: 5,
+                                          activeColor: Color(0xFF424242),
+                                          inactiveColor: Color(0xFFBDBDBD),
+                                          label: _currentSliderValue.round().toString(),
+                                          onChanged: (double value) {
+                                          setState(() {
+                                          _currentSliderValue = value;
+                                          });
+                                          },
+                                        ),
                                     ),
+                                    //f
                                   ],
                                 ),
                               ),

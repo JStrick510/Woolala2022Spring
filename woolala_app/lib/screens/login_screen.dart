@@ -98,9 +98,14 @@ class _LoginScreenState extends State<LoginScreen> {
   bool _disposed = false;
   bool _firstTimeLogin = false;
 
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
+  bool isPasswordVisble = false;
+
   // called automatically on app launch
   void initState() {
     print("Calling initState");
+    _emailController.addListener(() => setState(() {}));
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       signInProcess();
@@ -223,6 +228,8 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   void dispose() {
     _disposed = true;
+    _emailController.dispose();
+    _passwordController.dispose();
     super.dispose();
   }
 
@@ -448,16 +455,152 @@ class _LoginScreenState extends State<LoginScreen> {
     return result;
   }
 
+  // Go to the Register page to create an account with email and password
+  Widget _noAccount() {
+    return Container(
+      // margin: EdgeInsets.symmetric(vertical: 20),
+      // padding: EdgeInsets.all(15),
+      alignment: Alignment.bottomCenter,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          Text(
+            'Don\'t have an account ?',
+            style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
+          ),
+          SizedBox(
+            width: 10,
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.pushReplacementNamed(context, '/registration');
+            },
+            child: Text(
+              'Register Here',
+              style: TextStyle(
+                  color: Color(0xfff79c4f),
+                  fontSize: 13,
+                  fontWeight: FontWeight.w600),
+            ),
+          )
+        ],
+      ),
+    );
+  }
+
+  Widget _emailField() {
+    return Container(
+      padding: EdgeInsets.fromLTRB(60, 20, 60, 10),
+      child: Theme(
+        data: ThemeData().copyWith(
+          colorScheme: ThemeData().colorScheme.copyWith(
+                primary: Colors.black,
+              ),
+        ),
+        child: TextField(
+          controller: _emailController,
+          keyboardType: TextInputType.emailAddress,
+          textInputAction: TextInputAction.done,
+          decoration: InputDecoration(
+            border: OutlineInputBorder(),
+            hintText: 'name@example.com',
+            label: const Text('email'),
+            prefixIcon: Icon(Icons.email),
+            suffixIcon: _emailController.text.isEmpty
+                ? Container(
+                    width: 0,
+                  )
+                : IconButton(
+                    onPressed: () => _emailController.clear(),
+                    icon: Icon(Icons.close),
+                  ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _passwordField() {
+    return Container(
+      padding: EdgeInsets.fromLTRB(60, 10, 60, 10),
+      child: Theme(
+        data: ThemeData().copyWith(
+          colorScheme: ThemeData().colorScheme.copyWith(
+                primary: Colors.black,
+              ),
+        ),
+        child: TextField(
+          controller: _passwordController,
+          decoration: InputDecoration(
+            border: OutlineInputBorder(),
+            hintText: 'Enter your password',
+            label: const Text('password'),
+            suffixIcon: IconButton(
+              icon: isPasswordVisble
+                  ? Icon(Icons.visibility)
+                  : Icon(Icons.visibility_off),
+              onPressed: () =>
+                  setState(() => isPasswordVisble = !isPasswordVisble),
+            ),
+          ),
+          obscureText: !isPasswordVisble,
+        ),
+      ),
+    );
+  }
+
+  Widget _loginButton() {
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.all(Radius.circular(5)),
+        boxShadow: <BoxShadow>[
+          BoxShadow(
+              color: Colors.grey.shade200,
+              offset: Offset(2, 4),
+              blurRadius: 5,
+              spreadRadius: 2)
+        ],
+      ),
+      child: TextButton(
+        style: ButtonStyle(
+          foregroundColor: MaterialStateProperty.all<Color>(Colors.blue),
+        ),
+        onPressed: () async {
+          final password = _passwordController.text;
+          final email = _emailController.text;
+          try {
+            final userCredential =
+                await fireB.FirebaseAuth.instance.signInWithEmailAndPassword(
+              email: email,
+              password: password,
+            );
+            print(userCredential);
+            User tempUser = await getDoesUserExists(email);
+            if (tempUser != null && tempUser.userID != "") //account exists
+            {
+              print("User account found with email and password.");
+              currentUser = tempUser;
+              Navigator.pushReplacementNamed(context, '/home');
+            }
+          } on fireB.FirebaseAuthException catch (e) {
+            // errorHandling(e);
+          }
+        },
+        child: Text('Login'),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    final tween = MultiTrackTween([
-      Track("color1").add(Duration(seconds: 3),
-          ColorTween(begin: Colors.white, end: Colors.white)),
-      Track("color2").add(Duration(seconds: 3),
-          ColorTween(begin: Colors.white, end: Colors.white)),
-      Track("color3").add(Duration(seconds: 3),
-          ColorTween(begin: Colors.white, end: Colors.white))
-    ]);
+    // final tween = MultiTrackTween([
+    //   Track("color1").add(Duration(seconds: 3),
+    //       ColorTween(begin: Colors.white, end: Colors.white)),
+    //   Track("color2").add(Duration(seconds: 3),
+    //       ColorTween(begin: Colors.white, end: Colors.white)),
+    //   Track("color3").add(Duration(seconds: 3),
+    //       ColorTween(begin: Colors.white, end: Colors.white))
+    // ]);
 
     // if (_firstTimeLogin) {
     //   return CreateUserName();
@@ -468,95 +611,131 @@ class _LoginScreenState extends State<LoginScreen> {
     //       isSignedInWithGoogle, isSignedInWithFacebook, isSignedInWithApple);
     // } else {
     return Scaffold(
-        key: _scaffoldKey,
-        body: Center(
-            child: ControlledAnimation(
-                playback: Playback.MIRROR,
-                tween: tween,
-                duration: tween.duration,
-                builder: (context, animation) {
-                  return Container(
-                    child: Container(
-                      padding: EdgeInsets.symmetric(vertical: 25),
-                      width: double.infinity,
-                      decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                              begin: Alignment.topCenter,
-                              end: Alignment.bottomCenter,
-                              colors: [
-                            animation["color1"],
-                            animation["color2"],
-                            animation["color3"]
-                          ])),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          new Image.asset(
-                              './assets/logos/ChooseNXT wide logo WBG.png',
-                              width: 300,
-                              height: 150,
-                              fit: BoxFit.contain,
-                              semanticLabel: 'WooLaLa logo'),
-                          // Text(
-                          //   "Powered by: ",
-                          //   style: TextStyle(color: Colors.white, fontSize: 16),
-                          // ),
-                          // Image.asset('assets/logos/fashionNXT_logo.png',
-                          //     width: 150,
-                          //     height: 30,
-                          //     fit: BoxFit.contain,
-                          //     semanticLabel: 'FashioNXT logo'),
-                          SizedBox(
-                            height: 25,
-                          ),
-                          // CarouselSlider(
-                          //   options: CarouselOptions(
-                          //     height: 160.0,
-                          //     initialPage: 0,
-                          //     enlargeCenterPage: true,
-                          //     autoPlay: true,
-                          //     reverse: false,
-                          //     enableInfiniteScroll: true,
-                          //     autoPlayInterval: Duration(seconds: 4),
-                          //     autoPlayAnimationDuration:
-                          //         Duration(milliseconds: 2000),
-                          //     scrollDirection: Axis.horizontal,
-                          //   ),
-                          //   items: images.map((imgUrl) {
-                          //     return Builder(
-                          //       builder: (BuildContext context) {
-                          //         return Container(
-                          //           width: MediaQuery.of(context).size.width,
-                          //           margin:
-                          //               EdgeInsets.symmetric(horizontal: 10.0),
-                          //           decoration: BoxDecoration(
-                          //             color: Colors.black,
-                          //           ),
-                          //           child: Image.network(
-                          //             imgUrl,
-                          //             fit: BoxFit.fill,
-                          //           ),
-                          //         );
-                          //       },
-                          //     );
-                          //   }).toList(),
-                          // ),
-                          SizedBox(
-                            height: 25,
-                          ),
-                          Text(
-                            "Login With:",
-                            style: TextStyle(
-                              // color: Colors.white,
-                              fontSize: 24,
-                            ),
-                          ),
-                          _buildSocialButtonRow()
-                        ],
+      key: _scaffoldKey,
+      // body: Center(
+      // child: ControlledAnimation(
+      //     playback: Playback.MIRROR,
+      //     tween: tween,
+      //     duration: tween.duration,
+      //     builder: (context, animation) {
+      //       return Container(
+      body: Container(
+        child: Container(
+          padding: EdgeInsets.symmetric(vertical: 25),
+          width: double.infinity,
+          // decoration: BoxDecoration(
+          //     gradient: LinearGradient(
+          //         begin: Alignment.topCenter,
+          //         end: Alignment.bottomCenter,
+          //         colors: [
+          //       animation["color1"],
+          //       animation["color2"],
+          //       animation["color3"]
+          //     ]
+          //     )),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              new Image.asset('./assets/logos/ChooseNXT wide logo WBG.png',
+                  width: 300,
+                  height: 100,
+                  fit: BoxFit.contain,
+                  semanticLabel: 'WooLaLa logo'),
+              // Text(
+              //   "Powered by: ",
+              //   style: TextStyle(color: Colors.black, fontSize: 16),
+              // ),
+              // Image.asset('assets/logos/fashionNXT_logo.png',
+              //     width: 150,
+              //     height: 30,
+              //     fit: BoxFit.contain,
+              //     semanticLabel: 'FashioNXT logo'),
+              // SizedBox(
+              //   height: 25,
+              // ),
+              // CarouselSlider(
+              //   options: CarouselOptions(
+              //     height: 160.0,
+              //     initialPage: 0,
+              //     enlargeCenterPage: true,
+              //     autoPlay: true,
+              //     reverse: false,
+              //     enableInfiniteScroll: true,
+              //     autoPlayInterval: Duration(seconds: 4),
+              //     autoPlayAnimationDuration:
+              //         Duration(milliseconds: 2000),
+              //     scrollDirection: Axis.horizontal,
+              //   ),
+              //   items: images.map((imgUrl) {
+              //     return Builder(
+              //       builder: (BuildContext context) {
+              //         return Container(
+              //           width: MediaQuery.of(context).size.width,
+              //           margin:
+              //               EdgeInsets.symmetric(horizontal: 10.0),
+              //           decoration: BoxDecoration(
+              //             color: Colors.black,
+              //           ),
+              //           child: Image.network(
+              //             imgUrl,
+              //             fit: BoxFit.fill,
+              //           ),
+              //         );
+              //       },
+              //     );
+              //   }).toList(),
+              // ),
+              // SizedBox(
+              //   height: 25,
+              // ),
+
+              _emailField(),
+
+              _passwordField(),
+
+              // Submit button
+              _loginButton(),
+
+              // Devider
+              Container(
+                margin: EdgeInsets.symmetric(vertical: 10),
+                child: Row(
+                  children: [
+                    SizedBox(
+                      width: 25,
+                    ),
+                    Expanded(
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 10),
+                        child: Divider(
+                          thickness: 1,
+                        ),
                       ),
                     ),
-                  );
-                })));
+                    Text('  or  '),
+                    Expanded(
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 10),
+                        child: Divider(
+                          thickness: 1,
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      width: 25,
+                    ),
+                  ],
+                ),
+              ),
+
+              _buildSocialButtonRow(),
+
+              _noAccount(),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 
   // }
