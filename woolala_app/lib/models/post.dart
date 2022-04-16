@@ -11,10 +11,11 @@ class Post {
   final String Comments;
   final double CumulativeRating;
   final int NumRatings;
+  final String Category;
   //final String price;
 
   Post({
-    this.ID, this.UserID, this.ImageID1, this.ImageID2, this.ImageID3, this.ImageID4, this.ImageID5, this.Date, this.Description, this.Comments, this.CumulativeRating, this.NumRatings,
+    this.ID, this.UserID, this.ImageID1, this.ImageID2, this.ImageID3, this.ImageID4, this.ImageID5, this.Date, this.Description, this.Comments, this.CumulativeRating, this.NumRatings, this.Category,
   });
 
   Post.fromJSON(Map<String, dynamic> json)
@@ -29,7 +30,8 @@ class Post {
       Description = json["Description"],
       Comments = json["Comments"],
       CumulativeRating = json["CumulativeRating"],
-      NumRatings = json["NumRatings"];
+      NumRatings = json["NumRatings"],
+      Category = json["Category"];
       // price = json["price"]
 
   Map<String, dynamic> toJSON() => {
@@ -45,6 +47,7 @@ class Post {
     "Comments" : Comments,
     "CumulativeRating" : CumulativeRating,
     "NumRatings" : NumRatings,
+    "Category" : Category,
     // "price" : price,
   };
 }

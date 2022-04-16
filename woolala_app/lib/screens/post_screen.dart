@@ -29,11 +29,24 @@ class _PostScreenState extends State<PostScreen> {
   List<Object> arguments;
   String _text = "";
   String _price = "";
+  String _cat = "";
   TextEditingController _c;
   TextEditingController _d;
+  String _a = "";
   //String img64;
   List<File> images;
   List<String> encodes;
+
+  String dropdownvalue = 'Apparel';
+  var items = [
+    "Apparel",
+    "Shoes",
+    "Accessories",
+    "Crafts",
+    "Designs",
+    "Home",
+    "Others"
+  ];
 
   static final DateTime now = DateTime.now().toLocal();
   static final DateFormat formatter = DateFormat('yyyy-MM-dd');
@@ -43,6 +56,7 @@ class _PostScreenState extends State<PostScreen> {
   initState() {
     _c = new TextEditingController();
     _d = new TextEditingController();
+    _a = "Apparel";
     super.initState();
   }
 
@@ -105,6 +119,33 @@ class _PostScreenState extends State<PostScreen> {
                   contentPadding: const EdgeInsets.all(20.0)),
               controller: _d,
             ),
+            SizedBox(height: 20.0),
+            Text("Enter Category of Post:"),
+
+            DropdownButton(
+
+              // Initial Value
+              value: dropdownvalue,
+
+              // Down Arrow Icon
+              icon: const Icon(Icons.keyboard_arrow_down),
+
+              // Array list of items
+              items: items.map((String items) {
+                return DropdownMenuItem(
+                  value: items,
+                  child: Text(items),
+                );
+              }).toList(),
+              // After selecting the desired option,it will
+              // change button value to selected value
+              onChanged: (String newValue) {
+                setState(() {
+                  dropdownvalue = newValue;
+                  _a = newValue;
+                });
+              },
+            ),
           ],
         ),
       ),
@@ -119,11 +160,12 @@ class _PostScreenState extends State<PostScreen> {
                 setState(() {
                   this._text = _c.text;
                   this._price = _d.text;
+                  this._cat = _a;
                 }),
                 print(_text),
                 createPost(currentUser.userID + ":::" + getNewID(), encodes[0],
                     encodes[1], encodes[2], encodes[3], encodes[4], date,
-                    _text, currentUser.userID, currentUser.profileName, _price),
+                    _text, currentUser.userID, currentUser.profileName, _price, _cat),
                 Navigator.pop(context),
                 Navigator.pushReplacementNamed(context, '/home'),
               },
