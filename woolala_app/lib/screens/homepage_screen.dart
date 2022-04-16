@@ -357,7 +357,7 @@ class _HomepageScreenState extends State<HomepageScreen> {
   ///////////////////////START2////////////////////////////////
   void _sort(Map<String, double> popular, List users, var feedLoading) async {
     await Future.delayed(Duration(milliseconds: 9000));
-    if (popular.length == (users.length-2)){
+    if (popular.length == users.length){
       print("sorting");
 
       var sortedKeys = popular.keys.toList(growable:false)
@@ -417,7 +417,7 @@ class _HomepageScreenState extends State<HomepageScreen> {
           User rateUser;
           users += list1; //all users
           for (int j = 0; j < users.length; j++){
-            if((users[j]['userID'] != '')&&(users[j]['userID'] != 'cmFodWwubXVydGh5NzExQGdtYWlsLmNvbQ==')){
+
               getUserFromDB(users[j]['userID']).then((usr){
                 rateUser = usr;
 
@@ -428,7 +428,6 @@ class _HomepageScreenState extends State<HomepageScreen> {
 
               });
 
-            }
           }
         });
 
