@@ -301,6 +301,7 @@ class _HomepageScreenState extends State<HomepageScreen> {
     BottomNav bottomBar = BottomNav(context);
     bottomBar.currentIndex = 1;
     bottomBar.currEmail = currentUser.email;
+    bottomBar.brand = currentUser.brand;
 
     return Scaffold(
       appBar: AppBar(
@@ -427,7 +428,7 @@ class _HomepageScreenState extends State<HomepageScreen> {
         onTap: (int index) {
           bottomBar.switchPage(index, context);
         },
-        items: bottomBar.bottomItems,
+        items: bottomBar.getItems(),
         backgroundColor: Colors.white,
       ),
     );
