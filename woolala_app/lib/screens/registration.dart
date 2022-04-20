@@ -2,9 +2,10 @@
 
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart' as fba;
+import 'package:http/http.dart';
 import 'package:woolala_app/screens/login_screen.dart';
 import 'package:woolala_app/models/user.dart' as model;
-// import 'package:http/http.dart' as http;
+import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 class Registration extends StatefulWidget {
@@ -97,7 +98,14 @@ class _RegistrationState extends State<Registration> {
                 primary: Colors.black,
               ),
         ),
-        child: TextField(
+        child: TextFormField(
+          validator: (value) {
+            if (value == null || value.isEmpty) {
+              return 'Please enter a valid email';
+            } else {
+              return null;
+            }
+          },
           controller: _emailController,
           keyboardType: TextInputType.emailAddress,
           textInputAction: TextInputAction.done,
@@ -250,39 +258,67 @@ class _RegistrationState extends State<Registration> {
 
   Widget _signUpButton() {
     return Container(
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.all(Radius.circular(5)),
-        boxShadow: <BoxShadow>[
-          BoxShadow(
-              color: Colors.grey.shade200,
-              offset: Offset(2, 4),
-              blurRadius: 5,
-              spreadRadius: 2)
-        ],
-      ),
-      child: TextButton(
-        style: ButtonStyle(
-          foregroundColor: MaterialStateProperty.all<Color>(Colors.blue),
+      padding: EdgeInsets.symmetric(horizontal: 120, vertical: 10),
+      child: ElevatedButton(
+        style: ElevatedButton.styleFrom(
+          primary: Colors.blueGrey.shade900,
+          onPrimary: Colors.black,
+          minimumSize: const Size(double.infinity, 50),
+        ),
+        child: const Text(
+          'Sign Up',
+          style: TextStyle(
+              color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
         ),
         onPressed: () async {
-          final password = _passwordController.text;
-          final email = _emailController.text;
-          try {
-            final userCredential =
-                await fba.FirebaseAuth.instance.createUserWithEmailAndPassword(
-              email: email,
-              password: password,
-            );
-            await saveAccountToServer();
-            // Navigator.pushReplacementNamed(context, '/search');
-            print(userCredential);
-          } on fba.FirebaseAuthException catch (e) {
-            errorHandling(e);
+          if (await _checkRequirements()) {
+            final password = _passwordController.text;
+            final email = _emailController.text;
+            try {
+              final userCredential = await fba.FirebaseAuth.instance
+                  .createUserWithEmailAndPassword(
+                email: email,
+                password: password,
+              );
+              await saveAccountToServer();
+              // Navigator.pushReplacementNamed(context, '/search');
+              print(userCredential);
+            } on fba.FirebaseAuthException catch (e) {
+              errorHandling(e);
+            }
           }
         },
-        child: Text('Sign Up'),
       ),
     );
+  }
+
+  Future<bool> _checkRequirements() async {
+    http.Response res = await model.User.isUserNameTaken(
+        _userHandleController.text); // User handle must be unique
+
+    if (_emailController.text.isEmpty) {
+      showAlertDialog(
+        title: 'Email address Error!',
+        content: 'Please enter your email address.',
+        context: context,
+      );
+    } else if (_passwordController.text.isEmpty) {
+      showAlertDialog(
+        title: 'Password Error!',
+        content: 'Please enter your password.',
+        context: context,
+      );
+    } else if (!res.body.isEmpty) {
+      print(res.body);
+      showAlertDialog(
+        title: 'User handle Error!',
+        content: 'This Username is already taken!',
+        context: context,
+      );
+    } else {
+      return true;
+    }
+    return false;
   }
 
   // called in controlGoogleSignIn
