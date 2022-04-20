@@ -1,8 +1,5 @@
-// import 'dart:html';
-
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart' as fba;
-import 'package:http/http.dart';
 import 'package:woolala_app/screens/login_screen.dart';
 import 'package:woolala_app/models/user.dart' as model;
 import 'package:http/http.dart' as http;
@@ -90,47 +87,19 @@ class _RegistrationState extends State<Registration> {
   }
 
   Widget _emailField() {
-    return Container(
-      padding: EdgeInsets.fromLTRB(40, 20, 40, 10),
-      child: Theme(
-        data: ThemeData().copyWith(
-          colorScheme: ThemeData().colorScheme.copyWith(
-                primary: Colors.black,
-              ),
-        ),
-        child: TextFormField(
-          validator: (value) {
-            if (value == null || value.isEmpty) {
-              return 'Please enter a valid email';
-            } else {
-              return null;
-            }
-          },
-          controller: _emailController,
-          keyboardType: TextInputType.emailAddress,
-          textInputAction: TextInputAction.done,
-          decoration: InputDecoration(
-            border: OutlineInputBorder(),
-            hintText: 'name@example.com',
-            label: const Text('email'),
-            prefixIcon: Icon(Icons.email),
-            suffixIcon: _emailController.text.isEmpty
-                ? Container(
-                    width: 0,
-                  )
-                : IconButton(
-                    onPressed: () => _emailController.clear(),
-                    icon: Icon(Icons.close),
-                  ),
-          ),
-        ),
-      ),
+    return _generalTextFieldBuilder(
+      ctrl: _emailController,
+      businessHint: 'business@myCompany.co',
+      patronHint: 'name@example.com',
+      businessLabel: 'email',
+      patronLabel: 'email',
+      prefixIcon: Icon(Icons.email),
     );
   }
 
   Widget _passwordField() {
     return Container(
-      padding: EdgeInsets.fromLTRB(40, 10, 40, 10),
+      padding: EdgeInsets.symmetric(vertical: 10),
       child: Theme(
         data: ThemeData().copyWith(
           colorScheme: ThemeData().colorScheme.copyWith(
@@ -159,7 +128,7 @@ class _RegistrationState extends State<Registration> {
 
   Widget _urlField() {
     return Container(
-      padding: EdgeInsets.fromLTRB(40, 10, 40, 10),
+      padding: EdgeInsets.symmetric(vertical: 10),
       child: Theme(
         data: ThemeData().copyWith(
           colorScheme: ThemeData().colorScheme.copyWith(
@@ -190,75 +159,30 @@ class _RegistrationState extends State<Registration> {
   }
 
   Widget _profileNameField() {
-    return Container(
-      padding: EdgeInsets.fromLTRB(40, 10, 40, 10),
-      child: Theme(
-        data: ThemeData().copyWith(
-          colorScheme: ThemeData().colorScheme.copyWith(
-                primary: Colors.black,
-              ),
-        ),
-        child: TextField(
-          controller: _profileNameController,
-          textInputAction: TextInputAction.done,
-          decoration: InputDecoration(
-            border: OutlineInputBorder(),
-            hintText: tier == 'Business' ? 'ChooseNXT' : 'Tito Chowdhury',
-            label: tier == 'Business'
-                ? const Text('Business Name')
-                : const Text('Profile Name'),
-            prefixIcon: Icon(Icons.account_box_rounded),
-            suffixIcon: _profileNameController.text.isEmpty
-                ? Container(
-                    width: 0,
-                  )
-                : IconButton(
-                    onPressed: () => _profileNameController.clear(),
-                    icon: Icon(Icons.close),
-                  ),
-          ),
-        ),
-      ),
+    return _generalTextFieldBuilder(
+      ctrl: _profileNameController,
+      businessHint: 'ChooseNXT',
+      patronHint: 'Tito Chowdhury',
+      businessLabel: 'Business Name',
+      patronLabel: 'Profile Name',
+      prefixIcon: Icon(Icons.account_box_rounded),
     );
   }
 
   Widget _userHandleField() {
-    return Container(
-      padding: EdgeInsets.fromLTRB(40, 10, 40, 10),
-      child: Theme(
-        data: ThemeData().copyWith(
-          colorScheme: ThemeData().colorScheme.copyWith(
-                primary: Colors.black,
-              ),
-        ),
-        child: TextField(
-          controller: _userHandleController,
-          textInputAction: TextInputAction.done,
-          decoration: InputDecoration(
-            border: OutlineInputBorder(),
-            hintText:
-                tier == 'Business' ? '@Choose_NXT123' : '@Tito_Chowdhury123',
-            label: tier == 'Business'
-                ? const Text('Unique Business Handle')
-                : const Text('Unique Profile Handle'),
-            prefixIcon: Icon(Icons.alternate_email_sharp),
-            suffixIcon: _userHandleController.text.isEmpty
-                ? Container(
-                    width: 0,
-                  )
-                : IconButton(
-                    onPressed: () => _userHandleController.clear(),
-                    icon: Icon(Icons.close),
-                  ),
-          ),
-        ),
-      ),
+    return _generalTextFieldBuilder(
+      ctrl: _userHandleController,
+      businessHint: '@Choose_NXT123',
+      patronHint: '@Tito_Chowdhury123',
+      businessLabel: 'Unique Business Handle',
+      patronLabel: 'Unique Profile Handle',
+      prefixIcon: Icon(Icons.alternate_email_sharp),
     );
   }
 
   Widget _signUpButton() {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 120, vertical: 10),
+      padding: EdgeInsets.symmetric(horizontal: 80, vertical: 10),
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
           primary: Colors.blueGrey.shade900,
@@ -387,6 +311,45 @@ class _RegistrationState extends State<Registration> {
         ),
       );
 
+  // Encapsulate similar textfields: email, profile name, user handle
+  Widget _generalTextFieldBuilder({
+    TextEditingController ctrl,
+    String businessHint,
+    String patronHint,
+    String businessLabel,
+    String patronLabel,
+    Icon prefixIcon,
+  }) {
+    return Container(
+      padding: EdgeInsets.symmetric(vertical: 10),
+      child: Theme(
+        data: ThemeData().copyWith(
+          colorScheme: ThemeData().colorScheme.copyWith(
+                primary: Colors.black,
+              ),
+        ),
+        child: TextField(
+          controller: ctrl,
+          textInputAction: TextInputAction.done,
+          decoration: InputDecoration(
+            border: OutlineInputBorder(),
+            hintText: tier == 'Business' ? businessHint : patronHint,
+            label: tier == 'Business' ? Text(businessLabel) : Text(patronLabel),
+            prefixIcon: prefixIcon,
+            suffixIcon: ctrl.text.isEmpty
+                ? Container(
+                    width: 0,
+                  )
+                : IconButton(
+                    onPressed: () => ctrl.clear(),
+                    icon: Icon(Icons.close),
+                  ),
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -394,6 +357,7 @@ class _RegistrationState extends State<Registration> {
         title: const Text('Register'),
       ),
       body: ListView(
+        padding: EdgeInsets.symmetric(vertical: 10, horizontal: 40),
         children: [
           _emailField(),
           _passwordField(),
