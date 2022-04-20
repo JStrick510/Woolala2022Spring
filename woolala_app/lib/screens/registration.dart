@@ -350,6 +350,30 @@ class _RegistrationState extends State<Registration> {
     );
   }
 
+  Widget _logIn() {
+    return Container(
+      padding: EdgeInsets.only(top: 50),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const Text('Already have an account?'),
+          TextButton(
+            onPressed: () {
+              Navigator.pushReplacementNamed(context, '/');
+            },
+            child: const Text(
+              'Log in here',
+              style: TextStyle(
+                  color: Color(0xfff79c4f),
+                  fontSize: 13,
+                  fontWeight: FontWeight.w600),
+            ),
+          )
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -366,6 +390,7 @@ class _RegistrationState extends State<Registration> {
           tier == 'Business' ? _urlField() : SizedBox(),
           _accountType(),
           _signUpButton(),
+          _logIn(),
         ],
       ),
     );
