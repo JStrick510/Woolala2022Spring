@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:woolala_app/models/user.dart';
 import 'package:woolala_app/screens/login_screen.dart';
 //import 'dart:io';
 //import 'dart:convert';
@@ -43,7 +44,7 @@ class _CreateUserNameState extends State<CreateUserName> {
         _badUsername = true;
       });
     } else {
-      http.Response res = await currentUser.isUserNameTaken(nameToSend);
+      http.Response res = await User.isUserNameTaken(nameToSend);
       // print(res.body.toString());
       if (res.body.isEmpty) {
         setState(() {

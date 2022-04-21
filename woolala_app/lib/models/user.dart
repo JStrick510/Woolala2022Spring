@@ -155,7 +155,7 @@ class User {
     });
   }
 
-  Future<http.Response> isUserNameTaken(String n) {
+  static Future<http.Response> isUserNameTaken(String n) {
     String uName = n;
     if (uName.isNotEmpty && uName[0] != '@') {
       uName = '@' + n;
