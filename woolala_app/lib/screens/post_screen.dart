@@ -67,7 +67,7 @@ class _PostScreenState extends State<PostScreen> {
     images = arguments[0];
     encodes = arguments[1];
 
-    _image = images[0];
+    _image = images[0]; //select first image as preview image
     //img64 = arguments[1];
     return Scaffold(
       resizeToAvoidBottomInset: true,
@@ -83,7 +83,7 @@ class _PostScreenState extends State<PostScreen> {
       body: SingleChildScrollView(
         child: Column(
           children: <Widget>[
-            Container(
+            Container( //preview image
               width: MediaQuery.of(context).size.width,
               height: MediaQuery.of(context).size.width,
               decoration: BoxDecoration(

@@ -1,6 +1,8 @@
 class Post {
   final String ID;
   final String UserID;
+  //Image 1-5 probably could be turned into an array instead, but ran out of time.
+  //Maybe minor performance improvements when large # of posts
   final String ImageID1;
   final String ImageID2;
   final String ImageID3;

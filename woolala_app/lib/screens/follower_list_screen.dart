@@ -111,6 +111,8 @@ class _FollowerListScreenState extends State<FollowerListScreen> {
           bottomBar.switchPage(index, context);
         },
         items: bottomBar.bottomItems,
+        unselectedItemColor: Colors.black,
+        selectedItemColor: Colors.black, //color was not asked to change but just in case
       ),
     );
   }

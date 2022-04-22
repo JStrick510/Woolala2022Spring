@@ -41,8 +41,7 @@ class _ImageUploadScreenState extends State<ImageUploadScreen> {
   Future getImageGallery() async {
 
     try {
-      var pickedFiles = await picker.pickMultiImage(imageQuality: 50);
-      //you can use ImageCourse.camera for Camera capture
+      var pickedFiles = await picker.pickMultiImage(imageQuality: 50); //lower image quality should = less storage but probably minimal benefit
       if(pickedFiles != null){
         imageFiles = pickedFiles;
         setState(() {
@@ -57,20 +56,23 @@ class _ImageUploadScreenState extends State<ImageUploadScreen> {
     List<File> files = [];
     List<String> encodes = [];
 
-
+    //encode the images to be sent as strings for mongodb storage
+    //encoding causes larger size(?) rather than image file but was how implemented originally
     for (int i = 0; i < imageFiles.length; i++) {
       _image = await cropImage(imageFiles[i].path);
       if (_image != null) {
         final bytes = _image.readAsBytesSync();
         img64 = base64Encode(bytes);
 
+        //add image and encode to list, check should be implemented to allow only 5 selection,
+        //currently user can select more than 5 but only 5 will be sent
         files.add(_image);
         encodes.add(img64);
-        print(files.length);
-        print(encodes.length);
       }
     }
 
+
+    //fill the remainder of arguments with null up to 5, this is where imageid1-5 as array rather than indv values would be useful
     for(int i = files.length; i < 5; i++){
       files.add(null);
       encodes.add(null);
@@ -81,7 +83,7 @@ class _ImageUploadScreenState extends State<ImageUploadScreen> {
   }
 
 
-  Future getImageCamera() async {
+  Future getImageCamera() async { //only take one picture because that is how instagram does it
     final pickedFile = await picker.pickImage(source: ImageSource.camera, imageQuality: 50);
     if (pickedFile != null) {
       _image = await cropImage(pickedFile.path);
@@ -154,12 +156,14 @@ class _ImageUploadScreenState extends State<ImageUploadScreen> {
                           key: ValueKey("Camera"),
                           onPressed: () => getImageCamera(),
                           heroTag: null,
+                          foregroundColor: Colors.white,
                         ),
                         FloatingActionButton(
                           child: Icon(Icons.collections),
                           key: ValueKey("Gallery"),
                           onPressed: () => getImageGallery(),
                           heroTag: null,
+                          foregroundColor: Colors.white,
                         )
                       ]),
                 ]));
@@ -172,6 +176,8 @@ class _ImageUploadScreenState extends State<ImageUploadScreen> {
         },
         items: bottomBar.getItems(),
         backgroundColor: Colors.white,
+        unselectedItemColor: Colors.black,
+        selectedItemColor: Colors.black, //color was not asked to change but just in case
       ),
     );
   }

@@ -195,7 +195,10 @@ class _FollowingListScreenState extends State<FollowingListScreen> {
           onTap: (int index) {
             bottomBar.switchPage(index, context);
           },
-          items: bottomBar.getItems()),
+          items: bottomBar.getItems(),
+          unselectedItemColor: Colors.black,
+          selectedItemColor: Colors.black, //color was not asked to change but just in case
+      ),
     );
   }
 }

@@ -127,9 +127,9 @@ Future<List> getPost(String id) async {
   http.Response res = await http.get(Uri.parse(domain + '/getPostInfo/' + id));
   Map info = jsonDecode(res.body.toString());
 
-  List<Image> display = [];
+  List<Image> display = []; //store the image IDs to be displayed as buttons
 
-  if(info["image1"] != null){
+  if(info["image1"] != null){ //should never be null since posts have to have one image to post but handles exceptions
     display.add(Image.memory(base64Decode(info["image1"])));
   }
   if(info["image2"] != null){
@@ -161,7 +161,7 @@ Future<List> getPost(String id) async {
     display,
     info["Category"]///////////////////////////////////////ADDED2
   ];
-  return ret;
+  return ret; //this ends up getting sent to card and profile_card as postInfo
 }
 
 // Returns a list of all the posts the provided user has rated
@@ -448,10 +448,22 @@ class _HomepageScreenState extends State<HomepageScreen> {
     return Scaffold(
       appBar: AppBar(
         // title: Text('ChooseNXT', style: TextStyle(fontSize: 25)),
-        title: Image.asset(
-          './assets/logos/ChooseNXT wide logo WBG.png',
-          width: 200,
+        title: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Image.asset(
+              './assets/logos/ChooseNXT wide logo WBG.png',
+              width: 160, //org was 200, smaller to fit text in appbar
+            ),
+            Text("New Releases", style: TextStyle(fontSize: 16))
+          ]
         ),
+
+        //Image.asset(
+          //'./assets/logos/ChooseNXT wide logo WBG.png',
+          //width: 200,
+        //),
         centerTitle: true,
         key: ValueKey("homepage"),
         actions: <Widget>[
@@ -509,6 +521,9 @@ class _HomepageScreenState extends State<HomepageScreen> {
             },
           )
         ],
+        //bottom: PreferredSize(
+            //child: Text("New Releases"),
+            //preferredSize: null),
       ),
       body: !feedLoading
           ? Center(
@@ -535,7 +550,7 @@ class _HomepageScreenState extends State<HomepageScreen> {
                             // );
                             return Container(
                               constraints: BoxConstraints(
-                                minHeight: 570,
+                                minHeight: 50, //this is the space between the posts
                                 minWidth: double.infinity,
                               ),
                               child: FeedCard(postIDs[index], ratedPosts),
@@ -614,6 +629,8 @@ class _HomepageScreenState extends State<HomepageScreen> {
         },
         items: bottomBar.getItems(),
         backgroundColor: Colors.white,
+        unselectedItemColor: Colors.black,
+        selectedItemColor: Colors.black, //color was not asked to change but just in case
       ),
     );
   }

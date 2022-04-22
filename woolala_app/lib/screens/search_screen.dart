@@ -213,6 +213,8 @@ class _SearchPageState extends State<SearchPage> {
         },
         items: bottomBar.getItems(),
         backgroundColor: Colors.white,
+        unselectedItemColor: Colors.black,
+        selectedItemColor: Colors.black, //color was not asked to change but just in case
       ),
     );
   }
