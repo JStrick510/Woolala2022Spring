@@ -12,6 +12,9 @@ import 'package:http/http.dart' as http;
 import 'package:woolala_app/widgets/profile_card.dart';
 import 'package:woolala_app/widgets/card.dart';
 import 'dart:math';
+import 'dart:io' show Platform;
+import 'package:mailto/mailto.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class ProfilePage extends StatefulWidget {
   //the id of this profile
@@ -719,6 +722,24 @@ Future<void> showBlockConfirmDialog() async {
     Navigator.pushReplacementNamed(context, '/editProfile');
   }
 
+  //prompts to the default mailing app to email only individual.
+  launchMailtoSingle() async {
+    var url = "www.google.com";
+    if (Platform.isAndroid) { //Play Store url
+      url = "https://play.google.com/store/apps/details?id=com.fashionxt.choosenxt&hl=en_US&gl=US";
+    } else if (Platform.isIOS) { //Apple Store url
+      url = "https://www.apple.com/store";
+    }
+    //String greeting = "Hi " + '${widget.wouldBuyNameList[index - 1]}' + ",\n\n";
+    final mailtoLink = Mailto(
+      to: [],
+      cc: [],
+      subject: 'Invitation to Join ChooseNXT',
+      body: "Click here to download: " + url,
+    );
+    await launch('$mailtoLink');
+  }
+
   @override
   Widget build(BuildContext context) {
     BottomNav bottomBar = BottomNav(context);
@@ -741,6 +762,11 @@ Future<void> showBlockConfirmDialog() async {
             // color: Colors.white,
             onPressed: () => Navigator.push(
                 context, MaterialPageRoute(builder: (context) => SearchPage())),
+          ),
+          IconButton(
+            icon: Icon(Icons.person_add_alt_rounded),
+            color: Colors.black,
+            onPressed: launchMailtoSingle,
           ),
         ],
       ),

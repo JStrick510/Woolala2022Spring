@@ -156,12 +156,14 @@ class _ImageUploadScreenState extends State<ImageUploadScreen> {
                           key: ValueKey("Camera"),
                           onPressed: () => getImageCamera(),
                           heroTag: null,
+                          foregroundColor: Colors.white,
                         ),
                         FloatingActionButton(
                           child: Icon(Icons.collections),
                           key: ValueKey("Gallery"),
                           onPressed: () => getImageGallery(),
                           heroTag: null,
+                          foregroundColor: Colors.white,
                         )
                       ]),
                 ]));

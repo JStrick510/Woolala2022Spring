@@ -731,6 +731,14 @@ class _LoginScreenState extends State<LoginScreen> {
               _buildSocialButtonRow(),
 
               _noAccount(),
+
+              Container(
+                alignment: Alignment.bottomCenter,
+                child: Text(
+                'Choose New Releases from Creatives',
+                style: TextStyle(fontSize: 14, fontStyle: FontStyle.italic),
+                ),
+              ),
             ],
           ),
         ),

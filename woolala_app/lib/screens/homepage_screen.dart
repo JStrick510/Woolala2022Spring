@@ -448,10 +448,22 @@ class _HomepageScreenState extends State<HomepageScreen> {
     return Scaffold(
       appBar: AppBar(
         // title: Text('ChooseNXT', style: TextStyle(fontSize: 25)),
-        title: Image.asset(
-          './assets/logos/ChooseNXT wide logo WBG.png',
-          width: 200,
+        title: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Image.asset(
+              './assets/logos/ChooseNXT wide logo WBG.png',
+              width: 160, //org was 200, smaller to fit text in appbar
+            ),
+            Text("New Releases", style: TextStyle(fontSize: 16))
+          ]
         ),
+
+        //Image.asset(
+          //'./assets/logos/ChooseNXT wide logo WBG.png',
+          //width: 200,
+        //),
         centerTitle: true,
         key: ValueKey("homepage"),
         actions: <Widget>[
@@ -509,6 +521,9 @@ class _HomepageScreenState extends State<HomepageScreen> {
             },
           )
         ],
+        //bottom: PreferredSize(
+            //child: Text("New Releases"),
+            //preferredSize: null),
       ),
       body: !feedLoading
           ? Center(
