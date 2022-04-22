@@ -776,7 +776,7 @@ Future<void> showBlockConfirmDialog() async {
                               } else {
                                 return Container(
                                     constraints: BoxConstraints(
-                                      minHeight: 570,
+                                      minHeight: 50, //this is the space between the posts
                                       minWidth: double.infinity,
                                     ),
                                     child: FeedCard(
@@ -802,6 +802,8 @@ Future<void> showBlockConfirmDialog() async {
         },
         items: bottomBar.getItems(),
         backgroundColor: Colors.white,
+        unselectedItemColor: Colors.black,
+        selectedItemColor: Colors.black, //color was not asked to change but just in case
       ),
     );
   }

@@ -232,29 +232,37 @@ class _OwnFeedCardState extends State<OwnFeedCard> {
                           ),
                         ),
                         GestureDetector(
-                            child: Column(
+                            child: Stack(
+                              alignment: Alignment.bottomCenter,
                                 children: <Widget>[
-                                  CarouselSlider(
-                                    items: postInfo.data[5],
-                                    options: CarouselOptions(enlargeCenterPage: true, height: 200),
-                                    carouselController: _controller,
+                                  Container(
+                                    child: CarouselSlider(
+                                      items: postInfo.data[5],
+                                      options: CarouselOptions(enlargeCenterPage: true, height: 300),
+                                      carouselController: _controller,
+                                    )
                                   ),
-                                  Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                    children: <Widget>[
-                                      ...Iterable<int>.generate(postInfo.data[5].length).map(
-                                            (int pageIndex) => Flexible(
-                                          child: ElevatedButton(
-                                            onPressed: () => _controller.animateToPage(pageIndex),
-                                            child: postInfo.data[5][pageIndex],
-                                            style: ElevatedButton.styleFrom(
-                                                fixedSize: const Size(80, 80)),
+                                  Container(
+                                      child: Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                        children: <Widget>[
+                                          //generate tiny "thumbnail" buttons for each image(range 1-5) in post with the image as the icon and when button is pressed switch big display to image on button
+                                          ...Iterable<int>.generate(postInfo.data[5].length).map(
+                                                (int pageIndex) => Flexible(
+                                              child: ElevatedButton(
+                                                onPressed: () => _controller.animateToPage(pageIndex),
+                                                child: postInfo.data[5][pageIndex],
+                                                style: ElevatedButton.styleFrom(
+                                                    padding: EdgeInsets.all(0.0), //this makes it so the image fills the button
+                                                    fixedSize: const Size(55, 55)), //still white space even though button and image are square?
+                                              ),
+                                            ),
                                           ),
-                                        ),
-                                      ),
-                                    ],
+                                        ],
+                                      )
                                   )]
+
                             ),
                             onHorizontalDragStart:
                                 (DragStartDetails dragStartDetails) {
@@ -362,7 +370,7 @@ class _OwnFeedCardState extends State<OwnFeedCard> {
                                     textAlign: TextAlign.left,
                                     style: TextStyle(
                                         fontWeight: FontWeight.bold,
-                                        fontSize: 18),
+                                        fontSize: 14),
                                   ),
                                 ),
                               ),
@@ -370,12 +378,12 @@ class _OwnFeedCardState extends State<OwnFeedCard> {
                                 alignment: Alignment.centerLeft,
                                 child: Padding(
                                   padding: EdgeInsets.fromLTRB(
-                                      10.0, 1.0, 10.0, 15.0),
+                                      10.0, 1.0, 10.0, 2.0),
                                   child: Text(
                                     postInfo.data[0], //was 1
                                     textAlign: TextAlign.left,
                                     style: TextStyle(
-                                      fontSize: 18,
+                                      fontSize: 14,
                                     ),
                                   ),
                                 ),
@@ -391,7 +399,7 @@ class _OwnFeedCardState extends State<OwnFeedCard> {
                               postInfo.data[2],
                               textAlign: TextAlign.left,
                               style: TextStyle(
-                                  fontSize: 12, fontWeight: FontWeight.w500),
+                                  fontSize: 8, fontWeight: FontWeight.w500),
                             ),
                           ),
                         ),

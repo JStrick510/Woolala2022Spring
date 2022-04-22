@@ -213,7 +213,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
                       createBioTextFormField(),
                       createUrlTextFormField(),
                       createPrivacySwitch(),
-                      createUserTypeSwitch(),
                     ],
                   ),
                 ),
@@ -253,34 +252,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
             onChanged: (value) {
               setState(() {
                 currentUser.setPrivacy(value);
-              });
-            },
-            activeTrackColor: Colors.lightGreenAccent,
-            activeColor: Colors.green,
-          ),
-        ),
-      ],
-    );
-  }
-
-  Row createUserTypeSwitch() {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: <Widget>[
-        Padding(
-          padding: EdgeInsets.only(top: 15.0),
-          child: Text(
-            "Brand Account",
-            style: TextStyle(color: Colors.black, fontSize: 16.0),
-          ),
-        ),
-        Padding(
-          padding: EdgeInsets.only(top: 15.0),
-          child: Switch(
-            value: currentUser.brand,
-            onChanged: (value) {
-              setState(() {
-                currentUser.setBrand(value);
               });
             },
             activeTrackColor: Colors.lightGreenAccent,

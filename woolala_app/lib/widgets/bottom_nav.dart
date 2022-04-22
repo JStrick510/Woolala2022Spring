@@ -16,19 +16,11 @@ class BottomNav {
       icon: Icon(Icons.add_circle,
           key: ValueKey("Make Post"), color: Colors.black),
       label: "New",
-      //title: Text(
-      //"New",
-      //style: TextStyle(color: Colors.black),
-      //),
     ),
     BottomNavigationBarItem(
       icon: Icon(Icons.home, color: Colors.black),
       activeIcon: Icon(Icons.home, color: Colors.black),
       label: "Home",
-      //title: Text(
-        //'Home',
-        //style: TextStyle(color: Colors.black),
-      //),
     ),
     BottomNavigationBarItem(
       icon: Icon(
@@ -41,10 +33,6 @@ class BottomNav {
         color: Colors.black,
       ),
       label: "Profile",
-      //title: Text(
-        //"Profile",
-        //style: TextStyle(color: Colors.black),
-      //),
     ),
   ];
 
@@ -152,25 +140,17 @@ class BottomNav {
   {
     List<BottomNavigationBarItem> bottomItems = [];
 
-    if(this.brand){
+    if(this.brand){ //if brand display post button
       bottomItems = [
         BottomNavigationBarItem(
           icon: Icon(Icons.add_circle,
               key: ValueKey("Make Post"), color: Colors.black),
           label: "New",
-          //title: Text(
-          //"New",
-          //style: TextStyle(color: Colors.black),
-          //),
         ),
         BottomNavigationBarItem(
           icon: Icon(Icons.home, color: Colors.black),
           activeIcon: Icon(Icons.home, color: Colors.black),
           label: "Home",
-          //title: Text(
-          //'Home',
-          //style: TextStyle(color: Colors.black),
-          //),
         ),
         BottomNavigationBarItem(
           icon: Icon(
@@ -183,24 +163,16 @@ class BottomNav {
             color: Colors.black,
           ),
           label: "Profile",
-          //title: Text(
-          //"Profile",
-          //style: TextStyle(color: Colors.black),
-          //),
         ),
       ];
     }
 
-    else{
+    else{ //if not brand do not display new post button
       bottomItems = [
         BottomNavigationBarItem(
           icon: Icon(Icons.home, color: Colors.black),
           activeIcon: Icon(Icons.home, color: Colors.black),
           label: "Home",
-          //title: Text(
-          //'Home',
-          //style: TextStyle(color: Colors.black),
-          //),
         ),
         BottomNavigationBarItem(
           icon: Icon(
@@ -213,10 +185,6 @@ class BottomNav {
             color: Colors.black,
           ),
           label: "Profile",
-          //title: Text(
-          //"Profile",
-          //style: TextStyle(color: Colors.black),
-          //),
         ),
       ];
     }
