@@ -165,7 +165,7 @@ class _PostScreenState extends State<PostScreen> {
                 print(_text),
                 createPost(currentUser.userID + ":::" + getNewID(), encodes[0],
                     encodes[1], encodes[2], encodes[3], encodes[4], date,
-                    _text, currentUser.userID, currentUser.profileName, _price, _cat),
+                    _text, currentUser.userID, currentUser.profileName, _cat ,_price),
                 Navigator.pop(context),
                 Navigator.pushReplacementNamed(context, '/home'),
               },

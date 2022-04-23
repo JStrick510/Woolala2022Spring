@@ -395,6 +395,18 @@ class _OwnFeedCardState extends State<OwnFeedCard> {
                             ),
                           ),
                         ),
+                        Align(
+                          alignment: Alignment.centerLeft,
+                          child: Padding(
+                            padding: EdgeInsets.fromLTRB(10.0, 1.0, 10.0, 2.0),
+                            child: Text(
+                              postInfo.data[6].toString(),
+                              textAlign: TextAlign.left,
+                              style: TextStyle(
+                                  fontSize: 12, fontWeight: FontWeight.w500),
+                            ),
+                          ),
+                        ),
                       ],
                     ),
                   );

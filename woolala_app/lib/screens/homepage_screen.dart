@@ -18,7 +18,6 @@ import "dart:math";///////////////////////ADDED
 import "dart:collection";///////////////////////ADDED2
 
 // Star widget on the home page
-//check
 Widget starSlider(String postID, num, rated) => RatingBar(
       initialRating: num,
       minRating: 0,
@@ -78,10 +77,10 @@ Future<http.Response> createPost(String postID, String image1, String image2,
       'image5': image5,
       'date': date,
       'caption': caption,
-      'price': price,
       'cumulativeRating': 0.0,
       'numRatings': 0,
       'Category': Category,
+      'price': price,
       'wouldBuy': []
     }),
   );
@@ -153,13 +152,13 @@ Future<List> getPost(String id) async {
   }
   var ret = [
     info["caption"],
-    // info["price"],
     info["userID"],
     info["date"],
     avg,
     info["numRatings"],
     display,
-    info["Category"]///////////////////////////////////////ADDED2
+    info["Category"],///////////////////////////////////////ADDED2
+    info["price"] //Added
   ];
   return ret;
 }
