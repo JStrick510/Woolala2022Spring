@@ -59,7 +59,8 @@ class WooLaLa extends StatelessWidget {
         '/followinglist': (_) => FollowingListScreen(currentUser.email),
         '/createAccount': (_) => CreateUserName(),
         '/eula': (_) => EulaPage(),
-        '/registration': (_) => Registration(),
+        '/patronRegistration': (_) => Registration('Patron'),
+        '/businessRegistration': (_) => Registration('Business'),
       },
       onGenerateRoute: (settings) {
         if (settings.name == "/home") {
