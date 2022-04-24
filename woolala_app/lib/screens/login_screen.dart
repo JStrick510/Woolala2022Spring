@@ -483,14 +483,14 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                   children: [
                     SimpleDialogOption(
-                      child: const Text('Yes'),
+                      child: const Text('Patron'),
                       onPressed: () {
                         Navigator.pushReplacementNamed(
                             context, '/patronRegistration');
                       },
                     ),
                     SimpleDialogOption(
-                      child: const Text('No'),
+                      child: const Text('Business'),
                       onPressed: () {
                         Navigator.pushReplacementNamed(
                             context, '/businessRegistration');
