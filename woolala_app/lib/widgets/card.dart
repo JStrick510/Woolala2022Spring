@@ -88,6 +88,8 @@ class _FeedCardState extends State<FeedCard> {
   bool rated = false;
   Icon wouldBuy = Icon(Icons.add_shopping_cart);
   double _currentSliderValue = 20;
+  //double _price = (postInfo.data[6]!=null)? double.parse(postInfo.data[6]) : 100;
+
   final CarouselController _controller = CarouselController();
 
   void initState() {
@@ -465,8 +467,9 @@ class _FeedCardState extends State<FeedCard> {
                                     //   },
                                     // ),
                                     //f:
+
                                     SliderTheme(
-                                      data: SliderThemeData(
+                                        data: SliderThemeData(
                                         thumbColor: Color(0xFF424242),
                                         //thumbShape: SliderThumbImage()
                                         thumbShape: RoundSliderThumbShape(enabledThumbRadius: 10)
@@ -474,7 +477,7 @@ class _FeedCardState extends State<FeedCard> {
                                       child:
                                         Slider(
                                           value: _currentSliderValue,
-                                          max: double.parse(postInfo.data[6]),
+                                          max: (postInfo.data[6]!=null)? double.parse(postInfo.data[6]) : 100,
                                           divisions: 5,
                                           activeColor: Color(0xFF424242),
                                           inactiveColor: Color(0xFFBDBDBD),
