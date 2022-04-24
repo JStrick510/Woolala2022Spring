@@ -547,48 +547,6 @@ class _HomepageScreenState extends State<HomepageScreen> {
             icon: Icon(Icons.exit_to_app),
             onPressed: () => startSignOut(context),
           ),
-          IconButton(
-            icon: Icon(Icons.edit_note),
-            onPressed: () {
-              count = 0;
-              sorted = false;
-              Navigator.push(context, MaterialPageRoute<void>(
-                builder: (BuildContext context) {
-
-                  return Scaffold(
-                    appBar: AppBar(
-                      title: const Text('Filter Feed:'),
-                    ),
-                    body: Center(
-                      child: DropdownButton(
-
-                        // Initial Value
-                        value: dropdownvalue,
-
-                        // Down Arrow Icon
-                        icon: const Icon(Icons.keyboard_arrow_down),
-
-                        // Array list of items
-                        items: items.map((String items) {
-                          return DropdownMenuItem(
-                            value: items,
-                            child: Text(items),
-                          );
-                        }).toList(),
-                        // After selecting the desired option,it will
-                        // change button value to selected value
-                        onChanged: (String newValue) {
-                          setState(() {
-                            dropdownvalue = newValue;
-                          });
-                        },
-                      ),
-                    ),
-                  );
-                },
-              ));
-            },
-          )
         ],
       ),
       body: !feedLoading
@@ -603,25 +561,59 @@ class _HomepageScreenState extends State<HomepageScreen> {
           onRefresh: _onRefresh,
           onLoading: _onLoading,
           child: ListView.builder(
-              padding: const EdgeInsets.all(0),
-              itemCount: numToShow,
-              addAutomaticKeepAlives: true,
-              physics: const AlwaysScrollableScrollPhysics(),
-              itemBuilder: (BuildContext context, int index) {
-                // The height on this will need to be edited to match whatever height is set for the picture
-                // return SizedBox(
-                //   width: double.infinity,
-                //   height: 550,
-                //   child: FeedCard(postIDs[index], ratedPosts),
-                // );
-                return Container(
-                  constraints: BoxConstraints(
-                    minHeight: 50, //this is the space between the posts
-                    minWidth: double.infinity,
+          padding: EdgeInsets.fromLTRB(0, 1, 0, 0),
+          itemCount: numToShow,
+          addAutomaticKeepAlives: true,
+          physics: const AlwaysScrollableScrollPhysics(),
+          itemBuilder: (BuildContext context, int index) {
+            // The height on this will need to be edited to match whatever height is set for the picture
+            // return SizedBox(
+            //   width: double.infinity,
+            //   height: 550,
+            //   child: FeedCard(postIDs[index], ratedPosts),
+            // );
+            return Container(
+              constraints: BoxConstraints(
+                minHeight: 50, //this is the space between the posts
+                minWidth: double.infinity,
+              ),
+              child: !(index > 0)
+                  ?
+              Column(
+                children: [
+                  SizedBox(height: 20.0),
+                  Text("Filter Feed by Category:"),
+                  DropdownButton(
+
+                    // Initial Value
+                    value: dropdownvalue,
+
+                    // Down Arrow Icon
+                    icon: const Icon(Icons.keyboard_arrow_down),
+
+                    // Array list of items
+                    items: items.map((String items) {
+                      return DropdownMenuItem(
+                        value: items,
+                        child: Text(items),
+                      );
+                    }).toList(),
+                    // After selecting the desired option,it will
+                    // change button value to selected value
+                    onChanged: (String newValue) {
+                      setState(() {
+                        dropdownvalue = newValue;
+                        count = 0;
+                        sorted = false;
+                      });
+                    },
                   ),
-                  child: FeedCard(postIDs[index], ratedPosts),
-                );
-              }),
+                  FeedCard(postIDs[index], ratedPosts),
+                ],
+              ):
+              FeedCard(postIDs[index], ratedPosts),
+            );
+          }),
         )
             : Padding(
           padding: EdgeInsets.all(70.0),
