@@ -4,6 +4,7 @@ import 'dart:io';
 // import 'package:apple_sign_in/apple_sign_in.dart';
 //import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:simple_animations/simple_animations.dart';
 //import 'homepage_screen.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -109,33 +110,8 @@ class _LoginScreenState extends State<LoginScreen> {
     _emailController.addListener(() => setState(() {}));
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      signInProcess();
+      // signInProcess();
     });
-  }
-
-  void googleLoginUser() {
-    print("Google signing in!");
-    try {
-      gSignIn.signIn();
-    } catch (error) {
-      print(error);
-    }
-  }
-
-  void facebookLoginUser() async {
-    var facebookLoginResult = await facebookLogin.logIn(['email']);
-    switch (facebookLoginResult.status) {
-      case FacebookLoginStatus.error:
-        print("Facebook login error.");
-        print("Error from Facebook '${facebookLoginResult.errorMessage}'");
-        break;
-      case FacebookLoginStatus.cancelledByUser:
-        print("Facebook login cancelled by user.");
-        break;
-      case FacebookLoginStatus.loggedIn:
-        signInProcess();
-        break;
-    }
   }
 
   void signInWithApple() async {
@@ -210,21 +186,6 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
-  void signInProcess() {
-    var keepGoing = true;
-    if (keepGoing) {
-      gSignIn.signInSilently(suppressErrors: true).then((gSignInAccount) {
-        keepGoing = false;
-        controlGoogleSignIn(gSignInAccount);
-      }).catchError((gError) {
-        print("Error Message: " + gError);
-      });
-    }
-    if (keepGoing) {
-      controlFacebookSignIn();
-    }
-  }
-
   // provides an error when trying to set state
   @override
   void dispose() {
@@ -232,168 +193,6 @@ class _LoginScreenState extends State<LoginScreen> {
     _emailController.dispose();
     _passwordController.dispose();
     super.dispose();
-  }
-
-  // called during initState
-  void controlGoogleSignIn(GoogleSignInAccount signInAccount) async {
-    if (signInAccount != null) {
-      print("Google - Account token remembered.");
-      await saveGoogleUserInfoToServer();
-      if (!_disposed) {
-        setState(() {
-          isSignedInWithGoogle = true;
-        });
-      }
-    } else {
-      print("Google - no account found.");
-      if (!_disposed) {
-        setState(() {
-          isSignedInWithGoogle = false;
-        });
-      }
-    }
-  }
-
-  void controlFacebookSignIn() async {
-    showAlertDialog(context);
-    var tempToken = (await facebookLogin.currentAccessToken);
-    if (tempToken == null) {
-      print("Facebook - no account found.");
-      Navigator.pop(context);
-      if (!_disposed) {
-        setState(() {
-          isSignedInWithFacebook = false;
-        });
-      }
-    } else {
-      print("Facebook - Account token remembered.");
-      await saveFacebookUserInfoToServer();
-      if (!_disposed) {
-        setState(() {
-          isSignedInWithFacebook = true;
-        });
-      }
-    }
-  }
-
-// called in controlGoogleSignIn
-  saveGoogleUserInfoToServer() async {
-    showAlertDialog(context);
-    final GoogleSignInAccount gAccount = gSignIn.currentUser;
-    User tempUser = await getDoesUserExists(gAccount.email);
-    if (tempUser != null && tempUser.userID != "") //account exists
-    {
-      print("User account found with Google email.");
-      currentUser = tempUser;
-      Navigator.pop(context);
-      isSignedInWithGoogle = true;
-      Navigator.pushReplacementNamed(
-        context,
-        '/home',
-        arguments: [
-          isSignedInWithGoogle,
-          isSignedInWithFacebook,
-          isSignedInWithApple,
-        ],
-      );
-    } else {
-      print("Making an account with Google.");
-      //insert eula here
-      var result = await Navigator.pushNamed(context, '/eula');
-      if (result == null || result == false) {
-        googleLogoutUser();
-        Navigator.pop(context);
-        return;
-      }
-      User u = User(
-        googleID: gAccount.id,
-        email: gAccount.email,
-        userName: '@' + base64.encode(latin1.encode(gAccount.email)).toString(),
-        profileName: gAccount.displayName,
-        profilePic: 'default',
-        bio: "This is my new ChooseNXT Account!",
-        userID: base64.encode(latin1.encode(gAccount.email)).toString(),
-        followers: [],
-        numRated: 0,
-        postIDs: [],
-        following: [base64.encode(latin1.encode(gAccount.email)).toString()],
-        private: false,
-        ratedPosts: [],
-        url: "",
-        blockedUsers: [],
-        brand: false,
-      );
-      await insertUser(u);
-      currentUser = u;
-      _firstTimeLogin = true;
-      Navigator.pop(context);
-      isSignedInWithGoogle = true;
-      Navigator.pushReplacementNamed(context, '/createAccount');
-    }
-  }
-
-// called in controlGoogleSignIn
-  saveFacebookUserInfoToServer() async {
-    var tempToken = (await facebookLogin.currentAccessToken);
-    var token = tempToken.token;
-    final graphResponse = await http.get(Uri.parse(
-        'https://graph.facebook.com/v2.12/me?fields=name,first_name,last_name,picture.type(large),email&access_token=$token'));
-    final profile = json.decode(graphResponse.body);
-    User tempUser = await getDoesUserExists(profile['email']);
-    switch (tempUser) {
-      case null:
-        print("Making an account with Facebook.");
-        //insert eula here
-        var result = await Navigator.pushNamed(context, '/eula');
-        if (result == null || result == false) {
-          facebookLogoutUser();
-          Navigator.pop(context);
-          return;
-        }
-        User u = User(
-          facebookID: profile['id'],
-          email: profile['email'],
-          profileName: profile['name'],
-          profilePic: "default",
-          bio: "This is my new ChooseNXT Account!",
-          userID: base64.encode(latin1.encode(profile['email'])).toString(),
-          userName:
-              '@' + base64.encode(latin1.encode(profile['email'])).toString(),
-          numRated: 0,
-          postIDs: [],
-          following: [
-            base64.encode(latin1.encode(profile['email'])).toString()
-          ],
-          followers: [],
-          ratedPosts: [],
-          private: false,
-          url: "",
-          blockedUsers: [],
-          brand: false,
-        );
-        await insertUser(u);
-        currentUser = u;
-        _firstTimeLogin = true;
-        Navigator.pop(context);
-        isSignedInWithFacebook = true;
-        Navigator.pushReplacementNamed(context, '/createAccount');
-        break;
-      default:
-        print("User account found with Facebook email.");
-        currentUser = tempUser;
-        Navigator.pop(context);
-        isSignedInWithFacebook = true;
-        Navigator.pushReplacementNamed(
-          context,
-          '/home',
-          arguments: [
-            isSignedInWithGoogle,
-            isSignedInWithFacebook,
-            isSignedInWithApple,
-          ],
-        );
-        break;
-    }
   }
 
   saveAppleUserInfoToServer(firstTime, email, fullName) async {
@@ -445,15 +244,6 @@ class _LoginScreenState extends State<LoginScreen> {
       isSignedInWithApple = true;
       Navigator.pushReplacementNamed(context, '/createAccount');
     }
-  }
-
-// used in the CarouselSlider
-  List<T> map<T>(List list, Function handler) {
-    List<T> result = [];
-    for (var i = 0; i < list.length; i++) {
-      result.add(handler(i, list[i]));
-    }
-    return result;
   }
 
   // Go to the Register page to create an account with email and password
@@ -515,7 +305,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   Widget _emailField() {
     return Container(
-      padding: EdgeInsets.fromLTRB(60, 20, 60, 10),
+      padding: EdgeInsets.symmetric(vertical: 5, horizontal: 60),
       child: Theme(
         data: ThemeData().copyWith(
           colorScheme: ThemeData().colorScheme.copyWith(
@@ -547,7 +337,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   Widget _passwordField() {
     return Container(
-      padding: EdgeInsets.fromLTRB(60, 10, 60, 10),
+      padding: EdgeInsets.symmetric(vertical: 5, horizontal: 60),
       child: Theme(
         data: ThemeData().copyWith(
           colorScheme: ThemeData().colorScheme.copyWith(
@@ -576,7 +366,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   Widget _signInButton() {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 60, vertical: 20),
+      padding: EdgeInsets.symmetric(horizontal: 60, vertical: 5),
       child: ElevatedButton(
           style: ElevatedButton.styleFrom(
             primary: Colors.blueGrey.shade900,
@@ -703,6 +493,77 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
+  Widget _googleSignInButton(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.symmetric(vertical: 5, horizontal: 60),
+      child: ElevatedButton.icon(
+        style: ElevatedButton.styleFrom(
+          primary: Colors.blueGrey[50],
+          onPrimary: Colors.black,
+          minimumSize: const Size(double.infinity, 50),
+        ),
+        onPressed: () {},
+        label: const Text('Sign in with Google'),
+        icon: const FaIcon(
+          FontAwesomeIcons.google,
+          color: Colors.red,
+        ),
+      ),
+    );
+  }
+
+  Widget _facebookSignInButton(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.symmetric(vertical: 5, horizontal: 60),
+      child: ElevatedButton.icon(
+        style: ElevatedButton.styleFrom(
+          primary: Colors.blueGrey[50],
+          onPrimary: Colors.black,
+          minimumSize: const Size(double.infinity, 50),
+        ),
+        onPressed: () {},
+        label: const Text('Sign in with Facebook'),
+        icon: const FaIcon(
+          FontAwesomeIcons.facebook,
+          color: Colors.blue,
+        ),
+      ),
+    );
+  }
+
+  Widget _divider() {
+    return Container(
+      margin: EdgeInsets.symmetric(vertical: 10),
+      child: Row(
+        children: [
+          SizedBox(
+            width: 25,
+          ),
+          Expanded(
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: 10),
+              child: Divider(
+                thickness: 1,
+              ),
+            ),
+          ),
+          Text('  or  '),
+          Expanded(
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: 10),
+              child: Divider(
+                thickness: 1,
+              ),
+            ),
+          ),
+          SizedBox(
+            width: 25,
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -723,38 +584,9 @@ class _LoginScreenState extends State<LoginScreen> {
               _passwordField(),
               _signInButton(),
               _forgotPassword(),
-              // Devider
-              Container(
-                margin: EdgeInsets.symmetric(vertical: 10),
-                child: Row(
-                  children: [
-                    SizedBox(
-                      width: 25,
-                    ),
-                    Expanded(
-                      child: Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 10),
-                        child: Divider(
-                          thickness: 1,
-                        ),
-                      ),
-                    ),
-                    Text('  or  '),
-                    Expanded(
-                      child: Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 10),
-                        child: Divider(
-                          thickness: 1,
-                        ),
-                      ),
-                    ),
-                    SizedBox(
-                      width: 25,
-                    ),
-                  ],
-                ),
-              ),
-              _buildSocialButtonRow(),
+              _divider(),
+              _googleSignInButton(context),
+              _facebookSignInButton(context),
               _noAccount(),
               Container(
                 alignment: Alignment.bottomCenter,
@@ -772,128 +604,33 @@ class _LoginScreenState extends State<LoginScreen> {
 
   // }
 
-  Widget _buildSocialBtn(Function onTap, AssetImage logo, String keyText) {
-    return GestureDetector(
-      onTap: () {
-        onTap();
-        signInProcess();
-      },
-      key: ValueKey(keyText),
-      child: Container(
-        height: 60.0,
-        width: 60.0,
-        decoration: BoxDecoration(
-          shape: BoxShape.circle,
-          color: Colors.white,
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black26,
-              offset: Offset(0, 2),
-              blurRadius: 20.0,
-            ),
-          ],
-          image: DecorationImage(
-            image: logo,
+//progress indicator
+  showAlertDialog(BuildContext context) {
+    AlertDialog alert = AlertDialog(
+        content: Container(
+          child: Row(
+            children: <Widget>[
+              SizedBox(
+                width: 200,
+                height: 200,
+                child: CircularProgressIndicator(
+                  backgroundColor: Colors.transparent,
+                  strokeWidth: 8,
+                ),
+              ),
+            ],
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
           ),
         ),
-      ),
+        backgroundColor: Colors.white.withOpacity(0.7),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)));
+    showDialog(
+      barrierDismissible: false,
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      },
     );
   }
-
-  Widget _buildSocialButtonRow() {
-    return Padding(
-      padding: EdgeInsets.symmetric(vertical: 10.0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: Platform.isIOS
-            ? <Widget>[
-                _buildSocialBtn(
-                  () {
-                    facebookLogoutUser();
-                    googleLogoutUser();
-                    facebookLoginUser();
-                  },
-                  AssetImage(
-                    'assets/logos/facebook_logo.png',
-                  ),
-                  "Facebook",
-                ),
-                _buildSocialBtn(
-                  () {
-                    googleLogoutUser();
-                    facebookLogoutUser();
-                    googleLoginUser();
-                  },
-                  AssetImage(
-                    'assets/logos/google_logo.png',
-                  ),
-                  "Google",
-                ),
-                _buildSocialBtn(
-                  () {
-                    googleLogoutUser();
-                    facebookLogoutUser();
-                    signInWithApple();
-                  },
-                  AssetImage('assets/logos/logo_apple.png'),
-                  'Apple',
-                )
-              ]
-            : <Widget>[
-                _buildSocialBtn(
-                  () {
-                    facebookLogoutUser();
-                    googleLogoutUser();
-                    facebookLoginUser();
-                  },
-                  AssetImage(
-                    'assets/logos/facebook_logo.png',
-                  ),
-                  "Facebook",
-                ),
-                _buildSocialBtn(
-                  () {
-                    googleLogoutUser();
-                    facebookLogoutUser();
-                    googleLoginUser();
-                  },
-                  AssetImage(
-                    'assets/logos/google_logo.png',
-                  ),
-                  "Google",
-                ),
-              ],
-      ),
-    );
-  }
-}
-
-//progress indicator
-showAlertDialog(BuildContext context) {
-  AlertDialog alert = AlertDialog(
-      content: Container(
-        child: Row(
-          children: <Widget>[
-            SizedBox(
-              width: 200,
-              height: 200,
-              child: CircularProgressIndicator(
-                backgroundColor: Colors.transparent,
-                strokeWidth: 8,
-              ),
-            ),
-          ],
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-        ),
-      ),
-      backgroundColor: Colors.white.withOpacity(0.7),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)));
-  showDialog(
-    barrierDismissible: false,
-    context: context,
-    builder: (BuildContext context) {
-      return alert;
-    },
-  );
 }
