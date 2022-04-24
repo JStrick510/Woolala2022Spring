@@ -157,7 +157,7 @@ Future<List> getPost(String id) async {
     avg,
     info["numRatings"],
     display,
-    info["Category"] //category in which a post belongs to
+    info["Category"], //category in which a post belongs to
     info["price"] //Added
   ];
   return ret; //this ends up getting sent to card and profile_card as postInfo
