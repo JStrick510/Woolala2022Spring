@@ -271,10 +271,7 @@ class _RegistrationState extends State<Registration> {
   }
 
   // called in controlGoogleSignIn
-  _saveAccountToServer({
-    @required String email,
-    String profileName,
-  }) async {
+  _saveAccountToServer({@required String email, String profileName}) async {
     model.User tempUser = await getDoesUserExists(email);
     if (tempUser != null) {
       print("User already exist");
@@ -409,6 +406,7 @@ class _RegistrationState extends State<Registration> {
     );
   }
 
+// User should have to move back to the login page if came here by mistake
   Widget _logIn() {
     return Container(
       padding: EdgeInsets.only(top: 10),
@@ -433,27 +431,8 @@ class _RegistrationState extends State<Registration> {
     );
   }
 
-  Widget _devider() {
-    return Container(
-      margin: EdgeInsets.symmetric(vertical: 10),
-      child: Row(
-        children: [
-          Expanded(
-            child: Divider(
-              thickness: 1,
-            ),
-          ),
-          Text('  or  '),
-          Expanded(
-            child: Divider(
-              thickness: 1,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
+// Registration requires the "user handle" and "url" (for business tier) fields 
+// to creat a new account.
   Future<bool> _urlAndHandleCheck() async {
     if (tier == 'Business' && _urlController.text.isEmpty) {
       showAlertDialog(
