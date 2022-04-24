@@ -19,26 +19,26 @@ import "dart:collection";///////////////////////ADDED2
 
 // Star widget on the home page
 Widget starSlider(String postID, num, rated) => RatingBar(
-      initialRating: num,
-      minRating: 0,
-      direction: Axis.horizontal,
-      allowHalfRating: true,
-      ignoreGestures: rated,
-      itemCount: 5,
-      unratedColor: rated ? Colors.grey[400] : Colors.grey[400],
-      itemSize: 30,
-      itemPadding: EdgeInsets.symmetric(horizontal: 4.0),
-      itemBuilder: (context, _) => Icon(
-        Icons.star,
-        color: rated ? Colors.black : Colors.grey[800],
-      ),
-      onRatingUpdate: (rating) {
-        print(rating);
-        //Changing rating here
-        ratePost(rating, postID);
-        //getFeed("cmpoaW5ja0BnbWFpbC5jb20=", "2020-10-28");
-      },
-    );
+  initialRating: num,
+  minRating: 0,
+  direction: Axis.horizontal,
+  allowHalfRating: true,
+  ignoreGestures: rated,
+  itemCount: 5,
+  unratedColor: rated ? Colors.grey[400] : Colors.grey[400],
+  itemSize: 30,
+  itemPadding: EdgeInsets.symmetric(horizontal: 4.0),
+  itemBuilder: (context, _) => Icon(
+    Icons.star,
+    color: rated ? Colors.black : Colors.grey[800],
+  ),
+  onRatingUpdate: (rating) {
+    print(rating);
+    //Changing rating here
+    ratePost(rating, postID);
+    //getFeed("cmpoaW5ja0BnbWFpbC5jb20=", "2020-10-28");
+  },
+);
 
 // Will be used anytime the post is rated
 Future<http.Response> ratePost(double rating, String id) {
@@ -105,7 +105,7 @@ Future<http.Response> reportPost(
 
 Future<http.Response> getReports(String postID, String postUserID) async {
   http.Response res =
-      await http.get(Uri.parse(domain + '/getReports/' + postID));
+  await http.get(Uri.parse(domain + '/getReports/' + postID));
   Map ret = jsonDecode(res.body.toString());
   if (ret["numReports"] >= 3) {
     print("About to http to delete");
@@ -143,7 +143,7 @@ Future<List> getPost(String id) async {
   if(info["image5"] != null){
     display.add(Image.memory(base64Decode(info["image5"])));
   }
-  
+
   var avg;
   if (info["numRatings"] > 0) {
     avg = info["cumulativeRating"] / info["numRatings"];
@@ -157,7 +157,7 @@ Future<List> getPost(String id) async {
     avg,
     info["numRatings"],
     display,
-    info["Category"],///////////////////////////////////////ADDED2
+    info["Category"] //category in which a post belongs to
     info["price"] //Added
   ];
   return ret; //this ends up getting sent to card and profile_card as postInfo
@@ -165,9 +165,8 @@ Future<List> getPost(String id) async {
 
 // Returns a list of all the posts the provided user has rated
 Future<List> getRatedPosts(String userID) async {
-  // print('Getting rated posts');
   http.Response res =
-      await http.get(Uri.parse(domain + '/getRatedPosts/' + userID));
+  await http.get(Uri.parse(domain + '/getRatedPosts/' + userID));
   if (res.body.isNotEmpty) {
     return jsonDecode(res.body.toString());
   }
@@ -187,7 +186,7 @@ Future<List> getFeed(String userID) async {
   return jsonDecode(res.body.toString())["postIDs"];
 }
 
-///////////////////////////////Start/////////////////////////////////////
+//Will return a list of all the users:
 Future<List> getUsrs() async {
   List results = new List();
   List filteredResults = new List();
@@ -199,6 +198,7 @@ Future<List> getUsrs() async {
   return filteredResults;
 }
 
+//Will return a list of all the posts of selected user:
 Future<List> getAllPosts(String userID) async {
   http.Response res = await http
       .get(Uri.parse(domain + '/getOwnFeed/' + userID));
@@ -219,18 +219,15 @@ class HomepageScreen extends StatefulWidget {
 
 class _HomepageScreenState extends State<HomepageScreen> {
   RefreshController _refreshController =
-      RefreshController(initialRefresh: false);
-
-  //ScreenshotController screenshotController = ScreenshotController();
+  RefreshController(initialRefresh: false);
 
   List postIDs = [];
   var ratedPosts = [];
   File file;
   int numToShow;
   var feedLoading = true;
-  
-    ///////////////////////////////ADDED2
-  int count = 0;
+
+  int count = 0; //count
   String dropdownvalue = 'None';
   var items = [
     "Apparel",
@@ -247,6 +244,10 @@ class _HomepageScreenState extends State<HomepageScreen> {
   List prePostIDs = [];
   List users = [];/////////////////////////////ADDED
   final Map<String, double> popular = HashMap();/////////////////////////////ADDED2
+  bool sortConfirm = false;
+  bool hasFeed = false;
+
+  final Map<String, double> sortIDposts = HashMap();
   // Change this to load more posts per refresh
   int postsPerReload = 4;
 
@@ -254,7 +255,7 @@ class _HomepageScreenState extends State<HomepageScreen> {
   void sortPosts(list) {
     list.removeWhere((item) => item == "");
     list.sort((a, b) =>
-        int.parse(b.substring(b.indexOf(':::') + 3)) -
+    int.parse(b.substring(b.indexOf(':::') + 3)) -
         int.parse(a.substring(a.indexOf(':::') + 3)));
   }
 
@@ -295,15 +296,19 @@ class _HomepageScreenState extends State<HomepageScreen> {
     if (mounted) setState(() {});
     _refreshController.loadComplete();
   }
-  
+
   ///////////////////////START2/////////////////////////////////
   void filterOut() async {
-    await Future.delayed(Duration(milliseconds: 9000));
+    await Future.delayed(Duration(milliseconds: 1000));
     var rem = List.unmodifiable(toRemove);
     if (rem.length > 0){
       for (int j = 0; j < rem.length; j++){
         if (postIDs.contains(rem[j])){
           postIDs.remove(rem[j]);
+          if (postIDs.length < postsPerReload)
+            numToShow = postIDs.length;
+          else
+            numToShow = postsPerReload;
         }
       }
     }
@@ -331,11 +336,35 @@ class _HomepageScreenState extends State<HomepageScreen> {
     }
   }
   //////////////////////END2///////////////////////////////////
+  void _sortPosts(Map<String, double> sortPosts) async {
+    await Future.delayed(Duration(milliseconds: 1000));
+
+    if (sortPosts.length >= postIDs.length){
+
+      print("sorting posts...");
+
+      var sortKeyPosts = sortPosts.keys.toList(growable:false)
+        ..sort((k1, k2) => sortPosts[k2].compareTo(sortPosts[k1]));
+      LinkedHashMap sortedMapPosts = new LinkedHashMap
+          .fromIterable(sortKeyPosts, key: (k) => k, value: (k) => sortPosts[k]);
+
+      var sortedPosts = sortedMapPosts.keys.toList(growable:false);
+
+      postIDs = [];
+      postIDs = List.from(sortedPosts);
+      prePostIDs = List.from(sortedPosts);
+      sortConfirm = true;
+
+    }
+
+    if (mounted) setState(() {});
+    _refreshController.refreshCompleted();
+  }
   ///////////////////////START2////////////////////////////////
-  void _sort(Map<String, double> popular, List users, var feedLoading) async {
+  void _sort(Map<String, double> popular, List users) async {
     await Future.delayed(Duration(milliseconds: 9000));
-    if (popular.length == users.length){
-      print("sorting");
+    if (popular.length >= users.length){
+      print("sorting users by popularity...");
 
       var sortedKeys = popular.keys.toList(growable:false)
         ..sort((k1, k2) => popular[k2].compareTo(popular[k1]));
@@ -343,7 +372,10 @@ class _HomepageScreenState extends State<HomepageScreen> {
           .fromIterable(sortedKeys, key: (k) => k, value: (k) => popular[k]);
 
       var sortedIDs = sortedMap.keys.toList(growable:false);
+
       if (postIDs.length == 0){
+        hasFeed = false;
+
         for (int i = 0; i < sortedIDs.length; i++){
           getAllPosts(sortedIDs[i]).then((list) {
 
@@ -357,20 +389,9 @@ class _HomepageScreenState extends State<HomepageScreen> {
               numToShow = postIDs.length;
             else
               numToShow = postsPerReload;
-            //////////////////////filter posts
           });
         }
       }
-      else{
-        /*final Map<String, double> sortPosts = HashMap();
-        for (int i = 0; i < postIDs.length; i++){
-          getPost(postIDs[i]).then((info) {
-            sortPosts[postIDs[i]] = popular[info[1]];
-          });
-        }*/
-      }
-
-      _filterPosts(postIDs, dropdownvalue);
 
     }
 
@@ -386,13 +407,49 @@ class _HomepageScreenState extends State<HomepageScreen> {
     if (currentUser != null && postIDs.length == 0) {
       sorted = false;
       feedLoading = true;
+
       getFeed(currentUser.userID).then((list) {
         postIDs = List.from(list);
         prePostIDs = List.from(list);
-        getUsrs().then((list1){
-          User rateUser;
-          users += list1; //all users
-          for (int j = 0; j < users.length; j++){
+
+        if (postIDs.length > 0){
+          getUsrs().then((list1){
+            User rateUser;
+            users += list1; //all users
+            for (int j = 0; j < users.length; j++){
+
+              getUserFromDB(users[j]['userID']).then((usr){
+                rateUser = usr;
+
+                //Find the popularity of user:
+                rateUser.getAvgScore().then((score){
+                  popular.addAll({users[j]['userID']: score});
+                  getAllPosts(users[j]['userID']).then((list4) {
+                    for (int y = 0; y < list4.length; y++){
+                      if (postIDs.contains(list4[y])){
+                        sortIDposts.addAll({list4[y]: score});
+                      }
+                    }
+                  });
+                });
+
+              });
+
+            }
+          });
+          hasFeed = true;
+          if (postIDs.length < postsPerReload)
+            numToShow = postIDs.length;
+          else
+            numToShow = postsPerReload;
+        }
+        else {
+          //get data from MongoDB:
+          hasFeed = false;
+          getUsrs().then((list1){
+            User rateUser;
+            users += list1; //all users
+            for (int j = 0; j < users.length; j++){
 
               getUserFromDB(users[j]['userID']).then((usr){
                 rateUser = usr;
@@ -404,8 +461,9 @@ class _HomepageScreenState extends State<HomepageScreen> {
 
               });
 
-          }
-        });
+            }
+          });
+        }
 
       });
     }
@@ -424,12 +482,23 @@ class _HomepageScreenState extends State<HomepageScreen> {
     bottomBar.brand = currentUser.brand;
 
     if (postIDs.length > 0){
-      feedLoading = false;
       if (!sorted){
-        _sort(popular, users, feedLoading);
-
+        _sort(popular, users);
+        _filterPosts(postIDs, dropdownvalue);
         sorted = true;
       }
+
+      if (!sortConfirm && hasFeed){
+        _sortPosts(sortIDposts);
+        _filterPosts(postIDs, dropdownvalue);
+      }
+      else if (sortConfirm && hasFeed){
+        feedLoading = false;
+      }
+      else if (!hasFeed){
+        feedLoading = false;
+      }
+
       if (count < 3){
         print("Filtering");
         filterOut();
@@ -441,27 +510,27 @@ class _HomepageScreenState extends State<HomepageScreen> {
 
     }
     else{
-      _sort(popular, users, feedLoading);
+      _sort(popular, users);
     }
 
     return Scaffold(
       appBar: AppBar(
         // title: Text('ChooseNXT', style: TextStyle(fontSize: 25)),
         title: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Image.asset(
-              './assets/logos/ChooseNXT wide logo WBG.png',
-              width: 160, //org was 200, smaller to fit text in appbar
-            ),
-            Text("New Releases", style: TextStyle(fontSize: 16))
-          ]
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Image.asset(
+                './assets/logos/ChooseNXT wide logo WBG.png',
+                width: 160, //org was 200, smaller to fit text in appbar
+              ),
+              Text("New Releases", style: TextStyle(fontSize: 16))
+            ]
         ),
 
         //Image.asset(
-          //'./assets/logos/ChooseNXT wide logo WBG.png',
-          //width: 200,
+        //'./assets/logos/ChooseNXT wide logo WBG.png',
+        //width: 200,
         //),
         centerTitle: true,
         key: ValueKey("homepage"),
@@ -520,108 +589,105 @@ class _HomepageScreenState extends State<HomepageScreen> {
             },
           )
         ],
-        //bottom: PreferredSize(
-            //child: Text("New Releases"),
-            //preferredSize: null),
       ),
       body: !feedLoading
           ? Center(
-              child: postIDs.length > 0
-                  ? SmartRefresher(
-                      enablePullDown: true,
-                      enablePullUp: true,
-                      header: ClassicHeader(),
-                      footer: ClassicFooter(),
-                      controller: _refreshController,
-                      onRefresh: _onRefresh,
-                      onLoading: _onLoading,
-                      child: ListView.builder(
-                          padding: const EdgeInsets.all(0),
-                          itemCount: numToShow,
-                          addAutomaticKeepAlives: true,
-                          physics: const AlwaysScrollableScrollPhysics(),
-                          itemBuilder: (BuildContext context, int index) {
-                            // The height on this will need to be edited to match whatever height is set for the picture
-                            // return SizedBox(
-                            //   width: double.infinity,
-                            //   height: 550,
-                            //   child: FeedCard(postIDs[index], ratedPosts),
-                            // );
-                            return Container(
-                              constraints: BoxConstraints(
-                                minHeight: 50, //this is the space between the posts
-                                minWidth: double.infinity,
-                              ),
-                              child: FeedCard(postIDs[index], ratedPosts),
-                            );
-                          }),
-                    )
-                  : Padding(
-                      padding: EdgeInsets.all(70.0),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            "Follow People to see their posts on your feed!",
-                            style: TextStyle(
-                                fontSize: 30,
-                                color: Colors.grey,
-                                fontFamily: 'Lucida'),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(top: 16.0),
-                            child: ElevatedButton(
-                              style: ButtonStyle(
-                                shape: MaterialStateProperty.all<
-                                    RoundedRectangleBorder>(
-                                  RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(100),
-                                  ),
-                                ),
-                              ),
-                              child: Container(
-                                constraints: BoxConstraints(
-                                  minWidth: 150,
-                                  maxWidth: 300,
-                                  minHeight: 50,
-                                ),
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: <Widget>[
-                                    Icon(Icons.search),
-                                    Text('Search people here'),
-                                  ],
-                                ),
-                              ),
-                              onPressed: () {
-                                Navigator.push(context,
-                                    MaterialPageRoute(builder: (context) {
-                                  return SearchPage();
-                                }));
-                              },
-                            ),
-                          ),
-                        ],
+        child: postIDs.length > 0
+            ? SmartRefresher(
+          enablePullDown: true,
+          enablePullUp: true,
+          header: ClassicHeader(),
+          footer: ClassicFooter(),
+          controller: _refreshController,
+          onRefresh: _onRefresh,
+          onLoading: _onLoading,
+          child: ListView.builder(
+              padding: const EdgeInsets.all(0),
+              itemCount: numToShow,
+              addAutomaticKeepAlives: true,
+              physics: const AlwaysScrollableScrollPhysics(),
+              itemBuilder: (BuildContext context, int index) {
+                // The height on this will need to be edited to match whatever height is set for the picture
+                // return SizedBox(
+                //   width: double.infinity,
+                //   height: 550,
+                //   child: FeedCard(postIDs[index], ratedPosts),
+                // );
+                return Container(
+                  constraints: BoxConstraints(
+                    minHeight: 50, //this is the space between the posts
+                    minWidth: double.infinity,
+                  ),
+                  child: FeedCard(postIDs[index], ratedPosts),
+                );
+              }),
+        )
+            : Padding(
+          padding: EdgeInsets.all(70.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                "Follow People to see their posts on your feed!",
+                style: TextStyle(
+                    fontSize: 30,
+                    color: Colors.grey,
+                    fontFamily: 'Lucida'),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(top: 16.0),
+                child: ElevatedButton(
+                  style: ButtonStyle(
+                    shape: MaterialStateProperty.all<
+                        RoundedRectangleBorder>(
+                      RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(100),
                       ),
                     ),
-            )
-          : Center(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: <Widget>[
-                  Text(
-                    'Feed Loading...',
-                    style: TextStyle(
-                      fontSize: 36,
+                  ),
+                  child: Container(
+                    constraints: BoxConstraints(
+                      minWidth: 150,
+                      maxWidth: 300,
+                      minHeight: 50,
+                    ),
+                    child: Row(
+                      mainAxisAlignment:
+                      MainAxisAlignment.spaceBetween,
+                      children: <Widget>[
+                        Icon(Icons.search),
+                        Text('Search people here'),
+                      ],
                     ),
                   ),
-                  Container(width: 50),
-                  CircularProgressIndicator(),
-                ],
+                  onPressed: () {
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (context) {
+                          return SearchPage();
+                        }));
+                  },
+                ),
+              ),
+            ],
+          ),
+        ),
+      )
+          : Center(
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: <Widget>[
+            Text(
+              'Feed Loading...',
+              style: TextStyle(
+                fontSize: 36,
               ),
             ),
+            Container(width: 50),
+            CircularProgressIndicator(),
+          ],
+        ),
+      ),
       bottomNavigationBar: BottomNavigationBar(
         onTap: (int index) {
           bottomBar.switchPage(index, context);
