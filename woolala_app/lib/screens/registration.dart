@@ -431,7 +431,7 @@ class _RegistrationState extends State<Registration> {
     );
   }
 
-// Registration requires the "user handle" and "url" (for business tier) fields 
+// Registration requires the "user handle" and "url" (for business tier) fields
 // to creat a new account.
   Future<bool> _urlAndHandleCheck() async {
     if (tier == 'Business' && _urlController.text.isEmpty) {

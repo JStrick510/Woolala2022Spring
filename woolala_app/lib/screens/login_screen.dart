@@ -483,14 +483,14 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                   children: [
                     SimpleDialogOption(
-                      child: const Text('Patron'),
+                      child: const Text('Yes'),
                       onPressed: () {
                         Navigator.pushReplacementNamed(
                             context, '/patronRegistration');
                       },
                     ),
                     SimpleDialogOption(
-                      child: const Text('Business'),
+                      child: const Text('No'),
                       onPressed: () {
                         Navigator.pushReplacementNamed(
                             context, '/businessRegistration');
@@ -644,6 +644,65 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
+  // Users should get a password rest email when click on this button
+  // It must be given the email address to send the email (_emailcontroller != null)
+  // Firebase take cares of sending the email. So, the email context can be changed on
+  // "Console.firebase.com"
+  Widget _forgotPassword() {
+    return Container(
+      child: TextButton(
+        style: TextButton.styleFrom(
+          primary: Colors.black45,
+        ),
+        child: const Text(
+          'Forgot your password?',
+        ),
+        onPressed: () async {
+          if (_emailController.text.isEmpty) {
+            final snackBar = SnackBar(
+                content: const Text('Please enter your email address first!'));
+            ScaffoldMessenger.of(context).showSnackBar(snackBar);
+            return;
+          } else {
+            showDialog(
+              context: context,
+              builder: (_) => SimpleDialog(
+                title: Text(
+                  'Do you want to reset your password?',
+                  style: TextStyle(fontSize: 16),
+                ),
+                children: [
+                  SimpleDialogOption(
+                    child: const Text('Yes'),
+                    onPressed: () async {
+                      await fireB.FirebaseAuth.instance.sendPasswordResetEmail(
+                        email: _emailController.text,
+                      );
+                      final snackBar = SnackBar(
+                        content: Text(
+                          'A reset pasword email was sent to ' +
+                              _emailController.text,
+                        ),
+                      );
+                      Navigator.pop(context);
+                      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                    },
+                  ),
+                  SimpleDialogOption(
+                    child: const Text('No'),
+                    onPressed: () {
+                      Navigator.pop(context); // Close the pop-up
+                    },
+                  ),
+                ],
+              ),
+            );
+          }
+        },
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -663,6 +722,7 @@ class _LoginScreenState extends State<LoginScreen> {
               _emailField(),
               _passwordField(),
               _signInButton(),
+              _forgotPassword(),
               // Devider
               Container(
                 margin: EdgeInsets.symmetric(vertical: 10),
