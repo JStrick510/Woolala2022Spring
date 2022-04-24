@@ -19,6 +19,7 @@ import 'dart:convert';
 //import 'package:pull_to_refresh/pull_to_refresh.dart';
 //import 'package:flutter_image_slideshow/flutter_image_slideshow.dart';
 
+//import 'dart:ui' as ui;
 import 'dart:io';
 //import 'package:woolala_app/screens/login_screen.dart';
 //import 'package:image_picker/image_picker.dart';
@@ -37,6 +38,32 @@ import 'package:path_provider/path_provider.dart';
 
 import 'package:carousel_slider/carousel_slider.dart';
 
+//f-2:
+//  class SliderThumbImage extends SliderComponentShape {
+//   final ui.Image image;
+//   SliderThumbImage(this.image);
+//
+//   @override
+//   Size getPreferredSize(bool isEnabled, bool isDiscrete) {
+//     return Size(5, 5);
+//   }
+//
+//   @override
+//   void paint(PaintingContext context, Offset center,
+//       {Animation<double> activationAnimation,
+//         Animation<double> enableAnimation,
+//         bool isDiscrete,
+//         TextPainter labelPainter,
+//         RenderBox parentBox,
+//         SliderThemeData sliderTheme,
+//         TextDirection textDirection,
+//         double value}) {
+//     var canvas = context.canvas;
+//
+//     canvas.drawImage(image, Offset(5, 5), new Paint());
+//   }
+// }
+//f-2
 // This entire class is the widget that will populate the feed on the homepage
 
 class FeedCard extends StatefulWidget {
@@ -61,11 +88,17 @@ class _FeedCardState extends State<FeedCard> {
   bool rated = false;
   Icon wouldBuy = Icon(Icons.add_shopping_cart);
   double _currentSliderValue = 20;
+  //double _price = (postInfo.data[6]!=null)? double.parse(postInfo.data[6]) : 100;
 
   final CarouselController _controller = CarouselController();
 
   void initState() {
     checkWouldBuy(currentUser.userID, widget.postID);
+    // load('assets/logos/w_logo_test.png').then((image) {
+    //   setState(() {
+    //     customImage = image;
+    //   });
+    // });
     super.initState();
   }
 
@@ -442,15 +475,17 @@ class _FeedCardState extends State<FeedCard> {
                                     //   },
                                     // ),
                                     //f:
+
                                     SliderTheme(
-                                      data: SliderThemeData(
+                                        data: SliderThemeData(
                                         thumbColor: Color(0xFF424242),
+                                        //thumbShape: SliderThumbImage()
                                         thumbShape: RoundSliderThumbShape(enabledThumbRadius: 10)
                                       ),
                                       child:
                                         Slider(
                                           value: _currentSliderValue,
-                                          max: 100,
+                                          max: (postInfo.data[6]!=null)? double.parse(postInfo.data[6]) : 100,
                                           divisions: 5,
                                           activeColor: Color(0xFF424242),
                                           inactiveColor: Color(0xFFBDBDBD),
@@ -511,6 +546,19 @@ class _FeedCardState extends State<FeedCard> {
                             ),
                           ),
                         ),
+                        // Align(
+                        //   //adding price
+                        //   alignment: Alignment.centerLeft,
+                        //   child: Padding(
+                        //     padding: EdgeInsets.fromLTRB(10.0, 1.0, 10.0, 2.0),
+                        //     child: Text(
+                        //       postInfo.data[6].toString(),
+                        //       textAlign: TextAlign.left,
+                        //       style: TextStyle(
+                        //           fontSize: 12, fontWeight: FontWeight.w500),
+                        //     ),
+                        //   ),
+                        // ),
                       ],
                     ),
                   );
