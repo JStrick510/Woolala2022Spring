@@ -16,6 +16,8 @@ import 'package:woolala_app/main.dart';
 import 'dart:io';
 import "dart:math";///////////////////////ADDED
 import "dart:collection";///////////////////////ADDED2
+import 'dart:ui' as ui;
+import 'package:flutter/services.dart';
 
 // Star widget on the home page
 Widget starSlider(String postID, num, rated) => RatingBar(
@@ -56,6 +58,107 @@ Future<http.Response> ratePost(double rating, String id) {
     body: jsonEncode({}),
   );
 }
+
+double _currentSliderValue = 20;
+//added_by_farnaz_customized thumb shape defined for the wouldBuy slider
+class CustomSlider extends StatefulWidget {
+  @override
+  _CustomSliderState createState() => _CustomSliderState();
+}
+
+class _CustomSliderState extends State<CustomSlider> {
+  ui.Image customImage;
+  double sliderValue = 0.0;
+
+  Future<ui.Image> loadImage(String assetPath) async {
+    ByteData data = await rootBundle.load(assetPath);
+    ui.Codec codec = await ui.instantiateImageCodec(data.buffer.asUint8List(), targetWidth: 30,targetHeight: 30);
+    ui.FrameInfo fi = await codec.getNextFrame();
+
+    return fi.image;
+  }
+
+  @override
+  void initState() {
+    loadImage('assets/logos/w_logo_test.png').then((image) {
+      setState(() {
+        customImage = image;
+      });
+    });
+
+    super.initState();
+  }
+
+  // @override
+  Widget build(BuildContext context) {
+    return SliderTheme(
+          data: SliderThemeData(
+            thumbColor: Color(0xFF424242),
+            trackHeight: 10,
+            thumbShape: SliderThumbImage(customImage),
+          ),
+          child:
+          Slider(
+            value: _currentSliderValue,
+            max: 100.0,
+            min: 0.0,
+            divisions: 5,
+            activeColor: Color(0xFF424242),
+            inactiveColor: Color(0xFFBDBDBD),
+            label: _currentSliderValue.round().toString(),
+            onChanged: (double value) {
+              setState(() {
+                _currentSliderValue = value;
+              });
+            },
+          ),
+        );
+  }
+}
+
+class SliderThumbImage extends SliderComponentShape {
+  final ui.Image image;
+
+  SliderThumbImage(this.image);
+
+  @override
+  Size getPreferredSize(bool isEnabled, bool isDiscrete) {
+    return Size(0, 0);
+  }
+
+  @override
+  void paint( PaintingContext context,
+              Offset center,
+              {Animation<double> activationAnimation,
+              Animation<double> enableAnimation,
+              bool isDiscrete,
+              TextPainter labelPainter,
+              RenderBox parentBox,
+              SliderThemeData sliderTheme,
+              TextDirection textDirection,
+              double value,
+              double textScaleFactor,
+              Size sizeWithOverflow}
+      ) {
+    final canvas = context.canvas;
+    final imageWidth = image?.width ?? 30;
+    final imageHeight = image?.height ?? 30;
+
+    Offset imageOffset = Offset(
+      center.dx - (imageWidth / 2),
+      center.dy - (imageHeight / 2),
+    );
+
+    Paint paint = Paint()..filterQuality = FilterQuality.high;
+
+    if (image != null) {
+      canvas.drawImage(image, imageOffset, paint);
+    }
+  }
+}
+
+//end_farnaz:
+
 
 // Will be used to make the post for the first time.
 Future<http.Response> createPost(String postID, String image1, String image2,

@@ -88,7 +88,7 @@ class _FeedCardState extends State<FeedCard> {
   bool rated = false;
   Icon wouldBuy = Icon(Icons.add_shopping_cart);
   double _currentSliderValue = 20;
-  //double _price = (postInfo.data[6]!=null)? double.parse(postInfo.data[6]) : 100;
+
 
   final CarouselController _controller = CarouselController();
 
@@ -467,28 +467,28 @@ class _FeedCardState extends State<FeedCard> {
                                     //   },
                                     // ),
                                     //f:
-
-                                    SliderTheme(
-                                        data: SliderThemeData(
-                                        thumbColor: Color(0xFF424242),
-                                        //thumbShape: SliderThumbImage()
-                                        thumbShape: RoundSliderThumbShape(enabledThumbRadius: 10)
-                                      ),
-                                      child:
-                                        Slider(
-                                          value: _currentSliderValue,
-                                          max: (postInfo.data[6]!=null)? double.parse(postInfo.data[6]) : 100,
-                                          divisions: 5,
-                                          activeColor: Color(0xFF424242),
-                                          inactiveColor: Color(0xFFBDBDBD),
-                                          label: _currentSliderValue.round().toString(),
-                                          onChanged: (double value) {
-                                          setState(() {
-                                          _currentSliderValue = value;
-                                          });
-                                          },
-                                        ),
-                                    ),
+                                    // SliderTheme(
+                                    //     data: SliderThemeData(
+                                    //     thumbColor: Color(0xFF424242),
+                                    //     thumbShape: SliderThumbImage(customImage),
+                                    //     //thumbShape: RoundSliderThumbShape(enabledThumbRadius: 10)
+                                    //   ),
+                                    //   child:
+                                    //     Slider(
+                                    //       value: _currentSliderValue,
+                                    //       max: (postInfo.data[6]!=null)? double.parse(postInfo.data[6]) : 100,
+                                    //       divisions: 5,
+                                    //       activeColor: Color(0xFF424242),
+                                    //       inactiveColor: Color(0xFFBDBDBD),
+                                    //       label: _currentSliderValue.round().toString(),
+                                    //       onChanged: (double value) {
+                                    //       setState(() {
+                                    //       _currentSliderValue = value;
+                                    //       });
+                                    //       },
+                                    //     ),
+                                    // ),
+                                    CustomSlider(),
                                     //f
                                   ],
                                 ),
