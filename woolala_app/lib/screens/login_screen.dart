@@ -19,6 +19,7 @@ import 'package:woolala_app/main.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import 'package:firebase_auth/firebase_auth.dart' as fireB;
 import 'package:crypto/crypto.dart';
+import 'package:woolala_app/screens/registration.dart';
 // import 'package:flutter/services.dart';
 
 final GoogleSignIn gSignIn = GoogleSignIn();
@@ -473,7 +474,31 @@ class _LoginScreenState extends State<LoginScreen> {
           ),
           TextButton(
             onPressed: () {
-              Navigator.pushReplacementNamed(context, '/registration');
+              showDialog(
+                context: context,
+                builder: (_) => SimpleDialog(
+                  title: Text(
+                    'What account tier do you want to register for?',
+                    style: TextStyle(fontSize: 16),
+                  ),
+                  children: [
+                    SimpleDialogOption(
+                      child: const Text('Patron'),
+                      onPressed: () {
+                        Navigator.pushReplacementNamed(
+                            context, '/patronRegistration');
+                      },
+                    ),
+                    SimpleDialogOption(
+                      child: const Text('Business'),
+                      onPressed: () {
+                        Navigator.pushReplacementNamed(
+                            context, '/businessRegistration');
+                      },
+                    ),
+                  ],
+                ),
+              );
             },
             child: Text(
               'Register Here',
