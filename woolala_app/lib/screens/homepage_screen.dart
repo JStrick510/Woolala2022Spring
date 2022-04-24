@@ -59,8 +59,9 @@ Future<http.Response> ratePost(double rating, String id) {
   );
 }
 
-double _currentSliderValue = 20;
+////////////////////////////////////////////////////////////////////////////////
 //added_by_farnaz_customized thumb shape defined for the wouldBuy slider
+double _currentSliderValue = 20;
 class CustomSlider extends StatefulWidget {
   @override
   _CustomSliderState createState() => _CustomSliderState();
@@ -72,7 +73,7 @@ class _CustomSliderState extends State<CustomSlider> {
 
   Future<ui.Image> loadImage(String assetPath) async {
     ByteData data = await rootBundle.load(assetPath);
-    ui.Codec codec = await ui.instantiateImageCodec(data.buffer.asUint8List(), targetWidth: 30,targetHeight: 30);
+    ui.Codec codec = await ui.instantiateImageCodec(data.buffer.asUint8List(), targetWidth: 50,targetHeight: 50);
     ui.FrameInfo fi = await codec.getNextFrame();
 
     return fi.image;
@@ -80,7 +81,7 @@ class _CustomSliderState extends State<CustomSlider> {
 
   @override
   void initState() {
-    loadImage('assets/logos/w_logo_test.png').then((image) {
+    loadImage('assets/logos/shoppingCard_1.png').then((image) {
       setState(() {
         customImage = image;
       });
@@ -141,8 +142,8 @@ class SliderThumbImage extends SliderComponentShape {
               Size sizeWithOverflow}
       ) {
     final canvas = context.canvas;
-    final imageWidth = image?.width ?? 30;
-    final imageHeight = image?.height ?? 30;
+    final imageWidth = image?.width ?? 50;
+    final imageHeight = image?.height ?? 50;
 
     Offset imageOffset = Offset(
       center.dx - (imageWidth / 2),
@@ -157,7 +158,7 @@ class SliderThumbImage extends SliderComponentShape {
   }
 }
 
-//end_farnaz:
+////////////////////////end_farnaz//////////////////////////////////////////////
 
 
 // Will be used to make the post for the first time.

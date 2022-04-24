@@ -38,32 +38,7 @@ import 'package:path_provider/path_provider.dart';
 
 import 'package:carousel_slider/carousel_slider.dart';
 
-//f-2:
-//  class SliderThumbImage extends SliderComponentShape {
-//   final ui.Image image;
-//   SliderThumbImage(this.image);
-//
-//   @override
-//   Size getPreferredSize(bool isEnabled, bool isDiscrete) {
-//     return Size(5, 5);
-//   }
-//
-//   @override
-//   void paint(PaintingContext context, Offset center,
-//       {Animation<double> activationAnimation,
-//         Animation<double> enableAnimation,
-//         bool isDiscrete,
-//         TextPainter labelPainter,
-//         RenderBox parentBox,
-//         SliderThemeData sliderTheme,
-//         TextDirection textDirection,
-//         double value}) {
-//     var canvas = context.canvas;
-//
-//     canvas.drawImage(image, Offset(5, 5), new Paint());
-//   }
-// }
-//f-2
+
 // This entire class is the widget that will populate the feed on the homepage
 
 class FeedCard extends StatefulWidget {
@@ -90,15 +65,11 @@ class _FeedCardState extends State<FeedCard> {
   double _currentSliderValue = 20;
 
 
+
   final CarouselController _controller = CarouselController();
 
   void initState() {
     checkWouldBuy(currentUser.userID, widget.postID);
-    // load('assets/logos/w_logo_test.png').then((image) {
-    //   setState(() {
-    //     customImage = image;
-    //   });
-    // });
     super.initState();
   }
 
