@@ -38,32 +38,7 @@ import 'package:path_provider/path_provider.dart';
 
 import 'package:carousel_slider/carousel_slider.dart';
 
-//f-2:
-//  class SliderThumbImage extends SliderComponentShape {
-//   final ui.Image image;
-//   SliderThumbImage(this.image);
-//
-//   @override
-//   Size getPreferredSize(bool isEnabled, bool isDiscrete) {
-//     return Size(5, 5);
-//   }
-//
-//   @override
-//   void paint(PaintingContext context, Offset center,
-//       {Animation<double> activationAnimation,
-//         Animation<double> enableAnimation,
-//         bool isDiscrete,
-//         TextPainter labelPainter,
-//         RenderBox parentBox,
-//         SliderThemeData sliderTheme,
-//         TextDirection textDirection,
-//         double value}) {
-//     var canvas = context.canvas;
-//
-//     canvas.drawImage(image, Offset(5, 5), new Paint());
-//   }
-// }
-//f-2
+
 // This entire class is the widget that will populate the feed on the homepage
 
 class FeedCard extends StatefulWidget {
@@ -88,17 +63,13 @@ class _FeedCardState extends State<FeedCard> {
   bool rated = false;
   Icon wouldBuy = Icon(Icons.add_shopping_cart);
   double _currentSliderValue = 20;
-  //double _price = (postInfo.data[6]!=null)? double.parse(postInfo.data[6]) : 100;
+
+
 
   final CarouselController _controller = CarouselController();
 
   void initState() {
     checkWouldBuy(currentUser.userID, widget.postID);
-    // load('assets/logos/w_logo_test.png').then((image) {
-    //   setState(() {
-    //     customImage = image;
-    //   });
-    // });
     super.initState();
   }
 
@@ -475,28 +446,28 @@ class _FeedCardState extends State<FeedCard> {
                                     //   },
                                     // ),
                                     //f:
-
-                                    SliderTheme(
-                                        data: SliderThemeData(
-                                        thumbColor: Color(0xFF424242),
-                                        //thumbShape: SliderThumbImage()
-                                        thumbShape: RoundSliderThumbShape(enabledThumbRadius: 10)
-                                      ),
-                                      child:
-                                        Slider(
-                                          value: _currentSliderValue,
-                                          max: (postInfo.data[6]!=null)? double.parse(postInfo.data[6]) : 100,
-                                          divisions: 5,
-                                          activeColor: Color(0xFF424242),
-                                          inactiveColor: Color(0xFFBDBDBD),
-                                          label: _currentSliderValue.round().toString(),
-                                          onChanged: (double value) {
-                                          setState(() {
-                                          _currentSliderValue = value;
-                                          });
-                                          },
-                                        ),
-                                    ),
+                                    // SliderTheme(
+                                    //     data: SliderThemeData(
+                                    //     thumbColor: Color(0xFF424242),
+                                    //     thumbShape: SliderThumbImage(customImage),
+                                    //     //thumbShape: RoundSliderThumbShape(enabledThumbRadius: 10)
+                                    //   ),
+                                    //   child:
+                                    //     Slider(
+                                    //       value: _currentSliderValue,
+                                    //       max: (postInfo.data[6]!=null)? double.parse(postInfo.data[6]) : 100,
+                                    //       divisions: 5,
+                                    //       activeColor: Color(0xFF424242),
+                                    //       inactiveColor: Color(0xFFBDBDBD),
+                                    //       label: _currentSliderValue.round().toString(),
+                                    //       onChanged: (double value) {
+                                    //       setState(() {
+                                    //       _currentSliderValue = value;
+                                    //       });
+                                    //       },
+                                    //     ),
+                                    // ),
+                                    CustomSlider(),
                                     //f
                                   ],
                                 ),
