@@ -13,7 +13,7 @@ class ImageUploadScreen extends StatefulWidget {
 }
 
 Future<File> cropImage(imagePath) async {
-  File croppedImage = await ImageCropper().cropImage(
+  File croppedImage = await ImageCropper.cropImage(
     compressQuality: 30,
     sourcePath: imagePath,
     maxHeight: 800,
