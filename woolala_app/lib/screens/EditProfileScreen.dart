@@ -71,7 +71,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
   }
 
   Future<File> cropProfilePic(imagePath) async {
-    File onlyCroppedImage = await ImageCropper().cropImage(
+    File onlyCroppedImage = await ImageCropper.cropImage(
       sourcePath: imagePath,
       maxHeight: 400,
       maxWidth: 400,
