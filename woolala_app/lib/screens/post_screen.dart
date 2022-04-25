@@ -28,10 +28,12 @@ class _PostScreenState extends State<PostScreen> {
   File _image;
   List<Object> arguments;
   String _text = "";
-  String _price = "";
+  String _minprice = "";
+  String _maxprice = "";
   String _cat = "";
   TextEditingController _c;
   TextEditingController _d;
+  TextEditingController _e;
   String _a = "";
   //String img64;
   List<File> images;
@@ -56,6 +58,7 @@ class _PostScreenState extends State<PostScreen> {
   initState() {
     _c = new TextEditingController();
     _d = new TextEditingController();
+    _e = new TextEditingController();
     _a = "Apparel";
     super.initState();
   }
@@ -107,6 +110,19 @@ class _PostScreenState extends State<PostScreen> {
               controller: _c,
             ),
             SizedBox(height: 20.0),
+                TextField(
+                maxLength: 280,
+                maxLengthEnforced: true,
+                //maxLengthEnforcement: MaxLengthEnforcement.enforced,
+                textInputAction: TextInputAction.go,
+                keyboardType: TextInputType.multiline,
+                maxLines: null,
+                decoration: new InputDecoration(
+                    hintText: "Enter the minimum price!",
+                    contentPadding: const EdgeInsets.all(20.0)),
+                controller: _d,
+              ),
+            SizedBox(height: 20.0),
             TextField(
               maxLength: 280,
               maxLengthEnforced: true,
@@ -115,9 +131,9 @@ class _PostScreenState extends State<PostScreen> {
               keyboardType: TextInputType.multiline,
               maxLines: null,
               decoration: new InputDecoration(
-                  hintText: "Enter a target price!",
+                  hintText: "Enter the maximum price!",
                   contentPadding: const EdgeInsets.all(20.0)),
-              controller: _d,
+              controller: _e,
             ),
             SizedBox(height: 20.0),
             Text("Enter Category of Post:"),
@@ -159,13 +175,14 @@ class _PostScreenState extends State<PostScreen> {
               onPressed: () => {
                 setState(() {
                   this._text = _c.text;
-                  this._price = _d.text;
+                  this._minprice = _d.text;
+                  this._maxprice = _e.text;
                   this._cat = _a;
                 }),
                 print(_text),
                 createPost(currentUser.userID + ":::" + getNewID(), encodes[0],
                     encodes[1], encodes[2], encodes[3], encodes[4], date,
-                    _text, currentUser.userID, currentUser.profileName, _cat ,_price),
+                    _text, currentUser.userID, currentUser.profileName, _cat ,_minprice, _maxprice),
                 Navigator.pop(context),
                 Navigator.pushReplacementNamed(context, '/home'),
               },
