@@ -172,6 +172,7 @@ class _PostScreenState extends State<PostScreen> {
             SizedBox(height: 100.0),
             FloatingActionButton(
               child: Icon(Icons.check),
+              foregroundColor: Colors.white,
               onPressed: () => {
                 setState(() {
                   this._text = _c.text;
@@ -184,7 +185,7 @@ class _PostScreenState extends State<PostScreen> {
                     encodes[1], encodes[2], encodes[3], encodes[4], date,
                     _text, currentUser.userID, currentUser.profileName, _cat ,_minprice, _maxprice),
                 Navigator.pop(context),
-                Navigator.pushReplacementNamed(context, '/home'),
+                Navigator.pushReplacementNamed(context, '/profile'),
               },
             ),
             SizedBox(height: 100.0, width: 20),
