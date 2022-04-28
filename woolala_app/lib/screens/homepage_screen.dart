@@ -164,7 +164,7 @@ class SliderThumbImage extends SliderComponentShape {
 // Will be used to make the post for the first time.
 Future<http.Response> createPost(String postID, String image1, String image2,
     String image3, String image4, String image5, String date,
-    String caption, String userID, String userName, String price, String Category) {
+    String caption, String userID, String userName, String Category, String minprice,String maxprice) {
   return http.post(
     Uri.parse(domain + '/insertPost'),
     headers: <String, String>{
@@ -184,7 +184,8 @@ Future<http.Response> createPost(String postID, String image1, String image2,
       'cumulativeRating': 0.0,
       'numRatings': 0,
       'Category': Category,
-      'price': price,
+      'minprice': minprice,
+      'maxprice': maxprice,
       'wouldBuy': []
     }),
   );
@@ -262,7 +263,8 @@ Future<List> getPost(String id) async {
     info["numRatings"],
     display,
     info["Category"], //category in which a post belongs to
-    info["price"] //Added
+    info["minprice"],
+    info["maxprice"]
   ];
   return ret; //this ends up getting sent to card and profile_card as postInfo
 }
@@ -620,22 +622,11 @@ class _HomepageScreenState extends State<HomepageScreen> {
     return Scaffold(
       appBar: AppBar(
         // title: Text('ChooseNXT', style: TextStyle(fontSize: 25)),
-        title: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Image.asset(
-                './assets/logos/ChooseNXT wide logo WBG.png',
-                width: 160, //org was 200, smaller to fit text in appbar
-              ),
-              Text("New Releases", style: TextStyle(fontSize: 16))
-            ]
+        title: Image.asset(
+        './assets/logos/ChooseNXT wide logo WBG.png',
+        width: 200,
         ),
 
-        //Image.asset(
-        //'./assets/logos/ChooseNXT wide logo WBG.png',
-        //width: 200,
-        //),
         centerTitle: true,
         key: ValueKey("homepage"),
         actions: <Widget>[
@@ -685,6 +676,8 @@ class _HomepageScreenState extends State<HomepageScreen> {
               Column(
                 children: [
                   SizedBox(height: 20.0),
+                  Text("New Releases", style: TextStyle(fontSize: 22)),
+                  SizedBox(height: 10.0),
                   Text("Filter Feed by Category:"),
                   DropdownButton(
 

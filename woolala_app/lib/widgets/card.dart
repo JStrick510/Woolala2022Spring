@@ -256,7 +256,8 @@ class _FeedCardState extends State<FeedCard> {
                                               textAlign: TextAlign.left,
                                               style: TextStyle(
                                                   color: Colors.black,
-                                                  fontSize: 16)))),
+                                                  fontSize: 16,
+                                                  fontWeight: FontWeight.bold)))),
                                 ],
                               ),
                               PopupMenuButton<String>(
@@ -300,7 +301,9 @@ class _FeedCardState extends State<FeedCard> {
                                   Container(
                                       child: CarouselSlider(
                                         items: postInfo.data[5],
-                                        options: CarouselOptions(enlargeCenterPage: true, height: 300),
+                                        options: CarouselOptions(enlargeCenterPage: false,
+                                            height: MediaQuery.of(context).size.width, //since image is square, to fill use width
+                                            viewportFraction: 1), //sets so one image fills the page
                                         carouselController: _controller,
                                       )
                                   ),
