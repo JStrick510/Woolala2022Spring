@@ -564,8 +564,11 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  // When users attempt to sign in, they should be redirected to the Feed page
-  // if the user already exist in the database
+  /* When users attempt to sign in, they should be redirected to the Feed page
+   if the user already exist in the database.
+   This function updates the currentUser global variable which is required in 
+   other pages to access the current user information.
+  */
   void _redirectUser(
       {@required String email, @required String onFailureMessage}) async {
     User tempUser = await getDoesUserExists(email);

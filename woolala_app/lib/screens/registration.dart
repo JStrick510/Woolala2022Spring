@@ -232,17 +232,12 @@ class _RegistrationState extends State<Registration> {
               context: context,
             );
           }
-          signInProvider.facebookLogIn();
-          Map<String, dynamic> userdata =
-              await FacebookAuth.instance.getUserData();
-          print("################");
-          print(userdata);
-          print("################");
-
-          // _saveAccountToServer(
-          //   email: userdata['email'],
-          //   profileName: userdata['name'],
-          // );
+          // get the user information from Facebook signin
+          Map<String, dynamic> userdata = await signInProvider.facebookLogIn();
+          _saveAccountToServer(
+            email: userdata['email'],
+            profileName: userdata['name'],
+          );
         },
         label: const Text('Sign up with Facebook'),
         icon: const FaIcon(
@@ -278,8 +273,6 @@ class _RegistrationState extends State<Registration> {
     model.User tempUser = await getDoesUserExists(email);
     if (tempUser != null) {
       print("User already exist");
-      // currentUser = tempUser;
-      // Navigator.pushReplacementNamed(context, '/');
       final snackBar = SnackBar(
           content: const Text(
               'The user already exist!\nPlease sign in with your account.'));
@@ -288,7 +281,7 @@ class _RegistrationState extends State<Registration> {
       Navigator.pop(context);
       return;
     } else {
-      //insert eula here
+      // Use hase to accept the End User License Agreement (EULA) to continue to use the app
       var result = await Navigator.pushNamed(context, '/eula');
       if (result == null || result == false) {
         signInProvider.logout();
