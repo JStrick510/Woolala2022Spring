@@ -5,7 +5,7 @@ import 'dart:io';
 //import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:simple_animations/simple_animations.dart';
+// import 'package:simple_animations/simple_animations.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 // import 'package:flutter_facebook_login/flutter_facebook_login.dart';
 import 'package:woolala_app/Provider/sign_in_provider.dart';
@@ -44,12 +44,12 @@ String sha256ofString(String input) {
 
 void googleLogoutUser() async {
   print("Google signed out!");
-  // await gSignIn.signOut();
+  await signInProvider.logout();
 }
 
 void facebookLogoutUser() async {
   print("Facebook signed out!");
-  // await facebookLogin.logOut();
+  await signInProvider.logout();
 }
 
 // called by save user to server methods
@@ -399,7 +399,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 email: email,
                 password: password,
               );
-              print(userCredential);
+              // print(userCredential);
               User tempUser = await getDoesUserExists(email);
               if (tempUser != null && tempUser.userID != "") //account exists
               {
@@ -485,6 +485,13 @@ class _LoginScreenState extends State<LoginScreen> {
         ),
         onPressed: () async {
           GoogleSignInAccount googleUser = await signInProvider.googleLogIn();
+          User tempUser = await getDoesUserExists(googleUser.email);
+          if (tempUser != null && tempUser.userID != "") //account exists
+          {
+            print("User account found with email and password.");
+            currentUser = tempUser;
+            Navigator.pushReplacementNamed(context, '/home');
+          }
         },
         label: const Text('Sign in with Google'),
         icon: const FaIcon(

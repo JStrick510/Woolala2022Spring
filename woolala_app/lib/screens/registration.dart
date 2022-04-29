@@ -224,7 +224,7 @@ class _RegistrationState extends State<Registration> {
           onPrimary: Colors.black,
           minimumSize: const Size(double.infinity, 50),
         ),
-        onPressed: () {
+        onPressed: () async {
           if (tier == 'Business' && _urlController.text.isEmpty) {
             showAlertDialog(
               title: 'URL Error!',
@@ -233,12 +233,15 @@ class _RegistrationState extends State<Registration> {
             );
           }
           signInProvider.facebookLogIn();
-          // Map<String, dynamic> userdata =
-          //     await FacebookAuth.instance.getUserData();
+          Map<String, dynamic> userdata =
+              await FacebookAuth.instance.getUserData();
+          print("################");
+          print(userdata);
+          print("################");
+
           // _saveAccountToServer(
           //   email: userdata['email'],
           //   profileName: userdata['name'],
-          //   googleID: userdata['id'],
           // );
         },
         label: const Text('Sign up with Facebook'),
