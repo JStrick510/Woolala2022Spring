@@ -225,19 +225,15 @@ class _RegistrationState extends State<Registration> {
           minimumSize: const Size(double.infinity, 50),
         ),
         onPressed: () async {
-          if (tier == 'Business' && _urlController.text.isEmpty) {
-            showAlertDialog(
-              title: 'URL Error!',
-              content: 'Please enter your URL.',
-              context: context,
+          if (await _urlAndHandleCheck()) {
+            // get the user information from Facebook signin
+            Map<String, dynamic> userdata =
+                await signInProvider.facebookLogIn();
+            _saveAccountToServer(
+              email: userdata['email'],
+              profileName: userdata['name'],
             );
           }
-          // get the user information from Facebook signin
-          Map<String, dynamic> userdata = await signInProvider.facebookLogIn();
-          _saveAccountToServer(
-            email: userdata['email'],
-            profileName: userdata['name'],
-          );
         },
         label: const Text('Sign up with Facebook'),
         icon: const FaIcon(
