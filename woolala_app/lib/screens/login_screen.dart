@@ -485,20 +485,10 @@ class _LoginScreenState extends State<LoginScreen> {
         ),
         onPressed: () async {
           GoogleSignInAccount googleUser = await signInProvider.googleLogIn();
-          User tempUser = await getDoesUserExists(googleUser.email);
-          if (tempUser != null && tempUser.userID != "") //account exists
-          {
-            print("User account found with email and password.");
-            currentUser = tempUser;
-            Navigator.pushReplacementNamed(context, '/home');
-          } else {
-            // User should create an account first in case the user has not been registered
-            signInProvider.logout();
-            final snackBar = SnackBar(
-                content: const Text(
-                    'Please register with your Google account first!'));
-            ScaffoldMessenger.of(context).showSnackBar(snackBar);
-          }
+          _redirectUser(
+            email: googleUser.email,
+            onFailure: 'Please register with your Google account first!',
+          );
         },
         label: const Text('Sign in with Google'),
         icon: const FaIcon(
@@ -574,6 +564,21 @@ class _LoginScreenState extends State<LoginScreen> {
         ],
       ),
     );
+  }
+
+  void _redirectUser(
+      {@required String email, @required String onFailure}) async {
+    User tempUser = await getDoesUserExists(email);
+    // User should be redirected to Feed page after a successful login
+    if (tempUser != null && tempUser.userID != "") {
+      currentUser = tempUser;
+      Navigator.pushReplacementNamed(context, '/home');
+    } else {
+      // User should create an account first in case the user has not been registered
+      signInProvider.logout();
+      final snackBar = SnackBar(content: Text(onFailure));
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+    }
   }
 
   @override
