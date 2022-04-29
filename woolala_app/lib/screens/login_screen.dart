@@ -491,6 +491,13 @@ class _LoginScreenState extends State<LoginScreen> {
             print("User account found with email and password.");
             currentUser = tempUser;
             Navigator.pushReplacementNamed(context, '/home');
+          } else {
+            // User should create an account first in case the user has not been registered
+            signInProvider.logout();
+            final snackBar = SnackBar(
+                content: const Text(
+                    'Please register with your Google account first!'));
+            ScaffoldMessenger.of(context).showSnackBar(snackBar);
           }
         },
         label: const Text('Sign in with Google'),
