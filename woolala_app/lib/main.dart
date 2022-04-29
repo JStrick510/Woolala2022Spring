@@ -128,3 +128,10 @@ const MaterialColor primaryWhite = MaterialColor(
   },
 );
 const int _whitePrimaryValue = 0xFFFFFFFF;
+
+List<String> sort2Strings(String a, String b) {
+  if (a.compareTo(b)<=0) {
+    return [a,b,a+"#"+b];
+  }
+  return [b,a,b+"#"+a];
+}
