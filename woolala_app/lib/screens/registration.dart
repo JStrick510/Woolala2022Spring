@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart' as fba;
-import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:woolala_app/screens/login_screen.dart';
 import 'package:woolala_app/models/user.dart' as model;
@@ -28,7 +27,7 @@ class _RegistrationState extends State<Registration> {
   final tiers = ['Business', 'Patron'];
   String tier; // Manages the URL text field's show up
   bool
-      emailPassword; // Manages show up of the email and password registration fields
+      emailPasswordActivated; // Manages show up of the email and password registration fields
   SignInProvider signInProvider =
       SignInProvider(); // Required to call Facebook or Google log in method
 
@@ -39,7 +38,7 @@ class _RegistrationState extends State<Registration> {
     _profileNameController.addListener(() => setState(() {}));
     _userHandleController.addListener(() => setState(() {}));
     this.tier = widget.tier;
-    emailPassword = false;
+    emailPasswordActivated = false;
     super.initState();
   }
 
@@ -253,10 +252,12 @@ class _RegistrationState extends State<Registration> {
           onPrimary: Colors.black,
           minimumSize: const Size(double.infinity, 50),
         ),
-        onPressed: () {
-          setState(() {
-            emailPassword = !emailPassword;
-          });
+        onPressed: () async {
+          if (await _urlAndHandleCheck()) {
+            setState(() {
+              emailPasswordActivated = !emailPasswordActivated;
+            });
+          }
         },
         label: const Text('Sign up with email and password'),
         icon: Icon(Icons.email_outlined),
@@ -332,10 +333,10 @@ class _RegistrationState extends State<Registration> {
         content: 'This Username is already taken!',
         context: context,
       );
-    } else if (tier == 'Business' && _urlController.text.isEmpty) {
+    } else if (_profileNameController.text.isEmpty) {
       showAlertDialog(
-        title: 'URL Error!',
-        content: 'Please enter your URL.',
+        title: 'Profile Name Error!',
+        content: 'Please enter your profile name.',
         context: context,
       );
     } else {
@@ -479,10 +480,10 @@ class _RegistrationState extends State<Registration> {
           _facebookSignUpButton(context),
           _signUpWithEmailButton(),
           SizedBox(height: 20),
-          if (emailPassword) _emailField(),
-          if (emailPassword) _passwordField(),
-          if (emailPassword) _profileNameField(),
-          if (emailPassword) _signUpButton(),
+          if (emailPasswordActivated) _emailField(),
+          if (emailPasswordActivated) _passwordField(),
+          if (emailPasswordActivated) _profileNameField(),
+          if (emailPasswordActivated) _signUpButton(),
           _logIn(),
         ],
       ),
