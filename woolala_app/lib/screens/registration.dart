@@ -232,7 +232,7 @@ class _RegistrationState extends State<Registration> {
               context: context,
             );
           }
-          // signInProvider.facebookLogIn();
+          signInProvider.facebookLogIn();
           // Map<String, dynamic> userdata =
           //     await FacebookAuth.instance.getUserData();
           // _saveAccountToServer(
@@ -481,10 +481,8 @@ class _RegistrationState extends State<Registration> {
       body: ListView(
         padding: EdgeInsets.symmetric(vertical: 10, horizontal: 40),
         children: [
-          // _accountType(),
           tier == 'Business' ? _urlField() : SizedBox(),
           _userHandleField(),
-          // _devider(),
           _googleSignUpButton(context),
           _facebookSignUpButton(context),
           _signUpWithEmailButton(),

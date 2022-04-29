@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:simple_animations/simple_animations.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:flutter_facebook_login/flutter_facebook_login.dart';
+// import 'package:flutter_facebook_login/flutter_facebook_login.dart';
 import 'package:woolala_app/Provider/sign_in_provider.dart';
 import 'package:woolala_app/models/user.dart';
 import 'package:http/http.dart' as http;
@@ -255,12 +255,9 @@ class _LoginScreenState extends State<LoginScreen> {
           Text(
             'Don\'t have an account ?',
             style: TextStyle(
-                fontSize: 13,
+                fontSize: 14,
                 fontWeight: FontWeight.w600,
                 color: Colors.white70),
-          ),
-          SizedBox(
-            width: 10,
           ),
           TextButton(
             onPressed: () {
@@ -294,7 +291,7 @@ class _LoginScreenState extends State<LoginScreen> {
               'Register Here',
               style: TextStyle(
                   color: Color(0xfff79c4f),
-                  fontSize: 13,
+                  fontSize: 14,
                   fontWeight: FontWeight.w600),
             ),
           )
@@ -540,15 +537,20 @@ class _LoginScreenState extends State<LoginScreen> {
               padding: EdgeInsets.symmetric(horizontal: 10),
               child: Divider(
                 thickness: 1,
+                color: Colors.white,
               ),
             ),
           ),
-          Text('  or  '),
+          const Text(
+            '  or  ',
+            style: TextStyle(color: Colors.white70),
+          ),
           Expanded(
             child: Padding(
               padding: EdgeInsets.symmetric(horizontal: 10),
               child: Divider(
                 thickness: 1,
+                color: Colors.white,
               ),
             ),
           ),
