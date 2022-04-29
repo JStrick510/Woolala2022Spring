@@ -6,27 +6,24 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:simple_animations/simple_animations.dart';
-//import 'homepage_screen.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:flutter_facebook_login/flutter_facebook_login.dart';
-//import 'package:carousel_slider/carousel_slider.dart';
+import 'package:woolala_app/Provider/sign_in_provider.dart';
 import 'package:woolala_app/models/user.dart';
 import 'package:http/http.dart' as http;
-//import 'package:woolala_app/screens/homepage_screen.dart';
 import 'dart:convert';
-//import 'package:woolala_app/screens/createUserName.dart';
 import 'package:woolala_app/main.dart';
 
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import 'package:firebase_auth/firebase_auth.dart' as fireB;
 import 'package:crypto/crypto.dart';
-import 'package:woolala_app/screens/registration.dart';
-// import 'package:flutter/services.dart';
 
-final GoogleSignIn gSignIn = GoogleSignIn();
-final facebookLogin = FacebookLogin();
-final DateTime timestamp = DateTime.now();
+// final GoogleSignIn gSignIn = GoogleSignIn();
+// final facebookLogin = FacebookLogin();
+// final DateTime timestamp = DateTime.now();
 User currentUser;
+SignInProvider signInProvider =
+    SignInProvider(); // Required to call Facebook or Google log in method
 
 /// Generates a cryptographically secure random nonce, to be included in a
 /// credential request.
@@ -47,12 +44,12 @@ String sha256ofString(String input) {
 
 void googleLogoutUser() async {
   print("Google signed out!");
-  await gSignIn.signOut();
+  // await gSignIn.signOut();
 }
 
 void facebookLogoutUser() async {
   print("Facebook signed out!");
-  await facebookLogin.logOut();
+  // await facebookLogin.logOut();
 }
 
 // called by save user to server methods
@@ -257,7 +254,10 @@ class _LoginScreenState extends State<LoginScreen> {
         children: <Widget>[
           Text(
             'Don\'t have an account ?',
-            style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
+            style: TextStyle(
+                fontSize: 13,
+                fontWeight: FontWeight.w600,
+                color: Colors.white70),
           ),
           SizedBox(
             width: 10,
@@ -309,17 +309,23 @@ class _LoginScreenState extends State<LoginScreen> {
       child: Theme(
         data: ThemeData().copyWith(
           colorScheme: ThemeData().colorScheme.copyWith(
-                primary: Colors.black,
+                primary: Colors.white70,
+                onSurface: Colors.white70,
               ),
         ),
         child: TextField(
+          style: TextStyle(color: Colors.white),
           controller: _emailController,
           keyboardType: TextInputType.emailAddress,
           textInputAction: TextInputAction.done,
           decoration: InputDecoration(
             border: OutlineInputBorder(),
             hintText: 'name@example.com',
-            label: const Text('email'),
+            hintStyle: TextStyle(color: Colors.white70),
+            label: const Text(
+              'email',
+              style: TextStyle(color: Colors.white54, fontSize: 17),
+            ),
             prefixIcon: Icon(Icons.email),
             suffixIcon: _emailController.text.isEmpty
                 ? Container(
@@ -341,15 +347,21 @@ class _LoginScreenState extends State<LoginScreen> {
       child: Theme(
         data: ThemeData().copyWith(
           colorScheme: ThemeData().colorScheme.copyWith(
-                primary: Colors.black,
+                primary: Colors.white70,
+                onSurface: Colors.white70,
               ),
         ),
         child: TextField(
+          style: TextStyle(color: Colors.white),
           controller: _passwordController,
           decoration: InputDecoration(
             border: OutlineInputBorder(),
             hintText: 'Enter your password',
-            label: const Text('password'),
+            hintStyle: TextStyle(color: Colors.white70),
+            label: const Text(
+              'password',
+              style: TextStyle(color: Colors.white54, fontSize: 17),
+            ),
             suffixIcon: IconButton(
               icon: isPasswordVisble
                   ? Icon(Icons.visibility)
@@ -369,14 +381,17 @@ class _LoginScreenState extends State<LoginScreen> {
       padding: EdgeInsets.symmetric(horizontal: 60, vertical: 5),
       child: ElevatedButton(
           style: ElevatedButton.styleFrom(
-            primary: Colors.blueGrey.shade900,
+            primary: Colors.grey.shade400,
             onPrimary: Colors.black,
             minimumSize: const Size(double.infinity, 50),
           ),
-          child: const Text(
+          child: Text(
             'Log In',
             style: TextStyle(
-                color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
+              color: Colors.grey.shade800,
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+            ),
           ),
           onPressed: () async {
             final password = _passwordController.text;
@@ -402,38 +417,6 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  Widget _loginButton() {
-    return Container(
-      child: TextButton(
-        style: ButtonStyle(
-          foregroundColor: MaterialStateProperty.all<Color>(Colors.blue),
-        ),
-        onPressed: () async {
-          final password = _passwordController.text;
-          final email = _emailController.text;
-          try {
-            final userCredential =
-                await fireB.FirebaseAuth.instance.signInWithEmailAndPassword(
-              email: email,
-              password: password,
-            );
-            print(userCredential);
-            User tempUser = await getDoesUserExists(email);
-            if (tempUser != null && tempUser.userID != "") //account exists
-            {
-              print("User account found with email and password.");
-              currentUser = tempUser;
-              Navigator.pushReplacementNamed(context, '/home');
-            }
-          } on fireB.FirebaseAuthException catch (e) {
-            // errorHandling(e);
-          }
-        },
-        child: Text('Login'),
-      ),
-    );
-  }
-
   // Users should get a password rest email when click on this button
   // It must be given the email address to send the email (_emailcontroller != null)
   // Firebase take cares of sending the email. So, the email context can be changed on
@@ -446,6 +429,7 @@ class _LoginScreenState extends State<LoginScreen> {
         ),
         child: const Text(
           'Forgot your password?',
+          style: TextStyle(color: Colors.white70),
         ),
         onPressed: () async {
           if (_emailController.text.isEmpty) {
@@ -502,7 +486,9 @@ class _LoginScreenState extends State<LoginScreen> {
           onPrimary: Colors.black,
           minimumSize: const Size(double.infinity, 50),
         ),
-        onPressed: () {},
+        onPressed: () async {
+          GoogleSignInAccount googleUser = await signInProvider.googleLogIn();
+        },
         label: const Text('Sign in with Google'),
         icon: const FaIcon(
           FontAwesomeIcons.google,
@@ -521,7 +507,17 @@ class _LoginScreenState extends State<LoginScreen> {
           onPrimary: Colors.black,
           minimumSize: const Size(double.infinity, 50),
         ),
-        onPressed: () {},
+        onPressed: () async {
+          // if (await _urlAndHandleCheck()) {
+          // GoogleSignInAccount googleUser = await signInProvider.googleLogIn();
+          // If accepted EULA, create a new account
+          // _saveAccountToServer(
+          //   email: googleUser.email,
+          //   profileName: googleUser.displayName,
+          //   // googleID: googleUser.id,
+          // );
+          // }
+        },
         label: const Text('Sign in with Facebook'),
         icon: const FaIcon(
           FontAwesomeIcons.facebook,
@@ -569,34 +565,58 @@ class _LoginScreenState extends State<LoginScreen> {
     return Scaffold(
       key: _scaffoldKey,
       body: Container(
-        child: Container(
-          // padding: EdgeInsets.symmetric(vertical: 0),
-          // width: double.infinity,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              new Image.asset('./assets/logos/ChooseNXT wide logo WBG.png',
-                  width: 300,
-                  height: 80,
-                  fit: BoxFit.contain,
-                  semanticLabel: 'WooLaLa logo'),
-              _emailField(),
-              _passwordField(),
-              _signInButton(),
-              _forgotPassword(),
-              _divider(),
-              _googleSignInButton(context),
-              _facebookSignInButton(context),
-              _noAccount(),
-              Container(
-                alignment: Alignment.bottomCenter,
-                child: Text(
-                  'Choose New Releases from Creatives',
-                  style: TextStyle(fontSize: 14, fontStyle: FontStyle.italic),
-                ),
-              ),
+        decoration: BoxDecoration(
+          // Box decoration takes a gradient
+          gradient: LinearGradient(
+            // Where the linear gradient begins and ends
+            begin: Alignment.bottomLeft,
+            end: Alignment.topRight,
+            // Add one stop for each color. Stops should increase from 0 to 1
+            stops: [0.2, 0.5, 0.7, 0.9],
+            colors: [
+              // Colors are easy thanks to Flutter's Colors class.
+              Colors.black87,
+              Colors.black54,
+              Colors.black38,
+              Colors.black26,
             ],
           ),
+        ),
+        child: ListView(
+          children: [
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                SizedBox(height: 60),
+                new Image.asset('./assets/logos/ChooseNXT wide logo WBG.png',
+                    width: 400,
+                    height: 95,
+                    // color: Colors.blueGrey[900],
+                    fit: BoxFit.contain,
+                    semanticLabel: 'WooLaLa logo'),
+                Container(
+                  alignment: Alignment.bottomCenter,
+                  child: Text(
+                    'Choose New Releases from Creatives',
+                    style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        fontStyle: FontStyle.italic,
+                        color: Colors.blueGrey[900]),
+                  ),
+                ),
+                SizedBox(height: 30),
+                _emailField(),
+                _passwordField(),
+                _signInButton(),
+                _forgotPassword(),
+                _divider(),
+                _googleSignInButton(context),
+                _facebookSignInButton(context),
+                _noAccount(),
+              ],
+            ),
+          ],
         ),
       ),
     );

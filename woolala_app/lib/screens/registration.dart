@@ -191,7 +191,7 @@ class _RegistrationState extends State<Registration> {
       padding: EdgeInsets.symmetric(vertical: 5),
       child: ElevatedButton.icon(
         style: ElevatedButton.styleFrom(
-          primary: Colors.white,
+          primary: Colors.blueGrey[50],
           onPrimary: Colors.black,
           minimumSize: const Size(double.infinity, 50),
         ),
@@ -220,7 +220,7 @@ class _RegistrationState extends State<Registration> {
       padding: EdgeInsets.symmetric(vertical: 5),
       child: ElevatedButton.icon(
         style: ElevatedButton.styleFrom(
-          primary: Colors.white,
+          primary: Colors.blueGrey[50],
           onPrimary: Colors.black,
           minimumSize: const Size(double.infinity, 50),
         ),
@@ -255,7 +255,7 @@ class _RegistrationState extends State<Registration> {
       padding: EdgeInsets.symmetric(vertical: 5),
       child: ElevatedButton.icon(
         style: ElevatedButton.styleFrom(
-          primary: Colors.white,
+          primary: Colors.blueGrey[50],
           onPrimary: Colors.black,
           minimumSize: const Size(double.infinity, 50),
         ),
@@ -275,8 +275,14 @@ class _RegistrationState extends State<Registration> {
     model.User tempUser = await getDoesUserExists(email);
     if (tempUser != null) {
       print("User already exist");
-      currentUser = tempUser;
-      Navigator.pushReplacementNamed(context, '/');
+      // currentUser = tempUser;
+      // Navigator.pushReplacementNamed(context, '/');
+      final snackBar = SnackBar(
+          content: const Text(
+              'The user already exist!\nPlease sign in with your account.'));
+      signInProvider.logout();
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      Navigator.pop(context);
       return;
     } else {
       //insert eula here
