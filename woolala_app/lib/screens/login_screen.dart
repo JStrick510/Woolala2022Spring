@@ -487,7 +487,7 @@ class _LoginScreenState extends State<LoginScreen> {
           GoogleSignInAccount googleUser = await signInProvider.googleLogIn();
           _redirectUser(
             email: googleUser.email,
-            onFailure: 'Please register with your Google account first!',
+            onFailureMessage: 'Please register with your Google account first!',
           );
         },
         label: const Text('Sign in with Google'),
@@ -509,15 +509,13 @@ class _LoginScreenState extends State<LoginScreen> {
           minimumSize: const Size(double.infinity, 50),
         ),
         onPressed: () async {
-          // if (await _urlAndHandleCheck()) {
-          // GoogleSignInAccount googleUser = await signInProvider.googleLogIn();
-          // If accepted EULA, create a new account
-          // _saveAccountToServer(
-          //   email: googleUser.email,
-          //   profileName: googleUser.displayName,
-          //   // googleID: googleUser.id,
-          // );
-          // }
+          Map<String, dynamic> faceBookUser =
+              await signInProvider.facebookLogIn();
+          _redirectUser(
+            email: faceBookUser["email"],
+            onFailureMessage:
+                'Please register with your Facebook account first!',
+          );
         },
         label: const Text('Sign in with Facebook'),
         icon: const FaIcon(
@@ -566,8 +564,10 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
+  // When users attempt to sign in, they should be redirected to the Feed page
+  // if the user already exist in the database
   void _redirectUser(
-      {@required String email, @required String onFailure}) async {
+      {@required String email, @required String onFailureMessage}) async {
     User tempUser = await getDoesUserExists(email);
     // User should be redirected to Feed page after a successful login
     if (tempUser != null && tempUser.userID != "") {
@@ -576,7 +576,7 @@ class _LoginScreenState extends State<LoginScreen> {
     } else {
       // User should create an account first in case the user has not been registered
       signInProvider.logout();
-      final snackBar = SnackBar(content: Text(onFailure));
+      final snackBar = SnackBar(content: Text(onFailureMessage));
       ScaffoldMessenger.of(context).showSnackBar(snackBar);
     }
   }

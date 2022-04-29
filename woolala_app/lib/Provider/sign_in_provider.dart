@@ -53,12 +53,13 @@ class SignInProvider {
         final AuthCredential credential =
             FacebookAuthProvider.credential(_accessToken);
         await FirebaseAuth.instance.signInWithCredential(credential);
+        Map<String, dynamic> userdata =
+            await FacebookAuth.instance.getUserData();
+        return userdata;
       }
     } catch (e) {
       print(e.toString());
     }
-
-    // notifyListeners();
   }
 
   Future logout() async {
