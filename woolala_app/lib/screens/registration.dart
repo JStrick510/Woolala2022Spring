@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart' as fba;
-import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:woolala_app/screens/login_screen.dart';
 import 'package:woolala_app/models/user.dart' as model;
@@ -28,7 +27,7 @@ class _RegistrationState extends State<Registration> {
   final tiers = ['Business', 'Patron'];
   String tier; // Manages the URL text field's show up
   bool
-      emailPassword; // Manages show up of the email and password registration fields
+      emailPasswordActivated; // Manages show up of the email and password registration fields
   SignInProvider signInProvider =
       SignInProvider(); // Required to call Facebook or Google log in method
 
@@ -39,7 +38,7 @@ class _RegistrationState extends State<Registration> {
     _profileNameController.addListener(() => setState(() {}));
     _userHandleController.addListener(() => setState(() {}));
     this.tier = widget.tier;
-    emailPassword = false;
+    emailPasswordActivated = false;
     super.initState();
   }
 
@@ -191,7 +190,7 @@ class _RegistrationState extends State<Registration> {
       padding: EdgeInsets.symmetric(vertical: 5),
       child: ElevatedButton.icon(
         style: ElevatedButton.styleFrom(
-          primary: Colors.white,
+          primary: Colors.blueGrey[50],
           onPrimary: Colors.black,
           minimumSize: const Size(double.infinity, 50),
         ),
@@ -220,26 +219,20 @@ class _RegistrationState extends State<Registration> {
       padding: EdgeInsets.symmetric(vertical: 5),
       child: ElevatedButton.icon(
         style: ElevatedButton.styleFrom(
-          primary: Colors.white,
+          primary: Colors.blueGrey[50],
           onPrimary: Colors.black,
           minimumSize: const Size(double.infinity, 50),
         ),
-        onPressed: () {
-          if (tier == 'Business' && _urlController.text.isEmpty) {
-            showAlertDialog(
-              title: 'URL Error!',
-              content: 'Please enter your URL.',
-              context: context,
+        onPressed: () async {
+          if (await _urlAndHandleCheck()) {
+            // get the user information from Facebook signin
+            Map<String, dynamic> userdata =
+                await signInProvider.facebookLogIn();
+            _saveAccountToServer(
+              email: userdata['email'],
+              profileName: userdata['name'],
             );
           }
-          // signInProvider.facebookLogIn();
-          // Map<String, dynamic> userdata =
-          //     await FacebookAuth.instance.getUserData();
-          // _saveAccountToServer(
-          //   email: userdata['email'],
-          //   profileName: userdata['name'],
-          //   googleID: userdata['id'],
-          // );
         },
         label: const Text('Sign up with Facebook'),
         icon: const FaIcon(
@@ -255,14 +248,16 @@ class _RegistrationState extends State<Registration> {
       padding: EdgeInsets.symmetric(vertical: 5),
       child: ElevatedButton.icon(
         style: ElevatedButton.styleFrom(
-          primary: Colors.white,
+          primary: Colors.blueGrey[50],
           onPrimary: Colors.black,
           minimumSize: const Size(double.infinity, 50),
         ),
-        onPressed: () {
-          setState(() {
-            emailPassword = !emailPassword;
-          });
+        onPressed: () async {
+          if (await _urlAndHandleCheck()) {
+            setState(() {
+              emailPasswordActivated = !emailPasswordActivated;
+            });
+          }
         },
         label: const Text('Sign up with email and password'),
         icon: Icon(Icons.email_outlined),
@@ -275,11 +270,15 @@ class _RegistrationState extends State<Registration> {
     model.User tempUser = await getDoesUserExists(email);
     if (tempUser != null) {
       print("User already exist");
-      currentUser = tempUser;
-      Navigator.pushReplacementNamed(context, '/');
+      final snackBar = SnackBar(
+          content: const Text(
+              'The user already exist!\nPlease sign in with your account.'));
+      signInProvider.logout();
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      Navigator.pop(context);
       return;
     } else {
-      //insert eula here
+      // Use hase to accept the End User License Agreement (EULA) to continue to use the app
       var result = await Navigator.pushNamed(context, '/eula');
       if (result == null || result == false) {
         signInProvider.logout();
@@ -335,10 +334,10 @@ class _RegistrationState extends State<Registration> {
         content: 'This Username is already taken!',
         context: context,
       );
-    } else if (tier == 'Business' && _urlController.text.isEmpty) {
+    } else if (_profileNameController.text.isEmpty) {
       showAlertDialog(
-        title: 'URL Error!',
-        content: 'Please enter your URL.',
+        title: 'Profile Name Error!',
+        content: 'Please enter your profile name.',
         context: context,
       );
     } else {
@@ -476,18 +475,16 @@ class _RegistrationState extends State<Registration> {
       body: ListView(
         padding: EdgeInsets.symmetric(vertical: 10, horizontal: 40),
         children: [
-          // _accountType(),
           tier == 'Business' ? _urlField() : SizedBox(),
           _userHandleField(),
-          // _devider(),
           _googleSignUpButton(context),
           _facebookSignUpButton(context),
           _signUpWithEmailButton(),
           SizedBox(height: 20),
-          if (emailPassword) _emailField(),
-          if (emailPassword) _passwordField(),
-          if (emailPassword) _profileNameField(),
-          if (emailPassword) _signUpButton(),
+          if (emailPasswordActivated) _emailField(),
+          if (emailPasswordActivated) _passwordField(),
+          if (emailPasswordActivated) _profileNameField(),
+          if (emailPasswordActivated) _signUpButton(),
           _logIn(),
         ],
       ),

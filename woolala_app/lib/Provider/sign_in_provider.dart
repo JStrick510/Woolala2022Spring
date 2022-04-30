@@ -13,6 +13,7 @@ class SignInProvider {
   // GoogleSignInAccount? get user => _user;
 
   Future<GoogleSignInAccount> googleLogIn() async {
+    // logout();
     signInMethod = SignInMethod.google;
     GoogleSignInAccount _user = null;
     try {
@@ -36,6 +37,7 @@ class SignInProvider {
   }
 
   Future facebookLogIn() async {
+    // logout();
     signInMethod = SignInMethod.facebook;
     String _accessToken;
     try {
@@ -47,13 +49,17 @@ class SignInProvider {
         print(result.message);
       }
 
-      final OAuthCredential credential =
-          FacebookAuthProvider.credential(_accessToken);
-      await FirebaseAuth.instance.signInWithCredential(credential);
+      if (_accessToken != null) {
+        final AuthCredential credential =
+            FacebookAuthProvider.credential(_accessToken);
+        await FirebaseAuth.instance.signInWithCredential(credential);
+        Map<String, dynamic> userdata =
+            await FacebookAuth.instance.getUserData();
+        return userdata;
+      }
     } catch (e) {
       print(e.toString());
     }
-    // notifyListeners();
   }
 
   Future logout() async {
