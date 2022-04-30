@@ -19,7 +19,7 @@ import 'dart:convert';
 //import 'package:pull_to_refresh/pull_to_refresh.dart';
 //import 'package:flutter_image_slideshow/flutter_image_slideshow.dart';
 
-//import 'dart:ui' as ui;
+import 'dart:ui' as ui;
 import 'dart:io';
 //import 'package:woolala_app/screens/login_screen.dart';
 //import 'package:image_picker/image_picker.dart';
@@ -64,12 +64,27 @@ class _FeedCardState extends State<FeedCard> {
   Icon wouldBuy = Icon(Icons.add_shopping_cart);
   double _currentSliderValue = 20;
 
-
+  ui.Image customImage;
+  double sliderValue = 0.0;
 
   final CarouselController _controller = CarouselController();
 
+    Future<ui.Image> loadImage(String assetPath) async {
+    ByteData data = await rootBundle.load(assetPath);
+    ui.Codec codec = await ui.instantiateImageCodec(data.buffer.asUint8List(), targetWidth: 50,targetHeight: 50);
+    ui.FrameInfo fi = await codec.getNextFrame();
+
+    return fi.image;
+  }
+
   void initState() {
     checkWouldBuy(currentUser.userID, widget.postID);
+    loadImage('assets/logos/shoppingCard_2.png').then((image) {
+      setState(() {
+        customImage = image;
+      });
+    });
+
     super.initState();
   }
 
@@ -438,28 +453,28 @@ class _FeedCardState extends State<FeedCard> {
                                     //   },
                                     // ),
                                     //f:
-                                    // SliderTheme(
-                                    //     data: SliderThemeData(
-                                    //     thumbColor: Color(0xFF424242),
-                                    //     thumbShape: SliderThumbImage(customImage),
-                                    //     //thumbShape: RoundSliderThumbShape(enabledThumbRadius: 10)
-                                    //   ),
-                                    //   child:
-                                    //     Slider(
-                                    //       value: _currentSliderValue,
-                                    //       max: (postInfo.data[6]!=null)? double.parse(postInfo.data[6]) : 100,
-                                    //       divisions: 5,
-                                    //       activeColor: Color(0xFF424242),
-                                    //       inactiveColor: Color(0xFFBDBDBD),
-                                    //       label: _currentSliderValue.round().toString(),
-                                    //       onChanged: (double value) {
-                                    //       setState(() {
-                                    //       _currentSliderValue = value;
-                                    //       });
-                                    //       },
-                                    //     ),
-                                    // ),
-                                    CustomSlider(),
+                                    SliderTheme(
+                                        data: SliderThemeData(
+                                        thumbColor: Color(0xFF424242),
+                                        //thumbShape: SliderThumbImage(customImage),
+                                        thumbShape: RoundSliderThumbShape(enabledThumbRadius: 10)
+                                      ),
+                                      child:
+                                        Slider(
+                                          value: _currentSliderValue,
+                                          max: (postInfo.data[8]!=null)? double.parse(postInfo.data[8]) : 100,
+                                          divisions: 5,
+                                          activeColor: Color(0xFF424242),
+                                          inactiveColor: Color(0xFFBDBDBD),
+                                          label: _currentSliderValue.round().toString(),
+                                          onChanged: (double value) {
+                                          setState(() {
+                                          _currentSliderValue = value;
+                                          });
+                                          },
+                                        ),
+                                    ),
+                                    // CustomSlider(),
                                     //f
                                   ],
                                 ),
@@ -515,7 +530,7 @@ class _FeedCardState extends State<FeedCard> {
                         //   child: Padding(
                         //     padding: EdgeInsets.fromLTRB(10.0, 1.0, 10.0, 2.0),
                         //     child: Text(
-                        //       postInfo.data[6].toString(),
+                        //       postInfo.data[8].toString(),
                         //       textAlign: TextAlign.left,
                         //       style: TextStyle(
                         //           fontSize: 12, fontWeight: FontWeight.w500),
