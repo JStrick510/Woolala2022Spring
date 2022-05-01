@@ -449,28 +449,29 @@ class _FeedCardState extends State<FeedCard> {
                                     //   },
                                     // ),
                                     //f:
-                                    // SliderTheme(
-                                    //     data: SliderThemeData(
-                                    //     thumbColor: Color(0xFF424242),
-                                    //     thumbShape: SliderThumbImage(customImage),
-                                    //     //thumbShape: RoundSliderThumbShape(enabledThumbRadius: 10)
-                                    //   ),
-                                    //   child:
-                                    //     Slider(
-                                    //       value: _currentSliderValue,
-                                    //       max: (postInfo.data[6]!=null)? double.parse(postInfo.data[6]) : 100,
-                                    //       divisions: 5,
-                                    //       activeColor: Color(0xFF424242),
-                                    //       inactiveColor: Color(0xFFBDBDBD),
-                                    //       label: _currentSliderValue.round().toString(),
-                                    //       onChanged: (double value) {
-                                    //       setState(() {
-                                    //       _currentSliderValue = value;
-                                    //       });
-                                    //       },
-                                    //     ),
-                                    // ),
-                                    CustomSlider(),
+                                    SliderTheme(
+                                        data: SliderThemeData(
+                                        thumbColor: Color(0xFF424242),
+                                        thumbShape: SliderThumbImage(customImage),
+                                        //thumbShape: RoundSliderThumbShape(enabledThumbRadius: 10)
+                                      ),
+                                      child:
+                                        Slider(
+                                          value: _currentSliderValue,
+                                          min: (postInfo.data[6]!=null)? double.parse(postInfo.data[6]) : 0,
+                                          max: (postInfo.data[7]!=null)? double.parse(postInfo.data[7]) : 100,
+                                          divisions: 5,
+                                          activeColor: Color(0xFF424242),
+                                          inactiveColor: Color(0xFFBDBDBD),
+                                          label: _currentSliderValue.round().toString(),
+                                          onChanged: (double value) {
+                                          setState(() {
+                                          _currentSliderValue = value;
+                                          });
+                                          },
+                                        ),
+                                    ),
+                                    // CustomSlider(),
                                     //f
                                   ],
                                 ),
