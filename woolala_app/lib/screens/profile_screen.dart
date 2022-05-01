@@ -107,7 +107,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     profilePageOwner.profileName.substring(
                         0, min(22, profilePageOwner.profileName.length)),
                     style: TextStyle(
-                        fontSize: 30.0,
+                        fontSize: 20.0, //30
                         color: Colors.black,
                         fontWeight: FontWeight.bold),
                   ),
@@ -117,7 +117,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   padding: EdgeInsets.only(top: 1.0),
                   child: Text(
                     profilePageOwner.userName,
-                    style: TextStyle(fontSize: 16.0, color: Colors.black38),
+                    style: TextStyle(fontSize: 12.0, color: Colors.black38), //16
                   ),
                 ),
                 Container(
@@ -126,7 +126,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   child: Text(
                     profilePageOwner.bio,
                     style: TextStyle(
-                        fontSize: 20.0,
+                        fontSize: 16.0, //20
                         color: Colors.black54,
                         fontWeight: FontWeight.w600),
                   ),
@@ -138,7 +138,7 @@ class _ProfilePageState extends State<ProfilePage> {
                         child: Text(
                           profilePageOwner.url,
                           style: TextStyle(
-                              fontSize: 16.0,
+                              fontSize: 14.0, //16
                               color: Colors.black54,
                               fontWeight: FontWeight.w600),
                         ),
@@ -297,14 +297,14 @@ class _ProfilePageState extends State<ProfilePage> {
         Text(
           getFormattedText(count.toString()),
           style: TextStyle(
-              fontSize: 20.0, color: Colors.black, fontWeight: FontWeight.bold),
+              fontSize: 16.0, color: Colors.black, fontWeight: FontWeight.bold), //20
         ),
         Container(
           margin: EdgeInsets.only(top: 3.0),
           child: Text(
             title,
             style: TextStyle(
-                fontSize: 16.0,
+                fontSize: 12.0, //16
                 color: Colors.black,
                 fontWeight: FontWeight.w400),
           ),
@@ -370,14 +370,14 @@ class _ProfilePageState extends State<ProfilePage> {
         Text(
           count.toStringAsFixed(2),
           style: TextStyle(
-              fontSize: 20.0, color: Colors.black, fontWeight: FontWeight.bold),
+              fontSize: 16.0, color: Colors.black, fontWeight: FontWeight.bold), //20
         ),
         Container(
           margin: EdgeInsets.only(top: 3.0),
           child: Text(
             title,
             style: TextStyle(
-                fontSize: 18.0,
+                fontSize: 12.0, //18
                 color: Colors.black,
                 fontWeight: FontWeight.w400),
           ),
@@ -704,12 +704,12 @@ Future<void> showBlockConfirmDialog() async {
             child: Text(
               title,
               style:
-                  TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+                  TextStyle(color: Colors.black54, fontWeight: FontWeight.bold),
             ),
             alignment: Alignment.center,
             decoration: BoxDecoration(
               color: color,
-              border: Border.all(color: Colors.black, width: 2.0),
+              border: Border.all(color: Colors.black54, width: 2.0),
               borderRadius: BorderRadius.circular(6.0),
             ),
           ),
@@ -795,7 +795,7 @@ Future<void> showBlockConfirmDialog() async {
                                   currentUser.userID) {
                                 return Container(
                                     constraints: BoxConstraints(
-                                      minHeight: 570,
+                                      minHeight: 50,
                                       minWidth: double.infinity,
                                     ),
                                     child: OwnFeedCard(postIDs[index - 1]));

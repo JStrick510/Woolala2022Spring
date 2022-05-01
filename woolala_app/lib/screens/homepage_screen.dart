@@ -16,6 +16,8 @@ import 'package:woolala_app/main.dart';
 import 'dart:io';
 import "dart:math";///////////////////////ADDED
 import "dart:collection";///////////////////////ADDED2
+import 'dart:ui' as ui;
+import 'package:flutter/services.dart';
 
 // Star widget on the home page
 Widget starSlider(String postID, num, rated) => RatingBar(
@@ -57,10 +59,112 @@ Future<http.Response> ratePost(double rating, String id) {
   );
 }
 
+////////////////////////////////////////////////////////////////////////////////
+//added_by_farnaz_customized thumb shape defined for the wouldBuy slider
+double _currentSliderValue = 20;
+class CustomSlider extends StatefulWidget {
+  @override
+  _CustomSliderState createState() => _CustomSliderState();
+}
+
+class _CustomSliderState extends State<CustomSlider> {
+  ui.Image customImage;
+  double sliderValue = 0.0;
+
+  Future<ui.Image> loadImage(String assetPath) async {
+    ByteData data = await rootBundle.load(assetPath);
+    ui.Codec codec = await ui.instantiateImageCodec(data.buffer.asUint8List(), targetWidth: 50,targetHeight: 50);
+    ui.FrameInfo fi = await codec.getNextFrame();
+
+    return fi.image;
+  }
+
+  @override
+  void initState() {
+    loadImage('assets/logos/shoppingCard_1.png').then((image) {
+      setState(() {
+        customImage = image;
+      });
+    });
+
+    super.initState();
+  }
+
+  // @override
+  Widget build(BuildContext context) {
+    return SliderTheme(
+          data: SliderThemeData(
+            thumbColor: Color(0xFF424242),
+            trackHeight: 10,
+            thumbShape: SliderThumbImage(customImage),
+          ),
+          child:
+          Slider(
+            value: _currentSliderValue,
+            max: 100.0,
+            min: 0.0,
+            divisions: 5,
+            activeColor: Color(0xFF424242),
+            inactiveColor: Color(0xFFBDBDBD),
+            label: _currentSliderValue.round().toString(),
+            onChanged: (double value) {
+              setState(() {
+                _currentSliderValue = value;
+              });
+            },
+          ),
+        );
+  }
+}
+
+class SliderThumbImage extends SliderComponentShape {
+  final ui.Image image;
+
+  SliderThumbImage(this.image);
+
+  @override
+  Size getPreferredSize(bool isEnabled, bool isDiscrete) {
+    return Size(0, 0);
+  }
+
+  @override
+  void paint( PaintingContext context,
+              Offset center,
+              {Animation<double> activationAnimation,
+              Animation<double> enableAnimation,
+              bool isDiscrete,
+              TextPainter labelPainter,
+              RenderBox parentBox,
+              SliderThemeData sliderTheme,
+              TextDirection textDirection,
+              double value,
+              double textScaleFactor,
+              Size sizeWithOverflow}
+      ) {
+    final canvas = context.canvas;
+    final imageWidth = image?.width ?? 50;
+    final imageHeight = image?.height ?? 50;
+
+    Offset imageOffset = Offset(
+      center.dx - (imageWidth / 2),
+      center.dy - (imageHeight / 2),
+    );
+
+    Paint paint = Paint()..filterQuality = FilterQuality.high;
+
+    if (image != null) {
+      canvas.drawImage(image, imageOffset, paint);
+    }
+  }
+}
+
+////////////////////////end_farnaz//////////////////////////////////////////////
+
+
 // Will be used to make the post for the first time.
 Future<http.Response> createPost(String postID, String image1, String image2,
     String image3, String image4, String image5, String date,
-    String caption, String userID, String userName, String price, String Category) {
+    String caption, String userID, String userName, String Category, String minprice,String maxprice) {
   return http.post(
     Uri.parse(domain + '/insertPost'),
     headers: <String, String>{
@@ -80,7 +184,8 @@ Future<http.Response> createPost(String postID, String image1, String image2,
       'cumulativeRating': 0.0,
       'numRatings': 0,
       'Category': Category,
-      'price': price,
+      'minprice': minprice,
+      'maxprice': maxprice,
       'wouldBuy': []
     }),
   );
@@ -158,7 +263,8 @@ Future<List> getPost(String id) async {
     info["numRatings"],
     display,
     info["Category"], //category in which a post belongs to
-    info["price"] //Added
+    info["minprice"],
+    info["maxprice"]
   ];
   return ret; //this ends up getting sent to card and profile_card as postInfo
 }
@@ -516,22 +622,11 @@ class _HomepageScreenState extends State<HomepageScreen> {
     return Scaffold(
       appBar: AppBar(
         // title: Text('ChooseNXT', style: TextStyle(fontSize: 25)),
-        title: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Image.asset(
-                './assets/logos/ChooseNXT wide logo WBG.png',
-                width: 160, //org was 200, smaller to fit text in appbar
-              ),
-              Text("New Releases", style: TextStyle(fontSize: 16))
-            ]
+        title: Image.asset(
+        './assets/logos/ChooseNXT wide logo WBG.png',
+        width: 200,
         ),
 
-        //Image.asset(
-        //'./assets/logos/ChooseNXT wide logo WBG.png',
-        //width: 200,
-        //),
         centerTitle: true,
         key: ValueKey("homepage"),
         actions: <Widget>[
@@ -546,48 +641,6 @@ class _HomepageScreenState extends State<HomepageScreen> {
             icon: Icon(Icons.exit_to_app),
             onPressed: () => startSignOut(context),
           ),
-          IconButton(
-            icon: Icon(Icons.edit_note),
-            onPressed: () {
-              count = 0;
-              sorted = false;
-              Navigator.push(context, MaterialPageRoute<void>(
-                builder: (BuildContext context) {
-
-                  return Scaffold(
-                    appBar: AppBar(
-                      title: const Text('Filter Feed:'),
-                    ),
-                    body: Center(
-                      child: DropdownButton(
-
-                        // Initial Value
-                        value: dropdownvalue,
-
-                        // Down Arrow Icon
-                        icon: const Icon(Icons.keyboard_arrow_down),
-
-                        // Array list of items
-                        items: items.map((String items) {
-                          return DropdownMenuItem(
-                            value: items,
-                            child: Text(items),
-                          );
-                        }).toList(),
-                        // After selecting the desired option,it will
-                        // change button value to selected value
-                        onChanged: (String newValue) {
-                          setState(() {
-                            dropdownvalue = newValue;
-                          });
-                        },
-                      ),
-                    ),
-                  );
-                },
-              ));
-            },
-          )
         ],
       ),
       body: !feedLoading
@@ -602,25 +655,61 @@ class _HomepageScreenState extends State<HomepageScreen> {
           onRefresh: _onRefresh,
           onLoading: _onLoading,
           child: ListView.builder(
-              padding: const EdgeInsets.all(0),
-              itemCount: numToShow,
-              addAutomaticKeepAlives: true,
-              physics: const AlwaysScrollableScrollPhysics(),
-              itemBuilder: (BuildContext context, int index) {
-                // The height on this will need to be edited to match whatever height is set for the picture
-                // return SizedBox(
-                //   width: double.infinity,
-                //   height: 550,
-                //   child: FeedCard(postIDs[index], ratedPosts),
-                // );
-                return Container(
-                  constraints: BoxConstraints(
-                    minHeight: 50, //this is the space between the posts
-                    minWidth: double.infinity,
+          padding: EdgeInsets.fromLTRB(0, 1, 0, 0),
+          itemCount: numToShow,
+          addAutomaticKeepAlives: true,
+          physics: const AlwaysScrollableScrollPhysics(),
+          itemBuilder: (BuildContext context, int index) {
+            // The height on this will need to be edited to match whatever height is set for the picture
+            // return SizedBox(
+            //   width: double.infinity,
+            //   height: 550,
+            //   child: FeedCard(postIDs[index], ratedPosts),
+            // );
+            return Container(
+              constraints: BoxConstraints(
+                minHeight: 50, //this is the space between the posts
+                minWidth: double.infinity,
+              ),
+              child: !(index > 0)
+                  ?
+              Column(
+                children: [
+                  SizedBox(height: 20.0),
+                  Text("New Releases", style: TextStyle(fontSize: 22)),
+                  SizedBox(height: 10.0),
+                  Text("Filter Feed by Category:"),
+                  DropdownButton(
+
+                    // Initial Value
+                    value: dropdownvalue,
+
+                    // Down Arrow Icon
+                    icon: const Icon(Icons.keyboard_arrow_down),
+
+                    // Array list of items
+                    items: items.map((String items) {
+                      return DropdownMenuItem(
+                        value: items,
+                        child: Text(items),
+                      );
+                    }).toList(),
+                    // After selecting the desired option,it will
+                    // change button value to selected value
+                    onChanged: (String newValue) {
+                      setState(() {
+                        dropdownvalue = newValue;
+                        count = 0;
+                        sorted = false;
+                      });
+                    },
                   ),
-                  child: FeedCard(postIDs[index], ratedPosts),
-                );
-              }),
+                  FeedCard(postIDs[index], ratedPosts),
+                ],
+              ):
+              FeedCard(postIDs[index], ratedPosts),
+            );
+          }),
         )
             : Padding(
           padding: EdgeInsets.all(70.0),

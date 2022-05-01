@@ -302,6 +302,7 @@ class _RegistrationState extends State<Registration> {
         url: _urlController.text,
         blockedUsers: [],
         brand: tier == 'Business',
+        conversations: [],
       );
       // print(u.brand);
       await insertUser(u);

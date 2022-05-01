@@ -159,6 +159,14 @@ class _OwnFeedCardState extends State<OwnFeedCard> {
     }
   }
 
+  String priceRange(List postData){
+    var price = "";
+    //print(postData);
+    if (!(postData[7].toString() == null) && !(postData[8].toString() == null))
+      price = postData[7].toString() + " - " + postData[8].toString();
+    return price;
+  }
+
   @override
   Widget build(BuildContext context) {
     print(widget.postID);
@@ -204,7 +212,8 @@ class _OwnFeedCardState extends State<OwnFeedCard> {
                                               textAlign: TextAlign.left,
                                               style: TextStyle(
                                                   color: Colors.black,
-                                                  fontSize: 16)))),
+                                                  fontSize: 16,
+                                                  fontWeight: FontWeight.bold)))),
                                 ],
                               ),
                               PopupMenuButton<String>(
@@ -238,7 +247,9 @@ class _OwnFeedCardState extends State<OwnFeedCard> {
                                   Container(
                                     child: CarouselSlider(
                                       items: postInfo.data[5],
-                                      options: CarouselOptions(enlargeCenterPage: true, height: 300),
+                                      options: CarouselOptions(enlargeCenterPage: false,
+                                                height: MediaQuery.of(context).size.width, //since image is square, to fill use width
+                                                viewportFraction: 1), //sets so one image fills the page
                                       carouselController: _controller,
                                     )
                                   ),
@@ -311,7 +322,7 @@ class _OwnFeedCardState extends State<OwnFeedCard> {
                                   children: <Widget>[
                                     new IconButton(
                                       icon: Icon(Icons.share),
-                                      iconSize: 28,
+                                      iconSize: 24,
                                       onPressed: () async {
                                         await sc.capture().then((image) async {
                                           Directory tempDir =
@@ -332,7 +343,7 @@ class _OwnFeedCardState extends State<OwnFeedCard> {
                                     Text(
                                       "Scores: " + postInfo.data[4].toString(),
                                       style: TextStyle(
-                                        fontSize: 20.0,
+                                        fontSize: 14.0, //20
                                         fontWeight: FontWeight.w500,
                                       ),
                                     ),
@@ -340,13 +351,21 @@ class _OwnFeedCardState extends State<OwnFeedCard> {
                                       "Avg: " +
                                           postInfo.data[3].toStringAsFixed(2),
                                       style: TextStyle(
-                                        fontSize: 20.0,
+                                        fontSize: 14.0, //20
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                    Text(
+                                      "Price: " +
+                                          priceRange(postInfo.data),
+                                      style: TextStyle(
+                                        fontSize: 14.0, //20
                                         fontWeight: FontWeight.w500,
                                       ),
                                     ),
                                     new IconButton(
                                         icon: Icon(Icons.supervisor_account),
-                                        iconSize: 28,
+                                        iconSize: 24,
                                         onPressed: () {
                                           Navigator.push(
                                               context,
