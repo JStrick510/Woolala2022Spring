@@ -93,27 +93,27 @@ class _CustomSliderState extends State<CustomSlider> {
   // @override
   Widget build(BuildContext context) {
     return SliderTheme(
-          data: SliderThemeData(
-            thumbColor: Color(0xFF424242),
-            trackHeight: 10,
-            thumbShape: SliderThumbImage(customImage),
-          ),
-          child:
-          Slider(
-            value: _currentSliderValue,
-            max: 100.0,
-            min: 0.0,
-            divisions: 5,
-            activeColor: Color(0xFF424242),
-            inactiveColor: Color(0xFFBDBDBD),
-            label: _currentSliderValue.round().toString(),
-            onChanged: (double value) {
-              setState(() {
-                _currentSliderValue = value;
-              });
-            },
-          ),
-        );
+      data: SliderThemeData(
+        thumbColor: Color(0xFF424242),
+        trackHeight: 10,
+        thumbShape: SliderThumbImage(customImage),
+      ),
+      child:
+      Slider(
+        value: _currentSliderValue,
+        max: 100.0,
+        min: 0.0,
+        divisions: 5,
+        activeColor: Color(0xFF424242),
+        inactiveColor: Color(0xFFBDBDBD),
+        label: _currentSliderValue.round().toString(),
+        onChanged: (double value) {
+          setState(() {
+            _currentSliderValue = value;
+          });
+        },
+      ),
+    );
   }
 }
 
@@ -129,17 +129,17 @@ class SliderThumbImage extends SliderComponentShape {
 
   @override
   void paint( PaintingContext context,
-              Offset center,
-              {Animation<double> activationAnimation,
-              Animation<double> enableAnimation,
-              bool isDiscrete,
-              TextPainter labelPainter,
-              RenderBox parentBox,
-              SliderThemeData sliderTheme,
-              TextDirection textDirection,
-              double value,
-              double textScaleFactor,
-              Size sizeWithOverflow}
+      Offset center,
+      {Animation<double> activationAnimation,
+        Animation<double> enableAnimation,
+        bool isDiscrete,
+        TextPainter labelPainter,
+        RenderBox parentBox,
+        SliderThemeData sliderTheme,
+        TextDirection textDirection,
+        double value,
+        double textScaleFactor,
+        Size sizeWithOverflow}
       ) {
     final canvas = context.canvas;
     final imageWidth = image?.width ?? 50;
@@ -335,7 +335,7 @@ class _HomepageScreenState extends State<HomepageScreen> {
 
   int count = 0; //count
   String dropdownvalue = 'None';
-  var items = [
+  var itemsFilter = [
     "Apparel",
     "Shoes",
     "Accessories",
@@ -345,6 +345,7 @@ class _HomepageScreenState extends State<HomepageScreen> {
     "Others",
     "None",
   ];
+
   List <String> toRemove = [];
   var sorted = false;
   List prePostIDs = [];
@@ -623,8 +624,8 @@ class _HomepageScreenState extends State<HomepageScreen> {
       appBar: AppBar(
         // title: Text('ChooseNXT', style: TextStyle(fontSize: 25)),
         title: Image.asset(
-        './assets/logos/ChooseNXT wide logo WBG.png',
-        width: 200,
+          './assets/logos/ChooseNXT wide logo WBG.png',
+          width: 200,
         ),
 
         centerTitle: true,
@@ -655,61 +656,65 @@ class _HomepageScreenState extends State<HomepageScreen> {
           onRefresh: _onRefresh,
           onLoading: _onLoading,
           child: ListView.builder(
-          padding: EdgeInsets.fromLTRB(0, 1, 0, 0),
-          itemCount: numToShow,
-          addAutomaticKeepAlives: true,
-          physics: const AlwaysScrollableScrollPhysics(),
-          itemBuilder: (BuildContext context, int index) {
-            // The height on this will need to be edited to match whatever height is set for the picture
-            // return SizedBox(
-            //   width: double.infinity,
-            //   height: 550,
-            //   child: FeedCard(postIDs[index], ratedPosts),
-            // );
-            return Container(
-              constraints: BoxConstraints(
-                minHeight: 50, //this is the space between the posts
-                minWidth: double.infinity,
-              ),
-              child: !(index > 0)
-                  ?
-              Column(
-                children: [
-                  SizedBox(height: 20.0),
-                  Text("New Releases", style: TextStyle(fontSize: 22)),
-                  SizedBox(height: 10.0),
-                  Text("Filter Feed by Category:"),
-                  DropdownButton(
-
-                    // Initial Value
-                    value: dropdownvalue,
-
-                    // Down Arrow Icon
-                    icon: const Icon(Icons.keyboard_arrow_down),
-
-                    // Array list of items
-                    items: items.map((String items) {
-                      return DropdownMenuItem(
-                        value: items,
-                        child: Text(items),
-                      );
-                    }).toList(),
-                    // After selecting the desired option,it will
-                    // change button value to selected value
-                    onChanged: (String newValue) {
-                      setState(() {
-                        dropdownvalue = newValue;
-                        count = 0;
-                        sorted = false;
-                      });
-                    },
+              padding: EdgeInsets.fromLTRB(10, 1, 10, 0),
+              itemCount: numToShow,
+              addAutomaticKeepAlives: true,
+              physics: const AlwaysScrollableScrollPhysics(),
+              itemBuilder: (BuildContext context, int index) {
+                // The height on this will need to be edited to match whatever height is set for the picture
+                // return SizedBox(
+                //   width: double.infinity,
+                //   height: 550,
+                //   child: FeedCard(postIDs[index], ratedPosts),
+                // );
+                return Container(
+                  constraints: BoxConstraints(
+                    minHeight: 50, //this is the space between the posts
+                    minWidth: double.infinity,
                   ),
+                  child: !(index > 0)
+                      ?
+                  Column(
+                    children:[
+                      SizedBox(height: 20.0),
+                      Text("New Releases", style: TextStyle(fontSize: 22)),
+                      SizedBox(height: 10.0),
+                      Text("Filter Feed by Category:"),
+                      SizedBox(height: 15.0),
+                      Container(
+                          height: 25,
+                          child:ListView(
+                            scrollDirection: Axis.horizontal,
+                            children: itemsFilter.map((fil){
+                              return Container(
+
+                                  margin: EdgeInsets.fromLTRB(5, 0, 5, 0),
+                                  alignment: Alignment.center,
+
+                                  child: ElevatedButton.icon(
+                                      onPressed: (){
+                                        setState(() {
+                                          dropdownvalue = fil;
+                                          count = 0;
+                                          _filterPosts(postIDs, dropdownvalue);
+                                        });
+                                      },
+                                      style: ElevatedButton.styleFrom(
+                                        onPrimary: Colors.black,
+                                      ),
+                                      icon: Icon(Icons.add_circle_outline),
+                                      label: Text(fil)
+                                  )
+                              );
+                            }).toList(),
+                          )
+                      ),
+                      FeedCard(postIDs[index], ratedPosts),
+                    ],
+                  ):
                   FeedCard(postIDs[index], ratedPosts),
-                ],
-              ):
-              FeedCard(postIDs[index], ratedPosts),
-            );
-          }),
+                );
+              }),
         )
             : Padding(
           padding: EdgeInsets.all(70.0),
