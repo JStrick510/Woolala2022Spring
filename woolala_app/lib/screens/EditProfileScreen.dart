@@ -207,7 +207,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                   padding: EdgeInsets.fromLTRB(16, 0, 16, 16),
                   child: Column(
                     children: [
-                      _changeProfileButton(),
+                      _changeProfilePhotoButton(),
                       createProfileNameTextFormField(),
                       createHandleTextFormField(),
                       createBioTextFormField(),
@@ -479,7 +479,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
     Navigator.pushReplacementNamed(context, '/editProfile');
   }
 
-  Widget _changeProfileButton() {
+  Widget _changeProfilePhotoButton() {
     return Container(
       child: TextButton(
         onPressed: () async {

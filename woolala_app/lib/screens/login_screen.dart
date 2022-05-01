@@ -103,12 +103,26 @@ class _LoginScreenState extends State<LoginScreen> {
 
   // called automatically on app launch
   void initState() {
-    print("Calling initState");
+    _userIsSignedIn();
     _emailController.addListener(() => setState(() {}));
+    WidgetsBinding.instance.addPostFrameCallback((_) {});
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      // signInProcess();
-    });
+  }
+
+  /* This function makes sure the app remembers the user's credentials.
+  It will redirect to the Feed page if user is already signed in.
+  */
+  void _userIsSignedIn() async {
+    try {
+      fireB.User _oldUser = fireB.FirebaseAuth.instance.currentUser;
+      currentUser = await getDoesUserExists(_oldUser.email);
+      if (currentUser != null) {
+        Navigator.pushNamed(context, '/home');
+      }
+      ;
+    } catch (e) {
+      // If user has not been signed in, Firebase throws an exception which will be fixed when user signs in.
+    }
   }
 
   void signInWithApple() async {
