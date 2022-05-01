@@ -61,62 +61,61 @@ Future<http.Response> ratePost(double rating, String id) {
 
 ////////////////////////////////////////////////////////////////////////////////
 //added_by_farnaz_customized thumb shape defined for the wouldBuy slider
-// double _currentSliderValue = 20;
-// class CustomSlider extends StatefulWidget {
-//   @override
-//   _CustomSliderState createState() => _CustomSliderState();
-// }
-//
-// class _CustomSliderState extends State<CustomSlider> {
-//   ui.Image customImage;
-//   double sliderValue = 0.0;
-//
-//   Future<ui.Image> loadImage(String assetPath) async {
-//     ByteData data = await rootBundle.load(assetPath);
-//     ui.Codec codec = await ui.instantiateImageCodec(data.buffer.asUint8List(), targetWidth: 50,targetHeight: 50);
-//     ui.FrameInfo fi = await codec.getNextFrame();
-//
-//     return fi.image;
-//   }
-//
-//   @override
-//   void initState() {
-//     loadImage('assets/logos/shoppingCard_1.png').then((image) {
-//       setState(() {
-//         customImage = image;
-//       });
-//     });
-//
-//     super.initState();
-//   }
+double _currentSliderValue = 20;
+class CustomSlider extends StatefulWidget {
+  @override
+  _CustomSliderState createState() => _CustomSliderState();
+}
 
-//   // @override
-//   Widget build(BuildContext context) {
-//     return SliderTheme(
-//           data: SliderThemeData(
-//             thumbColor: Color(0xFF424242),
-//             trackHeight: 10,
-//             thumbShape: SliderThumbImage(customImage),
-//           ),
-//           child:
-//           Slider(
-//             value: _currentSliderValue,
-//             max: 100.0,
-//             min: 0.0,
-//             divisions: 5,
-//             activeColor: Color(0xFF424242),
-//             inactiveColor: Color(0xFFBDBDBD),
-//             label: _currentSliderValue.round().toString(),
-//             onChanged: (double value) {
-//               setState(() {
-//                 _currentSliderValue = value;
-//               });
-//             },
-//           ),
-//         );
-//   }
-// }
+class _CustomSliderState extends State<CustomSlider> {
+  ui.Image customImage;
+  double sliderValue = 0.0;
 
+  Future<ui.Image> loadImage(String assetPath) async {
+    ByteData data = await rootBundle.load(assetPath);
+    ui.Codec codec = await ui.instantiateImageCodec(data.buffer.asUint8List(), targetWidth: 50,targetHeight: 50);
+    ui.FrameInfo fi = await codec.getNextFrame();
+
+    return fi.image;
+  }
+
+  @override
+  void initState() {
+    loadImage('assets/logos/shoppingCard_1.png').then((image) {
+      setState(() {
+        customImage = image;
+      });
+    });
+
+    super.initState();
+  }
+
+  // @override
+  Widget build(BuildContext context) {
+    return SliderTheme(
+      data: SliderThemeData(
+        thumbColor: Color(0xFF424242),
+        trackHeight: 10,
+        thumbShape: SliderThumbImage(customImage),
+      ),
+      child:
+      Slider(
+        value: _currentSliderValue,
+        max: 100.0,
+        min: 0.0,
+        divisions: 5,
+        activeColor: Color(0xFF424242),
+        inactiveColor: Color(0xFFBDBDBD),
+        label: _currentSliderValue.round().toString(),
+        onChanged: (double value) {
+          setState(() {
+            _currentSliderValue = value;
+          });
+        },
+      ),
+    );
+  }
+}
 
 class SliderThumbImage extends SliderComponentShape {
   final ui.Image image;
@@ -165,7 +164,7 @@ class SliderThumbImage extends SliderComponentShape {
 // Will be used to make the post for the first time.
 Future<http.Response> createPost(String postID, String image1, String image2,
     String image3, String image4, String image5, String date,
-    String caption, String userID, String userName, String minprice, String maxprice, String Category) {
+    String caption, String userID, String userName, String Category, String minprice,String maxprice) {
   return http.post(
     Uri.parse(domain + '/insertPost'),
     headers: <String, String>{
