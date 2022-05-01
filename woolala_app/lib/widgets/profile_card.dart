@@ -159,6 +159,14 @@ class _OwnFeedCardState extends State<OwnFeedCard> {
     }
   }
 
+  String priceRange(List postData){
+    var price = "";
+    //print(postData);
+    if (!(postData[7].toString() == null) && !(postData[8].toString() == null))
+      price = postData[7].toString() + " - " + postData[8].toString();
+    return price;
+  }
+
   @override
   Widget build(BuildContext context) {
     print(widget.postID);
@@ -204,7 +212,8 @@ class _OwnFeedCardState extends State<OwnFeedCard> {
                                               textAlign: TextAlign.left,
                                               style: TextStyle(
                                                   color: Colors.black,
-                                                  fontSize: 16)))),
+                                                  fontSize: 16,
+                                                  fontWeight: FontWeight.bold)))),
                                 ],
                               ),
                               PopupMenuButton<String>(
@@ -232,29 +241,39 @@ class _OwnFeedCardState extends State<OwnFeedCard> {
                           ),
                         ),
                         GestureDetector(
-                            child: Column(
+                            child: Stack(
+                              alignment: Alignment.bottomCenter,
                                 children: <Widget>[
-                                  CarouselSlider(
-                                    items: postInfo.data[5],
-                                    options: CarouselOptions(enlargeCenterPage: true, height: 200),
-                                    carouselController: _controller,
+                                  Container(
+                                    child: CarouselSlider(
+                                      items: postInfo.data[5],
+                                      options: CarouselOptions(enlargeCenterPage: false,
+                                                height: MediaQuery.of(context).size.width, //since image is square, to fill use width
+                                                viewportFraction: 1), //sets so one image fills the page
+                                      carouselController: _controller,
+                                    )
                                   ),
-                                  Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                    children: <Widget>[
-                                      ...Iterable<int>.generate(postInfo.data[5].length).map(
-                                            (int pageIndex) => Flexible(
-                                          child: ElevatedButton(
-                                            onPressed: () => _controller.animateToPage(pageIndex),
-                                            child: postInfo.data[5][pageIndex],
-                                            style: ElevatedButton.styleFrom(
-                                                fixedSize: const Size(80, 80)),
+                                  Container(
+                                      child: Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                        children: <Widget>[
+                                          //generate tiny "thumbnail" buttons for each image(range 1-5) in post with the image as the icon and when button is pressed switch big display to image on button
+                                          ...Iterable<int>.generate(postInfo.data[5].length).map(
+                                                (int pageIndex) => Flexible(
+                                              child: ElevatedButton(
+                                                onPressed: () => _controller.animateToPage(pageIndex),
+                                                child: postInfo.data[5][pageIndex],
+                                                style: ElevatedButton.styleFrom(
+                                                    padding: EdgeInsets.all(0.0), //this makes it so the image fills the button
+                                                    fixedSize: const Size(55, 55)), //still white space even though button and image are square?
+                                              ),
+                                            ),
                                           ),
-                                        ),
-                                      ),
-                                    ],
+                                        ],
+                                      )
                                   )]
+
                             ),
                             onHorizontalDragStart:
                                 (DragStartDetails dragStartDetails) {
@@ -303,7 +322,7 @@ class _OwnFeedCardState extends State<OwnFeedCard> {
                                   children: <Widget>[
                                     new IconButton(
                                       icon: Icon(Icons.share),
-                                      iconSize: 28,
+                                      iconSize: 24,
                                       onPressed: () async {
                                         await sc.capture().then((image) async {
                                           Directory tempDir =
@@ -324,7 +343,7 @@ class _OwnFeedCardState extends State<OwnFeedCard> {
                                     Text(
                                       "Scores: " + postInfo.data[4].toString(),
                                       style: TextStyle(
-                                        fontSize: 20.0,
+                                        fontSize: 14.0, //20
                                         fontWeight: FontWeight.w500,
                                       ),
                                     ),
@@ -332,13 +351,21 @@ class _OwnFeedCardState extends State<OwnFeedCard> {
                                       "Avg: " +
                                           postInfo.data[3].toStringAsFixed(2),
                                       style: TextStyle(
-                                        fontSize: 20.0,
+                                        fontSize: 14.0, //20
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                    Text(
+                                      "Price: " +
+                                          priceRange(postInfo.data),
+                                      style: TextStyle(
+                                        fontSize: 14.0, //20
                                         fontWeight: FontWeight.w500,
                                       ),
                                     ),
                                     new IconButton(
                                         icon: Icon(Icons.supervisor_account),
-                                        iconSize: 28,
+                                        iconSize: 24,
                                         onPressed: () {
                                           Navigator.push(
                                               context,
@@ -362,7 +389,7 @@ class _OwnFeedCardState extends State<OwnFeedCard> {
                                     textAlign: TextAlign.left,
                                     style: TextStyle(
                                         fontWeight: FontWeight.bold,
-                                        fontSize: 18),
+                                        fontSize: 14),
                                   ),
                                 ),
                               ),
@@ -370,12 +397,12 @@ class _OwnFeedCardState extends State<OwnFeedCard> {
                                 alignment: Alignment.centerLeft,
                                 child: Padding(
                                   padding: EdgeInsets.fromLTRB(
-                                      10.0, 1.0, 10.0, 15.0),
+                                      10.0, 1.0, 10.0, 2.0),
                                   child: Text(
                                     postInfo.data[0], //was 1
                                     textAlign: TextAlign.left,
                                     style: TextStyle(
-                                      fontSize: 18,
+                                      fontSize: 14,
                                     ),
                                   ),
                                 ),
@@ -391,7 +418,7 @@ class _OwnFeedCardState extends State<OwnFeedCard> {
                               postInfo.data[2],
                               textAlign: TextAlign.left,
                               style: TextStyle(
-                                  fontSize: 12, fontWeight: FontWeight.w500),
+                                  fontSize: 8, fontWeight: FontWeight.w500),
                             ),
                           ),
                         ),

@@ -23,7 +23,7 @@ void main() async {
     domain = "http://0.0.0.0:5000"; //when running Mac
     // domain = "http://Bryants-MacBook-Pro.local:5000";
   } else {
-    domain = "https://woolala-2022.herokuapp.com";
+    domain = "https://hidden-caverns-85596.herokuapp.com";
   }
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
@@ -44,6 +44,16 @@ class WooLaLa extends StatelessWidget {
         // This makes the visual density adapt to the platform that you run the app on. For desktop platforms, the controls will be smaller and closer together (more dense) than on mobile platforms.
         visualDensity: VisualDensity.adaptivePlatformDensity,
         textSelectionTheme: TextSelectionThemeData(cursorColor: Colors.black),
+        textTheme: ThemeData.light().textTheme.apply(
+          fontFamily: 'Helvetica',
+        ),
+        primaryTextTheme: ThemeData.light().textTheme.apply(
+          fontFamily: 'Helvetica',
+        ),
+        accentTextTheme: ThemeData.light().textTheme.apply(
+          fontFamily: 'Helvetica',
+        ),
+        //fontFamily: 'Helvetica',
       ),
       initialRoute: '/',
       routes: {
@@ -59,7 +69,8 @@ class WooLaLa extends StatelessWidget {
         '/followinglist': (_) => FollowingListScreen(currentUser.email),
         '/createAccount': (_) => CreateUserName(),
         '/eula': (_) => EulaPage(),
-        '/registration': (_) => Registration(),
+        '/patronRegistration': (_) => Registration('Patron'),
+        '/businessRegistration': (_) => Registration('Business'),
       },
       onGenerateRoute: (settings) {
         if (settings.name == "/home") {
@@ -117,3 +128,10 @@ const MaterialColor primaryWhite = MaterialColor(
   },
 );
 const int _whitePrimaryValue = 0xFFFFFFFF;
+
+List<String> sort2Strings(String a, String b) {
+  if (a.compareTo(b)<=0) {
+    return [a,b,a+"#"+b];
+  }
+  return [b,a,b+"#"+a];
+}

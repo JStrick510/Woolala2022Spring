@@ -12,6 +12,9 @@ import 'package:http/http.dart' as http;
 import 'package:woolala_app/widgets/profile_card.dart';
 import 'package:woolala_app/widgets/card.dart';
 import 'dart:math';
+import 'dart:io' show Platform;
+import 'package:mailto/mailto.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class ProfilePage extends StatefulWidget {
   //the id of this profile
@@ -104,7 +107,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     profilePageOwner.profileName.substring(
                         0, min(22, profilePageOwner.profileName.length)),
                     style: TextStyle(
-                        fontSize: 30.0,
+                        fontSize: 20.0, //30
                         color: Colors.black,
                         fontWeight: FontWeight.bold),
                   ),
@@ -114,7 +117,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   padding: EdgeInsets.only(top: 1.0),
                   child: Text(
                     profilePageOwner.userName,
-                    style: TextStyle(fontSize: 16.0, color: Colors.black38),
+                    style: TextStyle(fontSize: 12.0, color: Colors.black38), //16
                   ),
                 ),
                 Container(
@@ -123,7 +126,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   child: Text(
                     profilePageOwner.bio,
                     style: TextStyle(
-                        fontSize: 20.0,
+                        fontSize: 16.0, //20
                         color: Colors.black54,
                         fontWeight: FontWeight.w600),
                   ),
@@ -135,7 +138,7 @@ class _ProfilePageState extends State<ProfilePage> {
                         child: Text(
                           profilePageOwner.url,
                           style: TextStyle(
-                              fontSize: 16.0,
+                              fontSize: 14.0, //16
                               color: Colors.black54,
                               fontWeight: FontWeight.w600),
                         ),
@@ -294,14 +297,14 @@ class _ProfilePageState extends State<ProfilePage> {
         Text(
           getFormattedText(count.toString()),
           style: TextStyle(
-              fontSize: 20.0, color: Colors.black, fontWeight: FontWeight.bold),
+              fontSize: 16.0, color: Colors.black, fontWeight: FontWeight.bold), //20
         ),
         Container(
           margin: EdgeInsets.only(top: 3.0),
           child: Text(
             title,
             style: TextStyle(
-                fontSize: 16.0,
+                fontSize: 12.0, //16
                 color: Colors.black,
                 fontWeight: FontWeight.w400),
           ),
@@ -367,14 +370,14 @@ class _ProfilePageState extends State<ProfilePage> {
         Text(
           count.toStringAsFixed(2),
           style: TextStyle(
-              fontSize: 20.0, color: Colors.black, fontWeight: FontWeight.bold),
+              fontSize: 16.0, color: Colors.black, fontWeight: FontWeight.bold), //20
         ),
         Container(
           margin: EdgeInsets.only(top: 3.0),
           child: Text(
             title,
             style: TextStyle(
-                fontSize: 18.0,
+                fontSize: 12.0, //18
                 color: Colors.black,
                 fontWeight: FontWeight.w400),
           ),
@@ -701,12 +704,12 @@ Future<void> showBlockConfirmDialog() async {
             child: Text(
               title,
               style:
-                  TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+                  TextStyle(color: Colors.black54, fontWeight: FontWeight.bold),
             ),
             alignment: Alignment.center,
             decoration: BoxDecoration(
               color: color,
-              border: Border.all(color: Colors.black, width: 2.0),
+              border: Border.all(color: Colors.black54, width: 2.0),
               borderRadius: BorderRadius.circular(6.0),
             ),
           ),
@@ -717,6 +720,24 @@ Future<void> showBlockConfirmDialog() async {
 
   editUserProfile() {
     Navigator.pushReplacementNamed(context, '/editProfile');
+  }
+
+  //prompts to the default mailing app to email only individual.
+  launchMailtoSingle() async {
+    var url = "www.google.com";
+    if (Platform.isAndroid) { //Play Store url
+      url = "https://play.google.com/store/apps/details?id=com.fashionxt.choosenxt&hl=en_US&gl=US";
+    } else if (Platform.isIOS) { //Apple Store url
+      url = "https://www.apple.com/store";
+    }
+    //String greeting = "Hi " + '${widget.wouldBuyNameList[index - 1]}' + ",\n\n";
+    final mailtoLink = Mailto(
+      to: [],
+      cc: [],
+      subject: 'Invitation to Join ChooseNXT',
+      body: "Click here to download: " + url,
+    );
+    await launch('$mailtoLink');
   }
 
   @override
@@ -741,6 +762,11 @@ Future<void> showBlockConfirmDialog() async {
             // color: Colors.white,
             onPressed: () => Navigator.push(
                 context, MaterialPageRoute(builder: (context) => SearchPage())),
+          ),
+          IconButton(
+            icon: Icon(Icons.person_add_alt_rounded),
+            color: Colors.black,
+            onPressed: launchMailtoSingle,
           ),
         ],
       ),
@@ -769,14 +795,14 @@ Future<void> showBlockConfirmDialog() async {
                                   currentUser.userID) {
                                 return Container(
                                     constraints: BoxConstraints(
-                                      minHeight: 570,
+                                      minHeight: 50,
                                       minWidth: double.infinity,
                                     ),
                                     child: OwnFeedCard(postIDs[index - 1]));
                               } else {
                                 return Container(
                                     constraints: BoxConstraints(
-                                      minHeight: 570,
+                                      minHeight: 50, //this is the space between the posts
                                       minWidth: double.infinity,
                                     ),
                                     child: FeedCard(
@@ -802,6 +828,8 @@ Future<void> showBlockConfirmDialog() async {
         },
         items: bottomBar.getItems(),
         backgroundColor: Colors.white,
+        unselectedItemColor: Colors.black,
+        selectedItemColor: Colors.black, //color was not asked to change but just in case
       ),
     );
   }

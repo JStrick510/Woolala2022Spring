@@ -27,6 +27,8 @@ app.listen(process.env.PORT || 5000, () => {
         collection = database.collection("Posts");
         userCollection = database.collection("Users");
         reportCollection = database.collection("ReportedPosts");
+        conversationCollection = database.collection("Conversations");
+        messageCollection = database.collection("Messages");
         console.log("Connected to `" + DATABASE_NAME + "`!");
     });
 });

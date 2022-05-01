@@ -4,27 +4,26 @@ import 'dart:io';
 // import 'package:apple_sign_in/apple_sign_in.dart';
 //import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:simple_animations/simple_animations.dart';
-//import 'homepage_screen.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+// import 'package:simple_animations/simple_animations.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:flutter_facebook_login/flutter_facebook_login.dart';
-//import 'package:carousel_slider/carousel_slider.dart';
+// import 'package:flutter_facebook_login/flutter_facebook_login.dart';
+import 'package:woolala_app/Provider/sign_in_provider.dart';
 import 'package:woolala_app/models/user.dart';
 import 'package:http/http.dart' as http;
-//import 'package:woolala_app/screens/homepage_screen.dart';
 import 'dart:convert';
-//import 'package:woolala_app/screens/createUserName.dart';
 import 'package:woolala_app/main.dart';
 
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import 'package:firebase_auth/firebase_auth.dart' as fireB;
 import 'package:crypto/crypto.dart';
-// import 'package:flutter/services.dart';
 
-final GoogleSignIn gSignIn = GoogleSignIn();
-final facebookLogin = FacebookLogin();
-final DateTime timestamp = DateTime.now();
+// final GoogleSignIn gSignIn = GoogleSignIn();
+// final facebookLogin = FacebookLogin();
+// final DateTime timestamp = DateTime.now();
 User currentUser;
+SignInProvider signInProvider =
+    SignInProvider(); // Required to call Facebook or Google log in method
 
 /// Generates a cryptographically secure random nonce, to be included in a
 /// credential request.
@@ -45,12 +44,12 @@ String sha256ofString(String input) {
 
 void googleLogoutUser() async {
   print("Google signed out!");
-  await gSignIn.signOut();
+  await signInProvider.logout();
 }
 
 void facebookLogoutUser() async {
   print("Facebook signed out!");
-  await facebookLogin.logOut();
+  await signInProvider.logout();
 }
 
 // called by save user to server methods
@@ -108,33 +107,8 @@ class _LoginScreenState extends State<LoginScreen> {
     _emailController.addListener(() => setState(() {}));
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      signInProcess();
+      // signInProcess();
     });
-  }
-
-  void googleLoginUser() {
-    print("Google signing in!");
-    try {
-      gSignIn.signIn();
-    } catch (error) {
-      print(error);
-    }
-  }
-
-  void facebookLoginUser() async {
-    var facebookLoginResult = await facebookLogin.logIn(['email']);
-    switch (facebookLoginResult.status) {
-      case FacebookLoginStatus.error:
-        print("Facebook login error.");
-        print("Error from Facebook '${facebookLoginResult.errorMessage}'");
-        break;
-      case FacebookLoginStatus.cancelledByUser:
-        print("Facebook login cancelled by user.");
-        break;
-      case FacebookLoginStatus.loggedIn:
-        signInProcess();
-        break;
-    }
   }
 
   void signInWithApple() async {
@@ -209,21 +183,6 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
-  void signInProcess() {
-    var keepGoing = true;
-    if (keepGoing) {
-      gSignIn.signInSilently(suppressErrors: true).then((gSignInAccount) {
-        keepGoing = false;
-        controlGoogleSignIn(gSignInAccount);
-      }).catchError((gError) {
-        print("Error Message: " + gError);
-      });
-    }
-    if (keepGoing) {
-      controlFacebookSignIn();
-    }
-  }
-
   // provides an error when trying to set state
   @override
   void dispose() {
@@ -231,168 +190,6 @@ class _LoginScreenState extends State<LoginScreen> {
     _emailController.dispose();
     _passwordController.dispose();
     super.dispose();
-  }
-
-  // called during initState
-  void controlGoogleSignIn(GoogleSignInAccount signInAccount) async {
-    if (signInAccount != null) {
-      print("Google - Account token remembered.");
-      await saveGoogleUserInfoToServer();
-      if (!_disposed) {
-        setState(() {
-          isSignedInWithGoogle = true;
-        });
-      }
-    } else {
-      print("Google - no account found.");
-      if (!_disposed) {
-        setState(() {
-          isSignedInWithGoogle = false;
-        });
-      }
-    }
-  }
-
-  void controlFacebookSignIn() async {
-    showAlertDialog(context);
-    var tempToken = (await facebookLogin.currentAccessToken);
-    if (tempToken == null) {
-      print("Facebook - no account found.");
-      Navigator.pop(context);
-      if (!_disposed) {
-        setState(() {
-          isSignedInWithFacebook = false;
-        });
-      }
-    } else {
-      print("Facebook - Account token remembered.");
-      await saveFacebookUserInfoToServer();
-      if (!_disposed) {
-        setState(() {
-          isSignedInWithFacebook = true;
-        });
-      }
-    }
-  }
-
-// called in controlGoogleSignIn
-  saveGoogleUserInfoToServer() async {
-    showAlertDialog(context);
-    final GoogleSignInAccount gAccount = gSignIn.currentUser;
-    User tempUser = await getDoesUserExists(gAccount.email);
-    if (tempUser != null && tempUser.userID != "") //account exists
-    {
-      print("User account found with Google email.");
-      currentUser = tempUser;
-      Navigator.pop(context);
-      isSignedInWithGoogle = true;
-      Navigator.pushReplacementNamed(
-        context,
-        '/home',
-        arguments: [
-          isSignedInWithGoogle,
-          isSignedInWithFacebook,
-          isSignedInWithApple,
-        ],
-      );
-    } else {
-      print("Making an account with Google.");
-      //insert eula here
-      var result = await Navigator.pushNamed(context, '/eula');
-      if (result == null || result == false) {
-        googleLogoutUser();
-        Navigator.pop(context);
-        return;
-      }
-      User u = User(
-        googleID: gAccount.id,
-        email: gAccount.email,
-        userName: '@' + base64.encode(latin1.encode(gAccount.email)).toString(),
-        profileName: gAccount.displayName,
-        profilePic: 'default',
-        bio: "This is my new ChooseNXT Account!",
-        userID: base64.encode(latin1.encode(gAccount.email)).toString(),
-        followers: [],
-        numRated: 0,
-        postIDs: [],
-        following: [base64.encode(latin1.encode(gAccount.email)).toString()],
-        private: false,
-        ratedPosts: [],
-        url: "",
-        blockedUsers: [],
-        brand: false,
-      );
-      await insertUser(u);
-      currentUser = u;
-      _firstTimeLogin = true;
-      Navigator.pop(context);
-      isSignedInWithGoogle = true;
-      Navigator.pushReplacementNamed(context, '/createAccount');
-    }
-  }
-
-// called in controlGoogleSignIn
-  saveFacebookUserInfoToServer() async {
-    var tempToken = (await facebookLogin.currentAccessToken);
-    var token = tempToken.token;
-    final graphResponse = await http.get(Uri.parse(
-        'https://graph.facebook.com/v2.12/me?fields=name,first_name,last_name,picture.type(large),email&access_token=$token'));
-    final profile = json.decode(graphResponse.body);
-    User tempUser = await getDoesUserExists(profile['email']);
-    switch (tempUser) {
-      case null:
-        print("Making an account with Facebook.");
-        //insert eula here
-        var result = await Navigator.pushNamed(context, '/eula');
-        if (result == null || result == false) {
-          facebookLogoutUser();
-          Navigator.pop(context);
-          return;
-        }
-        User u = User(
-          facebookID: profile['id'],
-          email: profile['email'],
-          profileName: profile['name'],
-          profilePic: "default",
-          bio: "This is my new ChooseNXT Account!",
-          userID: base64.encode(latin1.encode(profile['email'])).toString(),
-          userName:
-              '@' + base64.encode(latin1.encode(profile['email'])).toString(),
-          numRated: 0,
-          postIDs: [],
-          following: [
-            base64.encode(latin1.encode(profile['email'])).toString()
-          ],
-          followers: [],
-          ratedPosts: [],
-          private: false,
-          url: "",
-          blockedUsers: [],
-          brand: false,
-        );
-        await insertUser(u);
-        currentUser = u;
-        _firstTimeLogin = true;
-        Navigator.pop(context);
-        isSignedInWithFacebook = true;
-        Navigator.pushReplacementNamed(context, '/createAccount');
-        break;
-      default:
-        print("User account found with Facebook email.");
-        currentUser = tempUser;
-        Navigator.pop(context);
-        isSignedInWithFacebook = true;
-        Navigator.pushReplacementNamed(
-          context,
-          '/home',
-          arguments: [
-            isSignedInWithGoogle,
-            isSignedInWithFacebook,
-            isSignedInWithApple,
-          ],
-        );
-        break;
-    }
   }
 
   saveAppleUserInfoToServer(firstTime, email, fullName) async {
@@ -436,6 +233,7 @@ class _LoginScreenState extends State<LoginScreen> {
         url: "",
         blockedUsers: [],
         brand: false,
+        conversations: [],
       );
       await insertUser(u);
       currentUser = u;
@@ -444,15 +242,6 @@ class _LoginScreenState extends State<LoginScreen> {
       isSignedInWithApple = true;
       Navigator.pushReplacementNamed(context, '/createAccount');
     }
-  }
-
-// used in the CarouselSlider
-  List<T> map<T>(List list, Function handler) {
-    List<T> result = [];
-    for (var i = 0; i < list.length; i++) {
-      result.add(handler(i, list[i]));
-    }
-    return result;
   }
 
   // Go to the Register page to create an account with email and password
@@ -466,20 +255,44 @@ class _LoginScreenState extends State<LoginScreen> {
         children: <Widget>[
           Text(
             'Don\'t have an account ?',
-            style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
-          ),
-          SizedBox(
-            width: 10,
+            style: TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+                color: Colors.white70),
           ),
           TextButton(
             onPressed: () {
-              Navigator.pushReplacementNamed(context, '/registration');
+              showDialog(
+                context: context,
+                builder: (_) => SimpleDialog(
+                  title: Text(
+                    'What account tier do you want to register for?',
+                    style: TextStyle(fontSize: 16),
+                  ),
+                  children: [
+                    SimpleDialogOption(
+                      child: const Text('Patron'),
+                      onPressed: () {
+                        Navigator.pushReplacementNamed(
+                            context, '/patronRegistration');
+                      },
+                    ),
+                    SimpleDialogOption(
+                      child: const Text('Business'),
+                      onPressed: () {
+                        Navigator.pushReplacementNamed(
+                            context, '/businessRegistration');
+                      },
+                    ),
+                  ],
+                ),
+              );
             },
             child: Text(
               'Register Here',
               style: TextStyle(
                   color: Color(0xfff79c4f),
-                  fontSize: 13,
+                  fontSize: 14,
                   fontWeight: FontWeight.w600),
             ),
           )
@@ -490,21 +303,27 @@ class _LoginScreenState extends State<LoginScreen> {
 
   Widget _emailField() {
     return Container(
-      padding: EdgeInsets.fromLTRB(60, 20, 60, 10),
+      padding: EdgeInsets.symmetric(vertical: 5, horizontal: 60),
       child: Theme(
         data: ThemeData().copyWith(
           colorScheme: ThemeData().colorScheme.copyWith(
-                primary: Colors.black,
+                primary: Colors.white70,
+                onSurface: Colors.white70,
               ),
         ),
         child: TextField(
+          style: TextStyle(color: Colors.white),
           controller: _emailController,
           keyboardType: TextInputType.emailAddress,
           textInputAction: TextInputAction.done,
           decoration: InputDecoration(
             border: OutlineInputBorder(),
             hintText: 'name@example.com',
-            label: const Text('email'),
+            hintStyle: TextStyle(color: Colors.white70),
+            label: const Text(
+              'email',
+              style: TextStyle(color: Colors.white54, fontSize: 17),
+            ),
             prefixIcon: Icon(Icons.email),
             suffixIcon: _emailController.text.isEmpty
                 ? Container(
@@ -522,19 +341,25 @@ class _LoginScreenState extends State<LoginScreen> {
 
   Widget _passwordField() {
     return Container(
-      padding: EdgeInsets.fromLTRB(60, 10, 60, 10),
+      padding: EdgeInsets.symmetric(vertical: 5, horizontal: 60),
       child: Theme(
         data: ThemeData().copyWith(
           colorScheme: ThemeData().colorScheme.copyWith(
-                primary: Colors.black,
+                primary: Colors.white70,
+                onSurface: Colors.white70,
               ),
         ),
         child: TextField(
+          style: TextStyle(color: Colors.white),
           controller: _passwordController,
           decoration: InputDecoration(
             border: OutlineInputBorder(),
             hintText: 'Enter your password',
-            label: const Text('password'),
+            hintStyle: TextStyle(color: Colors.white70),
+            label: const Text(
+              'password',
+              style: TextStyle(color: Colors.white54, fontSize: 17),
+            ),
             suffixIcon: IconButton(
               icon: isPasswordVisble
                   ? Icon(Icons.visibility)
@@ -549,190 +374,274 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  Widget _loginButton() {
+  Widget _signInButton() {
     return Container(
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.all(Radius.circular(5)),
-        boxShadow: <BoxShadow>[
-          BoxShadow(
-              color: Colors.grey.shade200,
-              offset: Offset(2, 4),
-              blurRadius: 5,
-              spreadRadius: 2)
-        ],
-      ),
+      padding: EdgeInsets.symmetric(horizontal: 60, vertical: 5),
+      child: ElevatedButton(
+          style: ElevatedButton.styleFrom(
+            primary: Colors.grey.shade400,
+            onPrimary: Colors.black,
+            minimumSize: const Size(double.infinity, 50),
+          ),
+          child: Text(
+            'Log In',
+            style: TextStyle(
+              color: Colors.grey.shade800,
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          onPressed: () async {
+            final password = _passwordController.text;
+            final email = _emailController.text;
+            try {
+              final userCredential =
+                  await fireB.FirebaseAuth.instance.signInWithEmailAndPassword(
+                email: email,
+                password: password,
+              );
+              // print(userCredential);
+              User tempUser = await getDoesUserExists(email);
+              if (tempUser != null && tempUser.userID != "") //account exists
+              {
+                print("User account found with email and password.");
+                currentUser = tempUser;
+                Navigator.pushReplacementNamed(context, '/home');
+              }
+            } on fireB.FirebaseAuthException catch (e) {
+              // errorHandling(e);
+            }
+          }),
+    );
+  }
+
+  // Users should get a password rest email when click on this button
+  // It must be given the email address to send the email (_emailcontroller != null)
+  // Firebase take cares of sending the email. So, the email context can be changed on
+  // "Console.firebase.com"
+  Widget _forgotPassword() {
+    return Container(
       child: TextButton(
-        style: ButtonStyle(
-          foregroundColor: MaterialStateProperty.all<Color>(Colors.blue),
+        style: TextButton.styleFrom(
+          primary: Colors.black45,
+        ),
+        child: const Text(
+          'Forgot your password?',
+          style: TextStyle(color: Colors.white70),
         ),
         onPressed: () async {
-          final password = _passwordController.text;
-          final email = _emailController.text;
-          try {
-            final userCredential =
-                await fireB.FirebaseAuth.instance.signInWithEmailAndPassword(
-              email: email,
-              password: password,
+          if (_emailController.text.isEmpty) {
+            final snackBar = SnackBar(
+                content: const Text('Please enter your email address first!'));
+            ScaffoldMessenger.of(context).showSnackBar(snackBar);
+            return;
+          } else {
+            showDialog(
+              context: context,
+              builder: (_) => SimpleDialog(
+                title: Text(
+                  'Do you want to reset your password?',
+                  style: TextStyle(fontSize: 16),
+                ),
+                children: [
+                  SimpleDialogOption(
+                    child: const Text('Yes'),
+                    onPressed: () async {
+                      await fireB.FirebaseAuth.instance.sendPasswordResetEmail(
+                        email: _emailController.text,
+                      );
+                      final snackBar = SnackBar(
+                        content: Text(
+                          'A reset pasword email was sent to ' +
+                              _emailController.text,
+                        ),
+                      );
+                      Navigator.pop(context);
+                      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                    },
+                  ),
+                  SimpleDialogOption(
+                    child: const Text('No'),
+                    onPressed: () {
+                      Navigator.pop(context); // Close the pop-up
+                    },
+                  ),
+                ],
+              ),
             );
-            print(userCredential);
-            User tempUser = await getDoesUserExists(email);
-            if (tempUser != null && tempUser.userID != "") //account exists
-            {
-              print("User account found with email and password.");
-              currentUser = tempUser;
-              Navigator.pushReplacementNamed(context, '/home');
-            }
-          } on fireB.FirebaseAuthException catch (e) {
-            // errorHandling(e);
           }
         },
-        child: Text('Login'),
       ),
     );
   }
 
+  Widget _googleSignInButton(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.symmetric(vertical: 5, horizontal: 60),
+      child: ElevatedButton.icon(
+        style: ElevatedButton.styleFrom(
+          primary: Colors.blueGrey[50],
+          onPrimary: Colors.black,
+          minimumSize: const Size(double.infinity, 50),
+        ),
+        onPressed: () async {
+          GoogleSignInAccount googleUser = await signInProvider.googleLogIn();
+          _redirectUser(
+            email: googleUser.email,
+            onFailureMessage: 'Please register with your Google account first!',
+          );
+        },
+        label: const Text('Sign in with Google'),
+        icon: const FaIcon(
+          FontAwesomeIcons.google,
+          color: Colors.red,
+        ),
+      ),
+    );
+  }
+
+  Widget _facebookSignInButton(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.symmetric(vertical: 5, horizontal: 60),
+      child: ElevatedButton.icon(
+        style: ElevatedButton.styleFrom(
+          primary: Colors.blueGrey[50],
+          onPrimary: Colors.black,
+          minimumSize: const Size(double.infinity, 50),
+        ),
+        onPressed: () async {
+          Map<String, dynamic> faceBookUser =
+              await signInProvider.facebookLogIn();
+          _redirectUser(
+            email: faceBookUser["email"],
+            onFailureMessage:
+                'Please register with your Facebook account first!',
+          );
+        },
+        label: const Text('Sign in with Facebook'),
+        icon: const FaIcon(
+          FontAwesomeIcons.facebook,
+          color: Colors.blue,
+        ),
+      ),
+    );
+  }
+
+  Widget _divider() {
+    return Container(
+      margin: EdgeInsets.symmetric(vertical: 10),
+      child: Row(
+        children: [
+          SizedBox(
+            width: 25,
+          ),
+          Expanded(
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: 10),
+              child: Divider(
+                thickness: 1,
+                color: Colors.white,
+              ),
+            ),
+          ),
+          const Text(
+            '  or  ',
+            style: TextStyle(color: Colors.white70),
+          ),
+          Expanded(
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: 10),
+              child: Divider(
+                thickness: 1,
+                color: Colors.white,
+              ),
+            ),
+          ),
+          SizedBox(
+            width: 25,
+          ),
+        ],
+      ),
+    );
+  }
+
+  /* When users attempt to sign in, they should be redirected to the Feed page
+   if the user already exist in the database.
+   This function updates the currentUser global variable which is required in 
+   other pages to access the current user information.
+  */
+  void _redirectUser(
+      {@required String email, @required String onFailureMessage}) async {
+    User tempUser = await getDoesUserExists(email);
+    // User should be redirected to Feed page after a successful login
+    if (tempUser != null && tempUser.userID != "") {
+      currentUser = tempUser;
+      Navigator.pushReplacementNamed(context, '/home');
+    } else {
+      // User should create an account first in case the user has not been registered
+      signInProvider.logout();
+      final snackBar = SnackBar(content: Text(onFailureMessage));
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    // final tween = MultiTrackTween([
-    //   Track("color1").add(Duration(seconds: 3),
-    //       ColorTween(begin: Colors.white, end: Colors.white)),
-    //   Track("color2").add(Duration(seconds: 3),
-    //       ColorTween(begin: Colors.white, end: Colors.white)),
-    //   Track("color3").add(Duration(seconds: 3),
-    //       ColorTween(begin: Colors.white, end: Colors.white))
-    // ]);
-
-    // if (_firstTimeLogin) {
-    //   return CreateUserName();
-    // } else if (isSignedInWithGoogle ||
-    //     isSignedInWithFacebook ||
-    //     isSignedInWithApple) {
-    //   return HomepageScreen(
-    //       isSignedInWithGoogle, isSignedInWithFacebook, isSignedInWithApple);
-    // } else {
     return Scaffold(
       key: _scaffoldKey,
-      // body: Center(
-      // child: ControlledAnimation(
-      //     playback: Playback.MIRROR,
-      //     tween: tween,
-      //     duration: tween.duration,
-      //     builder: (context, animation) {
-      //       return Container(
       body: Container(
-        child: Container(
-          padding: EdgeInsets.symmetric(vertical: 25),
-          width: double.infinity,
-          // decoration: BoxDecoration(
-          //     gradient: LinearGradient(
-          //         begin: Alignment.topCenter,
-          //         end: Alignment.bottomCenter,
-          //         colors: [
-          //       animation["color1"],
-          //       animation["color2"],
-          //       animation["color3"]
-          //     ]
-          //     )),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              new Image.asset('./assets/logos/ChooseNXT wide logo WBG.png',
-                  width: 300,
-                  height: 100,
-                  fit: BoxFit.contain,
-                  semanticLabel: 'WooLaLa logo'),
-              // Text(
-              //   "Powered by: ",
-              //   style: TextStyle(color: Colors.black, fontSize: 16),
-              // ),
-              // Image.asset('assets/logos/fashionNXT_logo.png',
-              //     width: 150,
-              //     height: 30,
-              //     fit: BoxFit.contain,
-              //     semanticLabel: 'FashioNXT logo'),
-              // SizedBox(
-              //   height: 25,
-              // ),
-              // CarouselSlider(
-              //   options: CarouselOptions(
-              //     height: 160.0,
-              //     initialPage: 0,
-              //     enlargeCenterPage: true,
-              //     autoPlay: true,
-              //     reverse: false,
-              //     enableInfiniteScroll: true,
-              //     autoPlayInterval: Duration(seconds: 4),
-              //     autoPlayAnimationDuration:
-              //         Duration(milliseconds: 2000),
-              //     scrollDirection: Axis.horizontal,
-              //   ),
-              //   items: images.map((imgUrl) {
-              //     return Builder(
-              //       builder: (BuildContext context) {
-              //         return Container(
-              //           width: MediaQuery.of(context).size.width,
-              //           margin:
-              //               EdgeInsets.symmetric(horizontal: 10.0),
-              //           decoration: BoxDecoration(
-              //             color: Colors.black,
-              //           ),
-              //           child: Image.network(
-              //             imgUrl,
-              //             fit: BoxFit.fill,
-              //           ),
-              //         );
-              //       },
-              //     );
-              //   }).toList(),
-              // ),
-              // SizedBox(
-              //   height: 25,
-              // ),
-
-              _emailField(),
-
-              _passwordField(),
-
-              // Submit button
-              _loginButton(),
-
-              // Devider
-              Container(
-                margin: EdgeInsets.symmetric(vertical: 10),
-                child: Row(
-                  children: [
-                    SizedBox(
-                      width: 25,
-                    ),
-                    Expanded(
-                      child: Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 10),
-                        child: Divider(
-                          thickness: 1,
-                        ),
-                      ),
-                    ),
-                    Text('  or  '),
-                    Expanded(
-                      child: Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 10),
-                        child: Divider(
-                          thickness: 1,
-                        ),
-                      ),
-                    ),
-                    SizedBox(
-                      width: 25,
-                    ),
-                  ],
-                ),
-              ),
-
-              _buildSocialButtonRow(),
-
-              _noAccount(),
+        decoration: BoxDecoration(
+          // Box decoration takes a gradient
+          gradient: LinearGradient(
+            // Where the linear gradient begins and ends
+            begin: Alignment.bottomLeft,
+            end: Alignment.topRight,
+            // Add one stop for each color. Stops should increase from 0 to 1
+            stops: [0.2, 0.5, 0.7, 0.9],
+            colors: [
+              // Colors are easy thanks to Flutter's Colors class.
+              Colors.black87,
+              Colors.black54,
+              Colors.black38,
+              Colors.black26,
             ],
           ),
+        ),
+        child: ListView(
+          children: [
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                SizedBox(height: 60),
+                new Image.asset('./assets/logos/ChooseNXT wide logo WBG.png',
+                    width: 400,
+                    height: 95,
+                    // color: Colors.blueGrey[900],
+                    fit: BoxFit.contain,
+                    semanticLabel: 'WooLaLa logo'),
+                Container(
+                  alignment: Alignment.bottomCenter,
+                  child: Text(
+                    'Choose New Releases from Creatives',
+                    style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        fontStyle: FontStyle.italic,
+                        color: Colors.blueGrey[900]),
+                  ),
+                ),
+                SizedBox(height: 30),
+                _emailField(),
+                _passwordField(),
+                _signInButton(),
+                _forgotPassword(),
+                _divider(),
+                _googleSignInButton(context),
+                _facebookSignInButton(context),
+                _noAccount(),
+              ],
+            ),
+          ],
         ),
       ),
     );
@@ -740,128 +649,33 @@ class _LoginScreenState extends State<LoginScreen> {
 
   // }
 
-  Widget _buildSocialBtn(Function onTap, AssetImage logo, String keyText) {
-    return GestureDetector(
-      onTap: () {
-        onTap();
-        signInProcess();
-      },
-      key: ValueKey(keyText),
-      child: Container(
-        height: 60.0,
-        width: 60.0,
-        decoration: BoxDecoration(
-          shape: BoxShape.circle,
-          color: Colors.white,
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black26,
-              offset: Offset(0, 2),
-              blurRadius: 20.0,
-            ),
-          ],
-          image: DecorationImage(
-            image: logo,
+//progress indicator
+  showAlertDialog(BuildContext context) {
+    AlertDialog alert = AlertDialog(
+        content: Container(
+          child: Row(
+            children: <Widget>[
+              SizedBox(
+                width: 200,
+                height: 200,
+                child: CircularProgressIndicator(
+                  backgroundColor: Colors.transparent,
+                  strokeWidth: 8,
+                ),
+              ),
+            ],
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
           ),
         ),
-      ),
+        backgroundColor: Colors.white.withOpacity(0.7),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)));
+    showDialog(
+      barrierDismissible: false,
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      },
     );
   }
-
-  Widget _buildSocialButtonRow() {
-    return Padding(
-      padding: EdgeInsets.symmetric(vertical: 10.0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: Platform.isIOS
-            ? <Widget>[
-                _buildSocialBtn(
-                  () {
-                    facebookLogoutUser();
-                    googleLogoutUser();
-                    facebookLoginUser();
-                  },
-                  AssetImage(
-                    'assets/logos/facebook_logo.png',
-                  ),
-                  "Facebook",
-                ),
-                _buildSocialBtn(
-                  () {
-                    googleLogoutUser();
-                    facebookLogoutUser();
-                    googleLoginUser();
-                  },
-                  AssetImage(
-                    'assets/logos/google_logo.png',
-                  ),
-                  "Google",
-                ),
-                _buildSocialBtn(
-                  () {
-                    googleLogoutUser();
-                    facebookLogoutUser();
-                    signInWithApple();
-                  },
-                  AssetImage('assets/logos/logo_apple.png'),
-                  'Apple',
-                )
-              ]
-            : <Widget>[
-                _buildSocialBtn(
-                  () {
-                    facebookLogoutUser();
-                    googleLogoutUser();
-                    facebookLoginUser();
-                  },
-                  AssetImage(
-                    'assets/logos/facebook_logo.png',
-                  ),
-                  "Facebook",
-                ),
-                _buildSocialBtn(
-                  () {
-                    googleLogoutUser();
-                    facebookLogoutUser();
-                    googleLoginUser();
-                  },
-                  AssetImage(
-                    'assets/logos/google_logo.png',
-                  ),
-                  "Google",
-                ),
-              ],
-      ),
-    );
-  }
-}
-
-//progress indicator
-showAlertDialog(BuildContext context) {
-  AlertDialog alert = AlertDialog(
-      content: Container(
-        child: Row(
-          children: <Widget>[
-            SizedBox(
-              width: 200,
-              height: 200,
-              child: CircularProgressIndicator(
-                backgroundColor: Colors.transparent,
-                strokeWidth: 8,
-              ),
-            ),
-          ],
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-        ),
-      ),
-      backgroundColor: Colors.white.withOpacity(0.7),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)));
-  showDialog(
-    barrierDismissible: false,
-    context: context,
-    builder: (BuildContext context) {
-      return alert;
-    },
-  );
 }

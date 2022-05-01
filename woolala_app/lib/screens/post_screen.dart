@@ -70,7 +70,7 @@ class _PostScreenState extends State<PostScreen> {
     images = arguments[0];
     encodes = arguments[1];
 
-    _image = images[0];
+    _image = images[0]; //select first image as preview image
     //img64 = arguments[1];
     return Scaffold(
       resizeToAvoidBottomInset: true,
@@ -86,7 +86,7 @@ class _PostScreenState extends State<PostScreen> {
       body: SingleChildScrollView(
         child: Column(
           children: <Widget>[
-            Container(
+            Container( //preview image
               width: MediaQuery.of(context).size.width,
               height: MediaQuery.of(context).size.width,
               decoration: BoxDecoration(
@@ -110,6 +110,19 @@ class _PostScreenState extends State<PostScreen> {
               controller: _c,
             ),
             SizedBox(height: 20.0),
+                TextField(
+                maxLength: 280,
+                maxLengthEnforced: true,
+                //maxLengthEnforcement: MaxLengthEnforcement.enforced,
+                textInputAction: TextInputAction.go,
+                keyboardType: TextInputType.multiline,
+                maxLines: null,
+                decoration: new InputDecoration(
+                    hintText: "Enter the minimum price!",
+                    contentPadding: const EdgeInsets.all(20.0)),
+                controller: _d,
+              ),
+            SizedBox(height: 20.0),
             TextField(
               maxLength: 280,
               maxLengthEnforced: true,
@@ -118,9 +131,9 @@ class _PostScreenState extends State<PostScreen> {
               keyboardType: TextInputType.multiline,
               maxLines: null,
               decoration: new InputDecoration(
-                  hintText: "Enter the minimum price!",
+                  hintText: "Enter the maximum price!",
                   contentPadding: const EdgeInsets.all(20.0)),
-              controller: _d,
+              controller: _e,
             ),
             SizedBox(height: 20.0),
             TextField(
@@ -172,6 +185,7 @@ class _PostScreenState extends State<PostScreen> {
             SizedBox(height: 100.0),
             FloatingActionButton(
               child: Icon(Icons.check),
+              foregroundColor: Colors.white,
               onPressed: () => {
                 setState(() {
                   this._text = _c.text;
@@ -184,7 +198,7 @@ class _PostScreenState extends State<PostScreen> {
                     encodes[1], encodes[2], encodes[3], encodes[4], date,
                     _text, currentUser.userID, currentUser.profileName, _cat ,_minprice ,_maxprice),
                 Navigator.pop(context),
-                Navigator.pushReplacementNamed(context, '/home'),
+                Navigator.pushReplacementNamed(context, '/profile'),
               },
             ),
             SizedBox(height: 100.0, width: 20),

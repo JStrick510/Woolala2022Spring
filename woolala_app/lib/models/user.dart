@@ -27,6 +27,7 @@ class User {
   List ratedPosts;
   List blockedUsers;
   bool brand;
+  List conversations;
 
   User({
     this.userID,
@@ -46,6 +47,7 @@ class User {
     this.ratedPosts,
     this.blockedUsers,
     this.brand,
+    this.conversations,
   });
 
   User.fromJSON(Map<String, dynamic> json)
@@ -65,7 +67,8 @@ class User {
         private = json['private'],
         ratedPosts = json['ratedPosts'],
         blockedUsers = json['blockedUsers'],
-        brand = json['brand'];
+        brand = json['brand'],
+        conversations = json['conversations'];
 
   Map<String, dynamic> toJSON() => {
         'userID': userID,
@@ -85,6 +88,7 @@ class User {
         'ratedPosts': ratedPosts,
         'blockedUsers': blockedUsers,
         'brand': brand,
+        'conversations': conversations,
       };
 
   Future<double> getAvgScore() async {
@@ -155,7 +159,7 @@ class User {
     });
   }
 
-  Future<http.Response> isUserNameTaken(String n) {
+  static Future<http.Response> isUserNameTaken(String n) {
     String uName = n;
     if (uName.isNotEmpty && uName[0] != '@') {
       uName = '@' + n;
