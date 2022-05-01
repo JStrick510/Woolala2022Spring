@@ -136,6 +136,19 @@ class _PostScreenState extends State<PostScreen> {
               controller: _e,
             ),
             SizedBox(height: 20.0),
+            TextField(
+              maxLength: 280,
+              maxLengthEnforced: true,
+              //maxLengthEnforcement: MaxLengthEnforcement.enforced,
+              textInputAction: TextInputAction.go,
+              keyboardType: TextInputType.multiline,
+              maxLines: null,
+              decoration: new InputDecoration(
+                  hintText: "Enter the maximum price!",
+                  contentPadding: const EdgeInsets.all(20.0)),
+              controller: _e,
+            ),
+            SizedBox(height: 20.0),
             Text("Enter Category of Post:"),
 
             DropdownButton(
@@ -183,7 +196,7 @@ class _PostScreenState extends State<PostScreen> {
                 print(_text),
                 createPost(currentUser.userID + ":::" + getNewID(), encodes[0],
                     encodes[1], encodes[2], encodes[3], encodes[4], date,
-                    _text, currentUser.userID, currentUser.profileName, _cat ,_minprice, _maxprice),
+                    _text, currentUser.userID, currentUser.profileName, _cat ,_minprice ,_maxprice),
                 Navigator.pop(context),
                 Navigator.pushReplacementNamed(context, '/profile'),
               },
