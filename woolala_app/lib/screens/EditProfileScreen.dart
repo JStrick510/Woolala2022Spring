@@ -87,7 +87,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
   }
 
   Future getImageGallery() async {
-    final pickedFile = await picker.pickImage (source: ImageSource.gallery);
+    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
     if (pickedFile != null) {
       //_image = File(pickedFile.path);
       _image = await cropProfilePic(pickedFile.path);
@@ -98,12 +98,11 @@ class _EditProfilePageState extends State<EditProfilePage> {
         //print("Res: " + res.toString());
         //Navigator.pop(context);
         Navigator.pushReplacementNamed(context, '/editProfile');
-      }else {
+      } else {
         print('No image selected.');
       }
     } else {
-      final snackBar =
-      SnackBar(content: Text('No image has been selected'));
+      final snackBar = SnackBar(content: Text('No image has been selected'));
       ScaffoldMessenger.of(context).showSnackBar(snackBar);
       //http.Response res = await currentUser.setProfilePic('default');
       //Navigator.pushReplacementNamed(context, '/editProfile');
@@ -194,20 +193,21 @@ class _EditProfilePageState extends State<EditProfilePage> {
             child: Column(
               children: <Widget>[
                 Padding(
-                  padding: EdgeInsets.only(top: 16.0, bottom: 7.0),
+                  padding: EdgeInsets.only(top: 16.0),
                   child: Column(children: <Widget>[
                     GestureDetector(
                       onTap: () => {
-                        getImageGallery(),
+                        // getImageGallery(),
                       },
                       child: currentUser.createProfileAvatar(),
                     )
                   ]),
                 ),
                 Padding(
-                  padding: EdgeInsets.all(16.0),
+                  padding: EdgeInsets.fromLTRB(16, 0, 16, 16),
                   child: Column(
-                    children: <Widget>[
+                    children: [
+                      _changeProfileButton(),
                       createProfileNameTextFormField(),
                       createHandleTextFormField(),
                       createBioTextFormField(),
@@ -313,34 +313,34 @@ class _EditProfilePageState extends State<EditProfilePage> {
     );
   }
 
- Column createHandleTextFormField(){
- return Column(
-       crossAxisAlignment: CrossAxisAlignment.start,
-       children: <Widget>[
-         Padding(
-           padding: EdgeInsets.only(top: 13.0),
-           child: Text(
-             "User Handle",
-             style: TextStyle(color: Colors.black),
-           ),
-         ),
-         TextField(
-           style: TextStyle(color: Colors.black),
-           controller: handleController,
-           decoration: InputDecoration(
-             hintText: "Enter user handle here",
-             enabledBorder: UnderlineInputBorder(
-               borderSide: BorderSide(color: Colors.grey),
-             ),
-             focusedBorder: UnderlineInputBorder(
-               borderSide: BorderSide(color: Colors.black),
-             ),
-             hintStyle: TextStyle(color: Colors.grey),
-           ),
-         )
-       ],
-     );
- }
+  Column createHandleTextFormField() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        Padding(
+          padding: EdgeInsets.only(top: 13.0),
+          child: Text(
+            "User Handle",
+            style: TextStyle(color: Colors.black),
+          ),
+        ),
+        TextField(
+          style: TextStyle(color: Colors.black),
+          controller: handleController,
+          decoration: InputDecoration(
+            hintText: "Enter user handle here",
+            enabledBorder: UnderlineInputBorder(
+              borderSide: BorderSide(color: Colors.grey),
+            ),
+            focusedBorder: UnderlineInputBorder(
+              borderSide: BorderSide(color: Colors.black),
+            ),
+            hintStyle: TextStyle(color: Colors.grey),
+          ),
+        )
+      ],
+    );
+  }
 
   Column createProfileNameTextFormField() {
     return Column(
@@ -477,5 +477,40 @@ class _EditProfilePageState extends State<EditProfilePage> {
     //print(img64);
     http.Response res = await currentUser.setProfilePic(img64);
     Navigator.pushReplacementNamed(context, '/editProfile');
+  }
+
+  Widget _changeProfileButton() {
+    return Container(
+      child: TextButton(
+        onPressed: () async {
+          showDialog(
+            context: context,
+            builder: (_) => SimpleDialog(
+              children: [
+                SimpleDialogOption(
+                  child: const Text('Remove photo'),
+                  onPressed: () async {
+                    final img64 = "default";
+                    await currentUser.setProfilePic(img64);
+                    setState(() {});
+                    Navigator.pop(context);
+                  },
+                ),
+                SimpleDialogOption(
+                  child: const Text('Choose from library'),
+                  onPressed: () {
+                    getImageGallery();
+                  },
+                ),
+              ],
+            ),
+          );
+        },
+        child: Text(
+          "Change or remove profile photo",
+          style: TextStyle(color: Color.fromARGB(255, 25, 94, 150)),
+        ),
+      ),
+    );
   }
 }
