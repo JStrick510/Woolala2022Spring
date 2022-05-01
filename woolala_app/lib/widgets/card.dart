@@ -62,7 +62,7 @@ class _FeedCardState extends State<FeedCard> {
   var stars = 2.5;
   bool rated = false;
   Icon wouldBuy = Icon(Icons.add_shopping_cart);
-  double _currentSliderValue = 20;
+  double _currentSliderValue = 40;
 
   ui.Image customImage;
   double sliderValue = 0.0;
