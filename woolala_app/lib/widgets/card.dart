@@ -19,7 +19,7 @@ import 'dart:convert';
 //import 'package:pull_to_refresh/pull_to_refresh.dart';
 //import 'package:flutter_image_slideshow/flutter_image_slideshow.dart';
 
-//import 'dart:ui' as ui;
+import 'dart:ui' as ui;
 import 'dart:io';
 //import 'package:woolala_app/screens/login_screen.dart';
 //import 'package:image_picker/image_picker.dart';
@@ -64,12 +64,20 @@ class _FeedCardState extends State<FeedCard> {
   Icon wouldBuy = Icon(Icons.add_shopping_cart);
   double _currentSliderValue = 20;
 
+  ui.Image customImage;
+
 
 
   final CarouselController _controller = CarouselController();
 
   void initState() {
     checkWouldBuy(currentUser.userID, widget.postID);
+    loadImage('assets/logos/shoppingCard_1.png').then((image) {
+      setState(() {
+        customImage = image;
+      });
+    });
+
     super.initState();
   }
 
@@ -124,6 +132,16 @@ class _FeedCardState extends State<FeedCard> {
   }
 
   //Uint8List _originalImage;
+
+
+  Future<ui.Image> loadImage(String assetPath) async {
+    ByteData data = await rootBundle.load(assetPath);
+    ui.Codec codec = await ui.instantiateImageCodec(data.buffer.asUint8List(), targetWidth: 50,targetHeight: 50);
+    ui.FrameInfo fi = await codec.getNextFrame();
+
+    return fi.image;
+  }
+
 
   Future<File> convertImageToFile(String imagePath) async {
     final byteData = await rootBundle.load('assets/$imagePath');
@@ -458,8 +476,8 @@ class _FeedCardState extends State<FeedCard> {
                                       child:
                                         Slider(
                                           value: _currentSliderValue,
-                                          min: (postInfo.data[6]!=null)? double.parse(postInfo.data[6]) : 0,
-                                          max: (postInfo.data[7]!=null)? double.parse(postInfo.data[7]) : 100,
+                                          min: (postInfo.data[7]!=null)? double.parse(postInfo.data[7]) : 0,
+                                          max: (postInfo.data[8]!=null)? double.parse(postInfo.data[8]) : 100,
                                           divisions: 5,
                                           activeColor: Color(0xFF424242),
                                           inactiveColor: Color(0xFFBDBDBD),
