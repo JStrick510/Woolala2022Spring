@@ -10,6 +10,7 @@ import 'dart:convert';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 //import 'package:woolala_app/screens/profile_screen.dart';
 import 'package:woolala_app/screens/search_screen.dart';
+import 'package:woolala_app/screens/conversation_list_screen.dart';
 import 'package:woolala_app/widgets/bottom_nav.dart';
 import 'package:woolala_app/widgets/card.dart';
 import 'package:woolala_app/main.dart';
@@ -637,6 +638,14 @@ class _HomepageScreenState extends State<HomepageScreen> {
             onPressed: () => Navigator.push(
                 context, MaterialPageRoute(builder: (context) => SearchPage())),
           ),
+
+          IconButton(
+            icon: Icon(Icons.message_outlined),
+            onPressed: () => Navigator.push(
+              context, MaterialPageRoute(builder: (context) => ConversationListScreen(currentUser.email))
+            ),
+          ),
+
           IconButton(
             icon: Icon(Icons.exit_to_app),
             onPressed: () => startSignOut(context),

@@ -9,27 +9,28 @@
 // Messages: a model defined in models/message.dart
 // from, to, content
 
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import 'package:woolala_app/main.dart';
+
 class Conversation {
   final String User1; // User1 must lexicographically precede User2
-  final String User2; // Will enforce this in codes defined in other files
-  final String UniqueID;
-  List Messages;
+  final String User2; // Will enforce this in codes defined in app.js
+  final String UniqueID; // User1:::User2
+  final List Messages;
 
   Conversation({
-    required this.User1,
-    required this.User2,
-    required this.UniqueID,
-    required this.Messages,
+    this.User1,
+    this.User2,
+    this.UniqueID,
+    this.Messages,
   });
 
-  factory Conversation.fromJSON(Map<String, dynamic> json) {
-    return Conversation(
-      User1 = json["User1"],
+  Conversation.fromJSON(Map<String, dynamic> json)
+    : User1 = json["User1"],
       User2 = json["User2"],
       UniqueID = json["UniqueID"],
-      Messages = json["Messages"],
-    );
-  }
+      Messages = json["Messages"];
 
   Map<String, dynamic> toJSON() => {
     "User1" : User1,
@@ -37,4 +38,44 @@ class Conversation {
     "UniqueID" : UniqueID,
     "Messages" : Messages,
   };
+}
+
+// called to get conversation between 2 users
+Future<Conversation> getConversationBetween(String user1, String user2) async {
+  http.Response res =
+      await http.get(Uri.parse(domain + "/doesConversationExist/" + user1 + "/" + user2));
+  if (res.body.isNotEmpty) { // already exists
+    Map conversationMap = jsonDecode(res.body.toString());
+    return Conversation.fromJSON(conversationMap);
+  } else { // doesn't exist, return null
+    return null;
+  }
+}
+
+// create conversation between 2 users if not already exist
+Future<http.Response> createConversationBetween(String user1, String user2) {
+  var sorted = sort2Strings(user1, user2); // sort2Strings defined in main.dart
+  return http.post(
+    Uri.parse(domain + '/insertConversation'),
+    headers: <String, String>{
+      'Content-Type': 'application/json',
+    },
+    body: jsonEncode({
+      "User1" : sorted[0],
+      "User2" : sorted[1],
+      "UniqueID" : sorted[2],
+      "Messages" : [],
+    }),
+  );
+}
+
+String? conversationGetTheOther(String convID, String user1) {
+  var names = convID.split(":::");
+  if (user1 == names[0]) {
+    return names[1];
+  } else if (user1 == names[1]) {
+    return names[0];
+  } else {
+    return null;
+  }
 }

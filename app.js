@@ -384,3 +384,96 @@ app.get("/checkWouldBuy/:postID", (request, response) => {
     response.send(document.wouldBuy);
     });
 });
+
+// Jialin Li - CSCE 606 Spring 2022
+// Methods related to DM and ClientList
+
+// making a user client
+app.post("/makeClient/:you/:them", (request, response) => {
+  var currentUserID = request.params.you;
+  var targetUserID = request.params.them;
+  var updateCurrent = { $push: { clients: targetUserID } };
+
+  userCollection.updateOne({ "userID": currentUserID }, updateCurrent, function (err, res) {
+    console.log(currentUserID + " now has " + targetUserID + " in their client array");
+  });
+  response.send({});
+});
+
+// removing a user as client
+app.post("/removeClient/:you/:them", (request, response) => {
+  var currentUserID = request.params.you;
+  var targetUserID = request.params.them;
+  var updateCurrent = { $pull: { clients: targetUserID } };
+
+  userCollection.updateOne({ "userID": currentUserID }, updateCurrent, function (err, res) {
+    console.log(currentUserID + " now does not have " + targetUserID + " in their clients array");
+  });
+  response.send({});
+});
+
+// get conversation between two users if exist
+app.get("/doesConversationExist/:user1/:user2", (request, response) => {
+    var str1 = "";
+    var str2 = "";
+    if (request.params.user1 <= request.params.user2) {
+        str1 = request.params.user1;
+        str2 = request.params.user2;
+    } else {
+        str1 = request.params.user2;
+        str2 = request.params.user1;
+    }
+    var uniqID = str1+":::"+str2;
+    console.log("Finding conversation between "+str1+" and "+str2);
+
+    conversationCollection.findOne({"UniqueID":uniqID}, function(err, document) {
+        if(document) {
+            console.log("Found conversation between: " + str1+" and "+str2);
+            response.send(document);
+        } else {
+            response.send(err);
+        }
+    });
+});
+
+app.get("/getConversationByID/:uniqID", (request, response) => {
+  console.log('Conversation file requested for unique id ' + request.params.uniqID);
+    conversationCollection.findOne({"UniqueID":request.params.userID}, function(err, document) {
+      // console.log(document);
+      // returns a Conversation instance
+      response.send(document);
+    });
+});
+
+app.get("/getConversationList/:userID", (request, response) => {
+  console.log('Conversation list requested for user ' + request.params.userID);
+    userCollection.findOne({"userID":request.params.userID}, function(err, document) {
+      // console.log(document);
+      response.send(document.conversations);
+    });
+});
+
+// create a conversation file between 2 users if not already exist
+// this method and the previous one are called in models/conversation.dart
+app.post("/insertConversation", (request, response) => {
+    conversationCollection.insertOne(request.body, (error, result) => {
+        if(error) {
+            return response.status(500).send(error);
+        }
+        response.send(result.result);
+    });
+    var user1 = request.body.User1;
+    var user2 = request.body.User2;
+    var newVal = { $push: { conversations: request.body.UniqueID }};
+    userCollection.updateOne({"userID":user1}, newVal, function(err, res) {
+      console.log("Conversation file stored to "+user1);
+    });
+    userCollection.updateOne({"userID":user2}, newVal, function(err, res) {
+      console.log("Conversation file stored to "+user2);
+    });
+
+});
+
+
+
+
