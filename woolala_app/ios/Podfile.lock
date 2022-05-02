@@ -1,21 +1,25 @@
 PODS:
-  - AppAuth (1.4.0):
-    - AppAuth/Core (= 1.4.0)
-    - AppAuth/ExternalUserAgent (= 1.4.0)
-  - AppAuth/Core (1.4.0)
-  - AppAuth/ExternalUserAgent (1.4.0)
+  - AppAuth (1.5.0):
+    - AppAuth/Core (= 1.5.0)
+    - AppAuth/ExternalUserAgent (= 1.5.0)
+  - AppAuth/Core (1.5.0)
+  - AppAuth/ExternalUserAgent (1.5.0):
+    - AppAuth/Core
   - audioplayers (0.0.1):
     - Flutter
-  - FBSDKCoreKit (5.15.1):
-    - FBSDKCoreKit/Basics (= 5.15.1)
-    - FBSDKCoreKit/Core (= 5.15.1)
-  - FBSDKCoreKit/Basics (5.15.1)
-  - FBSDKCoreKit/Core (5.15.1):
-    - FBSDKCoreKit/Basics
-  - FBSDKLoginKit (5.15.1):
-    - FBSDKLoginKit/Login (= 5.15.1)
-  - FBSDKLoginKit/Login (5.15.1):
-    - FBSDKCoreKit (~> 5.0)
+  - BSGridCollectionViewLayout (1.2.5)
+  - BSImagePicker (2.10.3):
+    - BSGridCollectionViewLayout (= 1.2.5)
+    - BSImageView (= 1.0.3)
+  - BSImageView (1.0.3)
+  - FBAEMKit (13.1.0):
+    - FBSDKCoreKit_Basics (= 13.1.0)
+  - FBSDKCoreKit (13.1.0):
+    - FBAEMKit (= 13.1.0)
+    - FBSDKCoreKit_Basics (= 13.1.0)
+  - FBSDKCoreKit_Basics (13.1.0)
+  - FBSDKLoginKit (13.1.0):
+    - FBSDKCoreKit (= 13.1.0)
   - Firebase/Analytics (7.3.0):
     - Firebase/Core
   - Firebase/Auth (7.3.0):
@@ -66,14 +70,16 @@ PODS:
     - GoogleUtilities/UserDefaults (~> 7.0)
     - PromisesObjC (~> 1.2)
   - Flutter (1.0.0)
-  - flutter_facebook_login (0.0.1):
-    - FBSDKCoreKit (~> 5.5)
-    - FBSDKLoginKit (~> 5.5)
+  - flutter_absolute_path (0.0.1):
+    - Flutter
+  - flutter_facebook_auth (4.3.0):
+    - FBSDKCoreKit (~> 13)
+    - FBSDKLoginKit (~> 13)
     - Flutter
   - fluttertoast (0.0.2):
     - Flutter
     - Toast
-  - google_sign_in (0.0.1):
+  - google_sign_in_ios (0.0.1):
     - Flutter
     - GoogleSignIn (~> 5.0)
   - GoogleAppMeasurement (7.3.0):
@@ -107,7 +113,7 @@ PODS:
     - GoogleUtilities/Logger
   - GoogleUtilities/UserDefaults (7.3.1):
     - GoogleUtilities/Logger
-  - GTMAppAuth (1.2.1):
+  - GTMAppAuth (1.2.3):
     - AppAuth/Core (~> 1.4)
     - GTMSessionFetcher/Core (~> 1.5)
   - GTMSessionFetcher/Core (1.5.0)
@@ -115,6 +121,9 @@ PODS:
     - Flutter
     - TOCropViewController (~> 2.6.0)
   - image_picker (0.0.1):
+    - Flutter
+  - multi_image_picker (4.8.00):
+    - BSImagePicker (~> 2.10.3)
     - Flutter
   - nanopb (2.30906.0):
     - nanopb/decode (= 2.30906.0)
@@ -143,11 +152,13 @@ DEPENDENCIES:
   - firebase_auth (from `.symlinks/plugins/firebase_auth/ios`)
   - firebase_core (from `.symlinks/plugins/firebase_core/ios`)
   - Flutter (from `Flutter`)
-  - flutter_facebook_login (from `.symlinks/plugins/flutter_facebook_login/ios`)
+  - flutter_absolute_path (from `.symlinks/plugins/flutter_absolute_path/ios`)
+  - flutter_facebook_auth (from `.symlinks/plugins/flutter_facebook_auth/ios`)
   - fluttertoast (from `.symlinks/plugins/fluttertoast/ios`)
-  - google_sign_in (from `.symlinks/plugins/google_sign_in/ios`)
+  - google_sign_in_ios (from `.symlinks/plugins/google_sign_in_ios/ios`)
   - image_cropper (from `.symlinks/plugins/image_cropper/ios`)
   - image_picker (from `.symlinks/plugins/image_picker/ios`)
+  - multi_image_picker (from `.symlinks/plugins/multi_image_picker/ios`)
   - path_provider (from `.symlinks/plugins/path_provider/ios`)
   - share (from `.symlinks/plugins/share/ios`)
   - sign_in_with_apple (from `.symlinks/plugins/sign_in_with_apple/ios`)
@@ -158,7 +169,12 @@ DEPENDENCIES:
 SPEC REPOS:
   trunk:
     - AppAuth
+    - BSGridCollectionViewLayout
+    - BSImagePicker
+    - BSImageView
+    - FBAEMKit
     - FBSDKCoreKit
+    - FBSDKCoreKit_Basics
     - FBSDKLoginKit
     - Firebase
     - FirebaseAnalytics
@@ -188,16 +204,20 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/firebase_core/ios"
   Flutter:
     :path: Flutter
-  flutter_facebook_login:
-    :path: ".symlinks/plugins/flutter_facebook_login/ios"
+  flutter_absolute_path:
+    :path: ".symlinks/plugins/flutter_absolute_path/ios"
+  flutter_facebook_auth:
+    :path: ".symlinks/plugins/flutter_facebook_auth/ios"
   fluttertoast:
     :path: ".symlinks/plugins/fluttertoast/ios"
-  google_sign_in:
-    :path: ".symlinks/plugins/google_sign_in/ios"
+  google_sign_in_ios:
+    :path: ".symlinks/plugins/google_sign_in_ios/ios"
   image_cropper:
     :path: ".symlinks/plugins/image_cropper/ios"
   image_picker:
     :path: ".symlinks/plugins/image_picker/ios"
+  multi_image_picker:
+    :path: ".symlinks/plugins/multi_image_picker/ios"
   path_provider:
     :path: ".symlinks/plugins/path_provider/ios"
   share:
@@ -212,10 +232,15 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/webview_flutter/ios"
 
 SPEC CHECKSUMS:
-  AppAuth: 31bcec809a638d7bd2f86ea8a52bd45f6e81e7c7
+  AppAuth: 80317d99ac7ff2801a2f18ff86b48cd315ed465d
   audioplayers: 455322b54050b30ea4b1af7cd9e9d105f74efa8c
-  FBSDKCoreKit: 1d5acf7c9d7a2f92bb1a242dc60cae5b7adb91df
-  FBSDKLoginKit: f1ea8026a58b52d30c9f2e6a58ca7d813619fb83
+  BSGridCollectionViewLayout: 333dcb457a5a3bdd9212607ab5756553dcfe06cb
+  BSImagePicker: 07404254f2fcdaf5a2eb403c0f8c337267ce8738
+  BSImageView: a149459433a2687157d034c78e059d30ac7f2544
+  FBAEMKit: 3be32ffb79fe7c0603fed00d81742b23241e89a5
+  FBSDKCoreKit: eff97dea778dbe6cc4498959cffb619c75675102
+  FBSDKCoreKit_Basics: c151609a1cf6976a5958febcf0043266a8fd5151
+  FBSDKLoginKit: 42932c7ad6f6b91854fc0a6bcc79b7e807bcde4b
   Firebase: 26223c695fe322633274198cb19dca8cb7e54416
   firebase_analytics: ee4abb07bfa857e7c95d97144efe9eb68be414cd
   firebase_auth: d09964a120e218411768f5ca2d3ce938abd319f2
@@ -225,18 +250,20 @@ SPEC CHECKSUMS:
   FirebaseCore: 4d3c72622ce0e2106aaa07bb4b2935ba2c370972
   FirebaseCoreDiagnostics: d50e11039e5984d92c8a512be2395f13df747350
   FirebaseInstallations: bf2ec8dbf36ff4c91af6b9a003d15855757680c1
-  Flutter: 434fef37c0980e73bb6479ef766c45957d4b510c
-  flutter_facebook_login: cfb5659f686b1c575ef205c6b6fd20db9679d3c4
+  Flutter: 50d75fe2f02b26cc09d224853bb45737f8b3214a
+  flutter_absolute_path: 5adb13678c88f0bdfba527f3851f9543d01dde66
+  flutter_facebook_auth: a030aef1c2552fdc7cb090acc716ac836e3bb63c
   fluttertoast: 6122fa75143e992b1d3470f61000f591a798cc58
-  google_sign_in: 6bd214b9c154f881422f5fe27b66aaa7bbd580cc
+  google_sign_in_ios: ed71c0dbddfba8b1ea9aa210dbda695f46bf51bd
   GoogleAppMeasurement: 8d3c0aeede16ab7764144b5a4ca8e1d4323841b7
   GoogleDataTransport: 116c84c4bdeb76be2a7a46de51244368f9794eab
   GoogleSignIn: 7137d297ddc022a7e0aa4619c86d72c909fa7213
   GoogleUtilities: e1d9ed4e544fc32a93e00e721400cbc3f377200d
-  GTMAppAuth: 5b53231ef6920f149ab84b2969cb0ab572da3077
+  GTMAppAuth: 987526d41b07efb1bedda5e936fe0cb718a03113
   GTMSessionFetcher: b3503b20a988c4e20cc189aa798fd18220133f52
   image_cropper: f1668dd8d2cad2d357955caad15a40547856edcb
-  image_picker: 50e7c7ff960e5f58faa4d1f4af84a771c671bc4a
+  image_picker: 541dcbb3b9cf32d87eacbd957845d8651d6c62c3
+  multi_image_picker: 443e776a762d7901641854043b60abf88a85d5ef
   nanopb: 1bf24dd71191072e120b83dd02d08f3da0d65e53
   path_provider: abfe2b5c733d04e238b0d8691db0cfd63a27a93c
   PromisesObjC: 3113f7f76903778cf4a0586bd1ab89329a0b7b97
@@ -248,6 +275,6 @@ SPEC CHECKSUMS:
   url_launcher: a1c0cc845906122c4784c542523d8cacbded5626
   webview_flutter: 9f491a9b5a66f2573946a389b2677987b0ff8c0b
 
-PODFILE CHECKSUM: 7368163408c647b7eb699d0d788ba6718e18fb8d
+PODFILE CHECKSUM: cc1f88378b4bfcf93a6ce00d2c587857c6008d3b
 
-COCOAPODS: 1.10.1
+COCOAPODS: 1.11.3

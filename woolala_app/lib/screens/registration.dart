@@ -478,7 +478,7 @@ class _RegistrationState extends State<Registration> {
           tier == 'Business' ? _urlField() : SizedBox(),
           _userHandleField(),
           _googleSignUpButton(context),
-          _facebookSignUpButton(context),
+          // _facebookSignUpButton(context),
           _signUpWithEmailButton(),
           SizedBox(height: 20),
           if (emailPasswordActivated) _emailField(),
