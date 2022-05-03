@@ -185,7 +185,7 @@ class _PostScreenState extends State<PostScreen> {
                     encodes[1], encodes[2], encodes[3], encodes[4], date,
                     _text, currentUser.userID, currentUser.profileName, _cat ,_minprice, _maxprice),
                 Navigator.pop(context),
-                Navigator.pushReplacementNamed(context, '/profile'),
+                Navigator.pushReplacementNamed(context, '/home'),
               },
             ),
             SizedBox(height: 100.0, width: 20),
