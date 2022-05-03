@@ -72,7 +72,7 @@ class _FeedCardState extends State<FeedCard> {
 
   void initState() {
     checkWouldBuy(currentUser.userID, widget.postID);
-    loadImage('assets/logos/shoppingCard_3.png').then((image) {
+    loadImage('assets/logos/shoppingCard_1.png').then((image) {
       setState(() {
         customImage = image;
       });
@@ -133,9 +133,10 @@ class _FeedCardState extends State<FeedCard> {
 
   //Uint8List _originalImage;
 
+
   Future<ui.Image> loadImage(String assetPath) async {
     ByteData data = await rootBundle.load(assetPath);
-    ui.Codec codec = await ui.instantiateImageCodec(data.buffer.asUint8List(), targetWidth: 34,targetHeight: 34);
+    ui.Codec codec = await ui.instantiateImageCodec(data.buffer.asUint8List(), targetWidth: 50,targetHeight: 50);
     ui.FrameInfo fi = await codec.getNextFrame();
 
     return fi.image;
@@ -465,6 +466,7 @@ class _FeedCardState extends State<FeedCard> {
                                     //     });
                                     //   },
                                     // ),
+                                    //f:
                                     SliderTheme(
                                         data: SliderThemeData(
                                         thumbColor: Color(0xFF424242),
@@ -487,6 +489,8 @@ class _FeedCardState extends State<FeedCard> {
                                           },
                                         ),
                                     ),
+                                    // CustomSlider(),
+                                    //f
                                   ],
                                 ),
                               ),
