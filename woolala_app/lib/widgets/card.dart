@@ -37,7 +37,8 @@ import 'package:path_provider/path_provider.dart';
 //import 'dart:convert';
 
 import 'package:carousel_slider/carousel_slider.dart';
-
+import 'package:syncfusion_flutter_sliders/sliders.dart';
+import 'package:syncfusion_flutter_core/theme.dart';
 
 // This entire class is the widget that will populate the feed on the homepage
 
@@ -63,7 +64,7 @@ class _FeedCardState extends State<FeedCard> {
   bool rated = false;
   Icon wouldBuy = Icon(Icons.add_shopping_cart);
   double _currentSliderValue = 20;
-
+  double _value = 40.0;
   ui.Image customImage;
 
 
@@ -404,6 +405,7 @@ class _FeedCardState extends State<FeedCard> {
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceEvenly,
                                   children: <Widget>[
+                                    ////////////////////////////////////////////////////here!!
                                     new IconButton(
                                       icon: Icon(Icons.share),
                                       iconSize: 28,
@@ -445,7 +447,11 @@ class _FeedCardState extends State<FeedCard> {
                                       },
                                       // child: Text("Share Options"),
                                     ),
+                                    Padding(
+                                    padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
+                                    child:
                                     starSlider(widget.postID, stars, rated),
+                                    ),
                                     // new IconButton(
                                     //   icon: wouldBuy,
                                     //   iconSize: 28,
@@ -466,7 +472,10 @@ class _FeedCardState extends State<FeedCard> {
                                     //     });
                                     //   },
                                     // ),
-                                    //f:
+
+                                    Padding(
+                                    padding: EdgeInsets.fromLTRB(2, 0, 10, 0),
+                                    child:
                                     SliderTheme(
                                         data: SliderThemeData(
                                         thumbColor: Color(0xFF424242),
@@ -490,7 +499,7 @@ class _FeedCardState extends State<FeedCard> {
                                         ),
                                     ),
                                     // CustomSlider(),
-                                    //f
+                                  ),
                                   ],
                                 ),
                               ),
