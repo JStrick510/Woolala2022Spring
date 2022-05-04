@@ -413,7 +413,7 @@ app.post("/removeClient/:you/:them", (request, response) => {
 });
 
 // get conversation between two users if exist
-app.get("/doesConversationExist/:user1/:user2", (request, response) => {
+app.get("/getConvBetween/:user1/:user2", (request, response) => {
     var str1 = "";
     var str2 = "";
     if (request.params.user1 <= request.params.user2) {
@@ -438,9 +438,9 @@ app.get("/doesConversationExist/:user1/:user2", (request, response) => {
 
 app.get("/getConversationByID/:uniqID", (request, response) => {
   console.log('Conversation file requested for unique id ' + request.params.uniqID);
-    conversationCollection.findOne({"UniqueID":request.params.userID}, function(err, document) {
+    conversationCollection.findOne({"UniqueID":request.params.uniqID}, function(err, document) {
       // console.log(document);
-      // returns a Conversation instance
+      // returns a Conversation instance that should be parsed with Conversation.fromJSON
       response.send(document);
     });
 });
@@ -471,9 +471,22 @@ app.post("/insertConversation", (request, response) => {
     userCollection.updateOne({"userID":user2}, newVal, function(err, res) {
       console.log("Conversation file stored to "+user2);
     });
-
 });
 
+app.get("/getMessage/:msgID", (request,response) => {
+    console.log('Conversation file requested for unique id ' + request.params.uniqID);
+        messageCollection.findOne({"msgID":request.params.msgID}, function(err, document) {
+          // returns a Message instance that should be parsed by Message.fromJSON()
+          response.send(document);
+        });
+});
 
-
-
+// send a message
+app.post("/insertMessage", (request, response) => {
+    messageCollection.insertOne(request.body, (error, result) => {
+        if(error) {
+            return response.status(500).send(error);
+        }
+        response.send(result.result);
+    });
+});

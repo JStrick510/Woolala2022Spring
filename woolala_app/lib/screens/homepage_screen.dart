@@ -283,8 +283,11 @@ Future<List> getRatedPosts(String userID) async {
 // Will retrieve the entire user document from the DB with the provided user ID
 Future<User> getUserFromDB(String userID) async {
   http.Response res = await http.get(Uri.parse(domain + '/getUser/' + userID));
-  Map userMap = jsonDecode(res.body.toString());
-  return User.fromJSON(userMap);
+  if (res.body.isNotEmpty) {
+    Map userMap = jsonDecode(res.body.toString());
+    return User.fromJSON(userMap);
+  } else 
+    return null;
 }
 
 // Will return a list of posts from all the users the provided user is following
@@ -639,14 +642,12 @@ class _HomepageScreenState extends State<HomepageScreen> {
             onPressed: () => Navigator.push(
                 context, MaterialPageRoute(builder: (context) => SearchPage())),
           ),
-
           IconButton(
             icon: Icon(Icons.message_outlined),
             onPressed: () => Navigator.push(
-              context, MaterialPageRoute(builder: (context) => ConversationListScreen(currentUser.email))
+              context, MaterialPageRoute(builder: (context) => ConversationListScreen())
             ),
           ),
-
           IconButton(
             icon: Icon(Icons.exit_to_app),
             onPressed: () => startSignOut(context),

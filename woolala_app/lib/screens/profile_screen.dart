@@ -4,6 +4,7 @@ import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:woolala_app/main.dart';
 import 'package:woolala_app/screens/login_screen.dart';
 import 'package:woolala_app/models/user.dart';
+import 'package:woolala_app/models/conversation.dart';
 import 'package:woolala_app/screens/chat_screen.dart';
 import 'package:woolala_app/screens/follower_list_screen.dart';
 import 'package:woolala_app/screens/following_list_screen.dart';
@@ -572,9 +573,19 @@ class _ProfilePageState extends State<ProfilePage> {
     }
   }
 
-  startConversation() {
+  startConversation() async {
     // TODO
     // Navigator.pushReplacementNamed(context, '/editProfile'); // something like that
+    Conversation conv = await getConversationBetween(currentUser.userID, viewingUser.userID);
+    if (conv != null) {
+      print ("Profile Screen: Found conversation");
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (BuildContext context) =>
+          ChatScreen(viewingUser)));
+    } else {
+      print ("Profile Screen: Didn't find conversation" + conv.UniqueID);
+    }
   }
 
   createClientButton() {

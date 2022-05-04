@@ -3,33 +3,33 @@
 // Messages: from, to, content
 // So far only support text messages, may be expanded
 
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import 'package:woolala_app/main.dart';
+
 class Message {
-  final String ID;
+  final String msgID; // FromUser:::ToUser:::Timestamp
   final String FromUser;
   final String ToUser;
   final String Content;
-  final String Timestamp;
 
   Message({
-    this.ID,
+    this.msgID,
     this.FromUser,
     this.ToUser,
     this.Content,
-    this.Timestamp,
   });
 
   Message.fromJSON(Map<String, dynamic> json)
-    : ID = json["ID"],
+    : msgID = json["msgID"],
       FromUser = json["FromUser"],
       ToUser = json["ToUser"],
-      Content = json["Content"],
-      Timestamp = json["Timestamp"];
+      Content = json["Content"];
 
   Map<String, dynamic> toJSON() => {
-    "ID" : ID,
+    "msgID" : msgID,
     "FromUser" : FromUser,
     "ToUser" : ToUser,
     "Content" : Content,
-    "Timestamp": Timestamp,
   };
 }

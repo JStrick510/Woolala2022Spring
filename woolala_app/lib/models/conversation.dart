@@ -17,7 +17,7 @@ class Conversation {
   final String User1; // User1 must lexicographically precede User2
   final String User2; // Will enforce this in codes defined in app.js
   final String UniqueID; // User1:::User2
-  final List Messages;
+  final List Messages; // list of strings as pointers to msgs
 
   Conversation({
     this.User1,
@@ -43,39 +43,44 @@ class Conversation {
 // called to get conversation between 2 users
 Future<Conversation> getConversationBetween(String user1, String user2) async {
   http.Response res =
-      await http.get(Uri.parse(domain + "/doesConversationExist/" + user1 + "/" + user2));
+      await http.get(Uri.parse(domain + "/getConvBetween/" + user1 + "/" + user2)); // lexicographic order ensured in app.js
   if (res.body.isNotEmpty) { // already exists
+    print("Conversation file found");
     Map conversationMap = jsonDecode(res.body.toString());
     return Conversation.fromJSON(conversationMap);
-  } else { // doesn't exist, return null
-    return null;
+  } else { // if doesn't exist, create one right away
+    print("Conversation file not found, try creating one right now");
+    // sort2Strings defined in main.dart, returns [a, b, a:::b] for a <= b lexicographically
+    var sorted = sort2Strings(user1, user2);
+    res = await http.post(Uri.parse(domain + '/insertConversation'),
+      headers: <String, String>{
+        'Content-Type': 'application/json',
+      },
+      body: jsonEncode({
+        "User1" : sorted[0],
+        "User2" : sorted[1],
+        "UniqueID" : sorted[2],
+        "Messages" : [],
+      }),
+    );
+    if (res.statusCode == 200) {
+      // status code 200 OK, should return this if successful
+      print("Conversation file created successfully");
+      return Conversation.fromJSON(jsonDecode(res.body));
+    } else {
+      print("Some error happened trying to create conversation file. Status: " + res.statusCode.toString());
+      return null;
+    }
   }
 }
 
-// create conversation between 2 users if not already exist
-Future<http.Response> createConversationBetween(String user1, String user2) {
-  var sorted = sort2Strings(user1, user2); // sort2Strings defined in main.dart
-  return http.post(
-    Uri.parse(domain + '/insertConversation'),
-    headers: <String, String>{
-      'Content-Type': 'application/json',
-    },
-    body: jsonEncode({
-      "User1" : sorted[0],
-      "User2" : sorted[1],
-      "UniqueID" : sorted[2],
-      "Messages" : [],
-    }),
-  );
-}
-
-String? conversationGetTheOther(String convID, String user1) {
+String conversationGetTheOther(String convID, String user1) {
   var names = convID.split(":::");
   if (user1 == names[0]) {
     return names[1];
   } else if (user1 == names[1]) {
     return names[0];
   } else {
-    return null;
+    return "";
   }
 }
