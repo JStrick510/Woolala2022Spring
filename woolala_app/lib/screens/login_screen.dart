@@ -637,7 +637,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 _forgotPassword(),
                 _divider(),
                 _googleSignInButton(context),
-                // _facebookSignInButton(context),
+                _facebookSignInButton(context),
                 _noAccount(),
               ],
             ),
