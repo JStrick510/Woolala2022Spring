@@ -33,3 +33,32 @@ class Message {
     "Content" : Content,
   };
 }
+
+Future<http.Response> insertMessage(String fromUser, String toUser, String content) {
+  print("Inserting new message to db");
+  String timeStamp = DateTime.now().millisecondsSinceEpoch.toString();
+  print(timeStamp);
+  return http.post(
+    Uri.parse(domain + '/insertMessage'), // the backend will also insert this msg to conversation
+    headers: <String, String>{
+      'Content-Type': 'application/json',
+    },
+    body: jsonEncode({
+      "msgID" : fromUser + ":::" + toUser + ":::" + timeStamp,
+      "FromUser" : fromUser,
+      "ToUser" : toUser,
+      "Content" : content,
+    }),
+  );
+}
+
+Future<Message> getMessageByID(String msgID) async {
+  http.Response res =
+      await http.get(Uri.parse(domain + "/getMessage/" + msgID));
+  if (res.body.isNotEmpty) {
+    Map msgMap = jsonDecode(res.body);
+    return Message.fromJSON(msgMap);
+  } else {
+    return null;
+  }
+}

@@ -24,6 +24,8 @@ class _FollowerListScreenState extends State<FollowerListScreen> {
   List followerEmailList = [];
   List followerUserNameList = [];
 
+  ScrollController _controller = new ScrollController();
+
   //Build the list Asynchronously
   listbuilder() async {
     //Make sure the user Exists
@@ -56,6 +58,8 @@ class _FollowerListScreenState extends State<FollowerListScreen> {
           return ListView.builder(
             key: ValueKey("ListView"),
             scrollDirection: Axis.vertical,
+            physics: const AlwaysScrollableScrollPhysics(),
+            controller: _controller,
             shrinkWrap: true,
             itemCount: followerList.length,
             itemBuilder: (BuildContext context, int index) {

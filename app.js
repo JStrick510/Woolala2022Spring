@@ -385,6 +385,7 @@ app.get("/checkWouldBuy/:postID", (request, response) => {
     });
 });
 
+
 // Jialin Li - CSCE 606 Spring 2022
 // Methods related to DM and ClientList
 
@@ -474,19 +475,37 @@ app.post("/insertConversation", (request, response) => {
 });
 
 app.get("/getMessage/:msgID", (request,response) => {
-    console.log('Conversation file requested for unique id ' + request.params.uniqID);
-        messageCollection.findOne({"msgID":request.params.msgID}, function(err, document) {
-          // returns a Message instance that should be parsed by Message.fromJSON()
-          response.send(document);
-        });
+  // console.log('Conversation file requested for unique id ' + request.params.uniqID);
+  messageCollection.findOne({"msgID":request.params.msgID}, function(err, document) {
+    // returns a Message instance that should be parsed by Message.fromJSON()
+    response.send(document);
+  });
 });
 
 // send a message
 app.post("/insertMessage", (request, response) => {
-    messageCollection.insertOne(request.body, (error, result) => {
-        if(error) {
-            return response.status(500).send(error);
-        }
-        response.send(result.result);
-    });
+  messageCollection.insertOne(request.body, (error, result) => {
+    if(error) {
+      return response.status(500).send(error);
+    }
+    response.send(result.result);
+  });
+
+  // now insert this msg to corresponding conversation
+  // again, need to ensure the 2 users are of lexicographic order
+  var str1 = "";
+  var str2 = "";
+  if (request.body.FromUser <= request.body.ToUser) {
+      str1 = request.body.FromUser;
+      str2 = request.body.ToUser;
+  } else {
+      str1 = request.body.ToUser;
+      str2 = request.body.FromUser;
+  }
+  var uniqID = str1+":::"+str2;
+  var newVal = { $push: { Messages: request.body.msgID }};
+  conversationCollection.updateOne({"UniqueID":uniqID}, newVal, function(err, res) {
+    console.log("Message file stored to "+uniqID);
+  });
 });
+// END Jialin Li

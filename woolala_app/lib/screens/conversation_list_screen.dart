@@ -50,7 +50,6 @@ class _ConversationListScreenState extends State<ConversationListScreen> {
     }
     numOfClients = clientUserList.length;
     combinedList = List.from(clientUserList)..addAll(otherUserList);
-    print(clientUserList.length.toString() + " " + otherUserList.length.toString()+" "+combinedList.length.toString());
   }
 
   Widget _buildList() {
@@ -61,6 +60,7 @@ class _ConversationListScreenState extends State<ConversationListScreen> {
           return ListView.builder(
             key: ValueKey("ListView"),
             scrollDirection: Axis.vertical,
+            physics: const AlwaysScrollableScrollPhysics(),
             shrinkWrap: true,
             itemCount: combinedList.length,
             itemBuilder: (BuildContext context, int index) {
@@ -74,11 +74,10 @@ class _ConversationListScreenState extends State<ConversationListScreen> {
                   ),
                   backgroundColor: Colors.grey,
                 ),
-                tileColor: (index<numOfClients)? Colors.yellow : null,
+                tileColor: (index<numOfClients)? Colors.yellow[100] : null,
                 title: Text(combinedList[index].profileName),
                 subtitle: Text(combinedList[index].userName),
                 onTap: () {
-                  print("You clicked " + combinedList[index].profileName+", entering chat");
                   Navigator.push(
                     context,
                     MaterialPageRoute(builder: (BuildContext context) =>
