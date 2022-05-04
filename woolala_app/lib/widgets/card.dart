@@ -407,20 +407,22 @@ class _FeedCardState extends State<FeedCard> {
                                     new IconButton(
                                       icon: Icon(Icons.share),
                                       iconSize: 28,
-                                      onPressed: () async {
-                                        await sc.capture().then((image) async {
-                                          Directory tempDir =
-                                              await getTemporaryDirectory();
-                                          String filePath =
-                                              '${tempDir.path}/tmp_img.jpg';
-                                          await File(filePath)
-                                              .writeAsBytes(image);
-                                          await SocialShare.shareOptions(
-                                            "Shared from ChooseNXT App",
-                                            imagePath: filePath,
-                                          ).then((data) {
-                                            print(data);
-                                          });
+                                      //next lines stopped working when multiple image display created and unsure why
+                                      //onPressed: () //async {
+                                        //await sc.capture().then((image) async {
+                                          //Directory tempDir =
+                                              //await getTemporaryDirectory();
+                                          //String filePath =
+                                              //'${tempDir.path}/tmp_img.jpg';
+                                          //await File(filePath)
+                                              //.writeAsBytes(image);
+                                          //await SocialShare.shareOptions(
+                                            //"Shared from ChooseNXT App",
+                                            //imagePath: filePath,
+                                          //).then((data) {
+                                            //print(data);
+                                          //});
+                                          //stop of lines working
 
                                           //facebook appId is mandatory for android or else share won't work
                                           // Platform.isAndroid
@@ -441,8 +443,8 @@ class _FeedCardState extends State<FeedCard> {
                                           //         .then((data) {
                                           //         print(data);
                                           //       });
-                                        });
-                                      },
+                                        //});
+                                      //},
                                       // child: Text("Share Options"),
                                     ),
                                     starSlider(widget.postID, stars, rated),
