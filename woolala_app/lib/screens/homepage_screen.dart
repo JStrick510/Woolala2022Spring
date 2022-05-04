@@ -270,14 +270,17 @@ class _HomepageScreenState extends State<HomepageScreen> {
   RefreshController _refreshController =
   RefreshController(initialRefresh: false);
 
+  //Initialize global variables:
   List postIDs = [];
   var ratedPosts = [];
   File file;
-  int numToShow;
-  var feedLoading = true;
+  int numToShow; //number of posts to show
+  var feedLoading = true; //indicates if all posts of the feed is loaded
 
   int count = 0; //count
-  String dropdownvalue = 'None';
+  String dropdownvalue = 'None'; //category that filter will use
+
+  //list of categories that will be filtered:
   var itemsFilter = [
     "Apparel",
     "Shoes",
@@ -289,15 +292,16 @@ class _HomepageScreenState extends State<HomepageScreen> {
     "None",
   ];
 
-  List <String> toRemove = [];
-  var sorted = false;
-  List prePostIDs = [];
-  List users = [];/////////////////////////////ADDED
-  final Map<String, double> popular = HashMap();/////////////////////////////ADDED2
+  List <String> toRemove = []; //list to filter out posts
+  var sorted = false; //indicates if feed is sorted
+  List prePostIDs = []; //pre-loaded posts
+  List users = [];//users in the app
+  final Map<String, double> popular = HashMap();//hash map to sort popular user
   bool sortConfirm = false;
-  bool hasFeed = false;
+  bool hasFeed = false; //indicates if user has posts or follows users with posts
 
-  final Map<String, double> sortIDposts = HashMap();
+  final Map<String, double> sortIDposts = HashMap(); //hash map  to sort most popular following
+
   // Change this to load more posts per refresh
   int postsPerReload = 4;
 
@@ -309,7 +313,6 @@ class _HomepageScreenState extends State<HomepageScreen> {
         int.parse(a.substring(a.indexOf(':::') + 3)));
   }
 
-  /////////////////////////START//////////////////////////////////////////
   // is called when the user pulls up on home screen
   void _onRefresh() async {
     print("refresh");
@@ -331,7 +334,6 @@ class _HomepageScreenState extends State<HomepageScreen> {
     if (mounted) setState(() {});
     _refreshController.refreshCompleted();
   }
-  /////////////////////////////////END/////////////////////////////
 
   // is called when the user pulls down on the home screen
   void _onLoading() async {
@@ -347,7 +349,7 @@ class _HomepageScreenState extends State<HomepageScreen> {
     _refreshController.loadComplete();
   }
 
-  ///////////////////////START2/////////////////////////////////
+  //function that filters out posts:
   void filterOut() async {
     await Future.delayed(Duration(milliseconds: 1000));
     var rem = List.unmodifiable(toRemove);
@@ -355,6 +357,8 @@ class _HomepageScreenState extends State<HomepageScreen> {
       for (int j = 0; j < rem.length; j++){
         if (postIDs.contains(rem[j])){
           postIDs.remove(rem[j]);
+
+          //update number of posts to load on feed:
           if (postIDs.length < postsPerReload)
             numToShow = postIDs.length;
           else
@@ -367,6 +371,8 @@ class _HomepageScreenState extends State<HomepageScreen> {
     if (mounted) setState(() {});
     _refreshController.refreshCompleted();
   }
+
+  //function that populates a list (toRemove) with posts that do not fit in the category selected:
   void _filterPosts(List postIDs, String category) async {
     print("Category:");
     print(category);
@@ -375,6 +381,7 @@ class _HomepageScreenState extends State<HomepageScreen> {
       postIDs = toRemove;
       toRemove = [];
     }
+
     if (category != "None"){
       for (int i = 0; i < postIDs.length; i++){
         getPost(postIDs[i]).then((info) {
@@ -385,7 +392,8 @@ class _HomepageScreenState extends State<HomepageScreen> {
       }
     }
   }
-  //////////////////////END2///////////////////////////////////
+
+  //function that sorts out posts by popularity of users followed:
   void _sortPosts(Map<String, double> sortPosts) async {
     await Future.delayed(Duration(milliseconds: 1000));
 
@@ -393,6 +401,7 @@ class _HomepageScreenState extends State<HomepageScreen> {
 
       print("sorting posts...");
 
+      //Sort hash map by key (score):
       var sortKeyPosts = sortPosts.keys.toList(growable:false)
         ..sort((k1, k2) => sortPosts[k2].compareTo(sortPosts[k1]));
       LinkedHashMap sortedMapPosts = new LinkedHashMap
@@ -400,6 +409,7 @@ class _HomepageScreenState extends State<HomepageScreen> {
 
       var sortedPosts = sortedMapPosts.keys.toList(growable:false);
 
+      //update posts on feed:
       postIDs = [];
       postIDs = List.from(sortedPosts);
       prePostIDs = List.from(sortedPosts);
@@ -410,12 +420,14 @@ class _HomepageScreenState extends State<HomepageScreen> {
     if (mounted) setState(() {});
     _refreshController.refreshCompleted();
   }
-  ///////////////////////START2////////////////////////////////
+
+  //function that sorts out posts by popularity of users if user is not following or has no posts:
   void _sort(Map<String, double> popular, List users) async {
     await Future.delayed(Duration(milliseconds: 9000));
     if (popular.length >= users.length){
       print("sorting users by popularity...");
 
+      //Sort hash map by key (score):
       var sortedKeys = popular.keys.toList(growable:false)
         ..sort((k1, k2) => popular[k2].compareTo(popular[k1]));
       LinkedHashMap sortedMap = new LinkedHashMap
@@ -423,6 +435,7 @@ class _HomepageScreenState extends State<HomepageScreen> {
 
       var sortedIDs = sortedMap.keys.toList(growable:false);
 
+      //populate empty feed:
       if (postIDs.length == 0){
         hasFeed = false;
 
@@ -435,6 +448,8 @@ class _HomepageScreenState extends State<HomepageScreen> {
 
             sortPosts(list);
             postIDs+=list;
+
+            //update number of posts to load on feed:
             if (postIDs.length < postsPerReload)
               numToShow = postIDs.length;
             else
@@ -448,20 +463,23 @@ class _HomepageScreenState extends State<HomepageScreen> {
     if (mounted) setState(() {});
     _refreshController.refreshCompleted();
   }
-  ///////////////////////////////END2////////////////////////////////
 
-  //////////////////////////START/////////////////////////////////////////
+  //initialize feed:
   @override
   initState() {
     super.initState();
     if (currentUser != null && postIDs.length == 0) {
+
+      //initialize sorting and loading of posts:
       sorted = false;
       feedLoading = true;
 
+      //see if user has posts or following users with posts:
       getFeed(currentUser.userID).then((list) {
         postIDs = List.from(list);
         prePostIDs = List.from(list);
 
+        //if user has posts or following users with posts, sort posts by popularity:
         if (postIDs.length > 0){
           getUsrs().then((list1){
             User rateUser;
@@ -488,13 +506,15 @@ class _HomepageScreenState extends State<HomepageScreen> {
             }
           });
           hasFeed = true;
+
+          //update number of posts to load on feed:
           if (postIDs.length < postsPerReload)
             numToShow = postIDs.length;
           else
             numToShow = postsPerReload;
         }
+        //if user has no posts nor following users with posts, find popularity of all users in app:
         else {
-          //get data from MongoDB:
           hasFeed = false;
           getUsrs().then((list1){
             User rateUser;
@@ -521,7 +541,6 @@ class _HomepageScreenState extends State<HomepageScreen> {
       ratedPosts = list;
     });
   }
-////////////////////////////////////////END/////////////////////////////////
 
   @override
   Widget build(BuildContext context) {
@@ -531,35 +550,40 @@ class _HomepageScreenState extends State<HomepageScreen> {
     bottomBar.currEmail = currentUser.email;
     bottomBar.brand = currentUser.brand;
 
-    if (postIDs.length > 0){
+    if (postIDs.length > 0){ //if feed is not empty, sort posts:
+
+      //if user has no posts nor following, populate and sort by popularity and filter:
       if (!sorted){
         _sort(popular, users);
         _filterPosts(postIDs, dropdownvalue);
         sorted = true;
       }
 
+      //if user has posts and/or following, sort these posts by popularity and filter:
       if (!sortConfirm && hasFeed){
         _sortPosts(sortIDposts);
         _filterPosts(postIDs, dropdownvalue);
       }
-      else if (sortConfirm && hasFeed){
+      else if (sortConfirm && hasFeed){ //if already sorted, load the posts to feed:
         feedLoading = false;
       }
       else if (!hasFeed){
         feedLoading = false;
       }
 
+      //count 3 iterations to refresh feed when filter is added:
       if (count < 3){
         print("Filtering");
         filterOut();
       }
 
+      //if filter is not applied, load old posts pre-filter:
       if (toRemove.length == 0){
         postIDs = List.from(prePostIDs);
       }
 
     }
-    else{
+    else{ //if feed is empty, populate it with posts in order of popularity:
       _sort(popular, users);
     }
 
@@ -615,6 +639,8 @@ class _HomepageScreenState extends State<HomepageScreen> {
                     minHeight: 50, //this is the space between the posts
                     minWidth: double.infinity,
                   ),
+
+                  //load filters and first post, then load the rest of the posts:
                   child: !(index > 0)
                       ?
                   Column(
@@ -626,6 +652,8 @@ class _HomepageScreenState extends State<HomepageScreen> {
                       SizedBox(height: 15.0),
                       Container(
                           height: 25,
+
+                          //horizontal listview for scrollable filter icons:
                           child:ListView(
                             scrollDirection: Axis.horizontal,
                             children: itemsFilter.map((fil){
@@ -637,6 +665,8 @@ class _HomepageScreenState extends State<HomepageScreen> {
                                   child: ElevatedButton.icon(
                                       onPressed: (){
                                         setState(() {
+
+                                          //if filter is applied, indicate it and update filter:
                                           dropdownvalue = fil;
                                           count = 0;
                                           _filterPosts(postIDs, dropdownvalue);
@@ -652,14 +682,14 @@ class _HomepageScreenState extends State<HomepageScreen> {
                             }).toList(),
                           )
                       ),
-                      FeedCard(postIDs[index], ratedPosts),
+                      FeedCard(postIDs[index], ratedPosts),//load in the first post
                     ],
                   ):
-                  FeedCard(postIDs[index], ratedPosts),
+                  FeedCard(postIDs[index], ratedPosts), //load the rest of the posts
                 );
               }),
         )
-            : Padding(
+            : Padding( //if no posts are loaded, let user follow other users:
           padding: EdgeInsets.all(70.0),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
