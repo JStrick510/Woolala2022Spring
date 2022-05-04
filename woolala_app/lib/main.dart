@@ -12,6 +12,7 @@ import 'package:woolala_app/screens/profile_screen.dart';
 import 'package:woolala_app/screens/search_screen.dart';
 import 'package:woolala_app/screens/post_screen.dart';
 import 'package:woolala_app/screens/eulaScreen.dart';
+import 'package:syncfusion_flutter_core/theme.dart';
 
 // Set to true if running app.js locally and want to connect to it instead
 bool localDev = false;
