@@ -64,8 +64,6 @@ class _FeedCardState extends State<FeedCard> {
   bool rated = false;
   Icon wouldBuy = Icon(Icons.add_shopping_cart);
   double _currentSliderValue = 20;
-  final double _min = 0;
-  final double _max = 100;
   double _value = 40.0;
   ui.Image customImage;
 
@@ -407,6 +405,7 @@ class _FeedCardState extends State<FeedCard> {
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceEvenly,
                                   children: <Widget>[
+                                    ////////////////////////////////////////////////////here!!
                                     new IconButton(
                                       icon: Icon(Icons.share),
                                       iconSize: 28,
@@ -448,7 +447,11 @@ class _FeedCardState extends State<FeedCard> {
                                       },
                                       // child: Text("Share Options"),
                                     ),
+                                    Padding(
+                                    padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
+                                    child:
                                     starSlider(widget.postID, stars, rated),
+                                    ),
                                     // new IconButton(
                                     //   icon: wouldBuy,
                                     //   iconSize: 28,
@@ -469,59 +472,34 @@ class _FeedCardState extends State<FeedCard> {
                                     //     });
                                     //   },
                                     // ),
-                                    //f:
-                                    SfSliderTheme(
-                                        data:
-                                            SfSliderThemeData(
-                                                activeTrackHeight: 5,
-                                                inactiveTrackHeight: 5,
-                                                activeDividerColor: Colors.red,
-                                                inactiveDividerColor: Colors.red[200],
-                                                overlayRadius: 30,
+
+                                    Padding(
+                                    padding: EdgeInsets.fromLTRB(2, 0, 10, 0),
+                                    child:
+                                    SliderTheme(
+                                        data: SliderThemeData(
+                                        thumbColor: Color(0xFF424242),
+                                        thumbShape: SliderThumbImage(customImage),
+                                        //thumbShape: RoundSliderThumbShape(enabledThumbRadius: 10)
+                                      ),
+                                      child:
+                                        Slider(
+                                          value: _currentSliderValue,
+                                          min: (postInfo.data[7]!=null)? double.parse(postInfo.data[7]) : 0,
+                                          max: (postInfo.data[8]!=null)? double.parse(postInfo.data[8]) : 100,
+                                          divisions: 5,
+                                          activeColor: Color(0xFF424242),
+                                          inactiveColor: Color(0xFFBDBDBD),
+                                          label: _currentSliderValue.round().toString(),
+                                          onChanged: (double value) {
+                                          setState(() {
+                                          _currentSliderValue = value;
+                                          });
+                                          },
                                         ),
-                                        child:
-                                            SfSlider(
-                                                value: _value,
-                                                min: _min,
-                                                max: _max,
-                                                interval: 20,
-                                                thumbIcon: Icon(
-                                                    Icons.add_shopping_cart,
-                                                    color: Colors.blue,
-                                                    size: 20.0),
-                                                showLabels: true,
-                                                showTicks: true,
-                                                //numberFormat: NumberFormat("\$"),
-                                                onChanged: (dynamic newValue){
-                                                  setState(() {
-                                                    _value = newValue;
-                                                  });
-                                                },
-                                                ),
                                     ),
-                                    // SliderTheme(
-                                    //     data: SliderThemeData(
-                                    //     thumbColor: Color(0xFF424242),
-                                    //     thumbShape: SliderThumbImage(customImage),
-                                    //     //thumbShape: RoundSliderThumbShape(enabledThumbRadius: 10)
-                                    //   ),
-                                    //   child:
-                                    //     Slider(
-                                    //       value: _currentSliderValue,
-                                    //       min: (postInfo.data[7]!=null)? double.parse(postInfo.data[7]) : 0,
-                                    //       max: (postInfo.data[8]!=null)? double.parse(postInfo.data[8]) : 100,
-                                    //       divisions: 5,
-                                    //       activeColor: Color(0xFF424242),
-                                    //       inactiveColor: Color(0xFFBDBDBD),
-                                    //       label: _currentSliderValue.round().toString(),
-                                    //       onChanged: (double value) {
-                                    //       setState(() {
-                                    //       _currentSliderValue = value;
-                                    //       });
-                                    //       },
-                                    //     ),
-                                    // ),
                                     // CustomSlider(),
+                                  ),
                                   ],
                                 ),
                               ),

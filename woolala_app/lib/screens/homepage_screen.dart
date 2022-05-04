@@ -28,8 +28,8 @@ Widget starSlider(String postID, num, rated) => RatingBar(
   ignoreGestures: rated,
   itemCount: 5,
   unratedColor: rated ? Colors.grey[400] : Colors.grey[400],
-  itemSize: 30,
-  itemPadding: EdgeInsets.symmetric(horizontal: 4.0),
+  itemSize: 25, //30
+  itemPadding: EdgeInsets.symmetric(horizontal: 2.0), //4
   itemBuilder: (context, _) => Icon(
     Icons.star,
     color: rated ? Colors.black : Colors.grey[800],
@@ -85,8 +85,8 @@ class SliderThumbImage extends SliderComponentShape {
         Size sizeWithOverflow}
       ) {
     final canvas = context.canvas;
-    final imageWidth = image?.width ?? 40;
-    final imageHeight = image?.height ?? 40;
+    final imageWidth = image?.width ?? 34;
+    final imageHeight = image?.height ?? 34;
 
     Offset imageOffset = Offset(
       center.dx - (imageWidth / 2),
