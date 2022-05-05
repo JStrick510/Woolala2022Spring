@@ -582,7 +582,7 @@ class _HomepageScreenState extends State<HomepageScreen> {
       }
 
       //if filter is not applied, load old posts pre-filter:
-      if (toRemove.length == 0){
+      if ((toRemove.length == 0) && hasFeed){
         postIDs = List.from(prePostIDs);
       }
 
