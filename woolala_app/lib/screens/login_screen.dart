@@ -234,6 +234,7 @@ class _LoginScreenState extends State<LoginScreen> {
         blockedUsers: [],
         brand: false,
         conversations: [],
+        clients: [],
       );
       await insertUser(u);
       currentUser = u;

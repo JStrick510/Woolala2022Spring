@@ -50,6 +50,8 @@ class _FollowingListScreenState extends State<FollowingListScreen> {
   List followingEmailList = [];
   List followingUserNameList = [];
   List followingUserIDList = [];
+  
+  ScrollController _controller = new ScrollController();
 
   //Build the list Asynchronously
   listbuilder() async {
@@ -83,6 +85,8 @@ class _FollowingListScreenState extends State<FollowingListScreen> {
           return ListView.builder(
             key: ValueKey("ListView"),
             scrollDirection: Axis.vertical,
+            physics: const AlwaysScrollableScrollPhysics(),
+            controller: _controller,
             shrinkWrap: true,
             itemCount: followingList.length,
             itemBuilder: (BuildContext context, int index) {
@@ -133,6 +137,8 @@ class _FollowingListScreenState extends State<FollowingListScreen> {
           return ListView.builder(
             key: ValueKey("ListView"),
             scrollDirection: Axis.vertical,
+            physics: const AlwaysScrollableScrollPhysics(),
+            controller: _controller,
             shrinkWrap: true,
             itemCount: followingList.length,
             itemBuilder: (BuildContext context, int index) {
