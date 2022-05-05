@@ -406,26 +406,27 @@ class _FeedCardState extends State<FeedCard> {
                                       MainAxisAlignment.spaceEvenly,
                                   children: <Widget>[
                                     ////////////////////////////////////////////////////here!!
-                                    new IconButton(
+                                    //next lines stopped working when multiple image display created and unsure why
+                                    //commented out for Test Flight release
+                                    /*
+                                    new IconButton( //this is the share button
                                       icon: Icon(Icons.share),
                                       iconSize: 28,
-                                      //next lines stopped working when multiple image display created and unsure why
-                                      //onPressed: () //async {
-                                        //await sc.capture().then((image) async {
-                                          //Directory tempDir =
-                                              //await getTemporaryDirectory();
-                                          //String filePath =
-                                              //'${tempDir.path}/tmp_img.jpg';
-                                          //await File(filePath)
-                                              //.writeAsBytes(image);
-                                          //await SocialShare.shareOptions(
-                                            //"Shared from ChooseNXT App",
-                                            //imagePath: filePath,
-                                          //).then((data) {
-                                            //print(data);
-                                          //});
-                                          //stop of lines working
-
+                                      onPressed: () //async {
+                                        await sc.capture().then((image) async {
+                                          Directory tempDir =
+                                              await getTemporaryDirectory();
+                                          String filePath =
+                                              '${tempDir.path}/tmp_img.jpg';
+                                          await File(filePath)
+                                              .writeAsBytes(image);
+                                          await SocialShare.shareOptions(
+                                            "Shared from ChooseNXT App",
+                                            imagePath: filePath,
+                                          ).then((data) {
+                                            print(data);
+                                          });
+                                          //stop of lines working, below is legacy that has not been touched
                                           //facebook appId is mandatory for android or else share won't work
                                           // Platform.isAndroid
                                           //     ? SocialShare.shareFacebookStory(
@@ -447,8 +448,9 @@ class _FeedCardState extends State<FeedCard> {
                                           //       });
                                         //});
                                       //},
-                                      // child: Text("Share Options"),
+                                       //child: Text("Share Options"),
                                     ),
+                                     */
                                     Padding(
                                     padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
                                     child:
