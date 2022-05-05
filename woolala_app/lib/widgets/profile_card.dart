@@ -366,6 +366,10 @@ class _OwnFeedCardState extends State<OwnFeedCard> {
                                     new IconButton(
                                         icon: Icon(Icons.supervisor_account),
                                         iconSize: 24,
+                                        //this is supposed to take you to the would buy list page
+                                        //but it loads nothing even though the code was not touched
+                                        //disabled so users do not get trapped
+                                        /*
                                         onPressed: () {
                                           Navigator.push(
                                               context,
@@ -375,7 +379,7 @@ class _OwnFeedCardState extends State<OwnFeedCard> {
                                                           widget.postID,
                                                           wouldBuyNameList,
                                                           wouldBuyEmailList)));
-                                        }),
+                                        }*/),
                                   ],
                                 ),
                               ),

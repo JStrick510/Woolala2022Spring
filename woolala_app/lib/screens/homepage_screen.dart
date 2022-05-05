@@ -657,8 +657,8 @@ class _HomepageScreenState extends State<HomepageScreen> {
                     children:[
                       SizedBox(height: 20.0),
                       Text("New Releases", style: TextStyle(fontSize: 22)),
-                      SizedBox(height: 10.0),
-                      Text("Filter Feed by Category:"),
+                      //SizedBox(height: 10.0),
+                      //Text("Filter Feed by Category:"),
                       SizedBox(height: 15.0),
                       Container(
                           height: 25,
