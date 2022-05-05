@@ -163,19 +163,22 @@ class _ChatScreenState extends State<ChatScreen> {
       // body: ListView(padding: const EdgeInsets.all(4), children: <Widget>[
       //   _buildList(),
       // ]),
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(), //(horizontal: Sizes.dimen_8),
-          child: Column(
-            children: [
-              ListView(padding: const EdgeInsets.all(4), children: <Widget>[
-                _buildList(),
-              ]),
-              // _buildInputBox(),
-            ],
-          ),
-        ),
-      ),
+      // body: SafeArea(
+      //   child: Padding(
+      //     padding: const EdgeInsets.symmetric(), //(horizontal: Sizes.dimen_8),
+      //     child: Column(
+      //       children: [
+      //         ListView(padding: const EdgeInsets.all(4), children: <Widget>[
+      //           _buildList(),
+      //         ]),
+      //         // _buildInputBox(),
+      //       ],
+      //     ),
+      //   ),
+      // ),
+      body: const Center(
+        child: Text("DM to be implemented later"),
+      )
     );
   }
 }

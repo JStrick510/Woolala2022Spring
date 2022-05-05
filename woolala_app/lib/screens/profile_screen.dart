@@ -574,8 +574,6 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   startConversation() async {
-    // TODO
-    // Navigator.pushReplacementNamed(context, '/editProfile'); // something like that
     Conversation conv = await getConversationBetween(currentUser.userID, viewingUser.userID);
     if (conv != null) {
       print ("Profile Screen: Found conversation");
