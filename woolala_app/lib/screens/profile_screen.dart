@@ -130,8 +130,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     profilePageOwner.bio,
                     style: TextStyle(
                         fontSize: 16.0, //20
-                        color: Colors.black54,
-                        fontWeight: FontWeight.w600),
+                        color: Colors.black54),
                   ),
                 ),
                 profilePageOwner.url != null && profilePageOwner.url != ""
@@ -142,9 +141,42 @@ class _ProfilePageState extends State<ProfilePage> {
                           profilePageOwner.url,
                           style: TextStyle(
                               fontSize: 14.0, //16
-                              color: Colors.black54,
-                              fontWeight: FontWeight.w600),
+                              color: Colors.black54),)
+
+                        //Make url as button not working, something like this needs to be added to AndroidManifest.xml
+                        //<!-- Nest within the manifest element, not the application element-->
+                        //<queries>
+                          //<intent>
+                            //<action android:name="android.intent.action.VIEW" />
+                              //<data android:scheme="https" />
+                          //</intent>
+                          //<intent>
+                            //<action android:name="android.intent.action.DIAL" />
+                            //<data android:scheme="tel" />
+                          //</intent>
+                          //<intent>
+                            //<action android:name="android.intent.action.SEND" />
+                            //<data android:mimeType="*/*" />
+                          //</intent>
+                        //</queries>
+
+                        /* this is the button part
+                        child: TextButton(
+                            onPressed: () async {
+                              var url = profilePageOwner.url;
+                              if(await canLaunch(url)){
+                                await launch(url);
+                              }else {
+                                throw 'Could not launch $url';
+                              }
+                            },
+                            child: Text(
+                              profilePageOwner.url,
+                              style: TextStyle(
+                                  fontSize: 14.0, //16
+                                  color: Colors.black54),)
                         ),
+                         */
                       )
                     : Container(),
                 // 2 rows 1st posts followers following avg row 2nd buttons
@@ -926,7 +958,11 @@ Future<void> showBlockConfirmDialog() async {
 
     return Scaffold(
       appBar: AppBar(
-        leading: Container(),
+        leading: BackButton(
+          // color: Colors.white,
+            onPressed: () =>
+            //(Navigator.pushReplacementNamed(context, '/profile'))
+            (Navigator.pop(context))),
         title: Image.asset(
           './assets/logos/ChooseNXT wide logo WBG.png',
           width: 200,
