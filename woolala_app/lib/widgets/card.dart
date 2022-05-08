@@ -489,8 +489,8 @@ class _FeedCardState extends State<FeedCard> {
                                       child:
                                         Slider(
                                           value: _currentSliderValue,
-                                          min: (postInfo.data[7]!=null)? double.parse(postInfo.data[7]) : 0,
-                                          max: (postInfo.data[8]!=null)? double.parse(postInfo.data[8]) : 100,
+                                          min: ((postInfo.data[7]!=null) && (postInfo.data[7].runtimeType == double) )? double.parse(postInfo.data[7]) : 0,
+                                          max: ((postInfo.data[8]!=null) && (postInfo.data[8].runtimeType == double))? double.parse(postInfo.data[8]) : 100,
                                           divisions: 5,
                                           activeColor: Color(0xFF424242),
                                           inactiveColor: Color(0xFFBDBDBD),
