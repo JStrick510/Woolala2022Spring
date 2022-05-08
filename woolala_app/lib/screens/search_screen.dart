@@ -53,6 +53,33 @@ Future<http.Response> unblockUser(
   );
 }
 
+//Database call for making client
+Future<http.Response> makeClient(
+    String currentAccountID, String otherAccountID) {
+  print("trying to make user client");
+  return http.post(
+    Uri.parse(domain + '/makeClient/' + currentAccountID + '/' + otherAccountID),
+    headers: <String, String>{
+      'Content-Type': 'application/json',
+    },
+    body: jsonEncode({}),
+  );
+}
+
+//Database call for removing client
+Future<http.Response> removeClient(
+    String currentAccountID, String otherAccountID) {
+  print("trying to remove user as client");
+  return http.post(
+    Uri.parse(
+        domain + '/removeClient/' + currentAccountID + '/' + otherAccountID),
+    headers: <String, String>{
+      'Content-Type': 'application/json',
+    },
+    body: jsonEncode({}),
+  );
+}
+
 //Create Stateful Widget
 class SearchPage extends StatefulWidget {
   @override

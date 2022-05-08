@@ -4,6 +4,8 @@ import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:woolala_app/main.dart';
 import 'package:woolala_app/screens/login_screen.dart';
 import 'package:woolala_app/models/user.dart';
+import 'package:woolala_app/models/conversation.dart';
+import 'package:woolala_app/screens/chat_screen.dart';
 import 'package:woolala_app/screens/follower_list_screen.dart';
 import 'package:woolala_app/screens/following_list_screen.dart';
 import 'package:woolala_app/screens/search_screen.dart';
@@ -32,6 +34,7 @@ class _ProfilePageState extends State<ProfilePage> {
   User profilePageOwner;
   bool checker = false;
   bool isBlocked = true;
+  bool isClient = false;
   User viewingUser;
   User tempUser;
   List postIDs = [];
@@ -144,6 +147,7 @@ class _ProfilePageState extends State<ProfilePage> {
                         ),
                       )
                     : Container(),
+                // 2 rows 1st posts followers following avg row 2nd buttons
                 Row(
                   children: <Widget>[
                     Expanded(
@@ -186,6 +190,7 @@ class _ProfilePageState extends State<ProfilePage> {
                               ],
                             ),
                           ),
+                          // 2nd row buttons edit profile, follow, block
                           Row(
                             // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: [
@@ -213,6 +218,37 @@ class _ProfilePageState extends State<ProfilePage> {
                                         padding: EdgeInsets.only(top: 12),
                                         child: createButton(),
                                       );
+                                    }
+                                  },
+                                ),
+                              ),
+                            ],
+                          ),
+                          // 3rd row DM/Client buttons
+                          Row(
+                            // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              Expanded(
+                                child: Builder(
+                                  builder: (BuildContext context) {
+                                    if (currentOnlineUserEmail !=
+                                        widget.userProfileEmail)
+                                      return Padding(
+                                        padding: const EdgeInsets.only(
+                                            top: 12.0, left: 12),
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: <Widget>[
+                                            createDMButton(),
+                                            Expanded(
+                                              child: createClientButton(),
+                                            ),
+                                          ],
+                                        ),
+                                      );
+                                    else {
+                                      return Container();
                                     }
                                   },
                                 ),
@@ -416,8 +452,23 @@ class _ProfilePageState extends State<ProfilePage> {
     return false;
   }
 
-  Future<bool> checkBlockandFollowing() async {
-    print('Checking if blocked and following is true');
+  Future<bool> checkIfIsClient() async {
+    print('checking client users');
+    User currentUser = await getDoesUserExists(currentOnlineUserEmail);
+    viewingUser = await getDoesUserExists(widget.userProfileEmail);
+    for (int i = 0; i < currentUser.clients.length; i++) {
+      if (currentUser.clients[i] == viewingUser.userID) {
+        isClient = true;
+        print('user is a client');
+        return true;
+      }
+    }
+    print('user is not a client');
+    return false;
+  }
+
+  Future<bool> checkBlockandFollowing() async { //also check if is client
+    print('Checking if blocked, following and client are true');
     // User currentUser = await getDoesUserExists(currentOnlineUserEmail);
     // viewingUser = await getDoesUserExists(widget.userProfileEmail);
     User currentUser = tempUser; //grabbed from initState()
@@ -437,6 +488,14 @@ class _ProfilePageState extends State<ProfilePage> {
       }
     }
     isBlocked = tempBlock;
+    bool tempClient = false;
+    for (int i=0; i<currentUser.clients.length; i++) {
+      if (currentUser.clients[i] == viewingUser.userID) {
+        tempClient = true;
+        print('user is a client');
+      }
+    }
+    isClient = tempClient;
     print('checkBlockandFollowing function finished');
     //prevent loading posts from blocked users
     if (isBlocked && checker) {
@@ -496,6 +555,54 @@ class _ProfilePageState extends State<ProfilePage> {
         futureFunctionName: "blockUser",
         color: Colors.white,
         width: 100,
+      );
+    }
+  }
+
+  createDMButton() {
+    bool ownProfile = currentOnlineUserEmail == widget.userProfileEmail;
+    if (ownProfile) {
+      return Container();
+    } else {
+      return createButtonTitleAndFunction(
+        title: 'DM',
+        performFunction: startConversation,
+        color: Colors.white,
+        width: 150,
+      );
+    }
+  }
+
+  startConversation() async {
+    Conversation conv = await getConversationBetween(currentUser.userID, viewingUser.userID);
+    if (conv != null) {
+      print ("Profile Screen: Found conversation");
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (BuildContext context) =>
+          ChatScreen(viewingUser)));
+    } else {
+      print ("Profile Screen: Didn't find conversation" + conv.UniqueID);
+    }
+  }
+
+  createClientButton() {
+    bool ownProfile = currentOnlineUserEmail == widget.userProfileEmail;
+    if (ownProfile || currentUser.brand==false) {
+      return Container();
+    } else if (isClient) {
+      return createButtonTitleAndFunction(
+        title: "Remove Client", 
+        futureFunctionName: "removeClient",
+        color: Colors.grey[400],
+        width: 70,
+      );
+    } else {
+      return createButtonTitleAndFunction(
+        title: 'Make Client',
+        futureFunctionName: 'makeClient',
+        color: Colors.white,
+        width: 70,
       );
     }
   }
@@ -692,7 +799,77 @@ Future<void> showBlockConfirmDialog() async {
           ),
         ),
       );
-    } else {
+    } else if (futureFunctionName == "makeClient") {
+      return Container(
+        padding: EdgeInsets.only(top: 3.0),
+        child: GestureDetector(
+          onTap: () {
+            FutureBuilder(
+                future: makeClient(currentUser.userID, viewingUser.userID),
+                builder: (context, snapshot) {});
+            Navigator.pushReplacement(
+                context,
+                PageRouteBuilder(
+                  pageBuilder: (context, animation1, animation2) =>
+                      ProfilePage(viewingUser.email),
+                  transitionDuration: Duration(seconds: 0),
+                ));
+          },
+          key: ValueKey(title),
+          child: Container(
+            width: width,
+            height: 35.0,
+            child: Text(
+              title,
+              style:
+                  TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+            ),
+            alignment: Alignment.center,
+            decoration: BoxDecoration(
+              color: color,
+              border: Border.all(color: Colors.black, width: 2.0),
+              borderRadius: BorderRadius.circular(6.0),
+            ),
+          ),
+        ),
+      );
+    } else if (futureFunctionName == "removeClient") {
+      return Container(
+        padding: EdgeInsets.only(top: 3.0),
+        child: GestureDetector(
+          onTap: () {
+            FutureBuilder(
+                future: removeClient(currentUser.userID, viewingUser.userID),
+                builder: (context, snapshot) {});
+            Navigator.pushReplacement(
+                context,
+                PageRouteBuilder(
+                  pageBuilder: (context, animation1, animation2) =>
+                      ProfilePage(viewingUser.email),
+                  transitionDuration: Duration(seconds: 0),
+                ));
+          },
+          key: ValueKey(title),
+          child: Container(
+            width: width,
+            height: 35.0,
+            child: Text(
+              title,
+              style:
+                  TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+            ),
+            alignment: Alignment.center,
+            decoration: BoxDecoration(
+              color: color,
+              border: Border.all(color: Colors.black, width: 2.0),
+              borderRadius: BorderRadius.circular(6.0),
+            ),
+          ),
+        ),
+      );
+    }
+    
+    else {
       return Container(
         padding: EdgeInsets.only(top: 3.0),
         child: GestureDetector(

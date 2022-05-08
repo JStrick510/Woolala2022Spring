@@ -303,6 +303,7 @@ class _RegistrationState extends State<Registration> {
         blockedUsers: [],
         brand: tier == 'Business',
         conversations: [],
+        clients: [],
       );
       // print(u.brand);
       await insertUser(u);

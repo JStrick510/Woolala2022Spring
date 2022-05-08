@@ -21,16 +21,11 @@
 	<key>CFBundleURLTypes</key>
 	<array>
 		<dict>
-			<key>CFBundleURLSchemes</key>
-			<array>
-				<string>fb457421962253693</string>
-			</array>
-		</dict>
-		<dict>
 			<key>CFBundleTypeRole</key>
 			<string>Editor</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
+				<string>fb987763311875790</string>
 				<string>com.googleusercontent.apps.992623634786-vjrr0eun14b55ivja749nhoscove3vcb</string>
 			</array>
 		</dict>
@@ -38,7 +33,9 @@
 	<key>CFBundleVersion</key>
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
 	<key>FacebookAppID</key>
-	<string>457421962253693</string>
+	<string>987763311875790</string>
+	<key>FacebookClientToken</key>
+	<string>6e59b5465ed3bd35402da38a25827ec6</string>
 	<key>FacebookDisplayName</key>
 	<string>ChooseNXT</string>
 	<key>LSApplicationQueriesSchemes</key>
@@ -58,22 +55,13 @@
 		<string>fb-messenger-share-api</string>
 		<string>fbauth2</string>
 		<string>fbshareextension</string>
-		<string>instagram-stories</string>
-		<string>facebook-stories</string>
-		<string>facebook</string>
-		<string>instagram</string>
-		<string>twitter</string>
-		<string>whatsapp</string>
-		<string>tg</string>
 	</array>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSCameraUsageDescription</key>
-	<string>Enable ChooseNXT to access your camera to upload photos to post.</string>
-	<key>NSMicrophoneUsageDescription</key>
-	<string>$(DEVELOPMENT_LANGUAGE)</string>
+	<string>ChooseNXT requires to access the camera for uploading product images</string>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>Enable ChooseNXT to access your camera roll to upload your photos and save ones you&apos;ve taken with the app.</string>
+	<string>ChooseNXT requires to access the camera for uploading product images from you library and for uploading or updating profile picture</string>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>
