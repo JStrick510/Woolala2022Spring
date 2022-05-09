@@ -166,6 +166,10 @@ class _ImageUploadScreenState extends State<ImageUploadScreen> {
                           foregroundColor: Colors.white,
                         )
                       ]),
+                  SizedBox(
+                    height: 50,
+                  ),
+                  Text("Select up to 5 images", style: TextStyle(fontSize: 22, color: Colors.black38.withOpacity(0.8))),
                 ]));
           },
         ),
