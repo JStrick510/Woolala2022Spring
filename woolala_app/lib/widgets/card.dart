@@ -348,7 +348,7 @@ class _FeedCardState extends State<FeedCard> {
                                   ),
                                   ///////////
                                   Padding(
-                                    padding: EdgeInsets.fromLTRB(350, 0, 10, 5),
+                                    padding: EdgeInsets.fromLTRB(350, 0, 10, 2),
                                     child:
                                     new IconButton(
                                       icon: wouldBuy,
@@ -364,7 +364,7 @@ class _FeedCardState extends State<FeedCard> {
                                                 widget.postID);
                                           } else {
                                             wouldBuy =
-                                                Icon(Icons.remove_shopping_cart, color: Color(0xFF424242) );
+                                                Icon(Icons.remove_shopping_cart, color: Colors.black );
                                             addWouldBuy(currentUser.userID,
                                                 widget.postID);
                                           }
