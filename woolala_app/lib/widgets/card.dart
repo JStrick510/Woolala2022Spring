@@ -347,6 +347,7 @@ class _FeedCardState extends State<FeedCard> {
                                         ],
                                       )
                                   ),
+<<<<<<< HEAD
                                   new IconButton(
                                     icon: wouldBuy,
                                     iconSize: 30,
@@ -371,6 +372,36 @@ class _FeedCardState extends State<FeedCard> {
                                   //////////
                                 ]
 
+=======
+                                ///////////
+                                  Padding(
+                                    padding: EdgeInsets.fromLTRB(350, 0, 10, 5),
+                                    child:
+                                    new IconButton(
+                                    icon: wouldBuy,
+                                    iconSize: 30,
+                                      color: Colors.black,
+                                    onPressed: () {
+                                            setState(() {
+                                            if (wouldBuy.icon ==
+                                                Icons.remove_shopping_cart) {
+                                              wouldBuy =
+                                                  Icon(Icons.add_shopping_cart, color: Colors.black);
+                                              removeWouldBuy(currentUser.userID,
+                                                  widget.postID);
+                                            } else {
+                                              wouldBuy =
+                                                  Icon(Icons.remove_shopping_cart, color: Color(0xFF424242) );
+                                              addWouldBuy(currentUser.userID,
+                                                  widget.postID);
+                                            }
+                                          });
+                                          },
+                                    ),
+                                  ),
+                                 /////////////
+                                  ]
+>>>>>>> origin/master
                             ),
                             onHorizontalDragStart:
                                 (DragStartDetails dragStartDetails) {
@@ -527,6 +558,7 @@ class _FeedCardState extends State<FeedCard> {
                                           });
                                           },
                                         ),
+<<<<<<< HEAD
                                     ),),
                                     ///
                                             Align(
@@ -547,11 +579,14 @@ class _FeedCardState extends State<FeedCard> {
                                     ///
                                     ],),),
                                     // CustomSlider(),
+=======
+                                    ),
+                                  ),
+>>>>>>> origin/master
                                   ],
                                 ),
                               ),
                               Align(
-                                //remove username from posts
                                 alignment: Alignment.centerLeft,
                                 child: Padding(
                                   padding:
