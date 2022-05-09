@@ -347,30 +347,33 @@ class _FeedCardState extends State<FeedCard> {
                                       )
                                   ),
                                 ///////////
-                                  new IconButton(
+                                  Padding(
+                                    padding: EdgeInsets.fromLTRB(350, 0, 10, 0),
+                                    child:
+                                    new IconButton(
                                     icon: wouldBuy,
                                     iconSize: 30,
-                                    color: Colors.white,
+                                    color: Color(0xFF424242),
                                     onPressed: () {
-                                      setState(() {
-                                        if (wouldBuy.icon ==
-                                            Icons.remove_shopping_cart) {
-                                          wouldBuy =
-                                              Icon(Icons.add_shopping_cart, color: Colors.white);
-                                          removeWouldBuy(currentUser.userID,
-                                              widget.postID);
-                                        } else {
-                                          wouldBuy =
-                                              Icon(Icons.remove_shopping_cart, color: Colors.white);
-                                          addWouldBuy(currentUser.userID,
-                                              widget.postID);
-                                        }
-                                      });
-                                    },
+                                            setState(() {
+                                            if (wouldBuy.icon ==
+                                                Icons.remove_shopping_cart) {
+                                              wouldBuy =
+                                                  Icon(Icons.add_shopping_cart, color: Colors.black);
+                                              removeWouldBuy(currentUser.userID,
+                                                  widget.postID);
+                                            } else {
+                                              wouldBuy =
+                                                  Icon(Icons.remove_shopping_cart, color: Color(0xFF424242) );
+                                              addWouldBuy(currentUser.userID,
+                                                  widget.postID);
+                                            }
+                                          });
+                                          },
+                                    ),
                                   ),
                                  /////////////
                                   ]
-
                             ),
                             onHorizontalDragStart:
                                 (DragStartDetails dragStartDetails) {
