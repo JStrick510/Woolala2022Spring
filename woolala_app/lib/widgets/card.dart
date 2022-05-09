@@ -348,12 +348,12 @@ class _FeedCardState extends State<FeedCard> {
                                   ),
                                 ///////////
                                   Padding(
-                                    padding: EdgeInsets.fromLTRB(350, 0, 10, 0),
+                                    padding: EdgeInsets.fromLTRB(350, 0, 10, 5),
                                     child:
                                     new IconButton(
                                     icon: wouldBuy,
                                     iconSize: 30,
-                                    color: Color(0xFF424242),
+                                      color: Colors.black,
                                     onPressed: () {
                                             setState(() {
                                             if (wouldBuy.icon ==
