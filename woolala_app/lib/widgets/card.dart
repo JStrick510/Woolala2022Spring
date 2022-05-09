@@ -346,7 +346,6 @@ class _FeedCardState extends State<FeedCard> {
                                         ],
                                       )
                                   ),
-                                  ///////////
                                   Padding(
                                     padding: EdgeInsets.fromLTRB(350, 0, 10, 2),
                                     child:
@@ -368,11 +367,11 @@ class _FeedCardState extends State<FeedCard> {
                                             addWouldBuy(currentUser.userID,
                                                 widget.postID);
                                           }
-                                        });
+                                        }
+                                        );
                                       },
                                     ),
                                   ),
-                                  /////////////
                                 ]
                             ),
                             onHorizontalDragStart:
