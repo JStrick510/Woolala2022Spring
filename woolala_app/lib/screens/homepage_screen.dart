@@ -231,7 +231,7 @@ Future<User> getUserFromDB(String userID) async {
   if (res.body.isNotEmpty) {
     Map userMap = jsonDecode(res.body.toString());
     return User.fromJSON(userMap);
-  } else 
+  } else
     return null;
 }
 
@@ -614,7 +614,7 @@ class _HomepageScreenState extends State<HomepageScreen> {
           IconButton(
             icon: Icon(Icons.message_outlined),
             onPressed: () => Navigator.push(
-              context, MaterialPageRoute(builder: (context) => ConversationListScreen())
+                context, MaterialPageRoute(builder: (context) => ConversationListScreen())
             ),
           ),
           IconButton(

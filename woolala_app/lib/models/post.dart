@@ -24,22 +24,22 @@ class Post {
   });
 
   Post.fromJSON(Map<String, dynamic> json)
-    : ID = json["ID"],
-      UserID = json["UserID"],
-      ImageID1 = json["ImageID1"],
-      ImageID2 = json["ImageID2"],
-      ImageID3 = json["ImageID3"],
-      ImageID4 = json["ImageID4"],
-      ImageID5 = json["ImageID5"],
-      Date = json["Date"],
-      Description = json["Description"],
-      Comments = json["Comments"],
-      CumulativeRating = json["CumulativeRating"],
-      NumRatings = json["NumRatings"],
-      Category = json["Category"],
-      minprice = json["minprice"],
-      maxprice = json["maxprice"];
-      currency = json["currency"];
+      : ID = json["ID"],
+        UserID = json["UserID"],
+        ImageID1 = json["ImageID1"],
+        ImageID2 = json["ImageID2"],
+        ImageID3 = json["ImageID3"],
+        ImageID4 = json["ImageID4"],
+        ImageID5 = json["ImageID5"],
+        Date = json["Date"],
+        Description = json["Description"],
+        Comments = json["Comments"],
+        CumulativeRating = json["CumulativeRating"],
+        NumRatings = json["NumRatings"],
+        Category = json["Category"],
+        minprice = json["minprice"],
+        maxprice = json["maxprice"];
+  currency = json["currency"];
 
   Map<String, dynamic> toJSON() => {
     "ID" : ID,

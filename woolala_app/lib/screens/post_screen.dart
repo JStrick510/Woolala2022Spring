@@ -113,18 +113,18 @@ class _PostScreenState extends State<PostScreen> {
               controller: _c,
             ),
             SizedBox(height: 20.0),
-                TextField(
-                maxLength: 280,
-                maxLengthEnforced: true,
-                //maxLengthEnforcement: MaxLengthEnforcement.enforced,
-                textInputAction: TextInputAction.go,
-                keyboardType: TextInputType.multiline,
-                maxLines: null,
-                decoration: new InputDecoration(
-                    hintText: "Enter the minimum price!",
-                    contentPadding: const EdgeInsets.all(20.0)),
-                controller: _d,
-              ),
+            TextField(
+              maxLength: 280,
+              maxLengthEnforced: true,
+              //maxLengthEnforcement: MaxLengthEnforcement.enforced,
+              textInputAction: TextInputAction.go,
+              keyboardType: TextInputType.multiline,
+              maxLines: null,
+              decoration: new InputDecoration(
+                  hintText: "Enter the minimum price!",
+                  contentPadding: const EdgeInsets.all(20.0)),
+              controller: _d,
+            ),
             SizedBox(height: 20.0),
             TextField(
               maxLength: 280,
@@ -139,19 +139,19 @@ class _PostScreenState extends State<PostScreen> {
               controller: _e,
             ),
 
-      SizedBox(height: 20.0),
-      TextField(
-        maxLength: 280,
-        maxLengthEnforced: true,
-        //maxLengthEnforcement: MaxLengthEnforcement.enforced,
-        textInputAction: TextInputAction.go,
-        keyboardType: TextInputType.multiline,
-        maxLines: null,
-        decoration: new InputDecoration(
-            hintText: "What is the currency?",
-            contentPadding: const EdgeInsets.all(20.0)),
-        controller: _f,
-      ),
+            SizedBox(height: 20.0),
+            TextField(
+              maxLength: 280,
+              maxLengthEnforced: true,
+              //maxLengthEnforcement: MaxLengthEnforcement.enforced,
+              textInputAction: TextInputAction.go,
+              keyboardType: TextInputType.multiline,
+              maxLines: null,
+              decoration: new InputDecoration(
+                  hintText: "What is the currency?",
+                  contentPadding: const EdgeInsets.all(20.0)),
+              controller: _f,
+            ),
             SizedBox(height: 20.0),
             Text("Enter Category of Post:"),
 
