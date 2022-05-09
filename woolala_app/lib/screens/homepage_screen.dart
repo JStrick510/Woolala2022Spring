@@ -679,6 +679,8 @@ class _HomepageScreenState extends State<HomepageScreen> {
                                           //if filter is applied, indicate it and update filter:
                                           dropdownvalue = fil;
                                           count = 0;
+                                          postIDs = List.from(prePostIDs);
+                                          toRemove = [];
                                           _filterPosts(postIDs, dropdownvalue);
                                         });
                                       },
