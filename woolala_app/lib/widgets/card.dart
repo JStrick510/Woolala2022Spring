@@ -348,7 +348,7 @@ class _FeedCardState extends State<FeedCard> {
                                   ),
                                   ///////////
                                   Padding(
-                                    padding: EdgeInsets.fromLTRB(350, 0, 10, 2),
+                                    padding: EdgeInsets.fromLTRB(350, 0, 10, 5),
                                     child:
                                     new IconButton(
                                       icon: wouldBuy,
