@@ -363,7 +363,7 @@ class _FeedCardState extends State<FeedCard> {
                                                 widget.postID);
                                           } else {
                                             wouldBuy =
-                                                Icon(Icons.remove_shopping_cart, color: Color(0xFF424242) );
+                                                Icon(Icons.remove_shopping_cart, color: Colors.black );
                                             addWouldBuy(currentUser.userID,
                                                 widget.postID);
                                           }
