@@ -108,7 +108,7 @@ class SliderThumbImage extends SliderComponentShape {
 // Will be used to make the post for the first time.
 Future<http.Response> createPost(String postID, String image1, String image2,
     String image3, String image4, String image5, String date,
-    String caption, String userID, String userName, String Category, String minprice,String maxprice) {
+    String caption, String userID, String userName, String Category, String minprice,String maxprice, String currency) {
   return http.post(
     Uri.parse(domain + '/insertPost'),
     headers: <String, String>{
@@ -130,7 +130,8 @@ Future<http.Response> createPost(String postID, String image1, String image2,
       'Category': Category,
       'minprice': minprice,
       'maxprice': maxprice,
-      'wouldBuy': []
+      'wouldBuy': [],
+      'currency': currency,
     }),
   );
 }
@@ -208,7 +209,8 @@ Future<List> getPost(String id) async {
     display,
     info["Category"], //category in which a post belongs to
     info["minprice"],
-    info["maxprice"]
+    info["maxprice"],
+    info["currency"]
   ];
   return ret; //this ends up getting sent to card and profile_card as postInfo
 }

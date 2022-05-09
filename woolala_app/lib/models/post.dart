@@ -16,10 +16,11 @@ class Post {
   final String Category;
   final String minprice;
   final String maxprice;
+  final String currency;
 
   Post({
     this.ID, this.UserID, this.ImageID1, this.ImageID2, this.ImageID3, this.ImageID4, this.ImageID5, this.Date,
-    this.Description, this.Comments, this.CumulativeRating, this.NumRatings, this.Category, this.minprice, this.maxprice,
+    this.Description, this.Comments, this.CumulativeRating, this.NumRatings, this.Category, this.minprice, this.maxprice,this.currency,
   });
 
   Post.fromJSON(Map<String, dynamic> json)
@@ -38,6 +39,7 @@ class Post {
       Category = json["Category"],
       minprice = json["minprice"],
       maxprice = json["maxprice"];
+      currency = json["currency"];
 
   Map<String, dynamic> toJSON() => {
     "ID" : ID,
@@ -55,5 +57,6 @@ class Post {
     "Category" : Category,
     "minprice" : minprice,
     "maxprice" : maxprice,
+    "currency" : currency,
   };
 }

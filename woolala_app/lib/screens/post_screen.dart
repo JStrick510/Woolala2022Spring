@@ -30,10 +30,12 @@ class _PostScreenState extends State<PostScreen> {
   String _text = "";
   String _minprice = "";
   String _maxprice = "";
+  String _currency = "";
   String _cat = "";
   TextEditingController _c;
   TextEditingController _d;
   TextEditingController _e;
+  TextEditingController _f;
   String _a = "";
   //String img64;
   List<File> images;
@@ -59,6 +61,7 @@ class _PostScreenState extends State<PostScreen> {
     _c = new TextEditingController();
     _d = new TextEditingController();
     _e = new TextEditingController();
+    _f = new TextEditingController();
     _a = "Apparel";
     super.initState();
   }
@@ -135,6 +138,20 @@ class _PostScreenState extends State<PostScreen> {
                   contentPadding: const EdgeInsets.all(20.0)),
               controller: _e,
             ),
+
+      SizedBox(height: 20.0),
+      TextField(
+        maxLength: 280,
+        maxLengthEnforced: true,
+        //maxLengthEnforcement: MaxLengthEnforcement.enforced,
+        textInputAction: TextInputAction.go,
+        keyboardType: TextInputType.multiline,
+        maxLines: null,
+        decoration: new InputDecoration(
+            hintText: "What is the currency?",
+            contentPadding: const EdgeInsets.all(20.0)),
+        controller: _f,
+      ),
             SizedBox(height: 20.0),
             Text("Enter Category of Post:"),
 
@@ -178,12 +195,13 @@ class _PostScreenState extends State<PostScreen> {
                   this._text = _c.text;
                   this._minprice = _d.text;
                   this._maxprice = _e.text;
+                  this._currency = _f.text;
                   this._cat = _a;
                 }),
                 print(_text),
                 createPost(currentUser.userID + ":::" + getNewID(), encodes[0],
                     encodes[1], encodes[2], encodes[3], encodes[4], date,
-                    _text, currentUser.userID, currentUser.profileName, _cat ,_minprice, _maxprice),
+                    _text, currentUser.userID, currentUser.profileName, _cat ,_minprice, _maxprice, _currency),
                 Navigator.pop(context),
                 Navigator.pushReplacementNamed(context, '/home'),
               },

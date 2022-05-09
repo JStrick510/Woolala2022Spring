@@ -476,7 +476,9 @@ class _FeedCardState extends State<FeedCard> {
                                     //     });
                                     //   },
                                     // ),
-
+                                    Container(
+                                      child:
+                                          Column( children: <Widget>[
                                     Padding(
                                     padding: EdgeInsets.fromLTRB(2, 0, 10, 0),
                                     child:
@@ -501,9 +503,26 @@ class _FeedCardState extends State<FeedCard> {
                                           });
                                           },
                                         ),
-                                    ),
+                                    ),),
+                                    ///
+                                            Align(
+                                              //remove username from posts
+                                              alignment: Alignment.centerLeft,
+                                              child: Padding(
+                                                padding:
+                                                EdgeInsets.fromLTRB(10.0, 4.0, 10.0, 2.0),
+                                                child: Text(
+                                                  "Currency: "+  ((postInfo.data[9].toString()!="null")? (postInfo.data[9]) : "\$").toString(),
+                                                  textAlign: TextAlign.left,
+                                                  style: TextStyle(
+                                                      fontWeight: FontWeight.bold,
+                                                      fontSize: 14),
+                                                ),
+                                              ),
+                                            ),
+                                    ///
+                                    ],),),
                                     // CustomSlider(),
-                                  ),
                                   ],
                                 ),
                               ),
