@@ -39,7 +39,7 @@ class Post {
         Category = json["Category"],
         minprice = json["minprice"],
         maxprice = json["maxprice"];
-  currency = json["currency"];
+        currency = json["currency"];
 
   Map<String, dynamic> toJSON() => {
     "ID" : ID,
