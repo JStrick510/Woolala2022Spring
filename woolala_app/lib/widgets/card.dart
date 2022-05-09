@@ -43,7 +43,7 @@ import 'package:syncfusion_flutter_core/theme.dart';
 // This entire class is the widget that will populate the feed on the homepage
 
 class FeedCard extends StatefulWidget {
-   FeedCard(String postID, List rated) {
+  FeedCard(String postID, List rated) {
     this.postID = postID;
     this.ratedPosts = rated;
   }
@@ -86,49 +86,49 @@ class _FeedCardState extends State<FeedCard> {
   Widget score(postID) {
     return rated
         ? FutureBuilder(
-            future: getPost(widget.postID),
-            builder: (context, postInfo) {
-              if (postInfo.hasData) {
-                return Stack(
+        future: getPost(widget.postID),
+        builder: (context, postInfo) {
+          if (postInfo.hasData) {
+            return Stack(
+              alignment: Alignment.center,
+              children: [
+                Container(
+                  // decoration: BoxDecoration(
+                  //   //to debug container position
+                  //   border: Border.all(color: Colors.black),
+                  // ),
                   alignment: Alignment.center,
-                  children: [
-                    Container(
-                      // decoration: BoxDecoration(
-                      //   //to debug container position
-                      //   border: Border.all(color: Colors.black),
-                      // ),
-                      alignment: Alignment.center,
-                      child: Image.asset(
-                        './assets/logos/NXT_logo.png',
-                        height: 40,
-                        width: 100,
-                        fit: BoxFit.fitWidth,
-                      ),
-                    ),
-                    Container(
-                      width: 75,
-                      height: 25,
-                      decoration: new BoxDecoration(
-                          border: new Border.all(
-                              width: 10, color: Colors.transparent),
-                          borderRadius: const BorderRadius.all(
-                              const Radius.circular(20.0)),
-                          color: new Color.fromRGBO(100, 100, 100, 0.90)),
-                    ),
-                    Text(
-                      postInfo.data[3].toStringAsFixed(2),
-                      style: TextStyle(
-                        fontSize: 25,
-                        color: Colors.white,
-                        fontWeight: FontWeight.w400,
-                      ),
-                    )
-                  ],
-                );
-              } else {
-                return CircularProgressIndicator();
-              }
-            })
+                  child: Image.asset(
+                    './assets/logos/NXT_logo.png',
+                    height: 40,
+                    width: 100,
+                    fit: BoxFit.fitWidth,
+                  ),
+                ),
+                Container(
+                  width: 75,
+                  height: 25,
+                  decoration: new BoxDecoration(
+                      border: new Border.all(
+                          width: 10, color: Colors.transparent),
+                      borderRadius: const BorderRadius.all(
+                          const Radius.circular(20.0)),
+                      color: new Color.fromRGBO(100, 100, 100, 0.90)),
+                ),
+                Text(
+                  postInfo.data[3].toStringAsFixed(2),
+                  style: TextStyle(
+                    fontSize: 25,
+                    color: Colors.white,
+                    fontWeight: FontWeight.w400,
+                  ),
+                )
+              ],
+            );
+          } else {
+            return CircularProgressIndicator();
+          }
+        })
         : Container();
   }
 
@@ -261,14 +261,14 @@ class _FeedCardState extends State<FeedCard> {
                                       padding: EdgeInsets.all(5)),
                                   GestureDetector(
                                       onTap: () => {
-                                            Navigator.push(
-                                                context,
-                                                MaterialPageRoute(
-                                                    builder: (BuildContext
-                                                            context) =>
-                                                        ProfilePage(userInfo
-                                                            .data.email)))
-                                          },
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (BuildContext
+                                                context) =>
+                                                    ProfilePage(userInfo
+                                                        .data.email)))
+                                      },
                                       child: Padding(
                                           padding: EdgeInsets.all(5),
                                           child: Text(userInfo.data.profileName,
@@ -291,8 +291,8 @@ class _FeedCardState extends State<FeedCard> {
                                       showReportSuccess(
                                           res.body.isNotEmpty, context);
                                       http.Response reportCheck =
-                                          await getReports(
-                                              widget.postID, postInfo.data[1]);
+                                      await getReports(
+                                          widget.postID, postInfo.data[1]);
                                       showDeletionSuccess(
                                           (reportCheck.body.isNotEmpty &&
                                               reportCheck.statusCode != 400),
@@ -346,34 +346,33 @@ class _FeedCardState extends State<FeedCard> {
                                         ],
                                       )
                                   ),
-                                ///////////
                                   Padding(
-                                    padding: EdgeInsets.fromLTRB(350, 0, 10, 5),
+                                    padding: EdgeInsets.fromLTRB(350, 0, 10, 2),
                                     child:
                                     new IconButton(
-                                    icon: wouldBuy,
-                                    iconSize: 30,
+                                      icon: wouldBuy,
+                                      iconSize: 30,
                                       color: Colors.black,
-                                    onPressed: () {
-                                            setState(() {
-                                            if (wouldBuy.icon ==
-                                                Icons.remove_shopping_cart) {
-                                              wouldBuy =
-                                                  Icon(Icons.add_shopping_cart, color: Colors.black);
-                                              removeWouldBuy(currentUser.userID,
-                                                  widget.postID);
-                                            } else {
-                                              wouldBuy =
-                                                  Icon(Icons.remove_shopping_cart, color: Color(0xFF424242) );
-                                              addWouldBuy(currentUser.userID,
-                                                  widget.postID);
-                                            }
-                                          });
-                                          },
+                                      onPressed: () {
+                                        setState(() {
+                                          if (wouldBuy.icon ==
+                                              Icons.remove_shopping_cart) {
+                                            wouldBuy =
+                                                Icon(Icons.add_shopping_cart, color: Colors.black);
+                                            removeWouldBuy(currentUser.userID,
+                                                widget.postID);
+                                          } else {
+                                            wouldBuy =
+                                                Icon(Icons.remove_shopping_cart, color: Color(0xFF424242) );
+                                            addWouldBuy(currentUser.userID,
+                                                widget.postID);
+                                          }
+                                        }
+                                        );
+                                      },
                                     ),
                                   ),
-                                 /////////////
-                                  ]
+                                ]
                             ),
                             onHorizontalDragStart:
                                 (DragStartDetails dragStartDetails) {
@@ -430,7 +429,7 @@ class _FeedCardState extends State<FeedCard> {
                                 child: Row(
                                   mainAxisSize: MainAxisSize.max,
                                   mainAxisAlignment:
-                                      MainAxisAlignment.spaceEvenly,
+                                  MainAxisAlignment.spaceEvenly,
                                   children: <Widget>[
                                     ////////////////////////////////////////////////////here!!
                                     //next lines stopped working when multiple image display created and unsure why
@@ -479,9 +478,9 @@ class _FeedCardState extends State<FeedCard> {
                                     ),
                                      */
                                     Padding(
-                                    padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
-                                    child:
-                                    starSlider(widget.postID, stars, rated),
+                                      padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
+                                      child:
+                                      starSlider(widget.postID, stars, rated),
                                     ),
                                     // new IconButton(
                                     //   icon: wouldBuy,
@@ -503,17 +502,19 @@ class _FeedCardState extends State<FeedCard> {
                                     //     });
                                     //   },
                                     // ),
-
-                                    Padding(
-                                    padding: EdgeInsets.fromLTRB(2, 0, 10, 0),
+                                    Container(
                                     child:
-                                    SliderTheme(
-                                        data: SliderThemeData(
-                                        thumbColor: Color(0xFF424242),
-                                        thumbShape: SliderThumbImage(customImage),
-                                        //thumbShape: RoundSliderThumbShape(enabledThumbRadius: 10)
-                                      ),
+                                    Column( children: <Widget>[
+                                    Padding(
+                                      padding: EdgeInsets.fromLTRB(2, 0, 10, 0),
                                       child:
+                                      SliderTheme(
+                                        data: SliderThemeData(
+                                          thumbColor: Color(0xFF424242),
+                                          thumbShape: SliderThumbImage(customImage),
+                                          //thumbShape: RoundSliderThumbShape(enabledThumbRadius: 10)
+                                        ),
+                                        child:
                                         Slider(
                                           value: _currentSliderValue,
                                           min: ((postInfo.data[7]!=null) && (postInfo.data[7].runtimeType == double) )? double.parse(postInfo.data[7]) : 0,
@@ -523,13 +524,30 @@ class _FeedCardState extends State<FeedCard> {
                                           inactiveColor: Color(0xFFBDBDBD),
                                           label: _currentSliderValue.round().toString(),
                                           onChanged: (double value) {
-                                          setState(() {
-                                          _currentSliderValue = value;
-                                          });
+                                            setState(() {
+                                              _currentSliderValue = value;
+                                            });
                                           },
                                         ),
+                                      ),
                                     ),
-                                  ),
+
+                                    Align(
+                                    //remove username from posts
+                                    alignment: Alignment.centerLeft,
+                                    child: Padding(
+                                    padding:
+                                    EdgeInsets.fromLTRB(10.0, 4.0, 10.0, 2.0),
+                                    child: Text(
+                                    "Currency: "+  ((postInfo.data[9].toString()!="null")? (postInfo.data[9]) : "\$").toString(),
+                                    textAlign: TextAlign.left,
+                                    style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 14),
+                                    ),
+                                    ),
+                                    ),
+                                    ],),),
                                   ],
                                 ),
                               ),
@@ -537,7 +555,7 @@ class _FeedCardState extends State<FeedCard> {
                                 alignment: Alignment.centerLeft,
                                 child: Padding(
                                   padding:
-                                      EdgeInsets.fromLTRB(10.0, 4.0, 10.0, 2.0),
+                                  EdgeInsets.fromLTRB(10.0, 4.0, 10.0, 2.0),
                                   child: Text(
                                     userInfo.data.profileName,
                                     textAlign: TextAlign.left,
@@ -577,19 +595,6 @@ class _FeedCardState extends State<FeedCard> {
                             ),
                           ),
                         ),
-                        // Align(
-                        //   //adding price
-                        //   alignment: Alignment.centerLeft,
-                        //   child: Padding(
-                        //     padding: EdgeInsets.fromLTRB(10.0, 1.0, 10.0, 2.0),
-                        //     child: Text(
-                        //       postInfo.data[6].toString(),
-                        //       textAlign: TextAlign.left,
-                        //       style: TextStyle(
-                        //           fontSize: 12, fontWeight: FontWeight.w500),
-                        //     ),
-                        //   ),
-                        // ),
                       ],
                     ),
                   );
