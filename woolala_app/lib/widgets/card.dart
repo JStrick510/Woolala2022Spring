@@ -498,13 +498,11 @@ class _FeedCardState extends State<FeedCard> {
                                           },
                                         ),
                                     ),
-                                    // CustomSlider(),
                                   ),
                                   ],
                                 ),
                               ),
                               Align(
-                                //remove username from posts
                                 alignment: Alignment.centerLeft,
                                 child: Padding(
                                   padding:
