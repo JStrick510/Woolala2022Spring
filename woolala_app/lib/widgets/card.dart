@@ -317,6 +317,7 @@ class _FeedCardState extends State<FeedCard> {
                             child: Stack(
                                 alignment: Alignment.bottomCenter,
                                 children: <Widget>[
+                                  /////////////////////
                                   Container(
                                       child: CarouselSlider(
                                         items: postInfo.data[5],
@@ -345,7 +346,30 @@ class _FeedCardState extends State<FeedCard> {
                                           ),
                                         ],
                                       )
-                                  )]
+                                  ),
+                                  new IconButton(
+                                    icon: wouldBuy,
+                                    iconSize: 30,
+                                    color: Colors.white,
+                                    onPressed: () {
+                                      setState(() {
+                                        if (wouldBuy.icon ==
+                                            Icons.remove_shopping_cart) {
+                                          wouldBuy =
+                                              Icon(Icons.add_shopping_cart, color: Colors.white);
+                                          removeWouldBuy(currentUser.userID,
+                                              widget.postID);
+                                        } else {
+                                          wouldBuy =
+                                              Icon(Icons.remove_shopping_cart, color: Colors.white);
+                                          addWouldBuy(currentUser.userID,
+                                              widget.postID);
+                                        }
+                                      });
+                                    },
+                                  ),
+                                  //////////
+                                ]
 
                             ),
                             onHorizontalDragStart:
