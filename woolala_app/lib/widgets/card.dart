@@ -317,7 +317,6 @@ class _FeedCardState extends State<FeedCard> {
                             child: Stack(
                                 alignment: Alignment.bottomCenter,
                                 children: <Widget>[
-                                  /////////////////////
                                   Container(
                                       child: CarouselSlider(
                                         items: postInfo.data[5],
@@ -434,13 +433,10 @@ class _FeedCardState extends State<FeedCard> {
                                       MainAxisAlignment.spaceEvenly,
                                   children: <Widget>[
                                     ////////////////////////////////////////////////////here!!
-                                    //next lines stopped working when multiple image display created and unsure why
-                                    //commented out for Test Flight release
-                                    /*
-                                    new IconButton( //this is the share button
+                                    new IconButton(
                                       icon: Icon(Icons.share),
                                       iconSize: 28,
-                                      onPressed: () //async {
+                                      onPressed: () async {
                                         await sc.capture().then((image) async {
                                           Directory tempDir =
                                               await getTemporaryDirectory();
@@ -454,7 +450,7 @@ class _FeedCardState extends State<FeedCard> {
                                           ).then((data) {
                                             print(data);
                                           });
-                                          //stop of lines working, below is legacy that has not been touched
+
                                           //facebook appId is mandatory for android or else share won't work
                                           // Platform.isAndroid
                                           //     ? SocialShare.shareFacebookStory(
@@ -474,11 +470,10 @@ class _FeedCardState extends State<FeedCard> {
                                           //         .then((data) {
                                           //         print(data);
                                           //       });
-                                        //});
-                                      //},
-                                       //child: Text("Share Options"),
+                                        });
+                                      },
+                                      // child: Text("Share Options"),
                                     ),
-                                     */
                                     Padding(
                                     padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
                                     child:
@@ -504,9 +499,7 @@ class _FeedCardState extends State<FeedCard> {
                                     //     });
                                     //   },
                                     // ),
-                                    Container(
-                                      child:
-                                          Column( children: <Widget>[
+
                                     Padding(
                                     padding: EdgeInsets.fromLTRB(2, 0, 10, 0),
                                     child:
@@ -519,8 +512,8 @@ class _FeedCardState extends State<FeedCard> {
                                       child:
                                         Slider(
                                           value: _currentSliderValue,
-                                          min: ((postInfo.data[7]!=null) && (postInfo.data[7].runtimeType == double) )? double.parse(postInfo.data[7]) : 0,
-                                          max: ((postInfo.data[8]!=null) && (postInfo.data[8].runtimeType == double))? double.parse(postInfo.data[8]) : 100,
+                                          min: (postInfo.data[7]!=null)? double.parse(postInfo.data[7]) : 0,
+                                          max: (postInfo.data[8]!=null)? double.parse(postInfo.data[8]) : 100,
                                           divisions: 5,
                                           activeColor: Color(0xFF424242),
                                           inactiveColor: Color(0xFFBDBDBD),
@@ -531,30 +524,8 @@ class _FeedCardState extends State<FeedCard> {
                                           });
                                           },
                                         ),
-<<<<<<< HEAD
-                                    ),),
-                                    ///
-                                            Align(
-                                              //remove username from posts
-                                              alignment: Alignment.centerLeft,
-                                              child: Padding(
-                                                padding:
-                                                EdgeInsets.fromLTRB(10.0, 4.0, 10.0, 2.0),
-                                                child: Text(
-                                                  "Currency: "+  ((postInfo.data[9].toString()!="null")? (postInfo.data[9]) : "\$").toString(),
-                                                  textAlign: TextAlign.left,
-                                                  style: TextStyle(
-                                                      fontWeight: FontWeight.bold,
-                                                      fontSize: 14),
-                                                ),
-                                              ),
-                                            ),
-                                    ///
-                                    ],),),
-                                    // CustomSlider(),
                                     ),
                                   ),
-
                                   ],
                                 ),
                               ),
@@ -628,7 +599,7 @@ class _FeedCardState extends State<FeedCard> {
           return SizedBox(
             child: Center(child: CircularProgressIndicator()),
           );
-          // return Container();
+
         }
       },
     );
