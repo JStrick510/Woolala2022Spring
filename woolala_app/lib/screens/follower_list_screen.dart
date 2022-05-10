@@ -7,6 +7,8 @@ import 'package:woolala_app/screens/profile_screen.dart';
 import 'package:woolala_app/widgets/bottom_nav.dart';
 //import 'package:woolala_app/main.dart';
 import 'package:woolala_app/screens/following_list_screen.dart';
+import 'package:woolala_app/screens/homepage_screen.dart'; // getUserFromDB(userID)
+import 'package:woolala_app/screens/conversation_list_screen.dart'; // getUpdatedConvClient(userID)
 
 //Create Stateful Widget
 class FollowerListScreen extends StatefulWidget {
@@ -23,6 +25,8 @@ class _FollowerListScreenState extends State<FollowerListScreen> {
   List followerList = [];
   List followerEmailList = [];
   List followerUserNameList = [];
+  List followerUserIDList = [];
+  List myClients = [];
 
   ScrollController _controller = new ScrollController();
 
@@ -34,16 +38,21 @@ class _FollowerListScreenState extends State<FollowerListScreen> {
     //Follower list of the user
     List tempFollowerList = [];
     tempFollowerList = currentProfile.followers;
+    List tmpList = await getUpdatedConvClient(currentUser.userID);
+    myClients = tmpList[1];
 
     //Go through the Follower List of userIDs and grab their profileName, email, and userName
     for (int i = 0; i < tempFollowerList.length; i++) {
-      String tempProfileName = await getProfileName(tempFollowerList[i]);
-      String tempUserEmail = await getUserEmail(tempFollowerList[i]);
-      String tempUserName = await getUserName(tempFollowerList[i]);
-      //Add each to their respective Lists
-      followerList.add(tempProfileName);
-      followerEmailList.add(tempUserEmail);
-      followerUserNameList.add(tempUserName);
+      // String tempProfileName = await getProfileName(tempFollowerList[i]);
+      // String tempUserEmail = await getUserEmail(tempFollowerList[i]);
+      // String tempUserName = await getUserName(tempFollowerList[i]);
+
+      // no need to query the DB so many times, 1 time is enough
+      User tempUser = await getUserFromDB(tempFollowerList[i]);
+      followerList.add(tempUser.profileName);
+      followerEmailList.add(tempUser.email);
+      followerUserNameList.add(tempUser.userName);
+      followerUserIDList.add(tempUser.userID);
     }
     return followerList;
   }
@@ -74,6 +83,7 @@ class _FollowerListScreenState extends State<FollowerListScreen> {
                   ),
                   backgroundColor: Colors.grey,
                 ),
+                tileColor: (myClients.contains(followerUserIDList[index]))? Colors.yellow[100] : null,
                 title: Text(followerList[index]),
                 subtitle: Text(followerUserNameList[index]),
                 onTap: () {

@@ -6,6 +6,8 @@ import 'package:woolala_app/models/user.dart';
 import 'package:woolala_app/screens/profile_screen.dart';
 import 'package:woolala_app/widgets/bottom_nav.dart';
 import 'package:woolala_app/screens/search_screen.dart';
+import 'package:woolala_app/screens/homepage_screen.dart'; // getUserFromDB(userID)
+import 'package:woolala_app/screens/conversation_list_screen.dart'; // getUpdatedConvClient(userID)
 import 'package:woolala_app/main.dart';
 
 //Create Stateful Widget
@@ -50,6 +52,7 @@ class _FollowingListScreenState extends State<FollowingListScreen> {
   List followingEmailList = [];
   List followingUserNameList = [];
   List followingUserIDList = [];
+  List myClients = [];
   
   ScrollController _controller = new ScrollController();
 
@@ -59,18 +62,22 @@ class _FollowingListScreenState extends State<FollowingListScreen> {
     currentProfile = await getDoesUserExists(widget.userEmail);
     List tempFollowingList = [];
     tempFollowingList = currentProfile.following;
+    List tmpList = await getUpdatedConvClient(currentUser.userID);
+    myClients = tmpList[1];
 
     //Go through the Follower List of userIDs and grab their profileName, email, and userName
     for (int i = 0; i < tempFollowingList.length; i++) {
       if (tempFollowingList[i] != currentProfile.userID) {
-        String tempProfileName = await getProfileName(tempFollowingList[i]);
-        String tempUserEmail = await getUserEmail(tempFollowingList[i]);
-        String tempUserName = await getUserName(tempFollowingList[i]);
-        String tempUserID = await getUserID(tempFollowingList[i]);
-        followingList.add(tempProfileName);
-        followingEmailList.add(tempUserEmail);
-        followingUserNameList.add(tempUserName);
-        followingUserIDList.add(tempUserID);
+        // String tempProfileName = await getProfileName(tempFollowingList[i]);
+        // String tempUserEmail = await getUserEmail(tempFollowingList[i]);
+        // String tempUserName = await getUserName(tempFollowingList[i]);
+        // String tempUserID = await getUserID(tempFollowingList[i]);
+
+        User tempUser = await getUserFromDB(tempFollowingList[i]);
+        followingList.add(tempUser.profileName);
+        followingEmailList.add(tempUser.email);
+        followingUserNameList.add(tempUser.userName);
+        followingUserIDList.add(tempUser.userID);
       }
     }
     return followingList;
@@ -94,6 +101,7 @@ class _FollowingListScreenState extends State<FollowingListScreen> {
                 leading: CircleAvatar(
                   child: Text(followingList[index][0]),
                 ),
+                tileColor: (myClients.contains(followingUserIDList[index]))? Colors.yellow[100] : null,
                 title: Text(followingList[index]),
                 subtitle: Text(followingUserNameList[index]),
                 trailing: Wrap(
@@ -194,9 +202,12 @@ class _FollowingListScreenState extends State<FollowingListScreen> {
           }),
           title: Text("Following"),
           actions: <Widget>[]),
-      body: ListView(padding: const EdgeInsets.all(8), children: <Widget>[
-        _buildList(),
-      ]),
+      body: Center(
+        child: ListView(padding: const EdgeInsets.all(8), children: <Widget>[
+          _buildList(),
+        ])
+      ),
+
       bottomNavigationBar: BottomNavigationBar(
           onTap: (int index) {
             bottomBar.switchPage(index, context);
