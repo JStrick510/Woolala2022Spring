@@ -157,6 +157,8 @@ class _OwnFeedCardState extends State<OwnFeedCard> {
         wouldBuyEmailList.add(user['email']);
       }
     }
+
+    print(wouldBuyNameList);
   }
 
   String priceRange(List postData){
@@ -369,7 +371,7 @@ class _OwnFeedCardState extends State<OwnFeedCard> {
                                         //this is supposed to take you to the would buy list page
                                         //but it loads nothing even though the code was not touched
                                         //disabled so users do not get trapped
-                                        /*
+
                                         onPressed: () {
                                           Navigator.push(
                                               context,
@@ -379,7 +381,7 @@ class _OwnFeedCardState extends State<OwnFeedCard> {
                                                           widget.postID,
                                                           wouldBuyNameList,
                                                           wouldBuyEmailList)));
-                                        }*/),
+                                        }),
                                   ],
                                 ),
                               ),
